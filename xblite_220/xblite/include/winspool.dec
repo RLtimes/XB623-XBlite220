@@ -1,0 +1,655 @@
+' ######################  XBLite
+' #####  winspool  #####  copyright 2003
+' ######################  XBLite declaration file for Windows "winspool"
+
+' subject to GPLL license - see gpll.txt
+' for Windows XBasic/XBLite
+
+' VERSION  "0.0004"  ' 2005/04/15
+
+' IMPORT "user32"
+
+' ###########################
+' #####  declare types  #####
+' ###########################
+
+' now found in user32.dec
+'TYPE DEVMODE
+'  STRING * 32  .dmDeviceName
+'  USHORT  .dmSpecVersion
+'  USHORT  .dmDriverVersion
+'  USHORT  .dmSize
+'  USHORT  .dmDriverExtra
+'  ULONG  .dmFields
+'  USHORT  .dmOrientation
+'  USHORT  .dmPaperSize
+'  USHORT  .dmPaperLength
+'  USHORT  .dmPaperWidth
+'  USHORT  .dmScale
+'  USHORT  .dmCopies
+'  USHORT  .dmDefaultSource
+'  SSHORT  .dmPrintQuality
+'  USHORT  .dmColor
+'  USHORT  .dmDuplex
+'  USHORT  .dmYResolution
+'  USHORT  .dmTTOption
+'  USHORT  .dmCollate
+'  STRING * 32  .dmFormName
+'  USHORT  .dmUnusedPadding
+'  USHORT  .dmBitsPerPel
+'  ULONG  .dmPelsWidth
+'  ULONG  .dmPelsHeight
+'  ULONG  .dmDisplayFlags
+'  ULONG  .dmDisplayFrequency
+'END TYPE
+
+TYPE SYSTIME
+  USHORT  .year
+  USHORT  .month
+  USHORT  .weekDay
+  USHORT  .day
+  USHORT  .hour
+  USHORT  .minute
+  USHORT  .second
+  USHORT  .msec
+END TYPE
+
+TYPE PRINTER_INFO_1
+  ULONG  .flags
+  ULONG  .pDescription
+  ULONG  .pName
+  ULONG  .pComment
+END TYPE
+
+TYPE ACL
+  UBYTE  .AclRevision
+  UBYTE  .Sbz1
+  USHORT  .AclSize
+  USHORT  .AceCount
+  USHORT  .Sbz2
+END TYPE
+
+TYPE SECURITY_DESCRIPTOR
+  UBYTE  .Revision
+  UBYTE  .Sbz1
+  ULONG  .Control
+  ULONG  .Owner
+  ULONG  .Group
+  ACL    .Sacl
+  ACL    .Dacl
+END TYPE
+
+TYPE PRINTER_INFO_2
+  ULONG  .pServerName
+  ULONG  .pPrinterName
+  ULONG  .pShareName
+  ULONG  .pPortName
+  ULONG  .pDriverName
+  ULONG  .pComment
+  ULONG  .pLocation
+	ULONG  .pDevMode	
+  ULONG  .pSepFile
+  ULONG  .pPrintProcessor
+  ULONG  .pDatatype
+  ULONG  .pParameters
+	ULONG  .pSecurityDescriptor	
+  ULONG  .Attributes
+  ULONG  .Priority
+  ULONG  .DefaultPriority
+  ULONG  .StartTime
+  ULONG  .UntilTime
+  ULONG  .Status
+  ULONG  .cJobs
+  ULONG  .AveragePPM
+END TYPE
+
+TYPE PRINTER_INFO_3
+  SECURITY_DESCRIPTOR  .pSecurityDescriptor
+END TYPE
+
+
+TYPE JOB_INFO_1
+  ULONG  .JobId
+  ULONG  .pPrinterName
+  ULONG  .pMachineName
+  ULONG  .pUserName
+  ULONG  .pDocument
+  ULONG  .pDatatype
+  ULONG  .pStatus
+  ULONG  .Status
+  ULONG  .Priority
+  ULONG  .Position
+  ULONG  .PagesPrinted
+  SYSTIME  .Submitted
+END TYPE
+
+TYPE JOB_INFO_2
+  ULONG  .JobId
+  ULONG  .pPrinterName
+  ULONG  .pMachineName
+  ULONG  .pUserName
+  ULONG  .pDocument
+  ULONG  .pNotifyName
+  ULONG  .pDatatype
+  ULONG  .pPrintProcessor
+  ULONG  .pParameters
+  ULONG  .pDriverName
+  DEVMODE  .pDevMode
+  ULONG  .pStatus
+  SECURITY_DESCRIPTOR  .pSecurityDescriptor
+  ULONG  .Status
+  ULONG  .Priority
+  ULONG  .Position
+  ULONG  .StartTime
+  ULONG  .UntilTime
+  ULONG  .TotalPages
+  ULONG  .Size
+  SYSTIME  .Submitted
+  ULONG  .time
+  ULONG  .PagesPrinted
+END TYPE
+
+TYPE ADDJOB_INFO_1
+  ULONG  .Path
+  ULONG  .JobId
+END TYPE
+
+TYPE DRIVER_INFO_1
+  ULONG  .pName
+END TYPE
+
+TYPE DRIVER_INFO_2
+  ULONG  .cVersion
+  ULONG  .pName
+  ULONG  .pEnvironment
+  ULONG  .pDriverPath
+  ULONG  .pDataFile
+  ULONG  .pConfigFile
+END TYPE
+
+TYPE DOC_INFO_1
+  ULONG  .pDocName
+  ULONG  .pOutputFile
+  ULONG  .pDataType
+END TYPE
+
+TYPE SIZEL
+  ULONG  .cx
+  ULONG  .cy
+END TYPE
+
+TYPE RECTL
+  ULONG  .Left
+  ULONG  .Top
+  ULONG  .Right
+  ULONG  .Bottom
+END TYPE
+
+TYPE FORM_INFO_1
+  ULONG  .pName
+  SIZEL  .Size
+  RECTL  .ImageableArea
+END TYPE
+
+TYPE PRINTPROCESSOR_INFO_1
+  ULONG  .pName
+END TYPE
+
+TYPE PORT_INFO_1
+  ULONG  .pName
+END TYPE
+
+TYPE MONITOR_INFO_1
+  ULONG  .pName
+END TYPE
+
+TYPE MONITOR_INFO_2
+  ULONG  .pName
+  ULONG  .pEnvironment
+  ULONG  .pDLLName
+END TYPE
+
+TYPE DATATYPES_INFO_1
+  ULONG  .pName
+END TYPE
+
+TYPE PRINTER_DEFAULTS
+  ULONG    .pDatatype
+  ULONG    .pDevMode
+  ULONG    .DesiredAccess
+END TYPE
+
+TYPE PRINTER_INFO_4
+  ULONG  .pPrinterName
+  ULONG  .pServerName
+  ULONG  .Attributes
+END TYPE
+
+TYPE PRINTER_INFO_5
+  ULONG  .pPrinterName
+  ULONG  .pPortName
+  ULONG  .Attributes
+  ULONG  .DeviceNotSelectedTimeout
+  ULONG  .TransmissionRetryTimeout
+END TYPE
+
+TYPE DRIVER_INFO_3
+  ULONG  .cVersion
+  ULONG          .pName   
+  ULONG       .pEnvironment    
+  ULONG       .pDriverPath    
+  ULONG        .pDataFile   
+  ULONG       .pConfigFile   
+  ULONG        .pHelpFile   
+ ULONG     .pDependentFiles   
+  ULONG       .pMonitorName    
+  ULONG     .pDefaultDataTYPE  
+END TYPE
+
+TYPE DOC_INFO_2
+  ULONG  .pDocName
+  ULONG  .pOutputFile
+  ULONG  .pDatatype
+  ULONG  .dwMode
+  ULONG  .JobId
+END TYPE
+
+
+TYPE PORT_INFO_2
+  ULONG  .pPortName
+  ULONG  .pMonitorName
+  ULONG  .pDescription
+  ULONG  .fPortTYPE
+  ULONG  .Reserved
+END TYPE
+
+TYPE PROVIDOR_INFO_1
+  ULONG  .pName
+  ULONG  .pEnvironment
+  ULONG  .pDLLName
+END TYPE
+
+' ###############################
+' #####  declare functions  #####
+' ###############################
+
+EXTERNAL FUNCTION AbortPrinter (hPrinter)
+EXTERNAL FUNCTION AddFormA (hPrinter, Level, pForm )
+EXTERNAL FUNCTION AddJobA (hPrinter, Level, pData , cdBuf, pcbNeeded)
+EXTERNAL FUNCTION AddMonitorA (pName, Level, pMonitors )
+EXTERNAL FUNCTION AddPortA (pName, hwnd, pMonitorNameAddr)
+EXTERNAL FUNCTION AddPrinterA (pName, Level, pPrinter )
+EXTERNAL FUNCTION AddPrinterConnectionA (pName)
+EXTERNAL FUNCTION AddPrinterDriverA (pName, Level, pDriverInfor )
+EXTERNAL FUNCTION AddPrintProcessorA (pName, pEnvironmentAddr, pPathNameAddr, pPrintProcessorNameAddr)
+EXTERNAL FUNCTION AddPrintProvidorA (pName, Level, pProvidorInfo )
+EXTERNAL FUNCTION AdvancedDocumentPropertiesA (hwnd, hPrinter, pDeviceName, pDevModeOutput, pDevModeInput)
+EXTERNAL FUNCTION ClosePrinter (hPrinter)
+EXTERNAL FUNCTION ConfigurePortA (pName, hwnd, pPortNameAddr)
+EXTERNAL FUNCTION ConnectToPrinterDlg (hwnd, flags)
+EXTERNAL FUNCTION DeleteFormA (hPrinter, pFormName)
+EXTERNAL FUNCTION DeleteMonitorA (pName, pEnvironmentAddr, pMonitorNameAddr)
+EXTERNAL FUNCTION DeletePortA (pName, hwnd, pPortNameAddr)
+EXTERNAL FUNCTION DeletePrinter (hPrinter)
+EXTERNAL FUNCTION DeletePrinterConnectionA (pNameAddr)
+EXTERNAL FUNCTION DeletePrinterDriverA (pName, pEnvironmentAddr, pDriverNameAddr)
+EXTERNAL FUNCTION DeletePrintProcessorA (pName, pEnvironmentAddr, pPrintProcessorNameAddr)
+EXTERNAL FUNCTION DeletePrintProvidorA (pName, pEnvironmentAddr, pPrintProvidorNameAddr)
+EXTERNAL FUNCTION DeviceCapabilitiesA (lpDeviceName, lpPortAddr, iIndex, lpOutputAddr, lpDevMode)
+EXTERNAL FUNCTION DocumentPropertiesA (hwnd, hPrinter, pDeviceName, pDevModeOutput, pDevModeInput, fMode)
+EXTERNAL FUNCTION EndDocPrinter (hPrinter)
+EXTERNAL FUNCTION EndPagePrinter (hPrinter)
+EXTERNAL FUNCTION EnumFormsA (hPrinter, Level, pForm , cbBuf, pcbNeeded, pcReturned)
+EXTERNAL FUNCTION EnumJobsA (hPrinter, FirstJob, NoJobs, Level, pJob , cdBuf, pcbNeeded, pcReturned)
+EXTERNAL FUNCTION EnumMonitorsA (pName, Level, pMonitors , cbBuf, pcbNeeded, pcReturned)
+EXTERNAL FUNCTION EnumPortsA (pName, Level, lpbPorts, cbBuf, pcbNeeded, pcReturned)
+EXTERNAL FUNCTION EnumPrinterDriversA (pName, pEnvironmentAddr, Level, pDriverInfo, cdBuf, pcbNeeded, pcRetruned)
+EXTERNAL FUNCTION EnumPrintersA (flags, nameAddr, Level, pPrinterEnum , cdBuf, pcbNeeded, pcReturned)
+EXTERNAL FUNCTION EnumPrinterPropertySheets (hPrinter, hwnd, lpfnAdd, lParam)
+EXTERNAL FUNCTION EnumPrintProcessorDatatypesA (pName, pPrintProcessorNameAddr, Level, pDatatypes, cdBuf, pcbNeeded, pcRetruned)
+EXTERNAL FUNCTION EnumPrintProcessorsA (pName, pEnvironmentAddr, Level, pPrintProcessorInfo , cdBuf, pcbNeeded, pcReturned)
+EXTERNAL FUNCTION FindClosePrinterChangeNotification (hChange)
+EXTERNAL FUNCTION FindFirstPrinterChangeNotification (hPrinter, fdwFlags, fdwOptions, pPrinterNotifyOptions)
+EXTERNAL FUNCTION FindNextPrinterChangeNotification (hChange, pdwChange, pvReservedAddr, ppPrinterNotifyInfo)
+EXTERNAL FUNCTION GetFormA (hPrinter, pFormNameAddr, Level, pForm , cbBuf, pcbNeeded)
+EXTERNAL FUNCTION GetJobA (hPrinter, JobId, Level, pJob , cdBuf, pcbNeeded)
+EXTERNAL FUNCTION GetPrinterA (hPrinter, Level, pPrinter , cbBuf, pcbNeeded)
+EXTERNAL FUNCTION GetPrinterDataA (hPrinter, pValueName, pTYPE, pData , nSize, pcbNeeded)
+EXTERNAL FUNCTION GetPrinterDriverA (hPrinter, pEnvironment, Level, pDriverInfo , cdBuf, pcbNeeded)
+EXTERNAL FUNCTION GetPrinterDriverDirectoryA (pName, pEnvironmentAddr, Level, pDriverDirectory , cdBuf, pcbNeeded)
+EXTERNAL FUNCTION GetPrintProcessorDirectoryA (pName, pEnvironmentAddr, Level, pPrintProcessorInfoAddr, cdBuf, pcbNeeded)
+EXTERNAL FUNCTION OpenPrinterA (pPrinterName, phPrinter, pDefault)
+EXTERNAL FUNCTION PrinterMessageBoxA (hPrinter, error, hwnd, pText, pCaptionAddr, dwTYPE)
+EXTERNAL FUNCTION PrinterProperties (hwnd, hPrinter)
+EXTERNAL FUNCTION ReadPrinter (hPrinter, pBuf, cdBuf, pNoBytesRead)
+EXTERNAL FUNCTION ResetPrinterA (hPrinter, pDefault)
+EXTERNAL FUNCTION ScheduleJob (hPrinter, JobId)
+EXTERNAL FUNCTION SetFormA (hPrinter, pFormName, Level, pForm )
+EXTERNAL FUNCTION SetJobA (hPrinter, JobId, Level, pJob , Command)
+EXTERNAL FUNCTION SetPrinterA (hPrinter, Level, pPrinter , Command)
+EXTERNAL FUNCTION SetPrinterDataA (hPrinter, pValueName, dwTYPE, pData , cbData)
+EXTERNAL FUNCTION StartDocPrinterA (hPrinter, Level, pDocInfo )
+EXTERNAL FUNCTION StartPagePrinter (hPrinter)
+EXTERNAL FUNCTION WaitForPrinterChange (hPrinter, flags)
+EXTERNAL FUNCTION WritePrinter (hPrinter, pBuf, cdBuf, pcWritten)
+
+' *************************
+' ***** Constants *********
+' *************************
+
+$$FORM_BUILTIN = 0x1
+
+$$JOB_CONTROL_PAUSE = 1
+$$JOB_CONTROL_RESUME = 2
+$$JOB_CONTROL_CANCEL = 3
+$$JOB_CONTROL_RESTART = 4
+
+$$JOB_STATUS_PAUSED = 0x1
+$$JOB_STATUS_ERROR = 0x2
+$$JOB_STATUS_DELETING = 0x4
+$$JOB_STATUS_SPOOLING = 0x8
+$$JOB_STATUS_PRINTING = 0x10
+$$JOB_STATUS_OFFLINE = 0x20
+$$JOB_STATUS_PAPEROUT = 0x40
+$$JOB_STATUS_PRINTED = 0x80
+
+$$JOB_POSITION_UNSPECIFIED = 0
+
+$$DI_CHANNEL = 1         ' start direct read/write channel, 
+$$DI_READ_SPOOL_JOB = 3
+
+$$PRINTER_CONTROL_SET_STATUS = 4
+$$PRINTER_ATTRIBUTE_WORK_OFFLINE = 0x400
+$$PRINTER_ATTRIBUTE_ENABLE_BIDI = 0x800
+$$JOB_CONTROL_DELETE = 5
+$$JOB_STATUS_USER_INTERVENTION = 0x10000
+
+$$PRINTER_ENUM_DEFAULT = 0x1
+$$PRINTER_ENUM_LOCAL = 0x2
+$$PRINTER_ENUM_CONNECTIONS = 0x4
+$$PRINTER_ENUM_FAVORITE = 0x4
+$$PRINTER_ENUM_NAME = 0x8
+$$PRINTER_ENUM_REMOTE = 0x10
+$$PRINTER_ENUM_SHARED = 0x20
+$$PRINTER_ENUM_NETWORK = 0x40
+
+$$PRINTER_ENUM_EXPAND = 0x4000
+$$PRINTER_ENUM_CONTAINER = 0x8000
+
+$$PRINTER_ENUM_ICONMASK = 0xFF0000
+$$PRINTER_ENUM_ICON1 = 0x10000
+$$PRINTER_ENUM_ICON2 = 0x20000
+$$PRINTER_ENUM_ICON3 = 0x40000
+$$PRINTER_ENUM_ICON4 = 0x80000
+$$PRINTER_ENUM_ICON5 = 0x100000
+$$PRINTER_ENUM_ICON6 = 0x200000
+$$PRINTER_ENUM_ICON7 = 0x400000
+$$PRINTER_ENUM_ICON8 = 0x800000
+
+$$PORT_TYPE_WRITE = 0x1
+$$PORT_TYPE_READ = 0x2
+$$PORT_TYPE_REDIRECTED = 0x4
+$$PORT_TYPE_NET_ATTACHED = 0x8
+
+$$PRINTER_CONTROL_PAUSE = 1
+$$PRINTER_CONTROL_RESUME = 2
+$$PRINTER_CONTROL_PURGE = 3
+
+$$PRINTER_STATUS_PAUSED = 0x1
+$$PRINTER_STATUS_ERROR = 0x2
+$$PRINTER_STATUS_PENDING_DELETION = 0x4
+$$PRINTER_STATUS_PAPER_JAM = 0x8
+$$PRINTER_STATUS_PAPER_OUT = 0x10
+$$PRINTER_STATUS_MANUAL_FEED = 0x20
+$$PRINTER_STATUS_PAPER_PROBLEM = 0x40
+$$PRINTER_STATUS_OFFLINE = 0x80
+$$PRINTER_STATUS_IO_ACTIVE = 0x100
+$$PRINTER_STATUS_BUSY = 0x200
+$$PRINTER_STATUS_PRINTING = 0x400
+$$PRINTER_STATUS_OUTPUT_BIN_FULL = 0x800
+$$PRINTER_STATUS_NOT_AVAILABLE = 0x1000
+$$PRINTER_STATUS_WAITING = 0x2000
+$$PRINTER_STATUS_PROCESSING = 0x4000
+$$PRINTER_STATUS_INITIALIZING = 0x8000
+$$PRINTER_STATUS_WARMING_UP = 0x10000
+$$PRINTER_STATUS_TONER_LOW = 0x20000
+$$PRINTER_STATUS_NO_TONER = 0x40000
+$$PRINTER_STATUS_PAGE_PUNT = 0x80000
+$$PRINTER_STATUS_USER_INTERVENTION = 0x100000
+$$PRINTER_STATUS_OUT_OF_MEMORY = 0x200000
+$$PRINTER_STATUS_DOOR_OPEN = 0x400000
+
+$$PRINTER_ATTRIBUTE_QUEUED = 0x1
+$$PRINTER_ATTRIBUTE_DIRECT = 0x2
+$$PRINTER_ATTRIBUTE_DEFAULT = 0x4
+$$PRINTER_ATTRIBUTE_SHARED = 0x8
+$$PRINTER_ATTRIBUTE_NETWORK = 0x10
+$$PRINTER_ATTRIBUTE_HIDDEN = 0x20
+$$PRINTER_ATTRIBUTE_LOCAL = 0x40
+
+$$NO_PRIORITY = 0
+$$MAX_PRIORITY = 99
+$$MIN_PRIORITY = 1
+$$DEF_PRIORITY = 1
+
+$$PRINTER_CHANGE_ADD_PRINTER = 0x1
+$$PRINTER_CHANGE_SET_PRINTER = 0x2
+$$PRINTER_CHANGE_DELETE_PRINTER = 0x4
+$$PRINTER_CHANGE_PRINTER = 0xFF
+$$PRINTER_CHANGE_ADD_JOB = 0x100
+$$PRINTER_CHANGE_SET_JOB = 0x200
+$$PRINTER_CHANGE_DELETE_JOB = 0x400
+$$PRINTER_CHANGE_WRITE_JOB = 0x800
+$$PRINTER_CHANGE_JOB = 0xFF00
+$$PRINTER_CHANGE_ADD_FORM = 0x10000
+$$PRINTER_CHANGE_SET_FORM = 0x20000
+$$PRINTER_CHANGE_DELETE_FORM = 0x40000
+$$PRINTER_CHANGE_FORM = 0x70000
+$$PRINTER_CHANGE_ADD_PORT = 0x100000
+$$PRINTER_CHANGE_CONFIGURE_PORT = 0x200000
+$$PRINTER_CHANGE_DELETE_PORT = 0x400000
+$$PRINTER_CHANGE_PORT = 0x700000
+$$PRINTER_CHANGE_ADD_PRINT_PROCESSOR = 0x1000000
+$$PRINTER_CHANGE_DELETE_PRINT_PROCESSOR = 0x4000000
+$$PRINTER_CHANGE_PRINT_PROCESSOR = 0x7000000
+$$PRINTER_CHANGE_ADD_PRINTER_DRIVER = 0x10000000
+$$PRINTER_CHANGE_DELETE_PRINTER_DRIVER = 0x40000000
+$$PRINTER_CHANGE_PRINTER_DRIVER = 0x70000000
+$$PRINTER_CHANGE_TIMEOUT = 0x80000000
+$$PRINTER_CHANGE_ALL = 0x7777FFFF
+
+$$PRINTER_ERROR_INFORMATION = 0x80000000
+$$PRINTER_ERROR_WARNING = 0x40000000
+$$PRINTER_ERROR_SEVERE = 0x20000000
+
+$$PRINTER_ERROR_OUTOFPAPER = 0x1
+$$PRINTER_ERROR_JAM = 0x2
+$$PRINTER_ERROR_OUTOFTONER = 0x4
+
+$$SERVER_ACCESS_ADMINISTER = 0x1
+$$SERVER_ACCESS_ENUMERATE = 0x2
+
+$$PRINTER_ACCESS_ADMINISTER = 0x4
+$$PRINTER_ACCESS_USE = 0x8
+
+$$JOB_ACCESS_ADMINISTER = 0x10
+
+' found in kernel32.dec
+'$$STANDARD_RIGHTS_READ = 0x20000
+'$$STANDARD_RIGHTS_WRITE = 0x20000
+'$$STANDARD_RIGHTS_EXECUTE = 0x20000
+'$$STANDARD_RIGHTS_REQUIRED = 0xF0000
+'$$STANDARD_RIGHTS_ALL = 0x1F0000
+
+'$$SPECIFIC_RIGHTS_ALL = 0xFFFF
+
+' Access rights for print servers
+
+$$SERVER_ALL_ACCESS = 0xF0003			' $$STANDARD_RIGHTS_REQUIRED OR $$SERVER_ACCESS_ADMINISTER OR $$SERVER_ACCESS_ENUMERATE
+$$SERVER_READ       = 0x20002			' $$STANDARD_RIGHTS_READ OR $$SERVER_ACCESS_ENUMERATE
+$$SERVER_WRITE      = 0x20003			' $$STANDARD_RIGHTS_WRITE OR $$SERVER_ACCESS_ADMINISTER OR $$SERVER_ACCESS_ENUMERATE
+$$SERVER_EXECUTE    = 0x20002			' $$STANDARD_RIGHTS_EXECUTE OR $$SERVER_ACCESS_ENUMERATE
+
+' Access rights for printers
+$$PRINTER_ALL_ACCESS = 0xF000C		' $$STANDARD_RIGHTS_REQUIRED OR $$PRINTER_ACCESS_ADMINISTER OR $$PRINTER_ACCESS_USE
+$$PRINTER_READ       = 0x20008		' $$STANDARD_RIGHTS_READ OR $$PRINTER_ACCESS_USE
+$$PRINTER_WRITE      = 0x20008		' $$STANDARD_RIGHTS_WRITE OR $$PRINTER_ACCESS_USE
+$$PRINTER_EXECUTE    = 0x20008		' $$STANDARD_RIGHTS_EXECUTE OR $$PRINTER_ACCESS_USE
+
+' Access rights for jobs
+$$JOB_ALL_ACCESS = 0xF0010			' $$STANDARD_RIGHTS_REQUIRED OR $$JOB_ACCESS_ADMINISTER
+$$JOB_READ       = 0x20010			' $$STANDARD_RIGHTS_READ OR $$JOB_ACCESS_ADMINISTER
+$$JOB_WRITE      = 0x20010			' $$STANDARD_RIGHTS_WRITE OR $$JOB_ACCESS_ADMINISTER
+$$JOB_EXECUTE    = 0x20010			' $$STANDARD_RIGHTS_EXECUTE OR $$JOB_ACCESS_ADMINISTER
+
+' field selection bits
+$$DM_ORIENTATION = 0x1
+$$DM_PAPERSIZE = 0x2
+$$DM_PAPERLENGTH = 0x4
+$$DM_PAPERWIDTH = 0x8
+$$DM_SCALE = 0x10
+$$DM_COPIES = 0x100
+$$DM_DEFAULTSOURCE = 0x200
+$$DM_PRINTQUALITY = 0x400
+$$DM_COLOR = 0x800
+$$DM_DUPLEX = 0x1000
+$$DM_YRESOLUTION = 0x2000
+$$DM_TTOPTION = 0x4000
+$$DM_COLLATE = 0x8000
+$$DM_FORMNAME = 0x10000
+
+' orientation selections
+$$DMORIENT_PORTRAIT = 1
+$$DMORIENT_LANDSCAPE = 2
+
+' paper selections
+$$DMPAPER_LETTER = 1
+$$DMPAPER_FIRST = $$DMPAPER_LETTER
+' Letter 8 1/2 x 11 in
+$$DMPAPER_LETTERSMALL = 2      ' Letter Small 8 1/2 x 11 in
+$$DMPAPER_TABLOID = 3        ' Tabloid 11 x 17 in
+$$DMPAPER_LEDGER = 4         ' Ledger 17 x 11 in
+$$DMPAPER_LEGAL = 5         ' Legal 8 1/2 x 14 in
+$$DMPAPER_STATEMENT = 6       ' Statement 5 1/2 x 8 1/2 in
+$$DMPAPER_EXECUTIVE = 7       ' Executive 7 1/4 x 10 1/2 in
+$$DMPAPER_A3 = 8           ' A3 297 x 420 mm
+$$DMPAPER_A4 = 9           ' A4 210 x 297 mm
+$$DMPAPER_A4SMALL = 10        ' A4 Small 210 x 297 mm
+$$DMPAPER_A5 = 11          ' A5 148 x 210 mm
+$$DMPAPER_B4 = 12          ' B4 250 x 354
+$$DMPAPER_B5 = 13          ' B5 182 x 257 mm
+$$DMPAPER_FOLIO = 14         ' Folio 8 1/2 x 13 in
+$$DMPAPER_QUARTO = 15        ' Quarto 215 x 275 mm
+$$DMPAPER_10X14 = 16         ' 10x14 in
+$$DMPAPER_11X17 = 17         ' 11x17 in
+$$DMPAPER_NOTE = 18         ' Note 8 1/2 x 11 in
+$$DMPAPER_ENV_9 = 19         ' Envelope #9 3 7/8 x 8 7/8
+$$DMPAPER_ENV_10 = 20        ' Envelope #10 4 1/8 x 9 1/2
+$$DMPAPER_ENV_11 = 21        ' Envelope #11 4 1/2 x 10 3/8
+$$DMPAPER_ENV_12 = 22        ' Envelope #12 4 \276 x 11
+$$DMPAPER_ENV_14 = 23        ' Envelope #14 5 x 11 1/2
+$$DMPAPER_CSHEET = 24        ' C size sheet
+$$DMPAPER_DSHEET = 25        ' D size sheet
+$$DMPAPER_ESHEET = 26        ' E size sheet
+$$DMPAPER_ENV_DL = 27        ' Envelope DL 110 x 220mm
+$$DMPAPER_ENV_C5 = 28        ' Envelope C5 162 x 229 mm
+$$DMPAPER_ENV_C3 = 29        ' Envelope C3 324 x 458 mm
+$$DMPAPER_ENV_C4 = 30        ' Envelope C4 229 x 324 mm
+$$DMPAPER_ENV_C6 = 31        ' Envelope C6 114 x 162 mm
+$$DMPAPER_ENV_C65 = 32        ' Envelope C65 114 x 229 mm
+$$DMPAPER_ENV_B4 = 33        ' Envelope B4 250 x 353 mm
+$$DMPAPER_ENV_B5 = 34        ' Envelope B5 176 x 250 mm
+$$DMPAPER_ENV_B6 = 35        ' Envelope B6 176 x 125 mm
+$$DMPAPER_ENV_ITALY = 36       ' Envelope 110 x 230 mm
+$$DMPAPER_ENV_MONARCH = 37      ' Envelope Monarch 3.875 x 7.5 in
+$$DMPAPER_ENV_PERSONAL = 38     ' 6 3/4 Envelope 3 5/8 x 6 1/2 in
+$$DMPAPER_FANFOLD_US = 39      ' US Std Fanfold 14 7/8 x 11 in
+$$DMPAPER_FANFOLD_STD_GERMAN = 40  ' German Std Fanfold 8 1/2 x 12 in
+$$DMPAPER_FANFOLD_LGL_GERMAN = 41  ' German Legal Fanfold 8 1/2 x 13 in
+
+$$DMPAPER_LAST = 41
+
+$$DMPAPER_USER = 256
+
+' bin selections
+$$DMBIN_UPPER = 1
+$$DMBIN_FIRST = 1
+
+$$DMBIN_ONLYONE = 1
+$$DMBIN_LOWER = 2
+$$DMBIN_MIDDLE = 3
+$$DMBIN_MANUAL = 4
+$$DMBIN_ENVELOPE = 5
+$$DMBIN_ENVMANUAL = 6
+$$DMBIN_AUTO = 7
+$$DMBIN_TRACTOR = 8
+$$DMBIN_SMALLFMT = 9
+$$DMBIN_LARGEFMT = 10
+$$DMBIN_LARGECAPACITY = 11
+$$DMBIN_CASSETTE = 14
+$$DMBIN_LAST = 14
+
+$$DMBIN_USER = 256        ' device specific bins start here
+
+' print qualities
+$$DMRES_DRAFT = -1
+$$DMRES_LOW = -2
+$$DMRES_MEDIUM = -3
+$$DMRES_HIGH = -4
+
+' color enable/disable for color printers
+$$DMCOLOR_MONOCHROME = 1
+$$DMCOLOR_COLOR = 2
+
+' duplex enable
+$$DMDUP_SIMPLEX = 1
+$$DMDUP_VERTICAL = 2
+$$DMDUP_HORIZONTAL = 3
+
+' DEVMODE dmDisplayFlags flags
+
+$$DM_GRAYSCALE = 0x1
+$$DM_INTERLACED = 0x2
+
+' mode selections for the device mode function
+$$DM_UPDATE = 1
+$$DM_COPY = 2
+$$DM_PROMPT = 4
+$$DM_MODIFY = 8
+
+$$DM_IN_BUFFER = 8
+$$DM_IN_PROMPT = 4
+$$DM_OUT_BUFFER = 2
+$$DM_OUT_DEFAULT = 1
+
+' device capabilities indices
+$$DC_FIELDS = 1
+$$DC_PAPERS = 2
+$$DC_PAPERSIZE = 3
+$$DC_MINEXTENT = 4
+$$DC_MAXEXTENT = 5
+$$DC_BINS = 6
+$$DC_DUPLEX = 7
+$$DC_SIZE = 8
+$$DC_EXTRA = 9
+$$DC_VERSION = 10
+$$DC_DRIVER = 11
+$$DC_BINNAMES = 12
+$$DC_ENUMRESOLUTIONS = 13
+$$DC_FILEDEPENDENCIES = 14
+$$DC_TRUETYPE = 15
+$$DC_PAPERNAMES = 16
+$$DC_ORIENTATION = 17
+$$DC_COPIES = 18
+
+' bit fields of the return value DWORD for DC_TRUETYPE
+$$DCTT_BITMAP = 0x1
+$$DCTT_DOWNLOAD = 0x2
+$$DCTT_SUBDEV = 0x4
+
+
+
+
+
+
+

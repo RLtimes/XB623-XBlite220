@@ -1,0 +1,8 @@
+#include "winres.h"
+scrabble ICON    scrabble.ico
+
+// screen saver dialog
+100 DIALOG 0, 0, 0, 0
+STYLE WS_POPUP | WS_VISIBLE | DS_CONTROL
+BEGIN
+END

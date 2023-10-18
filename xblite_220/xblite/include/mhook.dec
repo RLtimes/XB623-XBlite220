@@ -1,0 +1,3 @@
+EXTERNAL FUNCTION MouseProc (nCode,wParam,lParam)
+EXTERNAL FUNCTION InstallHook (hwnd)
+EXTERNAL FUNCTION UninstallHook ()

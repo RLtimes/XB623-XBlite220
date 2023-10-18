@@ -1,0 +1,31 @@
+scrabble ICON    scrabble.ico
+
+menu MENU 
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "&Draw Moire",                 	101
+		MENUITEM SEPARATOR
+		MENUITEM "&Save As BMP",                 	102
+		MENUITEM SEPARATOR
+		MENUITEM "E&xit",                       	103
+	END
+	POPUP "&Scale Factor"
+	BEGIN
+		MENUITEM "0.125",               	118
+		MENUITEM "0.25",               	119
+		MENUITEM "0.5",               	120
+		MENUITEM "1.0",				121
+		MENUITEM "2.0",               	122
+		MENUITEM "4.0",               	123
+		MENUITEM "8.0",           		124
+		MENUITEM "16.0",           		125
+		MENUITEM "24.0",           		126
+	END
+POPUP "&Image Size"
+	BEGIN
+		MENUITEM "256x256",               	130
+		MENUITEM "512x512",               	131
+	END
+END
+

@@ -1,0 +1,26 @@
+# code templates file
+# use # as first character in line for comment
+# use | as a line separator
+# format is <label>, <filename.xxx>
+# use > and < to bracket a submenu
+#
+New Console Program, xconsole.xxx
+New GUI Program, xgui.xxx
+New OpenGL Program, glfw.xxx
+|
+New Control
+>
+New GroupBox, groupbox.xxx
+New Label, label.xxx
+New RadioButton, radiobutton.xxx
+New PushButton, pushbutton.xxx
+New CheckBox, checkbox.xxx
+New EditBox, edit.xxx
+New ListBox, listbox.xxx
+New Listview, listview.xxx
+New ProgressBar, progress.xxx
+New Treeview, treeview.xxx
+<
+
+
+

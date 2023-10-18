@@ -1,0 +1,6 @@
+LIBRARY  xformat
+VERSION  0.0001
+EXPORTS  %_StartLibrary_xformat
+EXPORTS  ValidFormat
+EXPORTS  XxxFormat$
+IMPORTS  xbl.XstStringToNumber

@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+ 
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <title>ShowHTMLDialog Function</title>
+  
+  <meta name="Description" content="Creates a modal dialog box that displays HTML.">
+ 
+  <meta name="Robots" content="all">
+ 
+  <meta name="Keywords" content="ShowHTMLDialog">
+ 
+  <meta name="MS.LOCALE" content="en-us">
+  
+  <meta name="Author" content="workshop">
+  <link rel="stylesheet" type="text/css" href="/library/shared/common/css/n6.css">
+ 
+  <link rel="stylesheet" type="text/css" href="/library/shared/comments/css/down.css">
+  
+  <style type="text/css"><!--
+
+	PRE.clsCode { font-size:110%; } 
+
+	PRE.clsSyntax { font-size:100%; }  
+
+--></style>
+ 
+  <style>
+BODY
+{
+font-family:verdana,arial,helvetica;
+margin:0;
+}
+  </style>   
+  <script language="javascript" src="/workshop/code/common.js"></script> 
+  <script language="javascript" src="/workshop/code/browdata.js"></script>
+ 
+  <script language="javascript" src="/library/toolbar/toolbar.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="/workshop/ie4.css">
+ 
+  <link rel="stylesheet" type="text/css" href="/workshop/inetsdk.css">
+ 
+  <link rel="stylesheet" type="text/css" href="/library/shared/eyebrow/css/default.css">
+  
+  <meta name="pagetype" content="function">
+ 
+  <meta name="devlang" content="cpp">
+ 
+  <meta name="src" content="/workshopx/browser/mshtml/reference/functions/showhtmldialog.xml">
+ 
+  <meta name="pubpath" content="/workshop/browser/mshtml/reference/functions/showhtmldialog.asp">
+ 
+  <meta name="ID" content="_inet_ShowHTMLDialog_Function">
+ 
+  <meta name="MS-HAID" content="_inet_ShowHTMLDialog_Function_cpp">
+  
+  <style>.time { behavior: url(#default#time2); }</style>
+  <style>v\:* { behavior: url(#default#VML); }</style>
+  <script>//<!--
+var gbDBG = true;
+//--></script>
+  <script language="JavaScript1.2">
+//<!--
+var gsHTCPath = "/workshop/code/";
+var gsGraphicsPath = "/workshop/graphics/";
+var gsCodePath = "/workshop/code/";
+//--></script>
+  <script language="JavaScript1.2">
+//<!--
+var gsContextMenuPath = gsHTCPath + "contextmenu.htc";
+var gsCodeDecoPath = gsHTCPath + "codedeco.htc";
+var gsStoreName="workshop";
+var gsGraphicsPath = "/workshop/graphics/";
+//--></script>
+  <script language="JavaScript1.2">
+//<!--
+function InitPage()
+{
+  if (!assert( (typeof(oBD) == 'object' && oBD != null), "browdata object unavailable!") )
+  {
+    return;
+  }
+  if ("MSIE" == oBD.browser && oBD.majorVer >= 5 && (oBD.platform.toLowerCase()!="x" && oBD.platform!="Mac" && oBD.platform!="PPC" ))
+  {
+    if (typeof(PreInit) == 'function') PreInit();
+    if (typeof(PostGBInit) == 'function') PostGBInit();
+    if (typeof(PostInit) == 'function') PostInit();
+    if (typeof(initTabbedMembers) == 'function') initTabbedMembers();
+    if (typeof(hideExamples) == 'function') hideExamples();
+  }
+  if (oBD.getsNavBar && oBD.platform!="PPC" )
+  {
+    if (typeof(SetShowMes) == 'function') SetShowMes();
+  }
+}
+
+function assert(bCond, sMsg)
+{
+  if (bCond) { return true; }
+  else { if (gbDBG) { alert(sMsg); } return false; }
+}
+
+window.onload = InitPage;
+
+//--></script>
+  <script language="JavaScript1.2">
+function PreInit()
+{
+    if (top == self)
+        location.replace("http://" + document.domain +"/library/default.asp?url=" + document.URL.substring("http://".length + document.domain.length));
+}
+  </script>
+  <script language="JavaScript"><!--
+   function BrowserData()
+{
+		this.userAgent = "Mozilla/5.0 (Windows; U; Win98; en-US; rv:0.9.7) Gecko/20011221";
+
+		this.browser = "Nav";
+
+		this.majorVer = 5;
+
+		this.minorVer = "0";
+
+		this.platform = "98";
+
+		this.getsNavBar = false;
+
+		this.doesActiveX = false;
+
+		this.doesPersistence = false;
+
+		this.bot = false;
+
+		this.fullVer = 5;
+
+   }
+
+   var oBD = new BrowserData();
+
+   //--></script>
+  <script language="JavaScript"><!--
+
+   if (document.layers) {
+    origWidth  = innerWidth;
+  origHeight = innerHeight;
+   }
+
+   function resizeFix() { if (innerWidth != origWidth || innerHeight != origHeight) location.reload(); }
+
+   if (document.layers) onresize = resizeFix;
+
+   //--></script>
+</head>
+ <body topmargin="0" leftmargin="0" marginheight="0" marginwidth="0" bgcolor="#ffffff" text="#000000">
+<xml:namespace ns="urn:schemas-microsoft-com:time" prefix="t">   <xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v">
+                      <xml id="xmlPageContext"><eyebrow findmenu="false">
+ 	<item label="MSDN Home" url="/default.asp"></item> 	<item label="MSDN Library" url="/library/default.asp"></item>
+ 	<item label="Web Development" id="msdnlib1177" xmlsrc="/library/en-us/toc/msdnlib/msdnlib1177_.xml"></item><item label="Programming and Reusing the Browser" url="/workshop/browser/prog_browser_node_entry.asp" id="msdnlib1233" xmlsrc="/library/en-us/toc/msdnlib/msdnlib1233_.xml"></item><item label="MSHTML Reference" url="/workshop/browser/mshtml/reference/reference.asp" id="progie90" xmlsrc="/library/en-us/toc/progie/progie90_.xml"></item><item label="Functions" url="/workshop/browser/mshtml/reference/functions/functions.asp" id="progie5013" xmlsrc="/library/en-us/toc/progie/progie5013_.xml"></item><item label="ShowHTMLDialog" url="/workshop/browser/mshtml/reference/functions/showhtmldialog.asp" id="progie5015"></item></eyebrow></xml>
+          </xml:namespace></xml:namespace>  
+<table class="clsContainer" cellpadding="15" cellspacing="0" float="left" width="100%" border="0">
+ <tbody>
+    <tr>
+ <td valign="top"> <!-------------------> <!-- BEGIN_CONTENT --> <!------------------->
+ <!-- TOOLBAR_START --><!-- TOOLBAR_EXEMPT --><!-- TOOLBAR_END --> 
+      <div class="clsDocBody">
+      <table width="97%" cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr>
+            <td>
+            <h1>ShowHTMLDialog Function </h1>
+            </td>
+            <td align="right"><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+ 
+      <hr size="1">
+      <p>Creates a modal dialog box that displays HTML.</p>
+      <p class="clsRef">Syntax</p>
+      <blockquote xmlns:xsl="http://www.w3.org/TR/WD-xsl">
+        <pre class="clsSyntax">HRESULT&nbsp;ShowHTMLDialog(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;HWND&nbsp;<i>hwndParent</i>,<br>&nbsp;&nbsp;&nbsp;&nbsp;IMoniker*&nbsp;<i>pMk</i>,<br>&nbsp;&nbsp;&nbsp;&nbsp;VARIANT*&nbsp;<i>pvarArgIn</i>,<br>&nbsp;&nbsp;&nbsp;&nbsp;WCHAR*&nbsp;<i>pchOptions</i>,<br>&nbsp;&nbsp;&nbsp;&nbsp;VARIANT*&nbsp;<i>pvarArgOut</i>
+);</pre>
+        </blockquote>
+        <p class="clsRef">Parameters</p>
+        <blockquote>
+          <dl>
+          <dt><i>hwndParent</i></dt>
+            <dd> Handle to the parent of the dialog box. </dd>
+              <dt><i>pMk</i></dt>
+                <dd> Address of an <a href="/library/en-us/com/cmi_m_8otu.asp" target="_top">
+IMoniker</a> interface from which the HTML for the dialog box is loaded.
+                  </dd>
+                  <dt><i>pvarArgIn</i></dt>
+                    <dd> Address of a <b>VARIANT</b> structure that contains
+the input data for the dialog box. The data passed in this <b>VARIANT</b>
+ is placed in the <a href="/workshop/author/dhtml/reference/objects/obj_window.asp">
+window</a> object's <a href="/workshop/browser/mshtml/reference/ifaces/dialog/get_dialogarguments.asp">
+IHTMLDialog::dialogArguments</a> property. This parameter can be NULL. </dd>
+                      <dt><i>pchOptions</i></dt>
+                        <dd> Window ornaments for the dialog box. This parameter
+can be NULL or the address of a string that contains a combination of values,
+each separated by a semicolon (;). See the description of the <i>features</i>
+ parameter of the <a href="/workshop/browser/mshtml/reference/ifaces/window2/showmodaldialog.asp">
+IHTMLWindow2::showModalDialog</a> method of the <b>window</b> object for
+detailed information.</dd>
+                          <dt><i>pvarArgOut</i></dt>
+                            <dd> Address of a <b>VARIANT</b> structure that
+contains the output data for the dialog box. This <b>VARIANT</b> receives
+the data that was placed in the <b>window</b> object's <a href="/workshop/browser/mshtml/reference/ifaces/dialog/returnvalue.asp">
+IHTMLDialog::returnValue</a> property. This parameter can be NULL. </dd>
+                              </dl>
+                              </blockquote>
+                              <p class="clsRef">Return Value</p>
+                              <blockquote>  			Returns S_OK if successful,
+or an error value otherwise. 		<br>
+                                </blockquote>
+                                <p class="clsRef">Remarks</p>
+                                <blockquote>
+                                  <p>To use <b>ShowHTMLDialog</b>, which
+is implemented in Mshtml.dll, you need to dynamically load and call this
+function by using the <a href="/library/en-us/dllproc/dll_1o8p.asp" target="_top">
+LoadLibrary</a> and <a href="/library/en-us/dllproc/dll_0f8z.asp" target="_top">
+GetProcAddress</a> functions. The proper function type for <b>ShowHTMLDialog</b>
+ is defined in Mshtmhst.h in the <a href="/workshop/browser/mshtml/reference/functions/showhtmldialogfn.asp">
+SHOWHTMLDIALOGFN</a> type. A full sample that demonstrates the usage of <b>
+ShowHTMLDialog</b> is available on the <a href="/downloads/samples/internet/browser/htmldlg/sample.asp" target="_top">
+ShowHTMLDialog Sample Source Page</a>.</p>
+                                  </blockquote>
+                                  <p class="clsRef">Example</p>
+                                  <blockquote>
+                                    <p> The following example shows the most
+basic steps needed to load Mshtml.dll, obtain the address of <b>ShowHTMLDialog</b>
+ using <b>GetProcAddress</b>, create a URL moniker, and call <b>ShowHTMLDialog</b>
+.</p>
+                                    <pre class="clsCode" autohilite="1">    HINSTANCE hinstMSHTML = LoadLibrary(TEXT("MSHTML.DLL"));<br><br>    if (hinstMSHTML)<br>    {<br>        SHOWHTMLDIALOGFN* pfnShowHTMLDialog;<br>        pfnShowHTMLDialog = (SHOWHTMLDIALOGFN*)GetProcAddress(hinstMSHTML,<br>                                                              TEXT("ShowHTMLDialog"));<br>        if (pfnShowHTMLDialog)<br>        {<br>            IMoniker *pURLMoniker;<br>            BSTR bstrURL = SysAllocString(L"http://www.example.com/dialogsource.htm");<br>            CreateURLMoniker(NULL, bstrURL, &amp;pURLMoniker);<br><br>            if (pURLMoniker)<br>            {<br>                (*pfnShowHTMLDialog)(NULL, pURLMoniker, NULL, NULL, NULL);<br>    <br>                pURLMoniker-&gt;Release();<br>            }<br><br>            SysFreeString(bstrURL);<br>        }<br><br>        FreeLibrary(hinstMSHTML);<br>    }</pre>
+                                    </blockquote>
+                                    <p class="clsRef">Function&nbsp;Information</p>
+                                    <blockquote>
+                                      <table class="clsStd">
+                                        <tbody>
+                                          <tr>
+                                            <th>Stock Implementation</th>
+                                            <td><span class="clsFmtDLL">mshtml.dll</span></td>
+                                          </tr>
+                                          <tr>
+                                            <th>Custom Implementation</th>
+                                            <td>No</td>
+                                          </tr>
+                                          <tr>
+                                            <th>Header</th>
+                                            <td><span class="clsFmtInc">mshtmhst.h</span></td>
+                                          </tr>
+                                          <tr>
+                                            <th>Import library</th>
+                                            <td><span class="clsFmtLib">mshtml.dll</span></td>
+                                          </tr>
+                                          <tr>
+                                            <th>Minimum availability</th>
+                                            <td>Internet Explorer 4.0</td>
+                                          </tr>
+                                          <tr>
+                                            <th>Minimum operating systems</th>
+                                            <td> Windows NT 4.0, Windows 95</td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                      </blockquote>
+                                      <p class="clsRef">See Also</p>
+                                      <blockquote><a href="/workshop/browser/mshtml/overview/htmlres.asp">
+Creating an HTML Resource</a></blockquote>
+                                        </div>
+  <!-----------------> <!-- END_CONTENT --> <!----------------->  </td>
+ </tr>
+ 
+                                    </tbody>
+                                  </table>
+   
+                                  </body>
+                                  </html>

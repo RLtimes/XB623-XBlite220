@@ -1,0 +1,48 @@
+EXTERNAL FUNCTION  Xio ()
+EXTERNAL FUNCTION  XioClearEndOfLine (hStdOut)
+EXTERNAL FUNCTION  XioDeleteLine (hStdOut)
+EXTERNAL FUNCTION  XioGetConsoleInfo (hStdOut, @bufSizeX, @bufSizeY, @cursorX, @cursorY, @fColors)
+EXTERNAL FUNCTION  XioGetConsoleTextRect (hStdOut, left, top, right, bottom, CHAR_INFO ci[])
+EXTERNAL FUNCTION  XioGetStdIn ()
+EXTERNAL FUNCTION  XioGetStdOut ()
+EXTERNAL FUNCTION  XioGrabConsoleText (hStdOut, @text$)
+EXTERNAL FUNCTION  XioInsertLine (hStdOut)
+EXTERNAL FUNCTION  XioPutConsoleText (hStdOut, text$, x, y)
+EXTERNAL FUNCTION  XioPutConsoleTextArray (hStdOut, text$[], x, y)
+EXTERNAL FUNCTION  XioScrollBufferUp (hStdOut, count)
+EXTERNAL FUNCTION  XioSetConsoleBufferSize (hStdOut, w, h)
+EXTERNAL FUNCTION  XioSetConsoleCursorPos (hStdOut, x, y)
+EXTERNAL FUNCTION  XioSetConsoleTextRect (hStdOut, left, top, right, bottom, CHAR_INFO ci[])
+EXTERNAL FUNCTION  XioSetCursorType (hStdOut, fCursor)
+EXTERNAL FUNCTION  XioCloseStdHandle (hStdCon)
+EXTERNAL FUNCTION  XioClearConsole (hStdOut)
+EXTERNAL FUNCTION  XioHideConsole ()
+EXTERNAL FUNCTION  XioShowConsole ()
+EXTERNAL FUNCTION  XioCreateConsole (@title$, nlines)
+EXTERNAL FUNCTION  XioGetConsoleWindow ()
+EXTERNAL FUNCTION  XioWriteConsole (hStdOut, text$)
+EXTERNAL FUNCTION  XioReadConsole (hStdIn, @input$)
+EXTERNAL FUNCTION  XioFreeConsole ()
+EXTERNAL FUNCTION  XioSetTextAttributes (hStdOut, newAttribute)
+EXTERNAL FUNCTION  XioSetTextBackColor (hStdOut, newColor)
+EXTERNAL FUNCTION  XioSetTextColor (hStdOut, newColor)
+EXTERNAL FUNCTION  XioSetDefaultColors (hStdOut)
+EXTERNAL FUNCTION  XioInkey ()
+' set the text foreground/background color constants
+$$BLACK			  = 0
+$$BLUE			  = 1
+$$GREEN			  = 2
+$$CYAN			  = 3
+$$RED				  = 4
+$$MAGENTA			= 5
+$$BROWN			  = 6
+$$LIGHTGRAY	  = 7
+$$DARKGRAY		= 8
+$$LIGHTBLUE		= 9
+$$LIGHTGREEN	= 10
+$$LIGHTCYAN		= 11
+$$LIGHTRED		= 12
+$$LIGHTMAGENTA= 13
+$$YELLOW			= 14
+$$WHITE			  = 15
+

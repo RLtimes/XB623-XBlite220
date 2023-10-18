@@ -1,0 +1,29 @@
+#include "winres.h"
+
+scrabble ICON    scrabble.ico
+
+menu MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit", 100
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About ...", 101      
+    END
+END
+
+200 DIALOG DISCARDABLE  22, 17, 235, 71
+STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 8, "System"
+BEGIN
+    ICON            "babygrid",500,14,9,20,20
+    LTEXT           "BABYGRID_DEMO Version 1.0 for XBLite",501,49,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright (C) 2002",502,49,20,119,8
+    DEFPUSHBUTTON   "OK",IDOK,195,6,30,11,WS_GROUP
+    LTEXT           "David Hillard",503,49,30,153,8
+END
+

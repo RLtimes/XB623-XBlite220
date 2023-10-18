@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>DevCentral - Using OpenGL in Visual C++: Part II</title>
+  <meta http-equiv="CONTENT-TYPE"
+ content="TEXT/HTML; CHARSET=ISO-8859-1">
+  <meta name="keywords"
+ content="ITI, Interface, custom, software, development, technology, technologies, devcentral, devjournal, programmers, program, web, technical, project, professional, programming, design, application, ASP, Internet, developer, C, C++, VB, Java, VBScript, JavaScript, Swing, ASP, HTML, PHP, Windows, NT, 2000, UNIX, Linux, SQL, Server, Oracle, Microsoft, Win32, Transaction, MFC, ATL, OLE, JDBC, ODBC,  ADO, Object, Oriented, COM, DCOM,  ActiveX, CORBA, web-based, tools, Raleigh, NC, RTP, Triangle, Research, article, tutorial, SourceVizor, ITCLib">
+  <meta name="description"
+ content="DevCentral - Articles and tutorials with easy to understand examples for the seasoned professional to the student.">
+</head>
+<body bgcolor="#ffffff" leftmargin="0" topmargin="0">
+<!-- This is the include file for the header -->
+<table width="750" border="0" cellspacing="0" cellpadding="0">
+	<tbody>
+    <tr valign="top">
+		 				 				 		<td width="5"><img
+ src="Using%20OpenGL%20Part%20II_files/spacer.gif" width="5"></td>
+		 		<td width="454"><br>
+			<!-- This is the main body text -->&nbsp; 			                 <big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="3"><big><b>Using OpenGL
+in Visual C++:  Part II</b></big></font>                <font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Simple 2-D Graphics</big></font></big>
+					
+      <p align="right"><big>            		<font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="2"><big><i><b>by Alan
+Oursland</b></i></big></font>               </big></p>
+<!-- \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\   End TITLE SECTION -->
+         <!-- PDF File Download --><big><br>
+      <a
+ href="http://download.iftech.com/DevCentral/source/openGL_part2.zip"><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>[Download the
+example source]</big></font></a>  					 					                  <font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="3"><big><b>Simple 2-D
+Graphics</b></big></font></big>		                               <!-- /////////////////////////////////////////// Begin CONTENT -->
+  		
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		The sample program presented in this section will show you
+how 		to create the viewport, set up matrix modes, and draw some simple 		2-D
+images.  	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Start by creating a new project named GLSample2 and setting
+it 		up for OpenGL like you did with the first program, or use the 		first
+program as your starting point. 	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Use ClassWizard to add an OnSize function to CGLSample2View
+in 		response to a WM_SIZE message. Edit OnSize to look like this: 	</big></font>
+      </big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>void CGLSample2View::OnSize(UINT nType, int cx, int cy) <br>{<br>   CView::OnSize(nType, cx, cy);<br><br>   GLsizei width, height;<br>   GLdouble aspect;<br><br>   width = cx;<br>   height = cy;<br><br>   if (cy==0)<br>      aspect = (GLdouble)width;<br>   else<br>      aspect = (GLdouble)width/(GLdouble)height;<br><br>   glViewport(0, 0, width, height);<br>   glMatrixMode(GL_PROJECTION);<br>   glLoadIdentity();<br>   gluOrtho2D(0.0, 500.0*aspect, 0.0, 500.0);<br>   glMatrixMode(GL_MODELVIEW);<br>   glLoadIdentity();<br>}</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Now use ClassWizard to add an OnPaint function to CGLSample2View
+in 		response to a WM_PAINT message. Edit OnPaint to look like this: 	</big></font>
+      </big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>
+void CGLSample2View::OnPaint() 
+{
+   // device context for painting (added by ClassWizard)
+   CPaintDC dc(this);
+     
+   glLoadIdentity();
+   glClear(GL_COLOR_BUFFER_BIT);
+
+   glBegin(GL_POLYGON);
+      glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+      glVertex2f(100.0f, 50.0f);
+      glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+      glVertex2f(450.0f, 400.0f);
+      glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+      glVertex2f(450.0f, 50.0f);
+   glEnd();
+
+   glFlush();
+}</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Compile and run the program. You should see a black window
+with 		a large multicolored triangle in it. Try resizing the window and 		watch
+the triangle resize along with it. OnSize defines the viewport 		and the
+viewing coordinates. The viewport is the area of the window 		that the OpenGL
+commands can draw into. It is set in this program 		by calling  	</big></font>
+      </big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>glViewport(0, 0, width, height);</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		This sets the lower left hand corner of the viewport to
+the lower 		left hand corner of the window and sets the height and width
+to 		that of the window. The parameters passed into the function are 		in
+screen coordinates. Try changing the glViewport command in 		OnSize to the
+following. Then compile and run the program to see 		what happens. 	</big></font>
+      </big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>glViewport(width/4, height/4, width/2, height/2);</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Make the window taller than it is wide. Because the viewport
+is 		smaller than the screen, part of the triangle will be clipped. 		Change
+the code back to the way it was originally 	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		The next command called in OnSize is glMatrixMode(GL_PROJECTION).
+		OpenGL maintains three internal matrices to control various transformations.
+		These matrices are name <i>Projection</i>, <i>ModelView</i>, and 		<i>Texture</i>.
+The Projection matrix handles transformations 		from the eye coordinates
+to clip coordinates. The ModelView matrix 		converts object coordinates to
+eye coordinates. The Texture matrix 		converts textures from the coordinates
+they are defined in to 		the coordinates needed to map them onto a surface.
+glMatrixMode 		sets which of these matrices will be affected by matrix operations.
+		Don't worry if you don't understand these right now, I'll explain  		them
+as needed. 	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		We call glLoadIdentity to initialize the project matrix.
+gluOrtho2D 		sets the project matrix to display a two dimension orthogonal
+		image. The numbers passed into this function define the space 		within
+which you may draw. This space is known as the world coordinates. 		We now
+initialize the ModelView matrix and leave OpenGL in this 		matrix mode. Matrix
+operations (which include transformations) 		carried out while in the ModelView
+mode will affect the location 		and shape of any object drawn. For example
+if we called "glRotated(30, 		0, 0, 1)" just before our glBegin call in OnPaint,
+our triangle 		would be rotated 30 degrees around the lower left corner of
+the 		screen. We will look at this more a little later. (For those of 		you
+who have used IRIS GL, we have just set up the equivalent 		of calling mmode(MSINGLE).
+There is an entire section in the VC++ 		online documentation detailing the
+differences between IRIS GL 		and OpenGL for those who are interested.) 	</big></font>
+      </big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		OnPaint is the beast that actually draws our triangle. First
+we 		clear our ModelView matrix. This isn't really necessary since 		we aren't
+doing any transformations, but I added it just in case 		we decide to do
+any. Next we clear the color buffer (which in 		this case happens to be the
+screen, but could be a print buffer 		or bitmap depending on the type of
+device context you used to 		create rendering context ). The next call is
+glBegin(GL_POLYGON). 		This function changes the state of the rendering context.
+From 		an object oriented perspective, it creates an internal object 		of
+type GL_POLYGON, which is defined by all commands issued until 		glEnd()
+is called. We make three glColor4f and three glVertex2f 		calls to define
+our triangle. <br>
+	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Let me take a moment at this point to discuss the naming
+conventions 		OpenGL uses. All OpenGLcommands use the prefix "gl". 		There
+are also a number of "glu" commands which are 		considered "GL Utilities".
+These "glu" commands 		are simply combinations of "gl" commands that perform
+		commonly useful tasks - like setting up 2-D orthographic matrices. 		Most
+"gl" commands have a number of variants that each 		take different data types.
+The glVertex2f command, for instance, 		defines a vertex using two floats.
+There are other variants ranging 		from four doubles to an array of two shorts.
+Read the list of 		glVertex calls in the online documentation and you will
+feel like 		you are counting off an eternal list. glVertex2d, glVertex2f,
+		glVertex3i, glVertex3s, glVertex2sv, glVertex3dv... 	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		The definition for our triangle uses the following technique.
+		We call glColor4f(1.0f, 0.0f, 0.0f, 1.0f). This sets the current 		color
+to Red by specifying the Red component to 1 and the Green 		and Blue components
+to 0. We then define a vertex at point (100,50) 		in our world coordinates
+by calling glVertex2f(100.0f, 50.0f). 		We now have a red vertex at point
+(100,50). We repeat this process, 		setting the color to Green and Blue respectively,
+for the next 		two vertices. The call to glEnd ends the definition of this
+polygon. 		At this point there should still be nothing on the screen. OpenGL
+		will save the list of commands in a buffer until you call glFlush. 		glFlush
+causes these commands to be executes. OpenGL automatically 		interpolates
+the colors between each of the points to give you 		the multihued triangle
+you see on the screen.  	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Play with some of the different shapes you can create with
+glBegin. 		There is a list of modes and valid commands to create shapes below.
+		In the next version of this program, we will move our drawing 		routines
+into the document class. I will also show you how to 		use the basic transforms
+and the importance of pushing and popping 		matrices onto and off of the
+matrix stack. 	</big></font></big></p>
+      <p><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>glBegin(GLenum mode) parameters: </big></font></big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLES, GL_QUADS,<br>GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUAD_STRIP, GL_POLYGON</big></font></big></pre>
+      <p><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>Functions that are valid between glBegin and glEnd:</big></font></big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>glVertex, glColor, glIndex, glNormal, glTexCoord, glEvalCoord,<br>glEvalPoint, glMaterial, and glEdgeFlag</big></font></big></pre>
+      <table border="1">
+        <big></big><tbody>
+          <tr>
+            <big>	</big><td><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Developed Under:<br>
+            <br>
+	Visual C++ 5+</big></font></big></td>
+            <big></big></tr>
+          <big></big>
+        </tbody>
+      </table>
+			 			 		</td>
+		<!-- RHS Margin -->				 		<!-- RHS divider line -->		<td width="1"
+ bgcolor="#48115b"><big>			<img
+ src="Using%20OpenGL%20Part%20II_files/spacer.gif">		</big></td>
+		<!-- RHS Margin -->				<!-- RHS proper -->			</tr>
+  </tbody>
+</table>
+<!-- This is the include file for the footer --><!-- End Footer --><br>
+</body>
+</html>

@@ -1,0 +1,22 @@
+EXTERNAL FUNCTION  Graph ()
+' graph class name
+$$GRAPHCLASSNAME = "graphctrl"
+' define graph styles
+$$GS_LINE = 0' default style
+$$GS_BAR  = 1
+' define graph direction constants
+$$GRAPH_LEFT  = 0
+$$GRAPH_RIGHT = 1
+' define custom window messages
+$$WM_SET_GRAPH_RANGE             = 1025' set the min and max y values for y array value scaling against control height, wParam = y min (default = 0), lParam = y max (default = 100)
+$$WM_SET_GRAPH_LINE_WIDTHS       = 1026' wParam = grid line width (default = 1), lParam = graph line width (default = 1)
+$$WM_SET_GRAPH_LINE_COLORS       = 1027' wParam = grid line color (default = LTGRAY = RGB(192, 192, 192)), lParam = graph line color (default = RED = RGB(255, 0, 0))
+$$WM_SET_GRAPH_BACKCOLOR         = 1028' wParam = 0, lParam = control back color (default = WHITE = RGB(255,255,255))
+$$WM_SET_GRAPH_STYLE             = 1029' wParam = 0, lParam = $$GS_LINE or $$GS_BAR (default = $$GS_LINE)
+$$WM_SET_GRAPH_FREEZE            = 1030' wParam = 0, lParam = set freeze status, $$TRUE or $$FALSE (default = $$FALSE)
+$$WM_SET_GRAPH_STEPSIZE          = 1031' wParam = 0, lParam = x axis step size between updates (default = 10)
+$$WM_SET_GRAPH_DIRECTION         = 1032' wParam = 0, lParam = $$GRAPH_LEFT or $$GRAPH_RIGHT (default = $$GRAPH_LEFT)
+$$WM_SET_GRAPH_GRID_UNITS        = 1033' wParam = 0, lParam = grid line spacing in pixels (default = 10)
+$$WM_GRAPH_UPDATE                = 1034' wParam = 0, lParam = new y value, update array of points and redraw graph
+$$WM_GET_GRAPH_FREEZE            = 1035' return is freeze status, $$TRUE or $$FALSE
+

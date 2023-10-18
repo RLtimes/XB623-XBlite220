@@ -1,0 +1,17 @@
+#include "winres.h"
+
+scrabble ICON    scrabble.ico
+
+menu MENU 
+BEGIN
+        POPUP "&File"
+        BEGIN
+                MENUITEM "E&xit",                          110
+        END
+
+	POPUP "&DrawBorder"
+        BEGIN
+                MENUITEM "Turn Border Off",                111
+                MENUITEM "Turn Border On",                 112
+        END
+END

@@ -1,0 +1,121 @@
+'
+'
+' ####################  David Szafranski
+' #####  ieelib  #####  copyright 2004
+' ####################  Windows XBLite declaration file for "ieelib"
+'
+' subject to GPLL license - see gpll.txt
+' for Windows XBasic/XBLite
+'
+' VERSION  "0.0001"  ' 2004/04/08
+
+' From Cephes library by Stephen L. Moshier.
+
+' Extended precision IEEE binary floating point arithmetic routines
+'
+' Numbers are stored in C language as arrays of 16-bit unsigned
+' short integers.  The arguments of the routines are pointers to
+' the arrays.
+
+' External e type data structure, simulates Intel 8087 chip
+' temporary real format but possibly with a larger significand:
+'
+'	NE-1 significand words	(least significant word first,
+'				 most significant bit is normally set)
+'	exponent		(value = EXONE for 1.0,
+'				top bit is the sign)
+'
+'
+' Internal data structure of a number (a "word" is 16 bits):
+'
+' ei[0]	sign word	(0 for positive, 0xffff for negative)
+' ei[1]	biased exponent	(value = EXONE for the number 1.0)
+' ei[2]	high guard word	(always zero after normalization)
+' ei[3]
+' to ei[NI-2]	significand	(NI-4 significand words,
+'				 most significant word first,
+'				 most significant bit is set)
+' ei[NI-1]	low guard word	(0x8000 bit is rounding place)
+
+'
+' ###########################
+' #####  declare types  #####
+' ###########################
+'
+' external format type e is 10 word array
+TYPE IEEX
+  USHORT .us[9]
+END TYPE
+
+' internal format type ei is 13 word array
+TYPE IEEI
+  USHORT .us[12]
+END TYPE
+
+' ###############################
+' #####  declare functions  #####
+' ###############################
+
+' routines for external format numbers - IEEX
+
+EXTERNAL CFUNCTION  asctoe (sAddr, eAddr)
+EXTERNAL CFUNCTION  asctoe24 (sAddr, singleAddr)
+EXTERNAL CFUNCTION  asctoe53 (sAddr, doubleAddr)
+EXTERNAL CFUNCTION  asctoe64 (sAddr, longdoubleAddr)
+EXTERNAL CFUNCTION  e24toasc (singleAddr, sAddr, nDigits)
+EXTERNAL CFUNCTION  e24toe (singleAddr, eAddr)
+EXTERNAL CFUNCTION  e53toasc (doubleAddr, sAddr, nDigits)
+EXTERNAL CFUNCTION  e53toe (doubleAddr, eAddr)
+EXTERNAL CFUNCTION  e64toasc (longdoubleAddr, sAddr, nDigits)
+EXTERNAL CFUNCTION  e64toe (longdoubleAddr, eAddr)
+EXTERNAL CFUNCTION  eabs (eAddr)
+EXTERNAL CFUNCTION  eadd (xAddr, yAddr, zAddr)
+EXTERNAL CFUNCTION  eclear (eAddr)
+EXTERNAL CFUNCTION  ecmp (xAddr, yAddr)
+EXTERNAL CFUNCTION  ediv (xAddr, yAddr, zAddr)
+EXTERNAL CFUNCTION  eexp (xAddr, yAddr)
+EXTERNAL CFUNCTION  efloor (xAddr, yAddr)
+EXTERNAL CFUNCTION  efrexp (eAddr, expAddr, sAddr)
+EXTERNAL CFUNCTION  eifrac (eAddr, iAddr, fracAddr)
+EXTERNAL CFUNCTION  einfin (eAddr)
+EXTERNAL CFUNCTION  eisinf (eAddr)
+EXTERNAL CFUNCTION  eisnan (eAddr)
+EXTERNAL CFUNCTION  eisneg (eAddr)
+EXTERNAL CFUNCTION  eldexp (xAddr, pwr2, yAddr)
+EXTERNAL CFUNCTION  elog (xAddr, yAddr)
+EXTERNAL CFUNCTION  emov (xAddr, yAddr)
+EXTERNAL CFUNCTION  emul (xAddr, yAddr, zAddr)
+EXTERNAL CFUNCTION  eneg (xAddr)
+EXTERNAL CFUNCTION  epow (xAddr, yAddr, zAddr)
+EXTERNAL CFUNCTION  eround (xAddr, yAddr)
+EXTERNAL CFUNCTION  esqrt (xAddr, yAddr)
+EXTERNAL CFUNCTION  esub (xAddr, yAddr, zAddr)
+EXTERNAL CFUNCTION  etanh (xAddr, yAddr)
+EXTERNAL CFUNCTION  etoasc (eAddr, sAddr, n)
+EXTERNAL CFUNCTION  etoe24 (eAddr, singleAddr)
+EXTERNAL CFUNCTION  etoe53 (eAddr, doubleAddr)
+EXTERNAL CFUNCTION  etoe64 (eAddr, longdoubleAddr)
+EXTERNAL CFUNCTION  ltoe (xAddr, eAddr)
+
+' routines for internal format numbers - IEEI
+
+EXTERNAL CFUNCTION  eaddm (aiAddr, biAddr)
+EXTERNAL CFUNCTION  ecleaz (eiAddr)
+EXTERNAL CFUNCTION  ecleazs (eiAddr)
+EXTERNAL CFUNCTION  ecmpm (aiAddr, biAddr)
+EXTERNAL CFUNCTION  edivm (aiAddr, biAddr)
+EXTERNAL CFUNCTION  emdnorm (aiAddr, lost, subflg, exp, rcntrl)
+EXTERNAL CFUNCTION  emovi (aAddr, aiAddr)
+EXTERNAL CFUNCTION  emovo (aiAddr, aAddr)
+EXTERNAL CFUNCTION  emovz (aiAddr, biAddr)
+EXTERNAL CFUNCTION  emulm (aiAddr, biAddr)
+EXTERNAL CFUNCTION  enormlz (eiAddr)
+EXTERNAL CFUNCTION  eshdn1 (eiAddr)
+EXTERNAL CFUNCTION  eshdn6 (eiAddr)
+EXTERNAL CFUNCTION  eshdn8 (eiAddr)
+EXTERNAL CFUNCTION  eshift (eiAddr)
+EXTERNAL CFUNCTION  eshup1 (eiAddr)
+EXTERNAL CFUNCTION  eshup6 (eiAddr)
+EXTERNAL CFUNCTION  eshup8 (eiAddr)
+EXTERNAL CFUNCTION  esubm (aiAddr, biAddr)
+

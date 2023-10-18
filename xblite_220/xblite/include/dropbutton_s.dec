@@ -1,0 +1,39 @@
+'
+TYPE DBLOCALINFO
+	XLONG .hmenu
+	XLONG .hhook
+	XLONG .iTimeOut
+	XLONG .iCurrentItem
+	XLONG .iItemCount
+	XLONG .fIgnoreSetState
+END TYPE
+'
+TYPE DROPBUTITEM
+	XLONG .iCode' button identifier id
+	XLONG .szLabel' address of label string
+	XLONG .iBufSize
+END TYPE
+'
+EXTERNAL FUNCTION DropButton ()
+EXTERNAL FUNCTION InitDropButtonControl ()
+'
+'
+' canvas control class name
+$$DROPBUTTONCLASSNAME = "dropbutton"
+$$DBWC_DROPBUTTON = "dropbutton"
+'
+$$DBDEF_MENUTIMEOUT = 500
+'
+' messages
+$$DBM_APPENDITEM = 1025' add an item to the end of the list of available items
+$$DBM_INSERTITEM = 1026' add an item at a specific index within the list of available items
+$$DBM_REMOVEITEM = 1027' remove an item from the list of available items given it's code id
+$$DBM_FINDITEM = 1028' find the first item based on the text
+$$DBM_CLEAR = 1034' remove all items from the list of available items
+$$DBM_SETITEMTEXT = 1035' set the label for an item
+$$DBM_GETITEMTEXT = 1036' get the label of an item
+$$DBM_SETITEMID = 1037' set the label of an item
+$$DBM_GETCOUNT = 1044' return count of items in list menu
+$$DBM_SETCURSEL = 1074' set current selection
+$$DBM_GETCURSEL = 1075' get current selection
+'

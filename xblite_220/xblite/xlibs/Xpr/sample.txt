@@ -1,0 +1,20 @@
+SAMPLE TEXT
+
+	This is some sample text for Xpr
+This is some sample text for Xpr
+This is some sample text for Xpr
+This is some sample text for Xpr
+This is some sample text for Xpr
+This is some sample text for Xpr
+This is some sample text for Xpr
+
+	This is some sample text for Xpr
+This is some sample text for Xpr
+This is some sample text for Xpr
+This is some sample text for Xpr
+This is some sample text for Xpr
+This is some sample text for Xpr
+This is some sample text for Xpr
+
+eof
+		

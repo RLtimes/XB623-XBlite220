@@ -1,0 +1,15 @@
+EXTERNAL FUNCTION  Hyperlink ()
+EXTERNAL FUNCTION  GoToURL (url$, showcmd)
+EXTERNAL FUNCTION  GetRegKey (key, subkey$, @retdata$)
+$$HYPERLINKCLASSNAME = "hyperlinkctrl"
+' custom hyperlink control messages
+$$SET_HYPERLINK_STYLE   = 1025' set style in lParam
+$$SET_HYPERLINK_BKCOLOR = 1026' set color in lParam
+' hyperlink styles
+$$HS_RELIEFTEXT    = 0x01' draw relief style text
+$$HS_NOUNDERLINE   = 0x02' do not draw underline
+$$HS_NOHANDCURSOR  = 0x04' use only arrow cursor
+$$HS_DRAWFOCUSRECT = 0x08' draw a focus rect if window style is WS_TABSTOP
+$$HS_CENTERHORZ		 = 0x10' center text horizontally in control
+$$HS_CENTERVERT    = 0x20' center text vertically in control
+

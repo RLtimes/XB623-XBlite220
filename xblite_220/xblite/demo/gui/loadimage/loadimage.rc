@@ -1,0 +1,12 @@
+#include "winres.h"
+
+scrabble ICON    scrabble.ico
+
+menubar MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+    MENUITEM "&Open", 101
+    MENUITEM "E&xit", 102
+    END
+END

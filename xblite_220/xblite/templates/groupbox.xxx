@@ -1,0 +1,1 @@
+NewChild ("button", "text", $$BS_GROUPBOX, x, y, w, h, hWnd, 0, 0)

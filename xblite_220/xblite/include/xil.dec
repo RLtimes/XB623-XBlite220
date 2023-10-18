@@ -1,0 +1,130 @@
+EXTERNAL FUNCTION  Xil         ()
+' image transformation/manipulation functions
+EXTERNAL FUNCTION  XilAddImages (UBYTE source1[], UBYTE source2[], UBYTE dest[], s1Factor, s1OffsetR, s1OffsetG, s1OffsetB, s2Factor, s2OffsetR, s2OffsetG, s2OffsetB)
+EXTERNAL FUNCTION  XilCombineImages (UBYTE source1[], UBYTE source2[], UBYTE dest[], dx1, dy1, DOUBLE percent)
+EXTERNAL FUNCTION  XilCrop (UBYTE source[], UBYTE dest[], x1, y1, x2, y2)
+EXTERNAL FUNCTION  XilFlip (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilMirror (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilResize (UBYTE source[], UBYTE dest[], destWidth, destHeight)
+EXTERNAL FUNCTION  XilResizeBiCubic (UBYTE source[], UBYTE dest[], DOUBLE ratio)
+EXTERNAL FUNCTION  XilResizeBiQuad (UBYTE source[], UBYTE dest[], destWidth, destHeight)
+EXTERNAL FUNCTION  XilResizeCanvas (UBYTE source[], UBYTE dest[], destWidth, destHeight, align, backColor)
+EXTERNAL FUNCTION  XilResizeProportional (UBYTE source[], UBYTE dest[], DOUBLE percent)
+EXTERNAL FUNCTION  XilRotate (UBYTE source[], UBYTE dest[], DOUBLE degrees, @destWidth, @destHeight)
+EXTERNAL FUNCTION  XilThumbnail (UBYTE source[], UBYTE dest[], DOUBLE ratio)
+EXTERNAL FUNCTION  XilTile (UBYTE source[], UBYTE dest[], destWidth, destHeight)
+'
+' image filter functions
+EXTERNAL FUNCTION  XilAND (UBYTE source[], UBYTE dest[], backColor)
+EXTERNAL FUNCTION  XilBlur (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilBlurMore (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilContrast (UBYTE source[], UBYTE dest[], mode, DOUBLE contrast)
+EXTERNAL FUNCTION  XilDetectEdgeCanny (UBYTE source[], UBYTE dest[], DOUBLE sigma, thresh)
+EXTERNAL FUNCTION  XilDetectEdgeLaplace (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilDetectEdgeLaplace3x3 (UBYTE source[], UBYTE dest[], fLaplace)
+EXTERNAL FUNCTION  XilDetectEdgeSobel (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilDetectEdgeZeroCrossing (UBYTE source[], UBYTE dest[], DOUBLE sigma, thresh, fLaplace)
+EXTERNAL FUNCTION  XilDilate (UBYTE source[], UBYTE dest[], level)
+EXTERNAL FUNCTION  XilEmboss (UBYTE source[], UBYTE dest[], direction)
+EXTERNAL FUNCTION  XilEmbossQuick (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilErode (UBYTE source[], UBYTE dest[], level)
+EXTERNAL FUNCTION  XilFade (UBYTE source[], UBYTE dest[], amount)
+EXTERNAL FUNCTION  XilGamma (UBYTE source[], UBYTE dest[], DOUBLE gamma)
+EXTERNAL FUNCTION  XilGaussianBlur (UBYTE source[], UBYTE dest[], DOUBLE sigma, scale)
+EXTERNAL FUNCTION  XilHistogramEqualize (UBYTE source[], UBYTE dest[], DOUBLE exponent)
+EXTERNAL FUNCTION  XilLighten (UBYTE source[], UBYTE dest[], percent)
+EXTERNAL FUNCTION  XilNoise (UBYTE source[], UBYTE dest[], percent)
+EXTERNAL FUNCTION  XilNormalize (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilSharpen (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilSharpenMore (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilSmoothKuwahara (UBYTE source[], UBYTE dest[], radius)
+EXTERNAL FUNCTION  XilSoften (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilSoftenMore (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilXOR (UBYTE source[], UBYTE dest[])
+'
+' image masking functions
+EXTERNAL FUNCTION  XilAsIcon (UBYTE source[], UBYTE dest[], backColor)
+EXTERNAL FUNCTION  XilMask (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilMaskCombine (UBYTE source[], UBYTE mask[], UBYTE dest[])
+'
+' image color/palette functions
+EXTERNAL FUNCTION  AddToPalette (red, green, blue)
+EXTERNAL FUNCTION  CreateHalfTonePalette ()
+EXTERNAL FUNCTION  CreateWebSafePalette ()
+EXTERNAL FUNCTION  XilApplyPalette (UBYTE source[], UBYTE dest[], diffuseError)
+EXTERNAL FUNCTION  XilColorize (UBYTE source[], UBYTE dest[], DOUBLE hue)
+EXTERNAL FUNCTION  XilDither8x8 (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilDitherBayer8x8 (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilDitherEfficientED (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilDitherFS (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilDitherUlichney (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilGrayScale1 (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilGrayScale2 (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilGrayScale3 (UBYTE source[], UBYTE dest[])
+EXTERNAL FUNCTION  XilHalfTonePaletteBest (UBYTE source[], UBYTE dest[], dither)
+EXTERNAL FUNCTION  XilHalfTonePaletteFast (UBYTE source[], UBYTE dest[], dither)
+EXTERNAL FUNCTION  XilWebSafePalette (UBYTE source[], UBYTE dest[], dither)
+' custom filter functions
+EXTERNAL FUNCTION  BuildFilterArray ()
+EXTERNAL FUNCTION  GetFilterArraySize ()
+EXTERNAL FUNCTION  GetFilterValue (x, y)
+EXTERNAL FUNCTION  GetFilterWeight ()
+EXTERNAL FUNCTION  SetFilterArraySize (size)
+EXTERNAL FUNCTION  SetFilterValue (x, y, value)
+EXTERNAL FUNCTION  SetFilterWeight (weight)
+EXTERNAL FUNCTION  XilBuildCustomFilterArray (size, data$)
+EXTERNAL FUNCTION  XilCustomFilter (UBYTE source[], UBYTE dest[], size, data$)
+EXTERNAL FUNCTION  XilSetFilterType (type)
+EXTERNAL FUNCTION  XilStandardFilter (UBYTE source[], UBYTE dest[])
+'
+' image info functions
+EXTERNAL FUNCTION  XilGetImageArrayDetails (UBYTE image[], @numColors, @fileSize, @dataOffset, @headerSize, @planes, @compression, @dataSize, @colors)
+EXTERNAL FUNCTION  XilGetImageArrayInfo (UBYTE image[], @bpp, @width, @height)
+'
+' color conversion functions
+EXTERNAL FUNCTION  RGBToHLS (r, g, b, DOUBLE h, DOUBLE s, DOUBLE l)
+EXTERNAL FUNCTION  HLSToRGB (DOUBLE h, DOUBLE s, DOUBLE l, @r, @g, @b)
+EXTERNAL FUNCTION  XilConvertColorToRGB (color, @r, @g, @b)
+'
+' misc helper functions
+EXTERNAL FUNCTION  CumulativeSumArray (DOUBLE array[], DOUBLE cumSum[])
+EXTERNAL FUNCTION  HistogramCalc (UBYTE source[], @histR[], @histG[], @histB[])
+EXTERNAL FUNCTION  GetClosestIndex (@lIndex, r, g, b)
+EXTERNAL FUNCTION  NextItem$ (source$, index, term, done)
+EXTERNAL FUNCTION  DOUBLE RNUniform ()
+EXTERNAL FUNCTION  ValidRange (@value, lower, upper)
+EXTERNAL FUNCTION  CreateGaussianKernel (DOUBLE sigma, scale, @kernel[], @weight)
+'
+'
+$$RAND_MAX = 0x7FFF
+'
+' Filter Type Constants
+'
+$$Blur 				= 0
+$$BlurMore		= 1
+$$Soften			= 2
+$$SoftenMore 	= 3
+$$Sharpen			= 4
+$$SharpenMore	= 5
+$$Custom			= 6
+$$MaxFilter		= 6
+'
+'
+' Alignment/Direction Constants
+'
+$$AlignUpperLeft			=  1
+$$AlignUpperCenter		=  2
+$$AlignUpperRight			=  3
+$$AlignMiddleLeft			=  5
+$$AlignMiddleCenter		=  6
+$$AlignMiddleRight		=  7
+$$AlignLowerLeft			=  9
+$$AlignLowerCenter		= 10
+$$AlignLowerRight			= 11
+'
+' Laplacian masks for XilDetectEdgeLaplace3x3()
+$$LAPLACIAN1 = 0' "0,1,0,1,-4,1,0,1,0"
+$$LAPLACIAN2 = 1' "1,1,1,1,-8,1,1,1,1"
+$$LAPLACIAN3 = 2' "-1,2,-1,2,-4,2,-1,2,-1"
+'
+

@@ -1,0 +1,1120 @@
+'
+'
+' #######################  David Szafranski
+' #####  ddraw.dec  #####  copyright 2003
+' #######################  Windows XBLite declarations for Windows "ddraw"
+'
+' subject to LGPL license - see COPYING_LIB
+'
+' VERSION  "0.0001"  ' 2003/07/27
+'
+' ###########################
+' #####  declare types  #####
+' ###########################
+
+TYPE DDRGBA
+  UBYTE .red
+  UBYTE .green
+  UBYTE .blue
+  UBYTE .alpha
+END TYPE
+
+' DDCOLORKEY Structure
+TYPE DDCOLORKEY
+  XLONG  .dwColorSpaceLowValue 
+  XLONG  .dwColorSpaceHighValue
+END TYPE
+
+' DDBLTFX Structure
+TYPE DDBFUnion1 
+UNION
+  XLONG  .dwZDestConst  
+  XLONG  .lpDDSZBufferDest
+END UNION
+END TYPE
+
+TYPE DDBFUnion2
+UNION
+  XLONG  .dwZSrcConst  
+  XLONG  .lpDDSZBufferSrc
+END UNION
+END TYPE
+
+TYPE DDBFUnion3
+UNION
+  XLONG  .dwAlphaDestConst
+  XLONG  .lpDDSAlphaDest 
+END UNION
+END TYPE
+
+TYPE DDBFUnion4
+UNION
+  XLONG  .dwAlphaSrcConst
+  XLONG  .lpDDSAlphaSrc 
+END UNION
+END TYPE
+
+TYPE DDBFUnion5 
+UNION
+  XLONG  .dwFillColor 
+  XLONG  .dwFillDepth 
+  XLONG  .dwFillPixel 
+  XLONG  .lpDDSPattern
+END UNION
+END TYPE
+
+TYPE DDBLTFX
+  XLONG  .dwSize         
+  XLONG  .dwDDFX         
+  XLONG  .dwROP          
+  XLONG  .dwDDROP         
+  XLONG  .dwRotationAngle     
+  XLONG  .dwZBufferOpCode     
+  XLONG  .dwZBufferLow      
+  XLONG  .dwZBufferHigh      
+  XLONG  .dwZBufferBaseDest    
+  XLONG  .dwZDestConstBitDepth  
+  UNION
+  	XLONG  .dwZDestConst  
+  	XLONG  .lpDDSZBufferDest
+  END UNION
+  XLONG  .dwZSrcConstBitDepth   
+  UNION
+  	XLONG  .dwZSrcConst  
+  	XLONG  .lpDDSZBufferSrc
+  END UNION
+  XLONG  .dwAlphaEdgeBlendBitDepth
+  XLONG  .dwAlphaEdgeBlend    
+  XLONG  .dwReserved       
+  XLONG  .dwAlphaDestConstBitDepth
+  UNION
+  	XLONG  .dwAlphaDestConst
+  	XLONG  .lpDDSAlphaDest 
+  END UNION
+  XLONG  .dwAlphaSrcConstBitDepth 
+  UNION
+  	XLONG  .dwAlphaSrcConst
+  	XLONG  .lpDDSAlphaSrc 
+  END UNION
+  UNION
+  	XLONG  .dwFillColor 
+  	XLONG  .dwFillDepth 
+  	XLONG  .dwFillPixel 
+  	XLONG  .lpDDSPattern
+  END UNION
+  DDCOLORKEY  .ddckDestColorkey    
+  DDCOLORKEY  .ddckSrcColorkey     
+END TYPE
+
+' DDSCAPS Structure
+TYPE DDSCAPS
+  XLONG  .dwCaps
+END TYPE
+
+TYPE DDOSCAPS
+  XLONG .dwCaps 
+END TYPE
+
+TYPE DDSCAPSEX
+  XLONG .dwCaps2
+  XLONG .dwCaps3
+  XLONG .dwCaps4
+END TYPE
+
+TYPE DDSCAPS2
+  XLONG .dwCaps 
+  XLONG .dwCaps2
+  XLONG .dwCaps3
+  XLONG .dwCaps4
+END TYPE
+
+TYPE DDCAPS_DX1
+  XLONG .dwSize 
+  XLONG .dwCaps 
+  XLONG .dwCaps2 
+  XLONG .dwCKeyCaps 
+  XLONG .dwFXCaps 
+  XLONG .dwFXAlphaCaps 
+  XLONG .dwPalCaps 
+  XLONG .dwSVCaps 
+  XLONG .dwAlphaBltConstBitDepths 
+  XLONG .dwAlphaBltPixelBitDepths 
+  XLONG .dwAlphaBltSurfaceBitDepths 
+  XLONG .dwAlphaOverlayConstBitDepths 
+  XLONG .dwAlphaOverlayPixelBitDepths 
+  XLONG .dwAlphaOverlaySurfaceBitDepths 
+  XLONG .dwZBufferBitDepths 
+  XLONG .dwVidMemTotal 
+  XLONG .dwVidMemFree 
+  XLONG .dwMaxVisibleOverlays 
+  XLONG .dwCurrVisibleOverlays 
+  XLONG .dwNumFourCCCodes 
+  XLONG .dwAlignBoundarySrc 
+  XLONG .dwAlignSizeSrc 
+  XLONG .dwAlignBoundaryDest 
+  XLONG .dwAlignSizeDest 
+  XLONG .dwAlignStrideAlign 
+  XLONG .dwRops[7] 
+  DDSCAPS .ddsCaps 
+  XLONG .dwMinOverlayStretch 
+  XLONG .dwMaxOverlayStretch 
+  XLONG .dwMinLiveVideoStretch 
+  XLONG .dwMaxLiveVideoStretch 
+  XLONG .dwMinHwCodecStretch 
+  XLONG .dwMaxHwCodecStretch 
+  XLONG .dwReserved1 
+  XLONG .dwReserved2 
+  XLONG .dwReserved3 
+END TYPE
+
+' DDCAPS_DX3 Structure
+TYPE DDCAPS_DX3
+  XLONG  .dwSize            
+  XLONG  .dwCaps            
+  XLONG  .dwCaps2            
+  XLONG  .dwCKeyCaps          
+  XLONG  .dwFXCaps           
+  XLONG  .dwFXAlphaCaps         
+  XLONG  .dwPalCaps           
+  XLONG  .dwSVCaps           
+  XLONG  .dwAlphaBltConstBitDepths   
+  XLONG  .dwAlphaBltPixelBitDepths   
+  XLONG  .dwAlphaBltSurfaceBitDepths  
+  XLONG  .dwAlphaOverlayConstBitDepths 
+  XLONG  .dwAlphaOverlayPixelBitDepths 
+  XLONG  .dwAlphaOverlaySurfaceBitDepths
+  XLONG  .dwZBufferBitDepths      
+  XLONG  .dwVidMemTotal         
+  XLONG  .dwVidMemFree         
+  XLONG  .dwMaxVisibleOverlays     
+  XLONG  .dwCurrVisibleOverlays     
+  XLONG  .dwNumFourCCCodes       
+  XLONG  .dwAlignBoundarySrc      
+  XLONG  .dwAlignSizeSrc        
+  XLONG  .dwAlignBoundaryDest      
+  XLONG  .dwAlignSizeDest        
+  XLONG  .dwAlignStrideAlign      
+  XLONG  .dwRops[7]     
+  DDSCAPS  .ddsCaps            
+  XLONG  .dwMinOverlayStretch      
+  XLONG  .dwMaxOverlayStretch      
+  XLONG  .dwMinLiveVideoStretch     
+  XLONG  .dwMaxLiveVideoStretch     
+  XLONG  .dwMinHwCodecStretch      
+  XLONG  .dwMaxHwCodecStretch      
+  XLONG  .dwReserved1          
+  XLONG  .dwReserved2          
+  XLONG  .dwReserved3          
+  XLONG  .dwSVBCaps           
+  XLONG  .dwSVBCKeyCaps         
+  XLONG  .dwSVBFXCaps          
+  XLONG  .dwSVBRops[7]   
+  XLONG  .dwVSBCaps           
+  XLONG  .dwVSBCKeyCaps         
+  XLONG  .dwVSBFXCaps          
+  XLONG  .dwVSBRops[7]   
+  XLONG  .dwSSBCaps           
+  XLONG  .dwSSBCKeyCaps         
+  XLONG  .dwSSBCFXCaps         
+  XLONG  .dwSSBRops[7]   
+  XLONG  .dwMaxVideoPorts        
+  XLONG  .dwCurrVideoPorts       
+  XLONG  .dwSVBCaps2          
+  XLONG  .dwNLVBCaps          
+  XLONG  .dwNLVBCaps2          
+  XLONG  .dwNLVBCKeyCaps        
+  XLONG  .dwNLVBFXCaps         
+  XLONG  .dwNLVBRops[7]   
+  XLONG  .dwReserved4          
+  XLONG  .dwReserved5          
+  XLONG  .dwReserved6          
+END TYPE
+
+TYPE DDCAPS_DX5
+  XLONG .dwSize 
+  XLONG .dwCaps 
+  XLONG .dwCaps2 
+  XLONG .dwCKeyCaps 
+  XLONG .dwFXCaps 
+  XLONG .dwFXAlphaCaps 
+  XLONG .dwPalCaps 
+  XLONG .dwSVCaps 
+  XLONG .dwAlphaBltConstBitDepths 
+  XLONG .dwAlphaBltPixelBitDepths 
+  XLONG .dwAlphaBltSurfaceBitDepths 
+  XLONG .dwAlphaOverlayConstBitDepths 
+  XLONG .dwAlphaOverlayPixelBitDepths 
+  XLONG .dwAlphaOverlaySurfaceBitDepths 
+  XLONG .dwZBufferBitDepths 
+  XLONG .dwVidMemTotal 
+  XLONG .dwVidMemFree 
+  XLONG .dwMaxVisibleOverlays 
+  XLONG .dwCurrVisibleOverlays 
+  XLONG .dwNumFourCCCodes 
+  XLONG .dwAlignBoundarySrc 
+  XLONG .dwAlignSizeSrc 
+  XLONG .dwAlignBoundaryDest 
+  XLONG .dwAlignSizeDest 
+  XLONG .dwAlignStrideAlign 
+  XLONG .dwRops[7] 
+  DDSCAPS .ddsCaps 
+  XLONG .dwMinOverlayStretch 
+  XLONG .dwMaxOverlayStretch 
+  XLONG .dwMinLiveVideoStretch 
+  XLONG .dwMaxLiveVideoStretch 
+  XLONG .dwMinHwCodecStretch 
+  XLONG .dwMaxHwCodecStretch 
+  XLONG .dwReserved1 
+  XLONG .dwReserved2 
+  XLONG .dwReserved3 
+  XLONG .dwSVBCaps 
+  XLONG .dwSVBCKeyCaps 
+  XLONG .dwSVBFXCaps 
+  XLONG .dwSVBRops[7]
+  XLONG .dwVSBCaps 
+  XLONG .dwVSBCKeyCaps 
+  XLONG .dwVSBFXCaps 
+  XLONG .dwVSBRops[7]
+  XLONG .dwSSBCaps 
+  XLONG .dwSSBCKeyCaps 
+  XLONG .dwSSBFXCaps 
+  XLONG .dwSSBRops[7]
+  XLONG .dwMaxVideoPorts 
+  XLONG .dwCurrVideoPorts 
+  XLONG .dwSVBCaps2 
+  XLONG .dwNLVBCaps 
+  XLONG .dwNLVBCaps2 
+  XLONG .dwNLVBCKeyCaps 
+  XLONG .dwNLVBFXCaps 
+  XLONG .dwNLVBRops[7] 
+END TYPE
+
+TYPE DDCAPS_DX6
+  XLONG .dwSize 
+  XLONG .dwCaps 
+  XLONG .dwCaps2 
+  XLONG .dwCKeyCaps 
+  XLONG .dwFXCaps 
+  XLONG .dwFXAlphaCaps 
+  XLONG .dwPalCaps 
+  XLONG .dwSVCaps 
+  XLONG .dwAlphaBltConstBitDepths 
+  XLONG .dwAlphaBltPixelBitDepths 
+  XLONG .dwAlphaBltSurfaceBitDepths 
+  XLONG .dwAlphaOverlayConstBitDepths 
+  XLONG .dwAlphaOverlayPixelBitDepths 
+  XLONG .dwAlphaOverlaySurfaceBitDepths 
+  XLONG .dwZBufferBitDepths 
+  XLONG .dwVidMemTotal 
+  XLONG .dwVidMemFree 
+  XLONG .dwMaxVisibleOverlays 
+  XLONG .dwCurrVisibleOverlays 
+  XLONG .dwNumFourCCCodes 
+  XLONG .dwAlignBoundarySrc 
+  XLONG .dwAlignSizeSrc 
+  XLONG .dwAlignBoundaryDest 
+  XLONG .dwAlignSizeDest 
+  XLONG .dwAlignStrideAlign 
+  XLONG .dwRops[7] 
+  DDSCAPS .ddsOldCaps 
+  XLONG .dwMinOverlayStretch 
+  XLONG .dwMaxOverlayStretch 
+  XLONG .dwMinLiveVideoStretch 
+  XLONG .dwMaxLiveVideoStretch 
+  XLONG .dwMinHwCodecStretch 
+  XLONG .dwMaxHwCodecStretch 
+  XLONG .dwReserved1 
+  XLONG .dwReserved2 
+  XLONG .dwReserved3 
+  XLONG .dwSVBCaps 
+  XLONG .dwSVBCKeyCaps 
+  XLONG .dwSVBFXCaps 
+  XLONG .dwSVBRops[7]
+  XLONG .dwVSBCaps 
+  XLONG .dwVSBCKeyCaps 
+  XLONG .dwVSBFXCaps 
+  XLONG .dwVSBRops[7]
+  XLONG .dwSSBCaps 
+  XLONG .dwSSBCKeyCaps 
+  XLONG .dwSSBFXCaps 
+  XLONG .dwSSBRops[7]
+  XLONG .dwMaxVideoPorts 
+  XLONG .dwCurrVideoPorts 
+  XLONG .dwSVBCaps2 
+  XLONG .dwNLVBCaps 
+  XLONG .dwNLVBCaps2 
+  XLONG .dwNLVBCKeyCaps 
+  XLONG .dwNLVBFXCaps 
+  XLONG .dwNLVBRops[7] 
+  DDSCAPS2 .ddsCaps 
+END TYPE
+
+TYPE DDCAPS_DX7
+  XLONG .dwSize 
+  XLONG .dwCaps 
+  XLONG .dwCaps2 
+  XLONG .dwCKeyCaps 
+  XLONG .dwFXCaps 
+  XLONG .dwFXAlphaCaps 
+  XLONG .dwPalCaps 
+  XLONG .dwSVCaps 
+  XLONG .dwAlphaBltConstBitDepths 
+  XLONG .dwAlphaBltPixelBitDepths 
+  XLONG .dwAlphaBltSurfaceBitDepths 
+  XLONG .dwAlphaOverlayConstBitDepths 
+  XLONG .dwAlphaOverlayPixelBitDepths 
+  XLONG .dwAlphaOverlaySurfaceBitDepths 
+  XLONG .dwZBufferBitDepths 
+  XLONG .dwVidMemTotal 
+  XLONG .dwVidMemFree 
+  XLONG .dwMaxVisibleOverlays 
+  XLONG .dwCurrVisibleOverlays 
+  XLONG .dwNumFourCCCodes 
+  XLONG .dwAlignBoundarySrc 
+  XLONG .dwAlignSizeSrc 
+  XLONG .dwAlignBoundaryDest 
+  XLONG .dwAlignSizeDest 
+  XLONG .dwAlignStrideAlign 
+  XLONG .dwRops[7] 
+  DDSCAPS .ddsOldCaps 
+  XLONG .dwMinOverlayStretch 
+  XLONG .dwMaxOverlayStretch 
+  XLONG .dwMinLiveVideoStretch 
+  XLONG .dwMaxLiveVideoStretch 
+  XLONG .dwMinHwCodecStretch 
+  XLONG .dwMaxHwCodecStretch 
+  XLONG .dwReserved1 
+  XLONG .dwReserved2 
+  XLONG .dwReserved3 
+  XLONG .dwSVBCaps 
+  XLONG .dwSVBCKeyCaps 
+  XLONG .dwSVBFXCaps 
+  XLONG .dwSVBRops[7]
+  XLONG .dwVSBCaps 
+  XLONG .dwVSBCKeyCaps 
+  XLONG .dwVSBFXCaps 
+  XLONG .dwVSBRops[7]
+  XLONG .dwSSBCaps 
+  XLONG .dwSSBCKeyCaps 
+  XLONG .dwSSBFXCaps 
+  XLONG .dwSSBRops[7]
+  XLONG .dwMaxVideoPorts 
+  XLONG .dwCurrVideoPorts 
+  XLONG .dwSVBCaps2 
+  XLONG .dwNLVBCaps 
+  XLONG .dwNLVBCaps2 
+  XLONG .dwNLVBCKeyCaps 
+  XLONG .dwNLVBFXCaps 
+  XLONG .dwNLVBRops[7] 
+  DDSCAPS2 .ddsCaps 
+END TYPE
+
+' DDCAPS Structure
+TYPE DDCAPS
+  XLONG  .dwSize            
+  XLONG  .dwCaps            
+  XLONG  .dwCaps2            
+  XLONG  .dwCKeyCaps          
+  XLONG  .dwFXCaps           
+  XLONG  .dwFXAlphaCaps         
+  XLONG  .dwPalCaps           
+  XLONG  .dwSVCaps           
+  XLONG  .dwAlphaBltConstBitDepths   
+  XLONG  .dwAlphaBltPixelBitDepths   
+  XLONG  .dwAlphaBltSurfaceBitDepths  
+  XLONG  .dwAlphaOverlayConstBitDepths 
+  XLONG  .dwAlphaOverlayPixelBitDepths 
+  XLONG  .dwAlphaOverlaySurfaceBitDepths
+  XLONG  .dwZBufferBitDepths      
+  XLONG  .dwVidMemTotal         
+  XLONG  .dwVidMemFree         
+  XLONG  .dwMaxVisibleOverlays     
+  XLONG  .dwCurrVisibleOverlays     
+  XLONG  .dwNumFourCCCodes       
+  XLONG  .dwAlignBoundarySrc      
+  XLONG  .dwAlignSizeSrc        
+  XLONG  .dwAlignBoundaryDest      
+  XLONG  .dwAlignSizeDest        
+  XLONG  .dwAlignStrideAlign      
+  XLONG  .dwRops[7]     
+  DDSCAPS  .ddsCaps            
+  XLONG  .dwMinOverlayStretch      
+  XLONG  .dwMaxOverlayStretch      
+  XLONG  .dwMinLiveVideoStretch     
+  XLONG  .dwMaxLiveVideoStretch     
+  XLONG  .dwMinHwCodecStretch      
+  XLONG  .dwMaxHwCodecStretch      
+  XLONG  .dwReserved1          
+  XLONG  .dwReserved2          
+  XLONG  .dwReserved3          
+  XLONG  .dwSVBCaps           
+  XLONG  .dwSVBCKeyCaps         
+  XLONG  .dwSVBFXCaps          
+  XLONG  .dwSVBRops[7]   
+  XLONG  .dwVSBCaps           
+  XLONG  .dwVSBCKeyCaps         
+  XLONG  .dwVSBFXCaps          
+  XLONG  .dwVSBRops[7]   
+  XLONG  .dwSSBCaps           
+  XLONG  .dwSSBCKeyCaps         
+  XLONG  .dwSSBCFXCaps         
+  XLONG  .dwSSBRops[7]   
+'$IF $$DIRECTDRAW_VERSION >= 0x0500
+  XLONG  .dwMaxVideoPorts        
+  XLONG  .dwCurrVideoPorts       
+  XLONG  .dwSVBCaps2          
+  XLONG  .dwNLVBCaps          
+  XLONG  .dwNLVBCaps2          
+  XLONG  .dwNLVBCKeyCaps        
+  XLONG  .dwNLVBFXCaps         
+  XLONG  .dwNLVBRops[7]   
+'$ELSE
+' XLONG  .dwReserved4          
+' XLONG  .dwReserved5          
+' XLONG  .dwReserved6          
+'$ENDIF
+END TYPE
+
+' DDPIXELFORMAT Structure
+
+TYPE DDPIXELFORMAT
+  XLONG  .dwSize 
+  XLONG  .dwFlags 
+  XLONG  .dwFourCC
+  UNION
+    XLONG  .dwRGBBitCount  
+    XLONG  .dwYUVBitCount  
+    XLONG  .dwZBufferBitDepth
+    XLONG  .dwAlphaBitDepth 
+  END UNION
+  UNION
+    XLONG  .dwRBitMask
+    XLONG  .dwYBitMask
+    XLONG  .dwStencilBitDepth 
+    XLONG  .dwLuminanceBitMask 
+    XLONG  .dwBumpDuBitMask 
+  END UNION
+  UNION
+    XLONG  .dwGBitMask
+    XLONG  .dwUBitMask
+    XLONG  .dwZBitMask 
+    XLONG  .dwBumpDvBitMask 
+  END UNION
+  UNION
+    XLONG  .dwBBitMask
+    XLONG  .dwVBitMask
+    XLONG  .dwStencilBitMask 
+    XLONG  .dwBumpLuminanceBitMask 
+  END UNION
+  UNION
+    XLONG  .dwRGBAlphaBitMask
+    XLONG  .dwYUVAlphaBitMask
+    XLONG  .dwLuminanceAlphaBitMask
+    XLONG  .dwRGBZBitMask  
+    XLONG  .dwYUVZBitMask  
+  END UNION
+END TYPE
+
+' DDOVERLAYFX Structure
+
+TYPE DDOVERLAYFX
+  XLONG  .dwSize         
+  XLONG  .dwAlphaEdgeBlendBitDepth
+  XLONG  .dwAlphaEdgeBlend    
+  XLONG  .dwReserved       
+  XLONG  .dwAlphaDestConstBitDepth
+  UNION
+  	XLONG  .dwAlphaDestConst
+  	XLONG  .lpDDSAlphaDest 
+  END UNION
+  XLONG  .dwAlphaSrcConstBitDepth 
+  UNION
+  	XLONG  .dwAlphaSrcConst
+  	XLONG  .lpDDSAlphaSrc 
+  END UNION
+  DDCOLORKEY  .dckDestColorkey     
+  DDCOLORKEY  .dckSrcColorkey     
+  XLONG  .dwDDFX         
+  XLONG  .dwFlags         
+END TYPE
+
+' DDBLTBATCH Structure
+TYPE DDBLTBATCH
+  XLONG  .lprDest 
+  XLONG  .lpDDSSrc 
+  XLONG  .lprSrc  
+  XLONG  .dwFlags 
+  XLONG  .lpDDBltFx
+END TYPE
+
+TYPE DDGAMMARAMP
+  USHORT .red[255]
+  USHORT .green[255]
+  USHORT .blue[255]
+END TYPE
+
+' DDSURFACEDESC Structure
+
+TYPE DDSURFACEDESC
+  XLONG  .dwSize      
+  XLONG  .dwFlags     
+  XLONG  .dwHeight     
+  XLONG  .dwWidth     
+  UNION
+  	XLONG  .lPitch    
+  	XLONG  .dwLinearSize 
+  END UNION
+  XLONG  .dwBackBufferCount
+  UNION
+  	XLONG  .dwMipMapCount  
+  	XLONG  .dwZBufferBitDepth
+  	XLONG  .dwRefreshRate  
+  END UNION
+  XLONG  .dwAlphaBitDepth 
+  XLONG  .dwReserved    
+  XLONG  .lpSurface    
+  DDCOLORKEY  .ddckCKDestOverlay
+  DDCOLORKEY  .ddckCKDestBlt  
+  DDCOLORKEY  .ddckCKSrcOverlay 
+  DDCOLORKEY  .ddckCKSrcBlt   
+  DDPIXELFORMAT  .ddpfPixelFormat 
+  DDSCAPS  .ddsCaps     
+END TYPE
+
+TYPE DDSURFACEDESC2
+  XLONG .dwSize 
+  XLONG .dwFlags 
+  XLONG .dwHeight 
+  XLONG .dwWidth 
+  UNION
+    XLONG .lPitch 
+    XLONG .dwLinearSize 
+  END UNION
+  XLONG .dwBackBufferCount 
+  UNION
+    XLONG .dwMipMapCount 
+    XLONG .dwRefreshRate 
+    XLONG .dwSrcVBHandle 
+  END UNION
+  XLONG .dwAlphaBitDepth 
+  XLONG .dwReserved 
+  XLONG .lpSurface 
+  UNION
+    DDCOLORKEY .ddckCKDestOverlay 
+    XLONG .dwEmptyFaceColor 
+  END UNION
+  DDCOLORKEY .ddckCKDestBlt 
+  DDCOLORKEY .ddckCKSrcOverlay 
+  DDCOLORKEY .ddckCKSrcBlt 
+  UNION
+    DDPIXELFORMAT .ddpfPixelFormat 
+    XLONG .dwFVF 
+  END UNION
+  DDSCAPS2 .ddsCaps 
+  XLONG .dwTextureStage 
+END TYPE
+
+' DDCOLORCONTROL Structure
+TYPE DDCOLORCONTROL
+  XLONG  .dwSize   
+  XLONG  .dwFlags   
+  XLONG  .lBrightness 
+  XLONG  .lContrast  
+  XLONG  .lHue    
+  XLONG  .lSaturation 
+  XLONG  .lSharpness 
+  XLONG  .lGamma   
+  XLONG  .lColorEnable
+  XLONG  .dwReserved1 
+END TYPE
+
+' ###############################
+' #####  declare functions  #####
+' ###############################
+
+EXTERNAL FUNCTION DirectDrawCreate        (lpGuid, lpDD, pUnkOuter)
+EXTERNAL FUNCTION DirectDrawCreateEx      (lpGuid, lpDD, iid, pUnkOuter)
+EXTERNAL FUNCTION DirectDrawCreateClipper (dwFlags, lpDDClipper, pUnkOuter)
+EXTERNAL FUNCTION DirectDrawEnumerate     (lpCallback, lpContext)
+EXTERNAL FUNCTION DirectDrawEnumerateEx   (lpCallback, lpContext, dwFlags)
+
+' Callback function prototypes
+'DECLARE FUNCTION DDEnumModesCallback     (lpDDSurfaceDesc, lpContext)
+'DECLARE FUNCTION DDEnumModesCallbackEx   (lpGUID, lpszDriverDescription, lpszDriverName, lpContext, hm)
+'DECLARE FUNCTION DDEnumSurfacesCallback  (lpDDSurface, lpDDSurfaceDesc, lpContext)
+
+' ##########################################
+' #####  declare and define constants  #####
+' ##########################################
+
+' GUIDs
+'$$CLSID_DirectDraw$        		= "D7B70EE0-4340-11CF-B063-0020AFC2CD35"
+'$$CLSID_DirectDrawClipper$    	= "593817A0-7DB3-11CF-A2DE-00AA00b93356"
+'$$IID_IDirectDraw$        		= "6C14DB80-A733-11CE-A521-0020AF0BE560"
+'$$IID_IDirectDraw2$        		= "B3A6F3E0-2B43-11CF-A2DE-00AA00B93356"
+'$$IID_IDirectDrawSurface$     	= "6C14DB81-A733-11CE-A521-0020AF0BE560"
+'$$IID_IDirectDrawSurface2$    	= "57805885-6eec-11cf-9441-a82303c10e27"
+'$$IID_IDirectDrawSurface3$    	= "DA044E00-69B2-11D0-A1D5-00AA00B8DFBB"
+'$$IID_IDirectDrawPalette$     	= "6C14DB84-A733-11CE-A521-0020AF0BE560"
+'$$IID_IDirectDrawClipper$     	= "6C14DB85-A733-11CE-A521-0020AF0BE560"
+'$$IID_IDirectDrawColorControl$ 	= "4B9F0EE0-0D7E-11D0-9B06-00A0C903A3B8"
+
+$$CLSID_DirectDraw            = "\xE0\x0E\xB7\xD7\x40\x43\xCF\x11\xB0\x63\x00\x20\xAF\xC2\xCD\x35"
+$$CLSID_DirectDraw7           = "\x96\x51\x30\x3C\xDB\x50\xD3\x11\x9C\xFE\x00\xC0\x4F\xD9\x30\xC5"
+$$CLSID_DirectDrawClipper     = "\xA0\x17\x38\x59\xB3\x7D\xCF\x11\xA2\xDE\x00\xAA\x00\xB9\x33\x56"
+$$IID_IDirectDraw             = "\x80\xDB\x14\x6C\x33\xA7\xCE\x11\xA5\x21\x00\x20\xAF\x0B\xE5\x60"
+$$IID_IDirectDraw2            = "\xE0\xF3\xA6\xB3\x43\x2B\xCF\x11\xA2\xDE\x00\xAA\x00\xB9\x33\x56"
+$$IID_IDirectDraw4            = "\x9A\x50\x59\x9C\xBD\x39\xD1\x11\x8C\x4A\x00\xC0\x4F\xD9\x30\xC5"
+$$IID_IDirectDraw7            = "\xC0\x5E\xE6\x15\x9C\x3B\xD2\x11\xB9\x2F\x00\x60\x97\x97\xEA\x5B"
+$$IID_IDirectDrawSurface      = "\x81\xDB\x14\x6C\x33\xA7\xCE\x11\xA5\x21\x00\x20\xAF\x0B\xE5\x60"
+$$IID_IDirectDrawSurface2     = "\x85\x58\x80\x57\xEC\x6E\xCF\x11\x94\x41\xA8\x23\x03\xC1\x0E\x27"
+$$IID_IDirectDrawSurface3     = "\x00\x4E\x04\xDA\xB2\x69\xD0\x11\xA1\xD5\x00\xAA\x00\xB8\xDF\xBB"
+$$IID_IDirectDrawSurface4     = "\x30\x86\x2B\x0B\x35\xAD\xD0\x11\x8E\xA6\x00\x60\x97\x97\xEA\x5B"
+$$IID_IDirectDrawSurface7     = "\x80\x5A\x67\x06\x9B\x3B\xD2\x11\xB9\x2F\x00\x60\x97\x97\xEA\x5B"
+$$IID_IDirectDrawPalette      = "\x84\xDB\x14\x6C\x33\xA7\xCE\x11\xA5\x21\x00\x20\xAF\x0B\xE5\x60"
+$$IID_IDirectDrawClipper      = "\x85\xDB\x14\x6C\x33\xA7\xCE\x11\xA5\x21\x00\x20\xAF\x0B\xE5\x60"
+$$IID_IDirectDrawColorControl = "\xE0\x0E\x9F\x4B\x7E\x0D\xD0\x11\x9B\x06\x00\xA0\xC9\x03\xA3\xB8"
+$$IID_IDirectDrawGammaControl = "\x3E\x1C\xC1\x69\x6B\xB4\xD1\x11\xAD\x7A\x00\xC0\x4F\xC2\x9B\x4E"
+
+'$$CLSID_DirectDraw$ 			= "0xd7b70ee0,0x4340,4559,176,99,0,32,175,194,205,53"
+'$$CLSID_DirectDraw7$ 			= "0x3c305196,0x50db,4563,156,254,0,192,79,217,48,197"
+'$$CLSID_DirectDrawClipper$ 		= "0x593817a0,0x7db3,4559,162,222,0,170,0,185,51,86"
+'$$IID_IDirectDraw$ 			= "0x6c14db80,0xa733,4558,165,33,0,32,175,11,229,96"
+'$$IID_IDirectDraw2$ 			= "0xb3a6f3e0,0x2b43,4559,162,222,0,170,0,185,51,86"
+'$$IID_IDirectDraw4$ 			= "0x9c59509a,0x39bd,4561,140,74,0,192,79,217,48,197"
+'$$IID_IDirectDraw7$ 			= "0x15e65ec0,0x3b9c,4562,185,47,0,96,151,151,234,91"
+'$$IID_IDirectDrawSurface$ 		= "0x6c14db81,0xa733,4558,165,33,0,32,175,11,229,96"
+'$$IID_IDirectDrawSurface2$ 		= "0x57805885,0x6eec,4559,148,65,168,35,3,193,14,39"
+'$$IID_IDirectDrawSurface3$ 		= "0xda044e00,0x69b2,4560,161,213,0,170,0,184,223,187"
+'$$IID_IDirectDrawSurface4$ 		= "0xb2b8630,0xad35,4560,142,166,0,96,151,151,234,91"
+'$$IID_IDirectDrawSurface7$ 		= "0x6675a80,0x3b9b,4562,185,47,0,96,151,151,234,91"
+'$$IID_IDirectDrawPalette$ 		= "0x6c14db84,0xa733,4558,165,33,0,32,175,11,229,96"
+'$$IID_IDirectDrawClipper$ 		= "0x6c14db85,0xa733,4558,165,33,0,32,175,11,229,96"
+'$$IID_IDirectDrawColorControl$ 	= "0x4b9f0ee0,3454,4560,155,6,0,160,201,3,163,184"
+'$$IID_IDirectDrawGammaControl$ 	= "0x69c11c3e,0xb46b,4561,173,122,0,192,79,194,155,78"
+
+$$DD_OK                              = 0x0
+$$DDENUMRET_OK                       = 0x1
+$$DDENUMRET_CANCEL                   = 0x0
+$$DDENUM_ATTACHEDSECONDARYDEVICES    = 0x1
+$$DDENUM_DETACHEDSECONDARYDEVICES    = 0x2
+$$DDENUM_NONDISPLAYDEVICES           = 0x4
+$$REGSTR_KEY_DDHW_DESCRIPTION        = "Description"
+$$REGSTR_KEY_DDHW_DRIVERNAME         = "DriverName"
+$$REGSTR_PATH_DDHW                   = "Hardware\\DirectDrawDrivers"
+$$DDCREATE_HARDWAREONLY              = 0x1
+$$DDCREATE_EMULATIONONLY             = 0x2
+$$7                       = 0x8
+$$DDSD_CAPS                          = 0x1
+$$DDSD_HEIGHT                        = 0x2
+$$DDSD_WIDTH                         = 0x4
+$$DDSD_PITCH                         = 0x8
+$$DDSD_BACKBUFFERCOUNT               = 0x20
+$$DDSD_ZBUFFERBITDEPTH               = 0x40
+$$DDSD_ALPHABITDEPTH          = 0x80
+$$DDSD_LPSURFACE            = 0x800
+$$DDSD_PIXELFORMAT           = 0x1000
+$$DDSD_CKDESTOVERLAY          = 0x2000
+$$DDSD_CKDESTBLT            = 0x4000
+$$DDSD_CKSRCOVERLAY           = 0x8000
+$$DDSD_CKSRCBLT             = 0x10000
+$$DDSD_MIPMAPCOUNT           = 0x20000
+$$DDSD_REFRESHRATE           = 0x40000
+$$DDSD_LINEARSIZE            = 0x80000
+$$DDSD_ALL               = 0xff9ee
+$$DDCOLOR_BRIGHTNESS          = 0x1
+$$DDCOLOR_CONTRAST           = 0x2
+$$DDCOLOR_HUE              = 0x4
+$$DDCOLOR_SATURATION          = 0x8
+$$DDCOLOR_SHARPNESS           = 0x10
+$$DDCOLOR_GAMMA             = 0x20
+$$DDCOLOR_COLORENABLE          = 0x40
+$$DDSCAPS_RESERVED1           = 0x1
+$$DDSCAPS_ALPHA             = 0x2
+$$DDSCAPS_BACKBUFFER          = 0x4
+$$DDSCAPS_COMPLEX            = 0x8
+$$DDSCAPS_FLIP             = 0x10
+$$DDSCAPS_FRONTBUFFER          = 0x20
+$$DDSCAPS_OFFSCREENPLAIN        = 0x40
+$$DDSCAPS_OVERLAY            = 0x80
+$$DDSCAPS_PALETTE            = 0x100
+$$DDSCAPS_PRIMARYSURFACE        = 0x200
+$$DDSCAPS_PRIMARYSURFACELEFT      = 0x400
+$$DDSCAPS_SYSTEMMEMORY         = 0x800
+$$DDSCAPS_TEXTURE            = 0x1000
+$$DDSCAPS_3DDEVICE           = 0x2000
+$$DDSCAPS_VIDEOMEMORY          = 0x4000
+$$DDSCAPS_VISIBLE            = 0x8000
+$$DDSCAPS_WRITEONLY           = 0x10000
+$$DDSCAPS_ZBUFFER            = 0x20000
+$$DDSCAPS_OWNDC             = 0x40000
+$$DDSCAPS_LIVEVIDEO           = 0x80000
+$$DDSCAPS_HWCODEC            = 0x100000
+$$DDSCAPS_MODEX             = 0x200000
+$$DDSCAPS_MIPMAP            = 0x400000
+$$DDSCAPS_RESERVED2           = 0x800000
+$$DDSCAPS_ALLOCONLOAD          = 0x4000000
+$$DDSCAPS_VIDEOPORT           = 0x8000000
+$$DDSCAPS_LOCALVIDMEM          = 0x10000000
+$$DDSCAPS_NONLOCALVIDMEM        = 0x20000000
+$$DDSCAPS_STANDARDVGAMODE        = 0x40000000
+$$DDSCAPS_OPTIMIZED           = 0x80000000
+$$DDCAPS_3D               = 0x1
+$$DDCAPS_ALIGNBOUNDARYDEST       = 0x2
+$$DDCAPS_ALIGNSIZEDEST         = 0x4
+$$DDCAPS_ALIGNBOUNDARYSRC        = 0x8
+$$DDCAPS_ALIGNSIZESRC          = 0x10
+$$DDCAPS_ALIGNSTRIDE          = 0x20
+$$DDCAPS_BLT              = 0x40
+$$DDCAPS_BLTQUEUE            = 0x80
+$$DDCAPS_BLTFOURCC           = 0x100
+$$DDCAPS_BLTSTRETCH           = 0x200
+$$DDCAPS_GDI              = 0x400
+$$DDCAPS_OVERLAY            = 0x800
+$$DDCAPS_OVERLAYCANTCLIP        = 0x1000
+$$DDCAPS_OVERLAYFOURCC         = 0x2000
+$$DDCAPS_OVERLAYSTRETCH         = 0x4000
+$$DDCAPS_PALETTE            = 0x8000
+$$DDCAPS_PALETTEVSYNC          = 0x10000
+$$DDCAPS_READSCANLINE          = 0x20000
+$$DDCAPS_STEREOVIEW           = 0x40000
+$$DDCAPS_VBI              = 0x80000
+$$DDCAPS_ZBLTS             = 0x100000
+$$DDCAPS_ZOVERLAYS           = 0x200000
+$$DDCAPS_COLORKEY            = 0x400000
+$$DDCAPS_ALPHA             = 0x800000
+$$DDCAPS_COLORKEYHWASSIST        = 0x1000000
+$$DDCAPS_NOHARDWARE           = 0x2000000
+$$DDCAPS_BLTCOLORFILL          = 0x4000000
+$$DDCAPS_BANKSWITCHED          = 0x8000000
+$$DDCAPS_BLTDEPTHFILL          = 0x10000000
+$$DDCAPS_CANCLIP            = 0x20000000
+$$DDCAPS_CANCLIPSTRETCHED        = 0x40000000
+$$DDCAPS_CANBLTSYSMEM          = 0x80000000
+$$DDCAPS2_CERTIFIED           = 0x1
+$$DDCAPS2_NO2DDURING3DSCENE       = 0x2
+$$DDCAPS2_VIDEOPORT           = 0x4
+$$DDCAPS2_AUTOFLIPOVERLAY        = 0x8
+$$DDCAPS2_CANBOBINTERLEAVED       = 0x10
+$$DDCAPS2_CANBOBNONINTERLEAVED     = 0x20
+$$DDCAPS2_COLORCONTROLOVERLAY      = 0x40
+$$DDCAPS2_COLORCONTROLPRIMARY      = 0x80
+$$DDCAPS2_CANDROPZ16BIT         = 0x100
+$$DDCAPS2_NONLOCALVIDMEM        = 0x200
+$$DDCAPS2_NONLOCALVIDMEMCAPS      = 0x400
+$$DDCAPS2_NOPAGELOCKREQUIRED      = 0x800
+$$DDCAPS2_WIDESURFACES         = 0x1000
+$$DDCAPS2_CANFLIPODDEVEN        = 0x2000
+$$DDCAPS2_CANBOBHARDWARE        = 0x4000
+$$DDCAPS2_COPYFOURCC          = 0x8000
+$$DDFXALPHACAPS_BLTALPHAEDGEBLEND    = 0x1
+$$DDFXALPHACAPS_BLTALPHAPIXELS     = 0x2
+$$DDFXALPHACAPS_BLTALPHAPIXELSNEG    = 0x4
+$$DDFXALPHACAPS_BLTALPHASURFACES    = 0x8
+$$DDFXALPHACAPS_BLTALPHASURFACESNEG   = 0x10
+$$DDFXALPHACAPS_OVERLAYALPHAEDGEBLEND  = 0x20
+$$DDFXALPHACAPS_OVERLAYALPHAPIXELS   = 0x40
+$$DDFXALPHACAPS_OVERLAYALPHAPIXELSNEG  = 0x80
+$$DDFXALPHACAPS_OVERLAYALPHASURFACES  = 0x100
+$$DDFXALPHACAPS_OVERLAYALPHASURFACESNEG = 0x00000200
+$$DDFXCAPS_BLTARITHSTRETCHY       = 0x20
+$$DDFXCAPS_BLTARITHSTRETCHYN      = 0x10
+$$DDFXCAPS_BLTMIRRORLEFTRIGHT      = 0x40
+$$DDFXCAPS_BLTMIRRORUPDOWN       = 0x80
+$$DDFXCAPS_BLTROTATION         = 0x100
+$$DDFXCAPS_BLTROTATION90        = 0x200
+$$DDFXCAPS_BLTSHRINKX          = 0x400
+$$DDFXCAPS_BLTSHRINKXN         = 0x800
+$$DDFXCAPS_BLTSHRINKY          = 0x1000
+$$DDFXCAPS_BLTSHRINKYN         = 0x2000
+$$DDFXCAPS_BLTSTRETCHX         = 0x4000
+$$DDFXCAPS_BLTSTRETCHXN         = 0x8000
+$$DDFXCAPS_BLTSTRETCHY         = 0x10000
+$$DDFXCAPS_BLTSTRETCHYN         = 0x20000
+$$DDFXCAPS_OVERLAYARITHSTRETCHY     = 0x40000
+$$DDFXCAPS_OVERLAYARITHSTRETCHYN    = 0x8
+$$DDFXCAPS_OVERLAYSHRINKX        = 0x80000
+$$DDFXCAPS_OVERLAYSHRINKXN       = 0x100000
+$$DDFXCAPS_OVERLAYSHRINKY        = 0x200000
+$$DDFXCAPS_OVERLAYSHRINKYN       = 0x400000
+$$DDFXCAPS_OVERLAYSTRETCHX       = 0x800000
+$$DDFXCAPS_OVERLAYSTRETCHXN       = 0x1000000
+$$DDFXCAPS_OVERLAYSTRETCHY       = 0x2000000
+$$DDFXCAPS_OVERLAYSTRETCHYN       = 0x4000000
+$$DDFXCAPS_OVERLAYMIRRORLEFTRIGHT    = 0x8000000
+$$DDFXCAPS_OVERLAYMIRRORUPDOWN     = 0x10000000
+$$DDSVCAPS_ENIGMA            = 0x1
+$$DDSVCAPS_FLICKER           = 0x2
+$$DDSVCAPS_REDBLUE           = 0x4
+$$DDSVCAPS_SPLIT            = 0x8
+$$DDPCAPS_4BIT             = 0x1
+$$DDPCAPS_8BITENTRIES          = 0x2
+$$DDPCAPS_8BIT             = 0x4
+$$DDPCAPS_INITIALIZE          = 0x8
+$$DDPCAPS_PRIMARYSURFACE        = 0x10
+$$DDPCAPS_PRIMARYSURFACELEFT      = 0x20
+$$DDPCAPS_ALLOW256           = 0x40
+$$DDPCAPS_VSYNC             = 0x80
+$$DDPCAPS_1BIT             = 0x100
+$$DDPCAPS_2BIT             = 0x200
+$$DDBD_1                = 0x4000
+$$DDBD_2                = 0x2000
+$$DDBD_4                = 0x1000
+$$DDBD_8                = 0x800
+$$DDBD_16                = 0x400
+$$DDBD_24                = 0x200
+$$DDBD_32                = 0x100
+$$DDCKEY_COLORSPACE           = 0x1
+$$DDCKEY_DESTBLT            = 0x2
+$$DDCKEY_DESTOVERLAY          = 0x4
+$$DDCKEY_SRCBLT             = 0x8
+$$DDCKEY_SRCOVERLAY           = 0x10
+$$DDCKEYCAPS_DESTBLT          = 0x1
+$$DDCKEYCAPS_DESTBLTCLRSPACE      = 0x2
+$$DDCKEYCAPS_DESTBLTCLRSPACEYUV     = 0x4
+$$DDCKEYCAPS_DESTBLTYUV         = 0x8
+$$DDCKEYCAPS_DESTOVERLAY        = 0x10
+$$DDCKEYCAPS_DESTOVERLAYCLRSPACE    = 0x20
+$$DDCKEYCAPS_DESTOVERLAYCLRSPACEYUV   = 0x40
+$$DDCKEYCAPS_DESTOVERLAYONEACTIVE    = 0x80
+$$DDCKEYCAPS_DESTOVERLAYYUV       = 0x100
+$$DDCKEYCAPS_SRCBLT           = 0x200
+$$DDCKEYCAPS_SRCBLTCLRSPACE       = 0x400
+$$DDCKEYCAPS_SRCBLTCLRSPACEYUV     = 0x800
+$$DDCKEYCAPS_SRCBLTYUV         = 0x1000
+$$DDCKEYCAPS_SRCOVERLAY         = 0x2000
+$$DDCKEYCAPS_SRCOVERLAYCLRSPACE     = 0x4000
+$$DDCKEYCAPS_SRCOVERLAYCLRSPACEYUV   = 0x8000
+$$DDCKEYCAPS_SRCOVERLAYONEACTIVE    = 0x10000
+$$DDCKEYCAPS_SRCOVERLAYYUV       = 0x20000
+$$DDCKEYCAPS_NOCOSTOVERLAY       = 0x40000
+$$DDPF_ALPHAPIXELS           = 0x1
+$$DDPF_ALPHA              = 0x2
+$$DDPF_FOURCC              = 0x4
+$$DDPF_PALETTEINDEXED4         = 0x8
+$$DDPF_PALETTEINDEXEDTO8        = 0x10
+$$DDPF_PALETTEINDEXED8         = 0x20
+$$DDPF_RGB               = 0x40
+$$DDPF_COMPRESSED            = 0x80
+$$DDPF_RGBTOYUV             = 0x100
+$$DDPF_YUV               = 0x200
+$$DDPF_ZBUFFER             = 0x400
+$$DDPF_PALETTEINDEXED1         = 0x800
+$$DDPF_PALETTEINDEXED2         = 0x1000
+$$DDPF_ZPIXELS             = 0x2000
+$$DDENUMSURFACES_ALL          = 0x1
+$$DDENUMSURFACES_MATCH         = 0x2
+$$DDENUMSURFACES_NOMATCH        = 0x4
+$$DDENUMSURFACES_CANBECREATED      = 0x8
+$$DDENUMSURFACES_DOESEXIST       = 0x10
+$$DDSDM_STANDARDVGAMODE         = 0x1
+$$DDEDM_REFRESHRATES          = 0x1
+$$DDEDM_STANDARDVGAMODES        = 0x2
+$$DDSCL_FULLSCREEN           = 0x1
+$$DDSCL_ALLOWREBOOT           = 0x2
+$$DDSCL_NOWINDOWCHANGES         = 0x4
+$$DDSCL_NORMAL             = 0x8
+$$DDSCL_EXCLUSIVE            = 0x10
+$$DDSCL_ALLOWMODEX           = 0x40
+$$DDSCL_SETFOCUSWINDOW         = 0x80
+$$DDSCL_SETDEVICEWINDOW         = 0x100
+$$DDSCL_CREATEDEVICEWINDOW       = 0x200
+$$DDBLT_ALPHADEST            = 0x1
+$$DDBLT_ALPHADESTCONSTOVERRIDE     = 0x2
+$$DDBLT_ALPHADESTNEG          = 0x4
+$$DDBLT_ALPHADESTSURFACEOVERRIDE    = 0x8
+$$DDBLT_ALPHAEDGEBLEND         = 0x10
+$$DDBLT_ALPHASRC            = 0x20
+$$DDBLT_ALPHASRCCONSTOVERRIDE      = 0x40
+$$DDBLT_ALPHASRCNEG           = 0x80
+$$DDBLT_ALPHASRCSURFACEOVERRIDE     = 0x100
+$$DDBLT_ASYNC              = 0x200
+$$DDBLT_COLORFILL            = 0x400
+$$DDBLT_DDFX              = 0x800
+$$DDBLT_DDROPS             = 0x1000
+$$DDBLT_KEYDEST             = 0x2000
+$$DDBLT_KEYDESTOVERRIDE         = 0x4000
+$$DDBLT_KEYSRC             = 0x8000
+$$DDBLT_KEYSRCOVERRIDE         = 0x10000
+$$DDBLT_ROP               = 0x20000
+$$DDBLT_ROTATIONANGLE          = 0x40000
+$$DDBLT_ZBUFFER             = 0x80000
+$$DDBLT_ZBUFFERDESTCONSTOVERRIDE    = 0x100000
+$$DDBLT_ZBUFFERDESTOVERRIDE       = 0x200000
+$$DDBLT_ZBUFFERSRCCONSTOVERRIDE     = 0x400000
+$$DDBLT_ZBUFFERSRCOVERRIDE       = 0x800000
+$$DDBLT_WAIT              = 0x1000000
+$$DDBLT_DEPTHFILL            = 0x2000000
+$$DDBLTFAST_NOCOLORKEY         = 0x0
+$$DDBLTFAST_SRCCOLORKEY         = 0x1
+$$DDBLTFAST_DESTCOLORKEY        = 0x2
+$$DDBLTFAST_WAIT            = 0x10
+$$DDFLIP_WAIT              = 0x1
+$$DDFLIP_EVEN              = 0x2
+$$DDFLIP_ODD              = 0x4
+$$DDOVER_ALPHADEST           = 0x1
+$$DDOVER_ALPHADESTCONSTOVERRIDE     = 0x2
+$$DDOVER_ALPHADESTNEG          = 0x4
+$$DDOVER_ALPHADESTSURFACEOVERRIDE    = 0x8
+$$DDOVER_ALPHAEDGEBLEND         = 0x10
+$$DDOVER_ALPHASRC            = 0x20
+$$DDOVER_ALPHASRCCONSTOVERRIDE     = 0x40
+$$DDOVER_ALPHASRCNEG          = 0x80
+$$DDOVER_ALPHASRCSURFACEOVERRIDE    = 0x100
+$$DDOVER_HIDE              = 0x200
+$$DDOVER_KEYDEST            = 0x400
+$$DDOVER_KEYDESTOVERRIDE        = 0x800
+$$DDOVER_KEYSRC             = 0x1000
+$$DDOVER_KEYSRCOVERRIDE         = 0x2000
+$$DDOVER_SHOW              = 0x4000
+$$DDOVER_ADDDIRTYRECT          = 0x8000
+$$DDOVER_REFRESHDIRTYRECTS       = 0x10000
+$$DDOVER_REFRESHALL           = 0x20000
+$$DDOVER_DDFX              = 0x80000
+$$DDOVER_BOB              = 0x200000
+$$DDOVER_OVERRIDEBOBWEAVE        = 0x400000
+$$DDOVER_INTERLEAVED          = 0x800000
+$$DDOVER_BOBHARDWARE          = 0x1000000
+$$DDLOCK_SURFACEMEMORYPTR        = 0x0
+$$DDLOCK_WAIT              = 0x1
+$$DDLOCK_EVENT             = 0x2
+$$DDLOCK_READONLY            = 0x10
+$$DDLOCK_WRITEONLY           = 0x20
+$$DDLOCK_NOSYSLOCK           = 0x800
+$$DDBLTFX_ARITHSTRETCHY         = 0x1
+$$DDBLTFX_MIRRORLEFTRIGHT        = 0x2
+$$DDBLTFX_MIRRORUPDOWN         = 0x4
+$$DDBLTFX_NOTEARING           = 0x8
+$$DDBLTFX_ROTATE180           = 0x10
+$$DDBLTFX_ROTATE270           = 0x20
+$$DDBLTFX_ROTATE90           = 0x40
+$$DDBLTFX_ZBUFFERRANGE         = 0x80
+$$DDBLTFX_ZBUFFERBASEDEST        = 0x100
+$$DDOVERFX_ARITHSTRETCHY        = 0x1
+$$DDOVERFX_MIRRORLEFTRIGHT       = 0x2
+$$DDOVERFX_MIRRORUPDOWN         = 0x4
+$$DDWAITVB_BLOCKBEGIN          = 0x1
+$$DDWAITVB_BLOCKBEGINEVENT       = 0x2
+$$DDWAITVB_BLOCKEND           = 0x4
+$$DDGFS_CANFLIP             = 0x1
+$$DDGFS_ISFLIPDONE           = 0x2
+$$DDGBS_CANBLT             = 0x1
+$$DDGBS_ISBLTDONE            = 0x2
+$$DDENUMOVERLAYZ_BACKTOFRONT      = 0x0
+$$DDENUMOVERLAYZ_FRONTTOBACK      = 0x1
+$$DDOVERZ_SENDTOFRONT          = 0x0
+$$DDOVERZ_SENDTOBACK          = 0x1
+$$DDOVERZ_MOVEFORWARD          = 0x2
+$$DDOVERZ_MOVEBACKWARD         = 0x3
+$$DDOVERZ_INSERTINFRONTOF        = 0x4
+$$DDOVERZ_INSERTINBACKOF        = 0x5
+
+$$DDERR_ALREADYINITIALIZED       = 0x88760005
+$$DDERR_CANNOTATTACHSURFACE       = 0x8876000a
+$$DDERR_CANNOTDETACHSURFACE       = 0x88760014
+$$DDERR_CURRENTLYNOTAVAIL        = 0x88760028
+$$DDERR_EXCEPTION            = 0x88760037
+$$DDERR_GENERIC             = 0x80004005
+$$DDERR_HEIGHTALIGN           = 0x8876005a
+$$DDERR_INCOMPATIBLEPRIMARY       = 0x8876005f
+$$DDERR_INVALIDCAPS           = 0x88760064
+$$DDERR_INVALIDCLIPLIST         = 0x8876006e
+$$DDERR_INVALIDMODE           = 0x88760078
+$$DDERR_INVALIDOBJECT          = 0x88760082
+$$DDERR_INVALIDPARAMS          = 0x80070057
+$$DDERR_INVALIDPIXELFORMAT       = 0x88760091
+$$DDERR_INVALIDRECT           = 0x88760096
+$$DDERR_LOCKEDSURFACES         = 0x887600a0
+$$DDERR_NO3D              = 0x887600aa
+$$DDERR_NOALPHAHW            = 0x887600b4
+$$DDERR_NOCLIPLIST           = 0x887600cd
+$$DDERR_NOCOLORCONVHW          = 0x887600d2
+$$DDERR_NOCOOPERATIVELEVELSET      = 0x887600d4
+$$DDERR_NOCOLORKEY           = 0x887600d7
+$$DDERR_NOCOLORKEYHW          = 0x887600dc
+$$DDERR_NODIRECTDRAWSUPPORT       = 0x887600de
+$$DDERR_NOEXCLUSIVEMODE         = 0x887600e1
+$$DDERR_NOFLIPHW            = 0x887600e6
+$$DDERR_NOGDI              = 0x887600f0
+$$DDERR_NOMIRRORHW           = 0x887600fa
+$$DDERR_NOTFOUND            = 0x887600ff
+$$DDERR_NOOVERLAYHW           = 0x88760104
+$$DDERR_NORASTEROPHW          = 0x88760118
+$$DDERR_NOROTATIONHW          = 0x88760122
+$$DDERR_NOSTRETCHHW           = 0x88760136
+$$DDERR_NOT4BITCOLOR          = 0x8876013c
+$$DDERR_NOT4BITCOLORINDEX        = 0x8876013d
+$$DDERR_NOT8BITCOLOR          = 0x88760140
+$$DDERR_NOTEXTUREHW           = 0x8876014a
+$$DDERR_NOVSYNCHW            = 0x8876014f
+$$DDERR_NOZBUFFERHW           = 0x88760154
+$$DDERR_NOZOVERLAYHW          = 0x8876015e
+$$DDERR_OUTOFCAPS            = 0x88760168
+$$DDERR_OUTOFMEMORY           = 0x8007000e
+$$DDERR_OUTOFVIDEOMEMORY        = 0x8876017c
+$$DDERR_OVERLAYCANTCLIP         = 0x8876017e
+$$DDERR_OVERLAYCOLORKEYONLYONEACTIVE  = 0x88760180
+$$DDERR_PALETTEBUSY           = 0x88760183
+$$DDERR_COLORKEYNOTSET         = 0x88760190
+$$DDERR_SURFACEALREADYATTACHED     = 0x8876019a
+$$DDERR_SURFACEALREADYDEPENDENT     = 0x887601a4
+$$DDERR_SURFACEBUSY           = 0x887601ae
+$$DDERR_CANTLOCKSURFACE         = 0x887601b3
+$$DDERR_SURFACEISOBSCURED        = 0x887601b8
+$$DDERR_SURFACELOST           = 0x887601c2
+$$DDERR_SURFACENOTATTACHED       = 0x887601cc
+$$DDERR_TOOBIGHEIGHT          = 0x887601d6
+$$DDERR_TOOBIGSIZE           = 0x887601e0
+$$DDERR_TOOBIGWIDTH           = 0x887601ea
+$$DDERR_UNSUPPORTED           = 0x80004001
+$$DDERR_UNSUPPORTEDFORMAT        = 0x887601fe
+$$DDERR_UNSUPPORTEDMASK         = 0x88760208
+$$DDERR_VERTICALBLANKINPROGRESS     = 0x88760219
+$$DDERR_WASSTILLDRAWING         = 0x8876021c
+$$DDERR_XALIGN             = 0x88760230
+$$DDERR_INVALIDDIRECTDRAWGUID      = 0x88760231
+$$DDERR_DIRECTDRAWALREADYCREATED    = 0x88760232
+$$DDERR_NODIRECTDRAWHW         = 0x88760233
+$$DDERR_PRIMARYSURFACEALREADYEXISTS   = 0x88760234
+$$DDERR_NOEMULATION           = 0x88760235
+$$DDERR_REGIONTOOSMALL         = 0x88760236
+$$DDERR_CLIPPERISUSINGHWND       = 0x88760237
+$$DDERR_NOCLIPPERATTACHED        = 0x88760238
+$$DDERR_NOHWND             = 0x88760239
+$$DDERR_HWNDSUBCLASSED         = 0x8876023a
+$$DDERR_HWNDALREADYSET         = 0x8876023b
+$$DDERR_NOPALETTEATTACHED        = 0x8876023c
+$$DDERR_NOPALETTEHW           = 0x8876023d
+$$DDERR_BLTFASTCANTCLIP         = 0x8876023e
+$$DDERR_NOBLTHW             = 0x8876023f
+$$DDERR_NODDROPSHW           = 0x88760240
+$$DDERR_OVERLAYNOTVISIBLE        = 0x88760241
+$$DDERR_NOOVERLAYDEST          = 0x88760242
+$$DDERR_INVALIDPOSITION         = 0x88760243
+$$DDERR_NOTAOVERLAYSURFACE       = 0x88760244
+$$DDERR_EXCLUSIVEMODEALREADYSET     = 0x88760245
+$$DDERR_NOTFLIPPABLE          = 0x88760246
+$$DDERR_CANTDUPLICATE          = 0x88760247
+$$DDERR_NOTLOCKED            = 0x88760248
+$$DDERR_CANTCREATEDC          = 0x88760249
+$$DDERR_NODC              = 0x8876024a
+$$DDERR_WRONGMODE            = 0x8876024b
+$$DDERR_IMPLICITLYCREATED        = 0x8876024c
+$$DDERR_NOTPALETTIZED          = 0x8876024d
+$$DDERR_UNSUPPORTEDMODE         = 0x8876024e
+$$DDERR_NOMIPMAPHW           = 0x8876024f
+$$DDERR_INVALIDSURFACETYPE       = 0x88760250
+$$DDERR_NOOPTIMIZEHW          = 0x88760258
+$$DDERR_NOTLOADED            = 0x88760259
+$$DDERR_NOFOCUSWINDOW          = 0x8876025a
+$$DDERR_DCALREADYCREATED        = 0x8876026c
+$$DDERR_NONONLOCALVIDMEM        = 0x88760276
+$$DDERR_CANTPAGELOCK          = 0x88760280
+$$DDERR_CANTPAGEUNLOCK         = 0x88760294
+$$DDERR_NOTPAGELOCKED          = 0x887602a8
+$$DDERR_MOREDATA            = 0x887602b2
+$$DDERR_VIDEONOTACTIVE         = 0x887602b7
+$$DDERR_DEVICEDOESNTOWNSURFACE     = 0x887602bb
+$$DDERR_NOTINITIALIZED         = 0x800401f0
+
+

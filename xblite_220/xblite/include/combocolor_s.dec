@@ -1,0 +1,6 @@
+EXTERNAL FUNCTION  CreateComboColor (hWnd, ctrlId, left, top, width, height, autoCol, userCol)
+$$CBCOL_SETAUTOCOLOR = 1124
+$$CBCOL_SETUSERCOLOR = 1125
+$$CBCOL_GETAUTOCOLOR = 1224
+$$CBCOL_GETUSERCOLOR = 1225
+$$CBCOL_GETSELCOLOR  = 1226' wParam is $$TRUE to show ColorDialog on user color

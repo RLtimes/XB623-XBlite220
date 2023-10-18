@@ -1,0 +1,209 @@
+'
+' ###############################
+' #####  declare functions  #####
+' ###############################
+'
+EXTERNAL FUNCTION  Xpr ()
+'
+'StartDocument/EndDocument/NewPage Functions
+'
+EXTERNAL FUNCTION  XprEndDocument ()
+EXTERNAL FUNCTION  XprNewPage ()
+EXTERNAL FUNCTION  XprStartDocument (prtName$, jobName$)
+'
+'Text line/paragraph/file printing functions
+'
+EXTERNAL FUNCTION  XprTextArray (@text$[], textFlags, marLeft, DOUBLE marTop, marRight, marBottom, fontName$, fontHeight)
+EXTERNAL FUNCTION  XprTextFile (fileName$, textFlags, marLeft, DOUBLE marTop, marRight, marBottom, fontName$, fontHeight)
+EXTERNAL FUNCTION  XprTextLine (text$, textFlags, marLeft, DOUBLE marTop, marRight, marBottom, fontName$, fontHeight)
+EXTERNAL FUNCTION  XprTextParagraph (text$, textFlags, marLeft, DOUBLE marTop, marRight, marBottom, fontName$, fontHeight)
+'
+'bmp/grid printing functions
+'
+EXTERNAL FUNCTION  XprPrintBmpFile (fileName$, style, pxPos, DOUBLE pyPos, scaleFactor)
+EXTERNAL FUNCTION  XprPrintScreen (x1Disp, y1Disp, x2Disp, y2Disp, style, pxPos, DOUBLE pyPos, scaleFactor)
+EXTERNAL FUNCTION  XprPrintWindow (window, style, pxPos, DOUBLE pyPos, scaleFactor)
+'
+'drawing graphics functions
+'
+EXTERNAL FUNCTION  XprDrawBox (color, x1, y1, x2, y2, lineStyle, lineWidth)
+EXTERNAL FUNCTION  XprDrawCircle (color, r, x, y, lineStyle, lineWidth)
+EXTERNAL FUNCTION  XprDrawEllipse (color, x1, y1, x2, y2, lineStyle, lineWidth)
+EXTERNAL FUNCTION  XprDrawLine (color, x1, y1, x2, y2, lineStyle, lineWidth)
+EXTERNAL FUNCTION  XprDrawPie (color, r, x, y, angleStart#, angleEnd#, lineStyle, lineWidth)
+EXTERNAL FUNCTION  XprDrawText (text$, textFlags, xpos, @ypos, fontName$, fontHeight)
+'
+'misc print/printer settings and conversion functions
+'
+EXTERNAL FUNCTION  XprGetDefaultPrinter (@defPrinter$, @driver$, @port$)
+EXTERNAL FUNCTION  XprGetLinesPerPage (fontHeight, @lpp)
+EXTERNAL FUNCTION  XprGetPrintingOffset (prtName$, @right, @left, @top, @bottom)
+EXTERNAL FUNCTION  XprGetPrinterYpos (DOUBLE pyPos)
+EXTERNAL FUNCTION  XprGetTabValue (@tabV)
+EXTERNAL FUNCTION  XprSetFillStyle (fillStyle, color)
+EXTERNAL FUNCTION  XprSetTabValue (tabV)
+EXTERNAL FUNCTION  XprSetTextColors (textColor, backColor)
+'
+'simple text string LPRINT to LPT1
+'
+EXTERNAL FUNCTION  XprLPrint (text$)
+EXTERNAL FUNCTION  XprRawTextToPrinter (printerName$, @text$)
+'
+'shell file printing functions
+'
+EXTERNAL FUNCTION  XprPrintFileToLPT1 (fileName$, linesPerPage, escSequence$)
+EXTERNAL FUNCTION  XprPrintFileToMsHtml (fileName$)
+EXTERNAL FUNCTION  XprPrintFileToNetscape (fileName$)
+EXTERNAL FUNCTION  XprPrintFileToNotePad (fileName$)
+EXTERNAL FUNCTION  XprPrintFileToShellExecute (fileName$)
+EXTERNAL FUNCTION  XprPrintFileToWordPad (fileName$)
+'
+'
+' #########################
+' ##### Xpr constants #####
+' #########################
+'
+' text weight
+'
+$$TEXT_DEFAULT       = 0x0000
+$$TEXT_THIN          = 0x0001
+$$TEXT_EXTRALIGHT    = 0x0002
+$$TEXT_LIGHT         = 0x0004
+$$TEXT_NORMAL        = 0x0008
+$$TEXT_MEDIUM        = 0x0010
+$$TEXT_SEMIBOLD      = 0x0020
+$$TEXT_BOLD          = 0x0040
+$$TEXT_EXTRABOLD     = 0x0080
+$$TEXT_HEAVY         = 0x0100
+'
+' text styles
+'
+$$TEXT_ITALIC        = 0x0200
+$$TEXT_UNDERLINED    = 0x0400
+'
+' text mode
+'
+$$TEXT_WORDWRAPOFF   = 0x0800
+$$TEXT_WORDWRAPON    = 0x1000
+' text justify
+'
+$$TEXT_JUSTIFYCENTER	=0x2000
+$$TEXT_JUSTIFYRIGHT		=0x4000
+'
+' XprPrintBmpFile() flags
+'
+$$BMP_TOPLEFT            = 1
+$$BMP_MIDDLECENTER       = 2
+$$BMP_MANUALPOSITION     = 4
+$$BMP_SCALEFACTORON      = 8
+'
+' Fill styles
+$$FillStyleNone  = 0x0
+$$FillStyleSolid = 0x10
+$$FillStyleHatch = 0x20
+' Line styles
+$$LineStyleSolid      = 0
+$$LineStyleDash       = 1
+$$LineStyleDot        = 2
+$$LineStyleDashDot    = 3
+$$LineStyleDashDotDot = 4
+' EPSON Printer mode control ESC sequences
+' Can be used when sending raw text to printer
+$$RN = "\r\n"
+$$NEWLINE = "\n"
+$$FF = "\f"
+$$10CPI = "\e\x50"
+$$12CPI = "\e\x4d"
+$$BOLD_ON  = "\e\x45"
+$$BOLD_OFF = "\e\x46"
+$$ITALIC_ON = "\e\x34"
+$$ITALIC_OFF = "\e\x35"
+$$UNDERLINE_ON = "\e\x2d\x31"
+$$UNDERLINE_OFF = "\e\x2d\x30"
+$$PROPORTIONAL_ON = "\e\x70\x31"
+$$PROPORTIONAL_OFF = "\e\x70\x30"
+$$WIDE_ON = "\e\x57\x31"
+$$WIDE_OFF = "\e\x57\x30"
+$$CONDENSED_ON = "\x0f"
+$$CONDENSED_OFF = "\x12"
+$$FONT_ROMAN = "\e\x6b\x00"
+$$FONT_SANSERIF = "\e\x6b\x01"
+$$FONT_COURIER = "\e\x6b\x02"
+$$FONT_PRESTIGE = "\e\x6b\x03"
+$$FONT_SCRIPT = "\e\x6b\x04"
+$$SELECT_PICA = "\e\x21\x00"
+$$SELECT_ELITE = "\e\x21\x01"
+$$SELECT_PROPORTIONAL = "\e\x21\x02"
+$$SELECT_CONDENSED = "\e\x21\x04"
+$$SELECT_EMPHASIZED = "\e\x21\x08"
+$$SELECT_DOUBLESTRIKE = "\e\x21\x10"
+$$SELECT_DOUBLEWIDE = "\e\x21\x20"
+$$SELECT_ITALIC = "\e\x21\x40"
+$$SELECT_UNDERLINE = "\e\x21\x80"
+$$STYLE_NORMAL = "\e\x71\x00"
+$$STYLE_OUTLINE = "\e\x71\x01"
+$$STYLE_SHADOW = "\e\x71\x02"
+$$STYLE_OUTLINE_SHADOW = "\e\x71\x03"
+$$RESET = "\e\x40"
+' XBLite uses just Win32 color values
+' and ignores XB color numbers
+' These constants are now included in
+' user32.dec
+' ColorConstant           Hexadecimal
+'
+'                           BBGGRR
+'  $$Black               = 0x000000
+'  $$DarkBlue            = 0x3F0000
+'  $$MediumBlue          = 0x7F0000
+'  $$Blue                = 0x7F0000
+'  $$BrightBlue          = 0xBF0000
+'  $$LightBlue           = 0xFF0000
+'  $$DarkGreen           = 0x003F00
+'  $$MediumGreen         = 0x007F00
+'  $$Green               = 0x007F00
+'  $$BrightGreen         = 0x00BF00
+'  $$LightGreen          = 0x00FF00
+'  $$DarkCyan            = 0x3F3F00
+'  $$MediumCyan          = 0x7F7F00
+'  $$Cyan                = 0x7F7F00
+'  $$BrightCyan          = 0xBFBF00
+'  $$LightCyan           = 0xFFFF00
+'  $$DarkRed             = 0x00003F
+'  $$MediumRed           = 0x00007F
+'  $$Red                 = 0x00007F
+'  $$BrightRed           = 0x0000BF
+'  $$LightRed            = 0x0000FF
+'  $$DarkMagenta         = 0x3F003F
+'  $$MediumMagenta       = 0x7F007F
+'  $$Magenta             = 0x7F007F
+'  $$BrightMagenta       = 0xBF00BF
+'  $$LightMagenta        = 0xFF00FF
+'  $$DarkBrown           = 0x003F3F
+'  $$MediumBrown         = 0x007F7F
+'  $$Brown               = 0x007F7F
+'  $$Yellow              = 0x00BFBF
+'  $$BrightYellow        = 0x00FFFF
+'  $$LightYellow         = 0x00FFFF
+'  $$DarkGrey            = 0x3F3F3F
+'  $$MediumGrey          = 0x7F7F7F
+'  $$Grey                = 0x7F7F7F
+'  $$LightGrey           = 0xBFBFBF
+'  $$BrightGrey          = 0xBFBFBF
+'  $$DarkSteel           = 0x3F3F7F
+'  $$MediumSteel         = 0x7F7FBF
+'  $$Steel               = 0x7F7FBF
+'  $$BrightSteel         = 0xBFBFFF
+'  $$MediumOrange        = 0x3F3FBF
+'  $$Orange              = 0x3F3FBF
+'  $$BrightOrange        = 0x7F7FFF
+'  $$LightOrange         = 0x7F7FFF
+'  $$MediumAqua          = 0x7FBF3F
+'  $$Aqua                = 0x7FBF3F
+'  $$BrightAqua          = 0xBFFF7F
+'  $$DarkViolet          = 0x7F3F7F
+'  $$MediumViolet        = 0xBF7FBF
+'  $$Violet              = 0xBF7FBF
+'  $$BrightViolet        = 0xFFBFFF
+'  $$White               = 0xFFFFFF
+'
+

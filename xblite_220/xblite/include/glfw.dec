@@ -1,0 +1,332 @@
+'========================================================================
+' GLFW - An OpenGL framework
+' File:     glfw.dec
+' Version:  2.2.3.XBLite
+' Date:     2002.11.05  (y/m/d)
+' Author:   Marcus Geelnard (marcus.geelnard@home.se)
+' WWW:      http://hem.passagen.se/opengl/glfw/
+'------------------------------------------------------------------------
+' Copyright (c) 2002 Marcus Geelnard
+'
+' GLFW is provided "as-is", without any express or implied warranty,
+' without even the implied warranty of fitness for a particular purpose.
+' In no event will the author be held liable for any damage araising from
+' the use of GLFW.
+'
+' Permission is granted to anyone to use GLFW for any purpose, including
+' commercial applications, and to alter it and redistribute it freely,
+' subject to the following restrictions:
+'
+' 1. You must not claim that you wrote GLFW.
+' 2. If you modify any parts of GLFW, it must be clearly stated which
+'    modifications have been made, and that those modifications are not
+'    the work of the author of GLFW.
+' 3. If you use GLFW in a product, an acknowledgment in the product
+'    documentation would be appreciated, but is not required.
+' 4. This notice may not be removed or altered from any source
+'    distribution of GLFW.
+'
+' Marcus Geelnard
+' marcus.geelnard@home.se
+'
+' XBLite header ported by Michael McElligott
+' Mapei_@hotmail.com
+' Updated for glfw v2.3
+' Version 1.01
+'========================================================================
+
+
+'========================================================================
+' GLFW version
+'========================================================================
+
+$$GLFW_VERSION_MAJOR = 2
+$$GLFW_VERSION_MINOR = 5
+$$GLFW_VERSION_REVISION = 0
+
+
+'========================================================================
+' Input handling definitions
+'========================================================================
+
+' Key and button state/action definitions
+$$GLFW_RELEASE = 0
+$$GLFW_PRESS = 1
+
+' Keyboard key definitions (ASCII-codes are used for most keys, such
+' as A-Z, 0-9 etc)
+$$GLFW_KEY_UNKNOWN = -1
+$$GLFW_KEY_SPACE = 32
+$$GLFW_KEY_SPECIAL = 256
+$$GLFW_KEY_ESC =   257
+$$GLFW_KEY_F1 =   258
+$$GLFW_KEY_F2 =   259
+$$GLFW_KEY_F3 =   260
+$$GLFW_KEY_F4 =   261
+$$GLFW_KEY_F5 =   262
+$$GLFW_KEY_F6 =   263
+$$GLFW_KEY_F7 =   264
+$$GLFW_KEY_F8 =   265
+$$GLFW_KEY_F9 =   266
+$$GLFW_KEY_F10 =  267
+$$GLFW_KEY_F11 =  268
+$$GLFW_KEY_F12 =  269
+$$GLFW_KEY_F13 =  270
+$$GLFW_KEY_F14 =  271
+$$GLFW_KEY_F15 =  272
+$$GLFW_KEY_F16 =  273
+$$GLFW_KEY_F17 =  274
+$$GLFW_KEY_F18 =  275
+$$GLFW_KEY_F19 =  276
+$$GLFW_KEY_F20 =  277
+$$GLFW_KEY_F21 =  278
+$$GLFW_KEY_F22 =  279
+$$GLFW_KEY_F23 =  280
+$$GLFW_KEY_F24 =  281
+$$GLFW_KEY_F25 =  282
+$$GLFW_KEY_UP =   283
+$$GLFW_KEY_DOWN = 284
+$$GLFW_KEY_LEFT = 285
+$$GLFW_KEY_RIGHT= 286
+$$GLFW_KEY_LSHIFT=287
+$$GLFW_KEY_RSHIFT=288
+$$GLFW_KEY_LCTRL= 289
+$$GLFW_KEY_RCTRL= 290
+$$GLFW_KEY_LALT = 291
+$$GLFW_KEY_RALT = 292
+$$GLFW_KEY_TAB =  293
+$$GLFW_KEY_ENTER= 294
+$$GLFW_KEY_BACKSPACE = 295
+$$GLFW_KEY_INSERT = 296
+$$GLFW_KEY_DEL =  297
+$$GLFW_KEY_PAGEUP = 298
+$$GLFW_KEY_PAGEDOWN = 299
+$$GLFW_KEY_HOME = 300
+$$GLFW_KEY_END = 301
+$$GLFW_KEY_KP_0 = 302
+$$GLFW_KEY_KP_1 = 303
+$$GLFW_KEY_KP_2 = 304
+$$GLFW_KEY_KP_3 = 305
+$$GLFW_KEY_KP_4 = 306
+$$GLFW_KEY_KP_5 = 307
+$$GLFW_KEY_KP_6 = 308
+$$GLFW_KEY_KP_7 = 309
+$$GLFW_KEY_KP_8 = 310
+$$GLFW_KEY_KP_9 = 311
+$$GLFW_KEY_KP_DIVIDE = 312
+$$GLFW_KEY_KP_MULTIPLY = 313
+$$GLFW_KEY_KP_SUBTRACT = 314
+$$GLFW_KEY_KP_ADD = 315
+$$GLFW_KEY_KP_DECIMAL = 316
+$$GLFW_KEY_KP_EQUAL = 317
+$$GLFW_KEY_KP_ENTER = 318
+$$GLFW_KEY_LAST = $$GLFW_KEY_KP_ENTER
+
+' Mouse button definitions
+
+$$GLFW_MOUSE_BUTTON_1    = 0
+$$GLFW_MOUSE_BUTTON_2    = 1
+$$GLFW_MOUSE_BUTTON_3    = 2
+$$GLFW_MOUSE_BUTTON_4    = 3
+$$GLFW_MOUSE_BUTTON_5    = 4
+$$GLFW_MOUSE_BUTTON_6    = 5
+$$GLFW_MOUSE_BUTTON_7    = 6
+$$GLFW_MOUSE_BUTTON_8    = 7
+$$GLFW_MOUSE_BUTTON_LAST = $$GLFW_MOUSE_BUTTON_8
+
+$$GLFW_MOUSE_BUTTON_LEFT = $$GLFW_MOUSE_BUTTON_1
+$$GLFW_MOUSE_BUTTON_RIGHT = $$GLFW_MOUSE_BUTTON_2
+$$GLFW_MOUSE_BUTTON_MIDDLE = $$GLFW_MOUSE_BUTTON_3
+
+
+' Joystick identifiers
+$$GLFW_JOYSTICK_1 = 0
+$$GLFW_JOYSTICK_2 = 1
+$$GLFW_JOYSTICK_3 = 2
+$$GLFW_JOYSTICK_4 = 3
+$$GLFW_JOYSTICK_5 = 4
+$$GLFW_JOYSTICK_6 = 5
+$$GLFW_JOYSTICK_7 = 6
+$$GLFW_JOYSTICK_8 = 7
+$$GLFW_JOYSTICK_9 = 8
+$$GLFW_JOYSTICK_10 = 9
+$$GLFW_JOYSTICK_11 = 10
+$$GLFW_JOYSTICK_12 = 11
+$$GLFW_JOYSTICK_13 = 12
+$$GLFW_JOYSTICK_14 = 13
+$$GLFW_JOYSTICK_15 = 14
+$$GLFW_JOYSTICK_16 = 15
+$$GLFW_JOYSTICK_LAST = $$GLFW_JOYSTICK_16
+
+
+'========================================================================
+' Other definitions
+'========================================================================
+
+' glfwOpenWindow modes
+$$GLFW_WINDOW = 0x10001
+$$GLFW_FULLSCREEN = 0x10002
+
+' glfwGetWindowParam tokens
+$$GLFW_OPENED = 0x20001
+$$GLFW_ACTIVE = 0x20002
+$$GLFW_ICONIFIED = 0x20003
+$$GLFW_ACCELERATED = 0x20004
+$$GLFW_RED_BITS = 0x20005
+$$GLFW_GREEN_BITS = 0x20006
+$$GLFW_BLUE_BITS = 0x20007
+$$GLFW_ALPHA_BITS = 0x20008
+$$GLFW_DEPTH_BITS = 0x20009
+$$GLFW_STENCIL_BITS = 0x2000A
+
+' The following constants are used for both glfwGetWindowParam
+' and glfwOpenWindowHint
+$$GLFW_REFRESH_RATE = 0x2000B
+$$GLFW_ACCUM_RED_BITS = 0x2000C
+$$GLFW_ACCUM_GREEN_BITS = 0x2000D
+$$GLFW_ACCUM_BLUE_BITS = 0x2000E
+$$GLFW_ACCUM_ALPHA_BITS = 0x2000F
+$$GLFW_AUX_BUFFERS = 0x20010
+
+' glfwEnable/glfwDisable tokens
+$$GLFW_MOUSE_CURSOR = 0x30001
+$$GLFW_STICKY_KEYS = 0x30002
+$$GLFW_STICKY_MOUSE_BUTTONS = 0x30003
+$$GLFW_SYSTEM_KEYS = 0x30004
+$$GLFW_KEY_REPEAT = 0x30005
+
+' glfwWaitThread wait modes
+$$GLFW_WAIT = 0x40001
+$$GLFW_NOWAIT = 0x40002
+
+' glfwGetJoystickParam tokens
+$$GLFW_PRESENT = 0x50001
+$$GLFW_AXES = 0x50002
+$$GLFW_BUTTONS = 0x50003
+
+' glfwReadImage/glfwLoadTexture2D flags
+$$GLFW_NO_RESCALE_BIT = 0x1
+$$GLFW_ORIGIN_UL_BIT = 0x2
+$$GLFW_BUILD_MIPMAPS_BIT = 0x4
+
+' The maximum number of threads supported by GLFW (including the main
+' thread)
+$$GLFW_MAX_NUM_THREADS = 100
+
+' Time spans longer than this (seconds) are considered to be infinity
+$$GLFW_INFINITY = 100000
+
+
+'========================================================================
+' Typedefs
+'========================================================================
+
+' The video mode structure used by glfwGetVideoModes()
+TYPE GLFWvidmode
+    XLONG	.width     
+    XLONG	.height    
+    XLONG	.redbits   
+    XLONG	.greenbits 
+    XLONG	.bluebits  
+END TYPE
+
+
+' Image/texture information
+TYPE GLFWimage
+    XLONG	.width         
+    XLONG	.height        
+    XLONG	.format        
+    XLONG	.bytesperpixel 
+    XLONG	.data
+'   UBYTE 	.data[0]  ' defined in VB as .data()
+END TYPE
+
+
+
+'========================================================================
+' Prototypes
+'========================================================================
+
+' GLFW initialization, termination and version querying
+EXTERNAL FUNCTION  glfwInit ()
+EXTERNAL FUNCTION  glfwTerminate ()
+EXTERNAL FUNCTION  glfwGetVersion   (majorAddr, minorAddr, revAddr)
+
+' Window handling
+EXTERNAL FUNCTION  glfwOpenWindow   (width , height, redbits, greenbits,  bluebits,  alphabits,  depthbits,  stencilbits,  mode) 
+EXTERNAL FUNCTION  glfwOpenWindowHint   (target ,hint)
+EXTERNAL FUNCTION  glfwCloseWindow  ()
+EXTERNAL FUNCTION  glfwSetWindowTitle   (titleAddr)
+EXTERNAL FUNCTION  glfwGetWindowSize   (widthAddr, heightAddr)
+EXTERNAL FUNCTION  glfwSetWindowSize   (width , height)
+EXTERNAL FUNCTION  glfwSetWindowPos   (x , y)
+EXTERNAL FUNCTION  glfwIconifyWindow  ()
+EXTERNAL FUNCTION  glfwUnIconifyWindow  ()
+EXTERNAL FUNCTION  glfwSwapBuffers  ()
+EXTERNAL FUNCTION  glfwSwapInterval   (interval)
+EXTERNAL FUNCTION  glfwGetWindowParam   (param) 
+EXTERNAL FUNCTION  glfwSetWindowSizeCallback   (cbfunAddr)
+EXTERNAL FUNCTION  glfwRestoreWindow ()
+EXTERNAL FUNCTION  glfwSetWindowCloseCallback (cbfunAddr)
+EXTERNAL FUNCTION  glfwSetWindowRefreshCallback (cbfunAddr)
+
+' Video mode functions
+EXTERNAL FUNCTION  glfwGetVideoModes   (listAddr,  maxcount) 
+EXTERNAL FUNCTION  glfwGetDesktopMode   (modeAddr)
+
+' Input handling
+EXTERNAL FUNCTION  glfwPollEvents  ()
+EXTERNAL FUNCTION  glfwWaitEvents ()
+EXTERNAL FUNCTION  glfwGetKey   (key) 
+EXTERNAL FUNCTION  glfwGetMouseButton   (button) 
+EXTERNAL FUNCTION  glfwGetMousePos   (xposAddr, yposAddr)
+EXTERNAL FUNCTION  glfwSetMousePos   (xpos , ypos)
+EXTERNAL FUNCTION  glfwGetMouseWheel   ()
+EXTERNAL FUNCTION  glfwSetMouseWheel   (pos)
+EXTERNAL FUNCTION  glfwSetKeyCallback   (cbfunAddr)
+EXTERNAL FUNCTION  glfwSetMouseButtonCallback   (cbfunAddr)
+EXTERNAL FUNCTION  glfwSetMousePosCallback   (cbfunAddr)
+EXTERNAL FUNCTION  glfwSetMouseWheelCallback   (cbfunAddr)
+EXTERNAL FUNCTION  glfwSetCharCallback (cbfunAddr)
+
+
+' Joystick input
+EXTERNAL FUNCTION  glfwGetJoystickParam   (joy, param) 
+EXTERNAL FUNCTION  glfwGetJoystickPos   (joy, posAddr, numaxes) 
+EXTERNAL FUNCTION  glfwGetJoystickButtons   (joy, buttonsAddr, numbuttons) 
+
+' Time
+EXTERNAL FUNCTION  DOUBLE glfwGetTime ()
+EXTERNAL FUNCTION  glfwSetTime   (DOUBLE time)
+EXTERNAL FUNCTION  glfwSleep   (DOUBLE time )
+
+' Extension support
+EXTERNAL FUNCTION  glfwExtensionSupported   (extensionAddr) 
+EXTERNAL FUNCTION  glfwGetProcAddress   (procnameAddr) 
+EXTERNAL FUNCTION  glfwGetGLVersion   (majorAddr, minorAddr, revAddr) 
+
+' Threading support
+EXTERNAL FUNCTION  glfwCreateThread   (threadfunAddr , argAddr) 
+EXTERNAL FUNCTION  glfwDestroyThread   (id) 
+EXTERNAL FUNCTION  glfwWaitThread   (id , waitmode) 
+EXTERNAL FUNCTION  glfwGetThreadID   ()
+EXTERNAL FUNCTION  glfwCreateMutex   ()
+EXTERNAL FUNCTION  glfwDestroyMutex   (mutex)
+EXTERNAL FUNCTION  glfwLockMutex   (mutex)
+EXTERNAL FUNCTION  glfwUnlockMutex   (mutex)
+EXTERNAL FUNCTION  glfwCreateCond ()   
+EXTERNAL FUNCTION  glfwDestroyCond   (cond)
+EXTERNAL FUNCTION  glfwWaitCond   (cond , mutex , DOUBLE timeout )
+EXTERNAL FUNCTION  glfwSignalCond   (cond)
+EXTERNAL FUNCTION  glfwBroadcastCond   (cond)
+EXTERNAL FUNCTION  glfwGetNumberOfProcessors   ()
+
+
+' Enable/disable functions
+EXTERNAL FUNCTION  glfwEnable   (token)
+EXTERNAL FUNCTION  glfwDisable   (token)
+
+' Image/texture I/O support  
+EXTERNAL FUNCTION  glfwReadImage   (nameAddr, imgAddr, flags ) 
+EXTERNAL FUNCTION  glfwFreeImage   (imgAddr)
+EXTERNAL FUNCTION  glfwLoadTexture2D  (nameAddr, flags) 

@@ -1,0 +1,50 @@
+'
+' #################################
+' #####  file "xxx/font.xxx"  #####
+' #################################
+'
+' The first file not commented out becomes the default font.
+'
+' Good choices include:
+'   OEM_FIXED_FONT      - best all round choice
+'   SYSTEM_FIXED_FONT   - readable and attractive - large line spacing
+'
+'   if OEM_FIXED_FONT is too small, try SYSTEM_FIXED_FONT
+'
+' Poor choices include:
+'   MS Standard Font    - upper case only !!!
+'   Symbol              - symbols, not characters
+'   System              - large but hard to read
+'   Fixedsys            - too thin and too wide
+'   ANSI_FIXED_FONT     - large but some ugly characters
+'   ANSI_VAR_FONT       - readable but not fixed pitch - sans serif - like helvetica
+'   SYSTEM_FONT         - very readable and attractive but not fixed pitch - like helvetica bold
+'   DEVICE_DEFAULT_FONT - very large - okay for person with terrible eyesight
+'   UNSPECIFIED_FONT    - very unreliable - generally not fixed pitch
+'   DEFAULT_GUI_FONT    - fairly readable for a small font - not fixed pitch
+'   Terminal            - short but wide characters - too thin
+'   MS Serif            - not very readable or attractive - too small - not fixed pitch
+'   Courier             - short but wide characters - too thin
+'   Small Fonts         - fairly readable and attractive for a very small font - not fixed pitch
+'   MS Helv             - very readable and attractive for a very small font - not fixed pitch
+'   8514oem             - huge characters - way too large
+'
+OEM_FIXED_FONT
+' SYSTEM_FIXED_FONT
+' ANSI_FIXED_FONT
+' ANSI_VAR_FONT
+' SYSTEM_FONT
+' DEVICE_DEFAULT_FONT
+' UNSPECIFIED_FONT
+' DEFAULT_GUI_FONT
+' System
+' Fixedsys
+' Terminal
+' MS Serif
+' MS Sans Serif
+' Courier
+' Symbol
+' Small Fonts
+' MCS Standard Font
+' MCS Helv
+' 8514oem

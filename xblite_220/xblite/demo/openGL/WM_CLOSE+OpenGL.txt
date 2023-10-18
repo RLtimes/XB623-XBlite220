@@ -1,0 +1,131 @@
+> WHAT is a WM_CLOSE message, how do I catch it, and how do I use it?
+> Sorry, but this is my first bit of OpenGL AND my first bit of Visual C++
+> programming. (Been doing command-line stuff until now, mostly unix.
+> Simple interfaces, but lots of data structures)
+
+    When you create your window, you register a 'windowclass' with win32:
+
+something like:
+    
+ // create a windowclass
+ wcWndClass.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+ wcWndClass.lpfnWndProc   = (WNDPROC)MainMsgHandler; 
+ wcWndClass.cbClsExtra    = 0; 
+ wcWndClass.cbWndExtra    = 0; 
+ wcWndClass.hInstance     = m_gpDemoDat->GethInstance(); 
+ wcWndClass.hIcon         = hiAppIcon;
+ wcWndClass.hCursor       = LoadCursor (NULL,IDC_ARROW); 
+ wcWndClass.hbrBackground = (HBRUSH)(COLOR_WINDOW+1); 
+ wcWndClass.lpszMenuName  = sAppName; 
+ wcWndClass.lpszClassName = sAppName; 
+
+ // register the windowclass
+ if(!RegisterClass(&wcWndClass)) 
+ {
+  // no way back.. exit.
+  return SYS_CW_NOTRECOVERABLEERROR; 
+ }
+
+
+you see there the name 'MainMsgHandler'.
+That's a function like this: (sorry for the sloppy indentation, that's
+the newsreader)
+
+long WINAPI 
+MainMsgHandler(HWND hWnd, UINT uMsg, WPARAM  wParam, LPARAM  lParam) 
+{ 
+ switch (uMsg) 
+{ 
+  case WM_CREATE: 
+  {
+   hDC = GetDC(hWnd); 
+   // setup pixelformat structure and get the pixelformat for OpenGL.
+   if(!SetupPixelFormat(hDC))
+   {
+    // didn't succeed. exit
+    PostQuitMessage(0); 
+    return 0;
+   }
+
+   // use Microsoft's wrappercalls to create a RenderContext and connect it to window
+    hRC = wglCreateContext(hDC); 
+
+   if(!hRC)
+   {
+    // failed.
+    // didn't succeed. exit
+    PostQuitMessage(0); 
+    return 0;
+   }
+
+   // make the just created rendercontext current.
+   wglMakeCurrent(hDC, hRC); 
+  
+  }; break;
+  case WM_DESTROY: 
+  {
+   // free the target DeviceContext
+   wglMakeCurrent(NULL,NULL);
+   hRC = m_gpDemoDat->GethRC();
+   if(hRC)
+   {
+    wglDeleteContext(hRC); 
+   }
+   hDC = m_gpDemoDat->GethDC();
+   if (hDC) 
+   {
+    ReleaseDC(hWnd, hDC); 
+   } PostQuitMessage (0); 
+  };break; 
+}
+
+you can also add WM_CLOSE to the switch(). 
+
+ok, your application is eventdriven, so you should dive into the loop below
+when you're done initializing and up and running:
+
+
+ bool bQuitMainLoop;
+ MSG  mMsg;
+
+ // check if there are messages in the queue. If so: process them.
+ for(bQuitMainLoop=false;!bQuitMainLoop;)
+ {
+  while(PeekMessage(&mMsg, NULL, 0, 0, PM_NOREMOVE)) 
+  {
+   if(GetMessage(&mMsg, NULL, 0, 0)) 
+   {
+    TranslateMessage(&mMsg);
+    DispatchMessage(&mMsg);
+   }
+   else
+   {
+    bQuitMainLoop=true;
+    break;
+   }
+  }
+  // we're displaying content. That needs to be as smooth as possible so no messagewaitin'
+  if(m_gpDemoDat->GetSystemState()==SSTATE_ARUN_KERNELLOOP)
+  {
+   ExecuteTimeLine((long)(m_gpDemoDat->GetfElapsedTimeInSecs() * 1000));
+   m_gpDemoDat->CalcElapsedTimeInSeconds();
+   RenderFrame();
+  }
+  else
+  {
+   WaitMessage(); 
+  }
+ }
+
+where I use a statevariable to check which part of the messageloop I have to go into.
+If the state of the system is 'SSTATE_ARUN_KERNELLOOP', I'm executing content so
+I calculate the new high resolution timer value and render a frame.
+
+the while(peekmessage()) stuff checks for messages. If there are messages they
+will be executed by the DispatchMessage call. THis means that the messagehandler
+routine will get called and the message found will be passed to it.
+
+In the MSDN are a lot of examples how to do simple event driven programming
+with win32. Try these first. it's not that hard.
+
+    FB

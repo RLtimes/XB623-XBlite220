@@ -1,0 +1,1143 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 4//EN">
+<html>
+<head>
+  <title>General Programming Concepts: Writing and Debugging Programs -
+Chapter 15. m4 Macro Processor Overview</title>
+<!-- Begin Header Records  ========================================== --><!-- /tmp/idwb/temp/idwt1000/genprogc.scr converted by idb2h R4.4     --><!-- (367) ID Workbench Version (AIX) on 30 Mar 2001 at 08:03:14      --><!-- (C) Copyright IBM Corporation, 1999                              --><!-- All rights reserved. Licensed Materials Property of IBM          --><!-- US Government Users Restricted Rights -                          --><!-- Use, duplication or disclosure restricted by                     --><!-- GSA ADP Schedule Contract with IBM Corp.                         -->
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta http-equiv="updated" content="Fri, 30 Mar 2001 08:02:47">
+  <meta http-equiv="review" content="Sat, 30 Mar 2002 08:02:47">
+  <meta http-equiv="expires" content="Sun, 30 Mar 2003 08:02:47">
+</head>
+<body bgcolor="#fcfbf0">
+<p></p>
+<h2> m4 Macro Processor Overview</h2>
+<p>The <b>m4</b> macro processor is a front-end processor for any
+programming language being used in the operating system environment.
+</p>
+<p><a name="SPTA24065FB822SONI"></a>The <b>m4</b> macro processor
+is useful in many ways. At the beginning of a program, you can define a
+symbolic name or symbolic constant as a particular string of
+characters. You can then use the <a
+ href="../../cmds/aixcmds3/m4.htm#HDRA258B9F"><b>m4</b></a>
+program to replace unquoted occurrences of the symbolic name with the
+corresponding string. Besides replacing one string of text with
+another, the <b>m4</b> macro processor provides the following
+features:
+</p>
+<ul>
+  <li><strong><a name="SPTAHN9967"></a></strong>Arithmetic capabilities
+  </li>
+  <li><strong><a name="SPTAHN9968"></a></strong>File manipulation
+  </li>
+  <li><strong><a name="SPTAHN9969"></a></strong>Conditional macro
+expansion
+  </li>
+  <li><strong><a name="SPTAHN9970"></a></strong>String and substring
+functions
+  </li>
+</ul>
+<p><a name="SPTA24065FC112SONI"></a>The <b>m4</b> macro processor
+processes strings of letters and digits called <i>tokens</i>. The
+<b>m4</b> program reads each alphanumeric token and determines if it is
+the name of a macro. The program then replaces the name of the macro
+with its defining text, and pushes the resulting string back onto the
+input to
+be rescanned. You can call macros with arguments, in which case the
+arguments are collected and substituted into the right places in the
+defining
+text before the defining text is rescanned.
+</p>
+<p><a name="SPTA24065FC194SONI"></a>The <b>m4</b> program
+provides built-in macros such as <b>define</b>. You can also create
+new macros. Built-in and user-defined macros work the same way.
+</p>
+<hr>
+<h2><a name="HDRA5Y6160SHAD">Using the m4 Macro Processor</a></h2>
+<p>
+<a name="IDX5183"></a></p>
+<p><a name="SPTA24065FC333SONI"></a>To use the <b>m4</b> macro
+processor, enter the following command:
+</p>
+<p><a name="SPTAHN9982"></a>
+</p>
+<pre>m4 [file]<br></pre>
+<p><a name="SPTA24065FC455SONI"></a>The <b>m4</b> program
+processes each argument in order. If there are no arguments or if an
+argument is <b>-</b> (dash), <b>m4</b> reads standard input as its
+input file. The <b>m4</b> program writes its results to standard
+output. Therefore, to redirect the output to a file for later use, use
+a command such as:
+</p>
+<p><a name="SPTAHN9984"></a>
+</p>
+<pre>m4 [file] &gt;outputfile<br></pre>
+<p><a name="SPTLV6120SHAD"></a>&nbsp;
+<a name="IDX5184"></a></p>
+<hr>
+<h2><a name="HDRA24065FC664SONI">Creating a User-Defined Macro</a></h2>
+<p>
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="52%"><a
+ name="SPTD722D9E844MELA"></a><b>define
+(</b><i>MacroName</i><b>,</b><i> Replacement</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="48%">Defines new macro <i>MacroName</i>
+with a value of
+      <i>Replacement</i>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>For example, if the following statement is in a program:
+</p>
+<p><a name="SPTAHN9989"></a>
+</p>
+<pre>define(name, stuff)<br></pre>
+<p><a name="SPTA24065FC795SONI"></a>The <b>m4</b> program defines
+the string name as <tt>stuff.</tt> When the string name occurs in a
+program file, the <b>m4</b> program replaces it with the string
+<tt>stuff.</tt> The string <tt>name</tt> must be ASCII alphanumeric
+and must begin with a letter or underscore. The string <tt>stuff</tt>
+is any text, but if the text contains parentheses the number of open,
+or left,
+parentheses must equal the number of closed, or right, parentheses. Use
+the <b>/</b> (slash) character to spread the text for <tt>stuff</tt>
+over multiple lines.
+</p>
+<p>The open (left) parenthesis must immediately follow the word
+<b>define</b>. For example:
+</p>
+<p><a name="SPTAHN9991"></a>
+</p>
+<pre>define(N, 100)<br>&nbsp;.&nbsp;.&nbsp;.&nbsp;<br>if (i &gt; N)<br></pre>
+<p><a name="SPTA24065FC927SONI"></a>defines <tt>N</tt> to be
+<tt>100</tt> and uses the symbolic constant N in a later <b>if</b>
+statement.
+</p>
+<p><a name="SPTA24065FD000SONI"></a>Macro calls in a program have the
+following form:
+</p>
+<p><a name="SPTA356F9150"></a>
+</p>
+<pre>name(arg1,arg2,&nbsp;.&nbsp;.&nbsp;.&nbsp;argn)<br></pre>
+<p><a name="SPTA24065FD132SONI"></a>A macro name is recognized only
+if it is surrounded by nonalphanumerics. Using the following
+example:
+</p>
+<p><a name="SPTAHN9994"></a>
+</p>
+<pre>define(N, 100)<br>&nbsp;.&nbsp;.&nbsp;.&nbsp;<br>if (NNN &gt; 100)<br></pre>
+<p><a name="SPTA24065FD261SONI"></a>the variable <tt>NNN</tt> is
+not related to the defined macro <tt>N</tt>.
+</p>
+<p><a name="SPTA24065FD337SONI"></a>You can define macros in terms of
+other names. For example:
+</p>
+<p><a name="SPTAHN9997"></a>
+</p>
+<pre>define(N, 100)<br>define(M, N)<br></pre>
+<p><a name="SPTA24065FD463SONI"></a>defines both <tt>M</tt> and
+<tt>N</tt> to be <tt>100</tt>. If you later change the definition
+of <tt>N</tt> and assign it a new value, <tt>M</tt> retains the value
+of
+<tt>100</tt>, not <tt>N</tt>.
+</p>
+<p><a name="SPTA24065FD542SONI"></a>The <b>m4</b> macro processor
+expands macro names into their defining text as soon as possible. The
+string <tt>N</tt> is replaced by <tt>100</tt>. Then the string
+<tt>M</tt> is also replaced by <tt>100</tt>. The overall result is
+the same as using the following input in the first place:
+</p>
+<p><a name="SPTAHN9999"></a>
+</p>
+<pre>define(M, 100)<br></pre>
+<p><a name="SPTA24065FD663SONI"></a>The order of the definitions can
+be interchanged as follows:
+</p>
+<p><a name="SPTAHN10001"></a>
+</p>
+<pre>define(M, N)<br>define(N, 100)<br></pre>
+<p><a name="SPTA24065FD793SONI"></a>Now <tt>M</tt> is defined to be
+the string <tt>N</tt>, so when the value of <tt>M</tt> is requested
+later,
+the result is the value of <tt>N</tt> at that time (because the M is
+replaced by <tt>N</tt>, which is replaced by <tt>100</tt>).
+</p>
+<p></p>
+<h3><a name="HDRAHN10003">Using the Quote Characters</a></h3>
+<p>
+<a name="IDX5185"></a></p>
+<p><a name="SPTA24065FD932SONI"></a>To delay the expansion of the
+arguments of <b>define</b>, enclose them in quote characters. If
+you do not change them, quote characters are ` ' (left and right single
+quotes). Any text surrounded by quote characters is not expanded
+immediately, but quote characters are removed. The value of a quoted
+string is the string with the quote characters removed. If the input
+is:
+</p>
+<p><a name="SPTAHN10005"></a>
+</p>
+<pre>define(N, 100)<br>define(M, 'N')<br></pre>
+<p><a name="SPTA24065FE063SONI"></a>the quote characters around the
+<tt>N</tt> are removed as the argument is being collected. The result
+of using quote characters is to define <tt>M</tt> as the string
+<tt>N,</tt> not <tt>100</tt>. The general rule is that the
+<b>m4</b> program always strips off one level of quote characters
+whenever
+it evaluates something. This is true even outside of macros. To
+make the word <tt>define</tt> appear in the output, enter the word in
+quote
+characters, as follows:
+</p>
+<p><a name="SPTAHN10007"></a>
+</p>
+<pre>'define' = 1;<br></pre>
+<p><a name="SPTA24065FE189SONI"></a>Another example of using quote
+characters is redefining <tt>N</tt>. To redefine <tt>N</tt>, delay
+the evaluation by putting <tt>N</tt> in quote characters. For
+example:
+</p>
+<p><a name="SPTAHN10009"></a>
+</p>
+<pre>define(N, 100)<br>.&nbsp;.&nbsp;.&nbsp;<br>define('N', 200)<br></pre>
+<p><a name="SPTA24065FE320SONI"></a>To prevent problems from
+occurring, quote the first argument of a macro. For example, the
+following fragment does not redefine <tt>N</tt>:
+</p>
+<p><a name="SPTAHN10011"></a>
+</p>
+<pre>define(N, 100)<br>.&nbsp;.&nbsp;.&nbsp;<br>define(N, 200)<br></pre>
+<p><a name="SPTA24065FE449SONI"></a>The <tt>N</tt> in the second
+definition is replaced by 100. The result is the same as the following
+statement:
+</p>
+<p><a name="SPTAHN10013"></a>
+</p>
+<pre>define(100, 200)<br></pre>
+<p><a name="SPTA24065FE575SONI"></a>The <b>m4</b> program ignores
+this statement because it can only define names, not numbers.
+</p>
+<p></p>
+<h4><a name="HDRAHN10075">Changing the Quote Characters</a></h4>
+<p>
+<a name="IDX5186"></a></p>
+<p><a name="SPTA24065FE715SONI"></a>Quote characters are normally `
+' (left or right single quotes). If those characters are not
+convenient, change the quote characters with the following built-in
+macro:
+</p>
+<p><a name="SPTAHN10077"></a>&nbsp;
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="32%"><a
+ name="SPTD722D9E753MELA"></a><b>changequote</b><b>
+(</b><i>l</i><b>,</b><i> r</i><b> )</b>
+      </td>
+      <td align="left" valign="top" width="68%">Changes the left and
+right quote characters to the characters represented
+by the <i>l</i> and <i>r</i> variables.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p><a name="SPTA24065FE847SONI"></a>To restore the original quote
+characters, use <b>changequote</b> without arguments as follows:
+</p>
+<p><a name="SPTAHN10079"></a>
+</p>
+<pre>changequote<br></pre>
+<p></p>
+<h3><a name="HDRAHN10020">Arguments</a></h3>
+<p>
+<a name="IDX5187"></a></p>
+<p><a name="SPTA24065FF028SONI"></a>The simplest form of macro
+processing is replacing one string by another (fixed) string. However,
+macros can also have arguments, so that you can use the macro in
+different
+places with different results. To indicate where an argument is to be
+used within the replacement text for a macro (the second argument of
+its
+definition), use the symbol <b>$</b><i>n</i> to indicate the
+<i>n</i>th argument. When the macro is used, the <b>m4</b>
+macro processor replaces the symbol with the value of the indicated
+argument. For example, the symbol:
+</p>
+<p><a name="SPTAHN10015"></a>
+</p>
+<pre>$2<br></pre>
+<p><a name="SPTA24065FF150SONI"></a>refers to the second argument of
+a macro. Therefore, if you define a macro called <tt>bump</tt>
+as:
+</p>
+<p><a name="SPTAHN10017"></a>
+</p>
+<pre>define(bump, $1 = $1 + 1)<br></pre>
+<p><a name="SPTA24065FF275SONI"></a>the <b>m4</b> program
+generates code to increment the first argument by 1. The
+<tt>bump</tt>(<tt>x)</tt> statement is equivalent to x = x + 1.
+</p>
+<p><a name="SPTA24065FF354SONI"></a>A macro can have as many
+arguments as needed. However, you can access only nine arguments using
+the <b>$</b><i>n</i> symbol (<tt>$1</tt> through
+<tt>$9</tt>). To access arguments past the ninth argument, use the
+<b>shift</b> macro.
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="35%"><a
+ name="SPTD722D9F717MELA"></a><b>shift</b><b>
+(</b><i>ParameterList</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="65%">Returns all but the
+first element of <i>ParameterList</i> to perform
+a destructive left shift of the list.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>This macro drops the first argument and reassigns the remaining
+arguments
+to the <b>$</b><i>n</i> symbols (second argument to <tt>$1</tt>,
+third argument to <tt>$2</tt>. . . tenth argument to
+<tt>$9</tt>). Using the <b>shift</b> macro more than once allows
+access to all arguments used with the macro.
+</p>
+<p><a name="SPTA24065FF428SONI"></a>The <b>$0</b> macro returns
+the name of the macro. Arguments that are not supplied are replaced by
+null strings, so that you can define a macro that concatenates its
+arguments
+like this:
+</p>
+<p><a name="SPTAHN10023"></a>
+</p>
+<pre>define(cat, $1$2$3$4$5$6$7$8$9)<br></pre>
+<p><a name="SPTA24065FF549SONI"></a>Thus:
+</p>
+<p><a name="SPTAHN10025"></a>
+</p>
+<pre>cat(x, y, z)<br></pre>
+<p><a name="SPTA24065FF661SONI"></a>is the same as:
+</p>
+<p><a name="SPTAHN10027"></a>
+</p>
+<pre>xyz<br></pre>
+<p><a name="SPTA24065FF782SONI"></a>Arguments <tt>$4</tt> through
+<tt>$9</tt> in this example are null since corresponding arguments were
+not
+provided.
+</p>
+<p><a name="SPTA24065FF855SONI"></a>The <b>m4</b> program
+discards leading unquoted blanks, tabs, or new-line characters in
+arguments,
+but keeps all other white space. Thus:
+</p>
+<p><a name="SPTAHN10030"></a>
+</p>
+<pre>define(a, b c)<br></pre>
+<p><a name="SPTA24065FF972SONI"></a>defines <tt>a</tt> to be <tt>b
+c</tt>.
+</p>
+<p><a name="SPTA2406600051SONI"></a>Arguments are separated by
+commas. Use parentheses to enclose arguments containing commas, so that
+the comma does not end the argument. For example:
+</p>
+<p><a name="SPTAHN10033"></a>
+</p>
+<pre>define(a, (b,c))<br></pre>
+<p><a name="SPTA2406600177SONI"></a>has only two arguments.
+The first argument is <tt>a</tt>, and the second is (<tt>b,c</tt>).
+To use a comma or single parenthesis, enclose it in quote characters.
+</p>
+<hr>
+<h2><a name="HDRA2406600323SONI">Using a Built-In m4 Macro</a></h2>
+<p>
+<a name="IDX5188"></a></p>
+<p>The <b>m4</b> program provides a set of predefined macros. The
+subsequent sections explain many of the macros and their uses.
+</p>
+<p></p>
+<h3><a name="HDRAHN10080">Removing a Macro Definition</a></h3>
+<p>
+<a name="IDX5189"></a><br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="37%"><a
+ name="SPTD722DA0083MELA"></a><b>undefine
+(</b>`<i>MacroName</i>'<b>)</b>
+      </td>
+      <td align="left" valign="top" width="63%">Removes the definition
+of a user-defined or built-in macro
+(`<i>MacroName</i>')
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p><a name="SPTA2406602320SONI"></a>For example:
+</p>
+<p><a name="SPTAHN10082"></a>
+</p>
+<pre>undefine(`N')<br></pre>
+<p><a name="SPTA2406602441SONI"></a>removes the definition of
+N. Once you remove a built-in macro with the <b>undefine</b> macro,
+as follows:
+</p>
+<p><a name="SPTAHN10084"></a>
+</p>
+<pre>undefine(`define')<br></pre>
+<p><a name="SPTA2406602577SONI"></a>then you cannot use its
+definition of the built-in macro again.
+</p>
+<p><a name="SPTA2406602649SONI"></a>Single quotes are required in
+this case to prevent substitution.
+</p>
+<p></p>
+<h3><a name="HDRAHN10087">Checking for a Defined Macro</a></h3>
+<p>
+<a name="IDX5190"></a><br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td colspan="2" align="left" valign="top" width="100%"><a
+ name="SPTD722D9F211MELA"></a><b>ifdef
+(</b>`<i>MacroName</i>'<b>,</b><i>
+Argument1</i><b>,</b><i> Argument2</i><b>)</b>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="50%">&nbsp;
+      </td>
+      <td align="left" valign="top" width="50%">If macro <i>MacroName</i>
+is defined and is not defined to zero,
+returns the value of <i>Argument1</i>. Otherwise, it returns
+      <i>Argument2</i>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p><a name="SPTA2406602798SONI"></a>The <b>ifdef</b> macro
+permits three arguments. If the first argument is defined, the value of
+ifdef is the second argument. If the first argument is not defined, the
+value of ifdef is the third argument. If there is no third argument,
+the value of ifdef is null.
+</p>
+<p></p>
+<h3><a name="HDRAHN10089">Using Integer Arithmetic</a></h3>
+<p>
+<a name="IDX5191"></a></p>
+<p><a name="SPTA2406602934SONI"></a>The <b>m4</b> program
+provides the following built-in functions for doing arithmetic on
+integers
+only:
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="23%"><a
+ name="SPTD722D9F347MELA"></a><b>incr
+(</b><i>Number</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="77%">Returns the value of <i>Number</i>
++ 1.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="23%"><a
+ name="SPTD722D9E799MELA"></a><b>decr
+(</b><i>Number</i><b> )</b>
+      </td>
+      <td align="left" valign="top" width="77%">Returns the value of <i>Number</i>
+- 1.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="23%"><a name="SPTAHN10093"></a><b>eval</b>
+      </td>
+      <td align="left" valign="top" width="77%">Evaluates an arithmetic
+expression.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p><a name="SPTA2406603181SONI"></a>Thus, to define a variable as one
+more than the <i>Number</i> value, use the following:
+</p>
+<p><a name="SPTAHN10095"></a>
+</p>
+<pre>define(Number, 100)<br>define(Number1, `incr(Number)')<br></pre>
+<p><a name="SPTA2406603312SONI"></a>This defines <tt>Number1</tt>
+as one more than the current value of <tt>Number</tt>.
+</p>
+<p><a name="SPTA2406603386SONI"></a>The <b>eval</b> function can
+evaluate expressions containing the following operators (listed in
+decreasing
+order of precedence):
+</p>
+<dl>
+  <p></p>
+  <dt><b><a name="SPTAHN10098"></a>unary + and -
+    </b></dt>
+  <dd><br>
+  </dd>
+  <p></p>
+  <dt><b><a name="SPTAHN10099"></a>** or ^ (exponentiation)
+    </b></dt>
+  <dd><br>
+  </dd>
+  <p></p>
+  <dt><b><a name="SPTAHN10100"></a>* / % (modulus)
+    </b></dt>
+  <dd><br>
+  </dd>
+  <p></p>
+  <dt><b><a name="SPTAHN10101"></a>+ -
+    </b></dt>
+  <dd><br>
+  </dd>
+  <p></p>
+  <dt><b><a name="SPTAHN10102"></a>== != &lt; &lt;= &gt; &gt;=
+    </b></dt>
+  <dd><br>
+  </dd>
+  <p></p>
+  <dt><b><a name="SPTAHN10103"></a>!(not)
+    </b></dt>
+  <dd><br>
+  </dd>
+  <p></p>
+  <dt><b><a name="SPTAHN10104"></a>&amp; or &amp;&amp; (logical AND)
+    </b></dt>
+  <dd><br>
+  </dd>
+  <p></p>
+  <dt><b><a name="SPTAHN10105"></a>| or || (logical OR)
+    </b></dt>
+  <dd><br>
+  </dd>
+</dl>
+<p><a name="SPTA2406603851SONI"></a>Use parentheses to group
+operations where needed. All operands of an expression must be
+numeric. The numeric value of a true relation (for example, 1 &gt; 0)
+is 1, and false is 0. The precision of the <b>eval</b> function is
+32 bits.
+</p>
+<p><a name="SPTA2406603927SONI"></a>For example, define <tt>M</tt>
+to be <tt>2==N+1</tt> using the <b>eval</b> function as follows:
+</p>
+<p><a name="SPTAHN10108"></a>
+</p>
+<pre>define(N, 3)<br>define(M, `eval(2==N+1)')<br></pre>
+<p><a name="SPTA2406604058SONI"></a>Use quote characters around the
+text that defines a macro unless the text is very simple.
+</p>
+<p></p>
+<h3><a name="HDRAHN10110">Manipulating Files</a></h3>
+<p>
+<a name="IDX5192"></a></p>
+<p><a name="SPTA2406604191SONI"></a>To merge a new file in the input,
+use the built-in <b>include</b> function.
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="23%"><a
+ name="SPTD722D9F302MELA"></a><b>include
+(</b><i>File</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="77%">Returns the contents of
+the file <i>File</i>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>For example:
+</p>
+<p><a name="SPTAHN10112"></a>
+</p>
+<pre>include(FileName)<br></pre>
+<p><a name="SPTA2406604315SONI"></a>inserts the contents of
+<tt>FileName</tt> in place of the <b>include</b> command.
+</p>
+<p><a name="SPTA2406604389SONI"></a>A fatal error occurs if the file
+named in the <b>include</b> macro cannot be accessed. To avoid a
+fatal error, use the alternate form <b>sinclude</b>.
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="27%"><a
+ name="SPTD722D9F763MELA"></a><b>sinclude
+(</b><i>File</i><b> )</b>
+      </td>
+      <td align="left" valign="top" width="73%">Returns the contents of
+the file <i>File</i>, but does not report an
+error if it cannot access <i>File</i>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>The <b>sinclude</b> (silent include) macro does not write a
+message,
+but continues if the file named cannot be accessed.
+</p>
+<p></p>
+<h3><a name="HDRAHN10115">Redirecting Output</a></h3>
+<p>
+<a name="IDX5193"></a></p>
+<p><a name="SPTA2406604523SONI"></a>The output of the <b>m4</b>
+program can be redirected again to temporary files during processing,
+and the
+collected material can be output upon command. The <b>m4</b>
+program maintains nine possible temporary files, numbered 1 through 9.
+If you use the built-in <strong><a name="SPTAHN10117"></a></strong><b>divert</b>
+macro.
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="25%"><a
+ name="SPTD722D9E936MELA"></a><b>divert
+(</b><i>Number</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="75%">Changes output stream
+to the temporary file <i>Number</i>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p><a name="SPTA2406604645SONI"></a>The <b>m4</b> program writes
+all output from the program after the <b>divert</b> function at the
+end of
+temporary file, <i>Number</i>. To return the output to the display
+screen, use either the <b>divert</b> or <b>divert</b>(<b>0)</b>
+function, which resumes the normal output process.
+</p>
+<p><a name="SPTA2406604722SONI"></a>The <b>m4</b> program writes
+all redirected output to the temporary files in numerical order at the
+end of
+processing. The <b>m4</b> program discards the output if you
+redirect the output to a temporary file other than 0 through 9.
+</p>
+<p><a name="SPTA2406604797SONI"></a>To bring back the data from all
+temporary files in numerical order, use the built-in <b>undivert</b>
+macro.
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="52%"><a
+ name="SPTD722DA0130MELA"></a><b>undivert
+(</b><i>Number1</i><b>,</b><i>
+Number2</i>... <b>)</b>
+      </td>
+      <td align="left" valign="top" width="48%">Appends the contents of
+the indicated temporary files to the current
+temporary file.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>To bring back selected temporary files in a specified order, use the
+built-in <b>undivert</b> macro with arguments. When using the
+<b>undivert</b> macro, the <b>m4</b> program discards the temporary
+files that are recovered and does not search the recovered data for
+macros.
+</p>
+<p><a name="SPTA2406604869SONI"></a>The value of the
+<b>undivert</b> macro is not the diverted text.
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="10%"><a
+ name="SPTA2406604953SONI"></a><b>divnum</b>
+      </td>
+      <td align="left" valign="top" width="90%">Returns the value of
+the currently active temporary file.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>If you do not change the output file with the <b>divert</b> macro,
+the
+<b>m4</b> program puts all output in a temporary file named 0.
+</p>
+<p></p>
+<h3><a name="HDRAHN10123">Using System Programs in a Program</a></h3>
+<p>
+<a name="IDX5194"></a></p>
+<p><a name="SPTA2406605094SONI"></a>You can run any program in the
+operating system from a program by using the built-in <b>syscmd</b>
+macro. For example, the following statement runs the <b>date</b>
+program:
+</p>
+<p><a name="SPTAHN10125"></a>
+</p>
+<pre>syscmd(date)<br></pre>
+<p></p>
+<h3><a name="HDRAHN10126">Using Unique File Names</a></h3>
+<p>
+<a name="IDX5195"></a></p>
+<p><a name="SPTA2406605285SONI"></a>Use the built-in
+<b>maketemp</b> macro to make a unique file name from a program.
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="57%"><a
+ name="SPTD722D9F578MELA"></a><b>maketemp
+(</b><i>String...nnnnn...String</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="43%">Creates a unique file
+name by replacing the characters <i>nnnnn</i>
+in the argument string with the current process ID.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>For example, for the statement:
+</p>
+<p><a name="SPTAHN10128"></a>
+</p>
+<pre>maketemp(myfilennnnn)<br></pre>
+<p><a name="SPTA2406605411SONI"></a>the <b>m4</b> program returns
+a string that is <tt>myfile</tt> concatenated with the process ID.
+Use this string to name a temporary file.
+</p>
+<p></p>
+<h3><a name="HDRAHN10130">Using Conditional Expressions</a></h3>
+<p>
+<a name="IDX5196"></a><br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td colspan="2" align="left" valign="top" width="100%"><a
+ name="SPTD722D9F256MELA"></a><b>ifelse
+(</b><i>String1</i><b>,</b><i> String2</i><b>,</b><i>
+Argument1</i><b>,</b><i> Argument2</i><b>)</b>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="50%">&nbsp;
+      </td>
+      <td align="left" valign="top" width="50%">If <i>String1</i>
+matches <i>String2</i>, returns the value of
+      <i>Argument1</i>. Otherwise it returns <i>Argument2</i>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p><a name="SPTA2406605559SONI"></a>The built-in <b>ifelse</b>
+macro performs conditional testing. In the simplest form:
+</p>
+<p><a name="SPTGAC010"></a>
+</p>
+<pre>ifelse(a, b, c, d)<br></pre>
+<p><a name="SPTA2406605681SONI"></a>compares the two strings
+<tt>a</tt> and <tt>b</tt>.
+</p>
+<p>If <tt>a</tt> and <tt>b</tt> are identical, the built-in
+<b>ifelse</b> macro returns the string <tt>c</tt>. If they are
+not identical, it returns string <tt>d</tt>. For example, you can
+define a macro called <tt>compare</tt> to compare two strings and
+return
+<tt>yes</tt> if they are the same, or <tt>no</tt> if they are
+different,
+as follows:
+</p>
+<p><a name="SPTAHN10133"></a>
+</p>
+<pre>define(compare, `ifelse($1, $2, yes, no)`)<br></pre>
+<p><a name="SPTA2406605813SONI"></a>The quote characters prevent the
+evaluation of the <b>ifelse</b> macro from occurring too early. If
+the fourth argument is missing, it is treated as empty.
+</p>
+<p><a name="SPTA2406605899SONI"></a>The <b>ifelse</b> macro can
+have any number of arguments, and therefore, provides a limited form of
+multiple-path decision capability. For example:
+</p>
+<p><a name="SPTA2929113"></a>
+</p>
+<pre>ifelse(a, b, c, d, e, f, g)<br></pre>
+<p><a name="SPTA2406606023SONI"></a>This statement is logically the
+same as the following fragment:
+</p>
+<p><a name="SPTA2929115"></a>
+</p>
+<pre>if(a == b) x = c;<br>else if(d == e) x = f;<br>else x = g;<br>return(x);<br></pre>
+<p><a name="SPTA2406606156SONI"></a>If the final argument is omitted,
+the result is null, so:
+</p>
+<p><a name="SPTA2929117"></a>
+</p>
+<pre>ifelse(a, b, c)<br></pre>
+<p><a name="SPTA2406606276SONI"></a>is <tt>c</tt> if <tt>a</tt>
+matches <tt>b</tt>, and null otherwise.
+</p>
+<p></p>
+<h3><a name="HDRA2929119">Manipulating Strings</a></h3>
+<p>
+<a name="IDX5197"></a><br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="5%"><a
+ name="SPTA2406606419SONI"></a><b>len</b>
+      </td>
+      <td align="left" valign="top" width="95%">Returns the byte length
+of the string that makes up its argument
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>Thus:
+</p>
+<p><a name="SPTA292911B"></a>
+</p>
+<pre>len(abcdef)<br></pre>
+<p><a name="SPTA2406606532SONI"></a>is 6, and:
+</p>
+<p><a name="SPTA292911D"></a>
+</p>
+<pre>len((a,b))<br></pre>
+<p><a name="SPTA2406606641SONI"></a>is 5.
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="7%"><a
+ name="SPTA2406606727SONI"></a><b>dlen</b>
+      </td>
+      <td align="left" valign="top" width="93%">Returns the length of
+the displayable characters in a string
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>Characters made up from 2-byte codes are displayed as one character.
+Thus, if the string contains any 2-byte, international
+character-support
+characters, the results of <b>dlen</b> will differ from the results of
+<b>len</b>.
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="55%"><a
+ name="SPTD722D9F809MELA"></a><b>substr
+(</b><i>String</i><b>,</b><i> Position</i><b>,</b><i>
+Length</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="45%">Returns a substring of <i>String</i>
+that begins at character number
+      <i>Position</i> and is <i>Length</i> characters long.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>Using input, <b>substr (</b><i>s</i><b>,</b><i>
+i</i><b>,</b><i> n</i><b>)</b> returns the substring of
+<i>s</i> that starts at the <i>i</i>th position (origin zero) and is
+<i>n</i> characters long. If <i>n</i> is omitted, the rest of
+the string is returned. For example, the function:
+</p>
+<p><a name="SPTA2929121"></a>
+</p>
+<pre>substr('now is the time',1)<br></pre>
+<p><a name="SPTA2406606932SONI"></a>returns the following
+string:
+</p>
+<p><a name="SPTA2929123"></a>
+</p>
+<pre>now is the time<br></pre>
+<p>
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="40%"><a
+ name="SPTA2406607065SONI"></a><b>index
+(</b><i>String1</i><b>,</b><i> String2</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="60%">Returns the character
+position in <i>String1</i> where
+      <i>String2</i> starts <b>(</b>starting with character number 0),
+or -1
+if <i>String1</i> does not contain <i>String2</i>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>As with the built-in <b>substr</b> macro, the origin for strings is
+0.
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="48%"><a
+ name="SPTA2406607149SONI"></a><b>translit
+(</b><i>String</i><b>,</b><i> Set1</i><b>,</b><i>
+Set2</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="52%">Searches <i>String</i>
+for characters that are in
+      <i>Set1</i>. If it finds any, changes (transliterates) those
+characters to corresponding characters in <i>Set2</i>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>It has the general form:
+</p>
+<p><a name="SPTA2929126"></a>
+</p>
+<pre>translit(s, f, t)<br></pre>
+<p><a name="SPTA2406607271SONI"></a>which modifies <tt>s</tt> by
+replacing any character found in <tt>f</tt> by the corresponding
+character
+of <tt>t</tt>. For example, the function:
+</p>
+<p><a name="SPTA2929128"></a>
+</p>
+<pre>translit(s, aeiou, 12345)<br></pre>
+<p><a name="SPTA2406607399SONI"></a>replaces the vowels by the
+corresponding digits. If <tt>t</tt> is shorter than <tt>f</tt>,
+characters that do not have an entry in <tt>t</tt> are deleted. If
+<tt>t</tt> is not present at all, characters from <tt>f</tt> are
+deleted
+from <tt>s</tt>. So:
+</p>
+<p><a name="SPTA292912A"></a>
+</p>
+<pre>translit(s, aeiou)<br></pre>
+<p><a name="SPTA2406607519SONI"></a>deletes vowels from string
+<tt>s</tt>.
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="5%"><a
+ name="SPTA2406607602SONI"></a><b>dnl</b>
+      </td>
+      <td align="left" valign="top" width="95%">Deletes all characters
+that follow it, up to and including the new-line
+character.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>Use this macro to get rid of empty lines. For example, the
+function:
+</p>
+<p><a name="SPTA292912D"></a>
+</p>
+<pre>define(N, 100)<br>define(M, 200)<br>define(L, 300)<br></pre>
+<p><a name="SPTA2406607745SONI"></a>results in a new-line at the end
+of each line that is not part of the definition. These new-line
+characters are passed to the output. To get rid of the new lines, add
+the built-in <b>dnl</b> macro to each of the lines.
+</p>
+<p><a name="SPTA292912F"></a>
+</p>
+<pre>define(N, 100) dnl<br>define(M, 200) dnl<br>define(L, 300) dnl<br></pre>
+<p></p>
+<h3><a name="HDRA2929130">Printing</a></h3>
+<p>
+<a name="IDX5198"></a><br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="28%"><a
+ name="SPTA2406607941SONI"></a><b>errprint
+(</b><i>String</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="72%">Writes its argument (<i>String</i>)
+to the standard error file
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>For example:
+</p>
+<p><a name="SPTA2929132"></a>
+</p>
+<pre>errprint ('error')<br></pre>
+<p>
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="42%"><a
+ name="SPTA2406608082SONI"></a><b>dumpdef
+(</b>`<i>MacroName</i>'... <b>)</b>
+      </td>
+      <td align="left" valign="top" width="58%">Dumps the current names
+and definitions of items named as arguments
+(`<i>MacroName</i>'...)
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>If you do not supply arguments, the <b>dumpdef</b> macro prints all
+current names and definitions. Remember to quote the names.
+</p>
+<hr>
+<h2><a name="HDRGENPROGC43KLC006">List of Additional m4 Macros</a></h2>
+<p>A list of additional <b>m4</b> macros, with a brief explanation of
+each, follows:
+<br>
+</p>
+<table width="100%">
+  <tbody>
+    <tr>
+      <td align="left" valign="top" width="53%"><a name="SPTAHN10043"></a><b>changecom
+(</b><i>l</i><b>,</b><i> r</i><b> )</b>
+      </td>
+      <td align="left" valign="top" width="47%">Changes the left and
+right comment characters to the characters
+represented by the <i>l</i> and <i>r</i> variables.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="53%"><a
+ name="SPTD722D9E890MELA"></a><b>defn
+(</b><i>MacroName</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="47%">Returns the quoted
+definition of <i>MacroName</i>
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="53%"><a
+ name="SPTD722D9F440MELA"></a><b>en
+(</b><i>String</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="47%">Returns the number of
+characters in <i>String</i>.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="53%"><a
+ name="SPTD722D9F165MELA"></a><b>eval
+(</b><i>Expression</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="47%">Evaluates <i>Expression</i>
+as a 32-bit arithmetic expression.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="53%"><a
+ name="SPTD722D9F486MELA"></a><b>m4exit
+(</b><i>Code</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="47%">Exits <b>m4</b> with a
+return code of <i>Code</i>.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="53%"><a
+ name="SPTD722D9F532MELA"></a><b>m4wrap
+(</b><i>MacroName</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="47%">Runs macro <i>MacroName</i>
+at the end of <b>m4</b>.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="53%"><a
+ name="SPTD722D9F623MELA"></a><b>popdef
+(</b><i>MacroName</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="47%">Replaces the current
+definition of <i>MacroName</i> with the previous
+definition saved with the <b>pushdef</b> macro.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="53%"><a
+ name="SPTD722D9F671MELA"></a><b>pushdef
+(</b><i>MacroName</i><b>,</b><i> Replacement</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="47%">Saves the current
+definition of <i>MacroName</i> and then defines
+      <i>MacroName</i> to be <i>Replacement</i>.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="53%"><a
+ name="SPTD722D9F855MELA"></a><b>syscmd
+(</b><i>Command</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="47%">Executes the system
+command <i>Command</i> with no return
+value.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="53%"><a
+ name="SPTD722D9F900MELA"></a><b>sysval</b>
+      </td>
+      <td align="left" valign="top" width="47%">Gets the return code
+from the last use of the <b>syscmd</b>
+macro.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="53%"><a
+ name="SPTD722D9F946MELA"></a><b>traceoff
+(</b><i>MacroList</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="47%">Turns off trace for any
+macro in <i>MacroList</i>. If
+      <i>MacroList</i> is null, turns off all tracing.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top" width="53%"><a
+ name="SPTD722D9F992MELA"></a><b>traceon
+(</b><i>MacroName</i><b>)</b>
+      </td>
+      <td align="left" valign="top" width="47%">Turns on trace for
+macro <i>MacroName</i>. If
+      <i>MacroName</i> is null, turns trace on for all macros.
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>
+<b></b></p>
+<center>
+<p></p>
+<hr></center>
+<!-- End Footer Records  ============================================ -->
+</body>
+</html>

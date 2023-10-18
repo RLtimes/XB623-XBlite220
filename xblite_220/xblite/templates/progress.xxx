@@ -1,0 +1,1 @@
+NewChild ($$PROGRESS_CLASS, "", $$PBS_SMOOTH, x, y, w, h, hWnd, id, 0)

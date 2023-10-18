@@ -1,0 +1,20 @@
+#include "winres.h"
+
+scrabble ICON    scrabble.ico
+
+ThreadMenu  MENU
+BEGIN
+POPUP "&Threads"
+	BEGIN
+		MENUITEM "&Start Threads\tF2", 100
+		MENUITEM "E&xit\tCtrl+X", 102
+	END
+MENUITEM "&Help", 101
+END
+
+ThreadMenu ACCELERATORS
+BEGIN
+	VK_F2, 100, VIRTKEY
+	"^X", 102
+	VK_F1, 101, VIRTKEY
+END

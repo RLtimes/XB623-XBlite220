@@ -1,0 +1,32 @@
+Derivative (RATE):  In seconds ... the amount of time that it
+advances the output.  This can used to adjust processes that
+have lag, or are sluggish, or processes that are very sensitive
+to output changes.
+
+Integral (RESET):  In seconds, also called (repeats per minute)
+... how many times it resets the error and re-evaluates the
+values.  This removes the offset that occurs between the PV and
+SP. When you make changes to the PID variables, cause an upset by
+changing the setpoint (SP).  This will show you, via the graphs,
+how well you are "tuning" the control loop.
+
+When the program starts, the system is already placed into
+automatic mode with a somewhat stable setting for the PID
+algorithm.  The operator can alter the inlet valve position and
+see how the computer adjusts the output valve to maintain the
+level setpoint.
+
+The water tank is constructed of a tank with a manual input valve
+that the machine operator can control, a water tank with a level
+sensor, and an output valve that can either be controlled
+manually, or be controlled by the computer using the PID control
+algorithm.
+
+Because there are so many variations to PID control loops between
+manufacturers of controllers, a basic algorithm has been selected 
+that will allow experimentation with each of the 3 PID 
+variables.
+
+The objective of this program is to examine a simplified PID 
+control loop used in an industrial setting, in this case, a water
+tank with level control.

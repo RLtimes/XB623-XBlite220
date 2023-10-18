@@ -1,0 +1,16 @@
+
+EXTERNAL FUNCTION read_int ()
+EXTERNAL FUNCTION print_int ()
+EXTERNAL FUNCTION print_string ()
+EXTERNAL FUNCTION read_char () 
+
+EXTERNAL FUNCTION print_char ()
+EXTERNAL FUNCTION print_nl ()
+
+EXTERNAL FUNCTION sub_dump_regs ()
+EXTERNAL FUNCTION sub_dump_mem ()
+EXTERNAL FUNCTION sub_dump_math ()
+EXTERNAL FUNCTION sub_dump_stack ()
+
+
+

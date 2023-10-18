@@ -1,0 +1,124 @@
+Those screen savers examples, win32 SDK, and that model magic thing are way too
+complex for a start.
+
+Here is a bare-bone screen-saver, It doesn't need any ressources or other non
+C/C++ toys. It respects most Windows API rules, and it is hardware accelerated.
+You just have to modify initOpenGL if you need something special, draw in
+paintOpenGl, and set the refresh rate you wish in setTimer.
+
+If you want a setting panel, well, have fun with : RegisterDialogClasses and
+ScreenSaverConfigureDialog.
+
+Have fun.
+
+// needs to be linked with :
+// scrnsave.lib, opengl32.lib, glu32.lib
+// need to be a standard win32 app
+// need to be renamed .scr
+//
+// Author: Jeffrey Rainy
+// freud@cam*cough*.org
+//
+// Not patented, not copyrighted, no garantees given
+
+#include <windows.h>
+#include <scrnsave.h>
+#include <gl\gl.h>
+#include <gl\glu.h>
+
+HWND globalHwnd;
+HDC globalHDC;
+HGLRC globalHGLRC;
+
+BOOL WINAPI RegisterDialogClasses( HANDLE hInst );
+LONG WINAPI ScreenSaverProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM
+lParam );
+BOOL WINAPI ScreenSaverConfigureDialog( HWND hDlg, UINT message, WPARAM wParam,
+LPARAM lParam );
+
+void initOpenGL( HWND hwnd )
+{
+ PIXELFORMATDESCRIPTOR pfd ;
+ int iPixelFormat;
+
+ globalHwnd = hwnd;
+ globalHDC = GetDC(globalHwnd);
+
+ memset( &pfd, 0, sizeof(pfd) );
+
+ pfd.nSize = sizeof(pfd);
+ pfd.nVersion = 1;
+ pfd.dwFlags = PFD_DRAW_TO_WINDOW |
+     PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER  |
+     PFD_GENERIC_FORMAT | PFD_GENERIC_ACCELERATED;
+
+ pfd.iPixelType = PFD_TYPE_RGBA;
+ pfd.cColorBits = 24;
+ pfd.cDepthBits = 32;
+ pfd.iLayerType = PFD_MAIN_PLANE;
+
+ iPixelFormat = ChoosePixelFormat( globalHDC, &pfd);
+
+ SetPixelFormat( globalHDC, iPixelFormat, &pfd);
+
+ globalHGLRC = wglCreateContext( globalHDC );
+ wglMakeCurrent( globalHDC, globalHGLRC );
+
+}
+
+void desinitOpenGL()
+{
+ wglMakeCurrent( 0, 0 );
+ wglDeleteContext( globalHGLRC );
+ ReleaseDC( globalHwnd, globalHDC );
+}
+
+void paintOpenGL()
+{
+ glClearColor( 0.9f, 0.3f, 0.7f, 1.0 );
+ glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
+ SwapBuffers( globalHDC );
+}
+
+
+BOOL WINAPI RegisterDialogClasses( HANDLE hInst )
+{
+ return( TRUE );
+}
+
+LONG WINAPI ScreenSaverProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM
+lParam )
+{
+ PAINTSTRUCT ps;
+ switch( message )
+ {
+ case WM_CREATE:
+
+  initOpenGL( hWnd );
+  SetTimer( hWnd, 0, 50, 0 );
+  break;
+
+ case WM_TIMER:
+  paintOpenGL();
+  break;
+
+ case WM_PAINT:
+  BeginPaint( hWnd, &ps );
+  EndPaint( hWnd, &ps );
+  break;
+
+ case WM_DESTROY:
+
+  KillTimer( hWnd, 0 );
+  desinitOpenGL();
+  break;
+ }
+
+ return( DefScreenSaverProc( hWnd, message, wParam, lParam ) );
+}
+
+BOOL WINAPI ScreenSaverConfigureDialog( HWND hDlg, UINT message, WPARAM wParam,
+LPARAM lParam )
+{
+ return( TRUE );
+}

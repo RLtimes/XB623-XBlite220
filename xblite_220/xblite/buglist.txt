@@ -1,0 +1,22 @@
+########################
+#####  Known Bugs  #####
+########################
+
+XBLite for Windows v1.10
+December 2002
+
+The following is a list of known bugs. If anyone can
+help to identify the cause of the bug or resolve it, I
+would be very grateful. 
+
+Note that these are new XBLite related bugs and this list
+does not reflect the bugs carried over from XBasic.
+
+1. The function XbmDIBto24Bit () in Xbm library does not
+   properly convert a 24-bit bitmap to 4-bit.
+
+2. Some demo programs do not function correctly in Win95:
+
+   splittext.x
+   tsplit.x
+

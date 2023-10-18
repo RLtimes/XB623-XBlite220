@@ -1,0 +1,15 @@
+#include "winres.h"
+
+scrabble ICON    scrabble.ico
+
+menu MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit", 100
+        MENUITEM "Fill Using InitCell", 101
+        MENUITEM "Fill Using PutCell", 102
+    END
+END
+
+

@@ -1,0 +1,608 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="KEYWORDS" content="Game Programming, Games, Program, Open Source, Linux, C++, SDL, VB, Visual Basic, DirectX, OpenGL Tutorial Framework,GLFW,Windows" />
+<meta name="robots" content="index,follow" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link title="Creative Commons" type="application/rdf+xml" href="/index.php?title=OpenGL_Tutorial_Framework&amp;action=creativecommons" rel="meta" />
+<link rel="copyright" href="http://www.gnu.org/copyleft/fdl.html" />
+
+    <title>OpenGL Tutorial Framework</title>
+    <style type="text/css" media="screen,projection">/*<![CDATA[*/ @import "/stylesheets/monobook/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="/stylesheets/commonPrint.css"/>
+    <!--[if IE]><style type="text/css" media="all">@import "/stylesheets/monobook/IEFixes.css";</style>
+    <script type="text/javascript" src="/stylesheets/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script src="/index.php?title=-&amp;action=raw&amp;gen=js" type="text/javascript"></script>
+    <script type="text/javascript" src="/stylesheets/wikibits.js"></script>
+    <style type="text/css">/*<![CDATA[*/ @import "/index.php?title=-&action=raw&gen=css";
+ /*]]>*/</style>
+    
+  </head>
+  <body class="ns-0">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	  <h1 class="firstHeading">OpenGL Tutorial Framework</h1>
+	  <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="5"><tr><td width="100%" align="left" valign="top">
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From GPWiki</h3>
+	    <div id="contentSub"></div>
+	    
+	    
+	    
+	    <!-- start content -->
+	    <p>Because OpenGL is platform independent it is hard to write a single framework for tutorials. Here we present two frameworks: one using the MS <a href="/index.php?title=Windows&amp;action=edit" class="new" title ="Windows">Windows</a> API, and and using the platform independent <a href="/index.php/GLFW" title ="GLFW">GLFW</a> wrapper. Pieces of code shown in other parts of these tutorials can easily be plugged into these frameworks. Lesson material should be placed in another source file and compiled together with the framework source.
+</p><p>Each framework consists of a source file and a header file.
+</p>
+<table border="0" id="toc"><tr id="toctitle"><td align="center">
+<b>Table of contents</b> <script type="text/javascript">showTocToggle("show","hide")</script></td></tr><tr id="tocinside"><td>
+<div class="tocline"><a href="#Windows_Framework">1 Windows Framework</a><br /></div>
+<div class="tocindent">
+<p><a href="#Framework.h">1.1 Framework.h</a><br />
+<a href="#OpenGLBase.cpp">1.2 OpenGLBase.cpp</a><br />
+</p>
+</div>
+<div class="tocline"><a href="#GLFW_Framework">2 GLFW Framework</a><br /></div>
+<div class="tocindent">
+<p><a href="#Framework.h_2">2.1 Framework.h</a><br />
+<a href="#GLFWBase.cpp">2.2 GLFWBase.cpp</a><br />
+</p>
+</div>
+<div class="tocline"><a href="#Render_Template">3 Render Template</a><br /></div>
+<div class="tocindent">
+<p><a href="#Render.cpp">3.1 Render.cpp</a><br />
+</p>
+</div>
+</td></tr></table>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=OpenGL_Tutorial_Framework&amp;action=edit&amp;section=1" title ="OpenGL Tutorial Framework">edit</a>]</div><a name="Windows_Framework"></a><h2> Windows Framework </h2>
+<p>The Windows framework runs two threads, one manages the Windows message pump, the other runs the 'Render()' function. 
+</p><p>Please tweak the code if you find a bug, but try to keep it simple, the idea here is not to be bombproof, but easy to play and learn with.
+</p>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=OpenGL_Tutorial_Framework&amp;action=edit&amp;section=2" title ="OpenGL Tutorial Framework">edit</a>]</div><a name="Framework.h"></a><h3>Framework.h</h3>
+<pre>
+#include &lt;windows.h&gt;
+#include &lt;gl\gl.h&gt;
+#include &lt;gl\glu.h&gt;
+
+// Functions
+void FlipBuffers();
+void Render();
+
+// A struct to hold mouse data
+struct MouseInfo
+{  
+  int Mx,My;
+  bool Mleft, Mright;
+};
+
+// Globals
+extern int RunLevel;
+extern bool Keys[256];  // Key monitor
+extern MouseInfo Mouse; // Mouse monitor
+</pre>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=OpenGL_Tutorial_Framework&amp;action=edit&amp;section=3" title ="OpenGL Tutorial Framework">edit</a>]</div><a name="OpenGLBase.cpp"></a><h3>OpenGLBase.cpp</h3>
+<pre>
+// OpenGLBase.cpp - A multi-threaded OpenGL base application for GPWiki tutorials.
+// Windows version.
+
+#include &quot;Framework.h&quot;
+
+#pragma comment (lib , &quot;opengl32.lib&quot;) // Makes VC link the GL libs, 
+#pragma comment (lib , &quot;glu32.lib&quot;)    // other compliers will have to do it manually
+
+// Globals
+HINSTANCE gInst;
+HWND hGLWin;
+HDC  GLDC;
+int  RunLevel = 1;
+bool Keys[256];  // Key monitor
+MouseInfo Mouse; // Mouse monitor
+
+bool RegisterWin();
+bool StartGL(int ScrX, int ScrY, int BPP);
+bool RenderProc(LPVOID lpParam);
+
+int APIENTRY WinMain(HINSTANCE hInstance,
+                     HINSTANCE hPrevInstance,
+                     LPTSTR    lpCmdLine,
+                     int       nCmdShow)
+{
+ MSG msg;
+ DEVMODE ScrRes;
+ HANDLE hThr;
+ DWORD Res;
+
+ // Set the global instance
+ gInst=hInstance;
+
+ // Store the current screen resolution
+ EnumDisplaySettings(NULL,ENUM_CURRENT_SETTINGS,&amp;ScrRes);
+
+ // Register our Window Class
+  if(!RegisterWin())
+   {
+    MessageBox(NULL,&quot;Register Window Class Failed!&quot;,&quot;Error&quot;,MB_OK | MB_ICONERROR);
+    return 0;
+   }
+  
+ // Start GL Window
+  if(!StartGL(800,600,32))
+   {
+    MessageBox(NULL,&quot;GL Startup Failed!&quot;,&quot;Error&quot;,MB_OK | MB_ICONERROR);
+    return 0;
+   }
+
+  // Launch rendering thread
+  hThr=CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)RenderProc,0,0,NULL);
+
+   if(hThr) 
+    {
+     RunLevel=1;
+      // Main message loop:
+      while(RunLevel) 
+       {
+        GetMessage(&amp;msg, NULL, 0, 0);
+	TranslateMessage(&amp;msg);
+	DispatchMessage(&amp;msg);
+       }
+    }
+
+
+ // Shutdown and cleanup
+
+ // Wait for thread to stop
+ Res=STILL_ACTIVE;
+
+  while(Res==STILL_ACTIVE)
+   GetExitCodeThread(hThr,&amp;Res);
+
+ // Close window
+  if(hGLWin)
+   DestroyWindow(hGLWin);
+
+ UnregisterClass(&quot;OpenGLBaseWin&quot;,gInst);
+
+ // Restore Original Screen Mode
+ ChangeDisplaySettings(&amp;ScrRes,CDS_RESET);
+
+ return (int) msg.wParam;
+}
+
+
+// Message Handler for our Window
+LRESULT CALLBACK GLWinProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+ {
+  switch(Msg) 
+   {
+    case WM_DESTROY:
+     PostQuitMessage(0);
+     break;
+
+    // Grab inputs
+    case WM_KEYDOWN:
+     Keys[wParam] = TRUE;
+     return 0;
+
+    case WM_KEYUP:							
+     Keys[wParam] = FALSE;	
+     return 0;
+
+    case WM_MOUSEMOVE:
+     Mouse.Mx=LOWORD(lParam);
+     Mouse.My=HIWORD(lParam);
+     return 0;
+
+    case WM_LBUTTONDOWN:
+     Mouse.Mleft=TRUE;
+     return 0;
+ 
+    case WM_LBUTTONUP:
+     Mouse.Mleft=FALSE;
+     return 0;
+    
+    case WM_RBUTTONDOWN:
+     Mouse.Mright=TRUE;
+     return 0;
+
+    case WM_RBUTTONUP:
+     Mouse.Mright=FALSE;
+     return 0;
+
+    default:
+     return DefWindowProc(hWnd, Msg, wParam, lParam);
+   }
+
+  return 0;
+ }
+
+// Register a Window Class
+bool RegisterWin()
+ {
+  WNDCLASSEX glWin;
+
+  glWin.cbSize=sizeof(WNDCLASSEX); 
+  glWin.style = CS_VREDRAW | CS_HREDRAW | CS_OWNDC; // Window has it's own context
+  glWin.lpfnWndProc = GLWinProc;				         
+  glWin.cbClsExtra = 0;
+  glWin.cbWndExtra = 0;
+  glWin.hInstance = gInst;
+  glWin.hIcon = LoadIcon(NULL, IDI_WINLOGO);      // Default icon
+  glWin.hCursor = LoadCursor(NULL, IDC_ARROW);    // Default pointer
+  glWin.hbrBackground = NULL;
+  glWin.lpszMenuName = NULL;
+  glWin.lpszClassName = &quot;OpenGLBaseWin&quot;;
+  glWin.hIconSm=NULL;
+
+   if(RegisterClassEx(&amp;glWin))
+    return TRUE;				
+   else
+    return FALSE;
+ }
+
+bool StartGL(int ScrX, int ScrY, int BPP)
+ {
+  DEVMODE ScrMode;
+  PIXELFORMATDESCRIPTOR PixFmtReq;
+  int PixFmt;
+  HGLRC GLRC;
+
+
+  // Set the screen mode
+  ZeroMemory(&amp;ScrMode,sizeof(DEVMODE));
+  ScrMode.dmSize=sizeof(DEVMODE);
+  ScrMode.dmPelsWidth=ScrX;
+  ScrMode.dmPelsHeight=ScrY;
+  ScrMode.dmBitsPerPel=BPP;
+  ScrMode.dmFields=DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
+
+   if(ChangeDisplaySettings(&amp;ScrMode,CDS_FULLSCREEN)!=DISP_CHANGE_SUCCESSFUL)
+    return FALSE;
+
+   // Create our window
+   hGLWin=CreateWindowEx(WS_EX_LEFT,
+                         &quot;OpenGLBaseWin&quot;,
+                         &quot;OpenGL Test&quot;,
+                         WS_POPUP | WS_VISIBLE,
+                         0,0,ScrX,ScrY,
+                         NULL,NULL,gInst,NULL);
+    if(hGLWin==NULL)
+     return FALSE;
+     
+
+  // Define pixel format for our window
+  ZeroMemory(&amp;PixFmtReq,sizeof(PIXELFORMATDESCRIPTOR));
+  PixFmtReq.nSize=sizeof (PIXELFORMATDESCRIPTOR);
+  PixFmtReq.nVersion=1;
+  PixFmtReq.dwFlags= PFD_DRAW_TO_WINDOW |	PFD_SUPPORT_OPENGL |	PFD_DOUBLEBUFFER;
+  PixFmtReq.iPixelType=PFD_TYPE_RGBA;
+  PixFmtReq.cColorBits=BPP; // Color depth as specified in arguments
+  PixFmtReq.cDepthBits=16;
+  PixFmtReq.iLayerType=PFD_MAIN_PLANE;
+
+  // Get the device context
+  GLDC=GetDC(hGLWin);
+
+   if(!GLDC)
+    return FALSE;
+
+  // Match our specified pixel format to device
+  PixFmt=ChoosePixelFormat(GLDC,&amp;PixFmtReq);
+
+   if(PixFmt==0)
+    return FALSE;
+
+  // Set pixel format 
+   if(!SetPixelFormat(GLDC,PixFmt,&amp;PixFmtReq))
+    return FALSE;
+
+  // Create the OpenGL render context and bind to this thread current
+  GLRC=wglCreateContext(GLDC);
+
+   if(!GLRC)
+    return FALSE;
+
+   if(!wglMakeCurrent(GLDC,GLRC))
+    return FALSE;
+
+  // Clear to black
+  glClearColor(0,0,0,0);
+  glClear(GL_COLOR_BUFFER_BIT);
+  SwapBuffers(GLDC);
+
+  return TRUE;
+ }
+
+// The render thread start point
+bool RenderProc(LPVOID lpParam)
+ {
+  HGLRC glRC;
+
+  // Re-aquire the context as we are in a different thread
+  glRC=wglCreateContext(GLDC);
+  wglMakeCurrent(GLDC,glRC);
+
+  // Here's were we bring in the Render funtion
+  Render();
+
+  RunLevel=0; // Make sure the app stops
+  return 0;
+ }
+
+void FlipBuffers()
+{
+  SwapBuffers(GLDC);
+}
+</pre>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=OpenGL_Tutorial_Framework&amp;action=edit&amp;section=4" title ="OpenGL Tutorial Framework">edit</a>]</div><a name="GLFW_Framework"></a><h2> GLFW Framework </h2>
+<p>This framework requires the <a href="/index.php/GLFW" title ="GLFW">GLFW</a> library and should run on most contemporary platforms.
+</p>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=OpenGL_Tutorial_Framework&amp;action=edit&amp;section=5" title ="OpenGL Tutorial Framework">edit</a>]</div><a name="Framework.h_2"></a><h3>Framework.h</h3>
+<pre>
+#include &lt;GL/glfw.h&gt;
+
+// Functions
+void FlipBuffers();
+void Render();
+
+// A struct to hold mouse data
+struct MouseInfo
+{  
+  int Mx,My;
+  bool Mleft, Mright;
+};
+
+// Globals
+extern int RunLevel;
+extern bool Keys[GLFW_KEY_LAST];  // Key monitor
+extern MouseInfo Mouse; // Mouse monitor
+
+// Definitions of some windows key codes in terms of GLFW keys (Use
+// uppercase characters for characer keys - 'X' is the x key for
+// example.
+const unsigned int
+  VK_ESCAPE = GLFW_KEY_ESC,
+  VK_RETURN = GLFW_KEY_ENTER,
+  VK_SPACE = GLFW_KEY_SPACE,
+  VK_UP = GLFW_KEY_UP,
+  VK_DOWN = GLFW_KEY_DOWN,
+  VK_RIGHT = GLFW_KEY_RIGHT,
+  VK_LEFT = GLFW_KEY_LEFT,
+  VK_HOME = GLFW_KEY_HOME,
+  VK_END = GLFW_KEY_END,
+  VK_INSERT = GLFW_KEY_INSERT,
+  VK_DELETE = GLFW_KEY_DEL;
+</pre>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=OpenGL_Tutorial_Framework&amp;action=edit&amp;section=6" title ="OpenGL Tutorial Framework">edit</a>]</div><a name="GLFWBase.cpp"></a><h3>GLFWBase.cpp</h3>
+<pre>
+// GLFWBase.cpp - platform independent version of the gpwiki.org
+// OpenGL framework.
+
+#include &lt;fstream&gt;
+#include &quot;Framework.h&quot;
+
+// Globals
+int RunLevel = 1;
+bool Keys[GLFW_KEY_LAST] = {false};  // Key monitor
+MouseInfo Mouse; // Mouse monitor
+
+// Initializationa
+void InitWindow(int ScrX, int ScrY, int BPP);
+
+// Event callback functions
+void KeyCallback(int key, int action);
+void MouseButtonCallback(int button, int action);
+void MousePosCallback(int x, int y);
+
+int main()
+{
+  int retval = 0;
+  try
+  {
+    // Initialize the window
+    InitWindow(800, 600, 32);
+    // Pass control to the render function
+    Render();
+  }
+  catch (const char* error)
+  {
+    // Report an error
+    std::ofstream error_file(&quot;GL_ERROR.txt&quot;);
+    error_file &lt;&lt; &quot;Caught exception:\n  &quot; &lt;&lt; error &lt;&lt; '\n';
+    retval = 1;
+  }
+
+  // Shut down GLFW
+  glfwTerminate();
+  // Return the appropriate value
+  return retval;
+}
+
+// Initialize the window, can throw if something goes wrong.
+void InitWindow(int ScrX, int ScrY, int BPP)
+{
+  // Initialize the GLFW library
+  if (glfwInit()&nbsp;!= GL_TRUE)
+    throw &quot;Failed to initialize GLFW.&quot;;
+
+  // Create a window (8-bit depth-buffer, no alpha and stencil buffers, windowed)
+  if (glfwOpenWindow(ScrX, ScrY, BPP/3, BPP/3, BPP/3, 0, 8, 0, GLFW_WINDOW)&nbsp;!= GL_TRUE)
+    throw &quot;Failed to open window.&quot;;
+
+  // Give the window a title
+  glfwSetWindowTitle(&quot;GPWiki OpenGL Tutorial&quot;);
+
+  // Register event callbacks
+  glfwSetKeyCallback(KeyCallback);
+  glfwSetMouseButtonCallback(MouseButtonCallback);
+  glfwSetMousePosCallback(MousePosCallback);
+
+  // Set the projection matrix to a normal frustum with a max depth of 500
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  float aspect_ratio = ((float)ScrX) / ScrY;
+  glFrustum(.5, -.5, -.5 * aspect_ratio, .5 * aspect_ratio, 1, 500);
+  glMatrixMode(GL_MODELVIEW);
+}
+
+// Wrapper for buffer swapping
+void FlipBuffers()
+{
+  glfwSwapBuffers();
+  // glfwSwapBuffers also automatically polls for input
+
+  // If the window was closed we quit
+  if (glfwGetWindowParam(GLFW_OPENED)&nbsp;!= GL_TRUE)
+    RunLevel = 0;
+}
+
+// Handle keys - updates the Keys array
+void KeyCallback(int key, int action)
+{
+  Keys[key] = (action == GLFW_PRESS);
+
+  if (Keys[GLFW_KEY_ESC])
+    RunLevel = 0;
+}
+
+// Handle mouse button events - updates the Mouse structure
+void MouseButtonCallback(int button, int action)
+{
+  if (button == GLFW_MOUSE_BUTTON_LEFT)
+    Mouse.Mleft = (action == GLFW_PRESS);
+  else if (button == GLFW_MOUSE_BUTTON_RIGHT)
+    Mouse.Mright = (action == GLFW_PRESS);      
+}
+
+// Handle mouse motion - updates the Mouse structure
+void MousePosCallback(int x, int y)
+{
+  Mouse.Mx = x;
+  Mouse.My = y;
+}
+</pre>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=OpenGL_Tutorial_Framework&amp;action=edit&amp;section=7" title ="OpenGL Tutorial Framework">edit</a>]</div><a name="Render_Template"></a><h2>Render Template</h2>
+<p>Here's a template for the Render.cpp file. Code in this file should be platform independent.<br />
+This one just displays a black screen till 'Esc' is pressed.
+</p>
+<div class="editsection" style="float:right;margin-left:5px;">[<a href="/index.php?title=OpenGL_Tutorial_Framework&amp;action=edit&amp;section=8" title ="OpenGL Tutorial Framework">edit</a>]</div><a name="Render.cpp"></a><h3>Render.cpp</h3>
+<pre>
+// This code will be executed by the OpenGL base app's render thread
+#include &quot;Framework.h&quot;
+
+void Render(void)
+{
+  // Set the background to black
+  glClearColor(0,0,0,0);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  // This loop will run until Esc is pressed
+  while(RunLevel)
+  {
+    if(Keys[VK_ESCAPE]) // Esc Key
+      RunLevel=0;
+
+    // Do OpenGL stuff here
+
+    // We're using double buffers, so we need to swap to see our stuff
+    FlipBuffers();
+  }
+} 
+</pre>
+<p><br />  
+</p>
+	    <div id="catlinks"><p class='catlinks'><a href="/index.php?title=Special:Categories&amp;article=OpenGL_Tutorial_Framework" title ="Special:Categories">Categories</a>: <a href="/index.php/Category:Tutorial" title ="Category:Tutorial">Tutorial</a> | <a href="/index.php/Category:C" title ="Category:C">C</a> | <a href="/index.php/Category:OpenGL" title ="Category:OpenGL">OpenGL</a></p></div>
+	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	  </td></tr></table>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-main" class="selected"><a href="/index.php/OpenGL_Tutorial_Framework">Article</a></li><li id="ca-talk" class="new"><a href="/index.php?title=Talk:OpenGL_Tutorial_Framework&amp;action=edit">Discussion</a></li><li id="ca-edit" class=""><a href="/index.php?title=OpenGL_Tutorial_Framework&amp;action=edit">Edit</a></li><li id="ca-history"><a href="/index.php?title=OpenGL_Tutorial_Framework&amp;action=history">History</a></li>
+	  </ul>
+	</div>
+	<div class="portlet" id="p-personal">
+	  <h5>Personal tools</h5>
+	  <div class="pBody">
+	    <ul>
+	      <li id="pt-login"><a href="/index.php?title=Special:Userlogin&amp;returnto=OpenGL_Tutorial_Framework">Log in</a></li>
+	    </ul>
+	  </div>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a title="Game Programming Wiki" style="background-image: url(/stylesheets/images/wiki.png);" href="/index.php/Game_Programming_Wiki"></a>
+	</div>
+	<div class="portlet" id="p-nav">
+	  <h5>Navigation</h5>
+	  <div class="pBody">
+	    <ul>
+	      <li><a href="/">Main Page</a></li>
+	      <li><a href="/forums/">Message Board</a></li>
+	      <li id="n-currentevents"><a href="/index.php/Current_events">Current events</a></li>
+	      <li id="n-recentchanges"><a href="/index.php/Special:Recentchanges">Recent changes</a></li>
+	      <li id="n-randompage"><a href="/index.php/Special:Randompage">Random page</a></li>
+	      <li id="n-help"><a href="/index.php/Help:Contents">Help</a></li>
+	      
+	    </ul>
+	  </div>
+	</div>
+	<div id="p-search" class="portlet">
+	  <h5>Search</h5>
+	  <div class="pBody">
+<!-- SiteSearch Google -->
+<FORM method="GET" action="http://www.google.com/search">
+<input type="hidden" name="ie" value="UTF-8"/>
+<input type="hidden" name="oe" value="UTF-8"/>
+<A HREF="http://www.google.com/"><IMG SRC="/images/google.gif" border="0" ALT="Google"/></A><br/>
+<INPUT TYPE="text" name="q" size="16" maxlength="255" value=""/>
+<input type="hidden" name="domains" value="http://gpwiki.org"/><br/>
+<input type="radio" name="sitesearch" value=""/> web 
+<input type="radio" name="sitesearch" value="http://gpwiki.org" checked/> gpwiki <br/>
+<INPUT type="submit" name="btnG" VALUE="search"/>
+</FORM>
+<!-- SiteSearch Google -->	  </div>
+	</div>
+	<div class="portlet" id="p-tb">
+	  <h5>Toolbox</h5>
+	  <div class="pBody">
+	    <ul>
+	      <li id="t-whatlinkshere"><a href="/index.php?title=Special:Whatlinkshere&amp;target=OpenGL_Tutorial_Framework">What links here</a></li>
+	      <li id="t-recentchangeslinked"><a href="/index.php?title=Special:Recentchangeslinked&amp;target=OpenGL_Tutorial_Framework">Related changes</a></li>
+	      
+	      
+	      
+	      
+	      <li id="t-specialpages"><a href="/index.php/Special:Specialpages">Special pages</a></li>
+	    </ul>
+	  </div>
+	  <div align="center">
+	    <br/><a href="http://grubbygames.com"><img src="/images/grubbygames.gif" border="0" width="142" height="80"/></a><br/>
+	    Hosting donated by <a href="http://grubbygames.com">Grubby Games</a>
+	  </div>
+	</div>
+	
+      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+	<div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="/stylesheets/images/poweredby_mediawiki_88x31.png" alt="MediaWiki" /></a></div>
+	<div id="f-copyrightico"><a href="http://www.gnu.org/copyleft/fdl.html"><img src="/stylesheets/images/gnu-fdl.png" alt='GNU Free Documentation License 1.2' /></a></div>
+	<ul id="f-list">
+	  <li id="f-lastmod"> This page was last modified 19:37, 7 Apr 2005.</li>
+	  
+	  
+	  <li id="f-copyright">Content is available under <a href="http://www.gnu.org/copyleft/fdl.html" class='external' title="http://www.gnu.org/copyleft/fdl.html">GNU Free Documentation License 1.2</a>.</li>
+	  <li id="f-about"><a href="/index.php/GPWiki:About">About the Game 
+Programming Wiki</a></li>
+	  <li id="f-disclaimer"><a href="/index.php/GPWiki:General_disclaimer" title ="GPWiki:General disclaimer">Disclaimers</a></li>
+	</ul>
+      </div>
+    </div>
+    <!-- Served by server1.gpwiki.org in 0.19 secs. -->
+  </body>
+</html>

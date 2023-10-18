@@ -1,0 +1,16 @@
+TYPE TICKS = GIANT
+TYPE CALLINFO
+  XLONG .funcAddr' Function address
+  XLONG .parentFrame' Parent stack frame address
+  XLONG .origRetAddr' Function return address
+  TICKS .entryTime' Time function was called
+  TICKS .startTime' Time function started
+  TICKS .endTime' Time function returned
+END TYPE
+EXTERNAL FUNCTION Proflib ()
+EXTERNAL FUNCTION penter ()
+EXTERNAL FUNCTION pexit ()
+EXTERNAL FUNCTION TICKS GetTicks ()
+EXTERNAL FUNCTION TICKS GetFreq ()
+EXTERNAL FUNCTION LogEntry (funcAddr)
+

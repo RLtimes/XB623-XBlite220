@@ -1,0 +1,1 @@
+NewChild ("static", "text", $$SS_LEFT, x, y, w, h, hWnd, 0, 0)

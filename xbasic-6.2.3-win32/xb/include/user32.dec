@@ -1,0 +1,344 @@
+'
+'
+' ########################  Max Reason
+' #####  user32.dec  #####  copyright 1988-2000
+' ########################  Windows XBasic declarations for Windows "user32"
+'
+' subject to LGPL license - see COPYING_LIB
+'
+' maxreason@maxreason.com
+'
+' for Windows XBasic
+'
+'
+' VERSION  "0.0065"  ' 2000/04/19
+'
+'
+' ###########################
+' #####  declare types  #####
+' ###########################
+'
+TYPE WNDCLASS
+  XLONG    .style
+  XLONG    .lpfnWndProc
+  XLONG    .cbClsExtra
+  XLONG    .cbWndExtra
+  XLONG    .hInstance
+  XLONG    .hIcon
+  XLONG    .hCursor
+  XLONG    .hbrBackground
+  XLONG    .lpszMenuName
+  XLONG    .lpszClassName
+END TYPE
+'
+TYPE USER32_POINTAPI
+  ULONG    .x
+  ULONG    .y
+END TYPE
+'
+TYPE USER32_RECT
+  ULONG    .left
+  ULONG    .top
+  ULONG    .right
+  ULONG    .bottom
+END TYPE
+'
+'
+' ###############################
+' #####  declare functions  #####
+' ###############################
+'
+EXTERNAL FUNCTION  AdjustWindowRectEx (rect, style, menu, moreStyle)
+EXTERNAL FUNCTION  BeginPaint (hwnd, addrPAINTSTRUCT)
+EXTERNAL FUNCTION  BringWindowToTop (hwnd)
+EXTERNAL FUNCTION  ClientToScreen (hwnd, point)
+EXTERNAL FUNCTION  CloseClipboard ()
+EXTERNAL FUNCTION  CreateWindowExA (styleEx, className, windowName, style, x, y, w, h, owner, menu, inst, param)
+EXTERNAL FUNCTION  DefWindowProcA (hwnd, message, wParam, lParam)
+EXTERNAL FUNCTION  DestroyWindow (hwnd)
+EXTERNAL FUNCTION  DispatchMessageA (msg)
+EXTERNAL FUNCTION  DrawIcon (hdc, x, y, hIcon)
+EXTERNAL FUNCTION  DrawIconEx (hdc, x, y, hIcon, width, height, stepIfAniCur, hbrFlickerFreeDraw, flags)
+EXTERNAL FUNCTION  EmptyClipboard ()
+EXTERNAL FUNCTION  EnableWindow (hwnd, enable)
+EXTERNAL FUNCTION  EndPaint (hwnd, addrPAINTSTRUCT)
+EXTERNAL FUNCTION  FillRect (hdc, rect, hbrush)
+EXTERNAL FUNCTION  FindWindowA (addrClassName, addrWindowName)
+EXTERNAL FUNCTION  GetActiveWindow ()
+EXTERNAL FUNCTION  GetAsyncKeyState (key)
+EXTERNAL FUNCTION  GetCapture ()
+EXTERNAL FUNCTION  GetClassLongA (hwnd, offset)
+EXTERNAL FUNCTION  GetClientRect (hwnd, addrRect)
+EXTERNAL FUNCTION  GetClipboardData (format)
+EXTERNAL FUNCTION  GetCursorPos (point)
+EXTERNAL FUNCTION  GetDC (hwnd)
+EXTERNAL FUNCTION  GetDesktopWindow ()
+EXTERNAL FUNCTION  GetKeyState (key)
+EXTERNAL FUNCTION  GetMessageA (lpmsg, hwnd, wMsgFilterMin, wMsgFilterMax)
+EXTERNAL FUNCTION  GetQueueStatus (flags)
+EXTERNAL FUNCTION  GetSystemMetrics (nIndex)
+EXTERNAL FUNCTION  GetUpdateRect (hwnd, rect, erase)
+EXTERNAL FUNCTION  GetWindowDC (hwnd)
+EXTERNAL FUNCTION  GetWindowTextA (hwnd, lpText, nMaxCount)
+EXTERNAL FUNCTION  GetWindowTextLengthA (hwnd)
+EXTERNAL FUNCTION  InvalidateRect (hwnd, rect, erase)
+EXTERNAL FUNCTION  IsClipboardFormatAvailable (format)
+EXTERNAL FUNCTION  IsIconic (hwnd)
+EXTERNAL FUNCTION  IsZoomed (hwnd)
+EXTERNAL FUNCTION  KillTimer (hwnd, timer)
+EXTERNAL FUNCTION  LoadCursorA (hInst, lpszCursor)
+EXTERNAL FUNCTION  LoadIconA (hInst, lpszIcon)
+EXTERNAL FUNCTION  LoadImageA (hInst, addrFileName, uType, cxDesired, cyDesired, fuLoad)
+EXTERNAL FUNCTION  MessageBeep (type)
+EXTERNAL FUNCTION  MessageBoxA(hwnd, addrText, addrCaption, uType)
+EXTERNAL FUNCTION  MoveWindow (hwnd, x, y, nWidth, nHeight, bRepaint)
+EXTERNAL FUNCTION  OpenClipboard (handle)
+EXTERNAL FUNCTION  PeekMessageA (lpmsg, hwnd, wMsgFilterMin, wMsgFilterMax, fuRemoveMsg)
+EXTERNAL FUNCTION  PostMessageA (hwnd, message, wParam, lParam)
+EXTERNAL FUNCTION  RegisterClassA (WNDCLASS class)
+EXTERNAL FUNCTION  RegisterWindowMessageA (addrString)
+EXTERNAL FUNCTION  ReleaseCapture ()
+EXTERNAL FUNCTION  ReleaseDC (hwnd, hdc)
+EXTERNAL FUNCTION  ScreenToClient (hwnd, point)
+EXTERNAL FUNCTION  SendMessageA (hwnd, wMsg, wParam, lParam)
+EXTERNAL FUNCTION  SetActiveWindow (hwnd)
+EXTERNAL FUNCTION  SetCapture (hwnd)
+EXTERNAL FUNCTION  SetClassLongA (hwnd, offset, value)
+EXTERNAL FUNCTION  SetClipboardData (format, handle)
+EXTERNAL FUNCTION  SetCursor (hCursor)
+EXTERNAL FUNCTION  SetFocus (hwnd)
+EXTERNAL FUNCTION  SetTimer (hwnd, timer, msec, callFunc)
+EXTERNAL FUNCTION  SetWindowPlacement (hwnd, addrWINDOWPLACEMENT)
+EXTERNAL FUNCTION  SetWindowPos (hwnd, stackAction, x, y, cx, cy, action)
+EXTERNAL FUNCTION  SetWindowTextA (hwnd, lpszText)
+EXTERNAL FUNCTION  ShowCursor (state)
+EXTERNAL FUNCTION  ShowWindow (hwnd, show)
+EXTERNAL FUNCTION  SystemParametersInfoA (uAction, uParam, lpvParam, fuWinIni)
+EXTERNAL FUNCTION  TranslateMessage (msg)
+EXTERNAL FUNCTION  UpdateWindow (hwnd)
+EXTERNAL FUNCTION  ValidateRect (hwnd, rect)
+EXTERNAL FUNCTION  WaitMessage ()
+EXTERNAL FUNCTION  WinHelpA (hwnd, lpHelpFile$, wCommand, dwData)
+'
+'
+' #######################
+' #####  constants  #####
+' #######################
+'
+' LoadImageA()
+'
+$$IMAGE_BITMAP               = 0
+$$IMAGE_ICON                 = 1
+$$IMAGE_CURSOR               = 2
+'
+$$LR_DEFAULTCOLOR            = 0
+$$LR_MONOCHROME              = 1
+$$LR_COLOR                   = 2
+$$LR_LOADFROMFILE            = 16
+$$LR_LOADTRANSPARENT         = 32
+$$LR_DEFAULTSIZE             = 64
+$$LR_CREATEDIBSECTION        = 8192
+'
+' drawicon flags
+'
+$$DI_MASK                    = 0x0001
+$$DI_IMAGE                   = 0x0002
+$$DI_NORMAL                  = 0x0003
+$$DI_COMPAT                  = 0x0004
+$$DI_DEFAULTSIZE             = 0x0008
+'
+'
+$$WM_NULL                    = 0x00000000    ' xxx
+$$WM_CREATE                  = 0x00000001    ' xxx
+$$WM_DESTROY                 = 0x00000002
+$$WM_MOVE                    = 0x00000003
+$$WM_SIZE                    = 0x00000005
+$$WM_ACTIVATE                = 0x00000006    ' xxx
+$$WM_SETFOCUS                = 0x00000007
+$$WM_KILLFOCUS               = 0x00000008
+$$WM_ENABLE                  = 0x0000000A    ' xxx
+$$WM_SETREDRAW               = 0x0000000B    ' xxx
+$$WM_SETTEXT                 = 0x0000000C    ' xxx
+$$WM_GETTEXT                 = 0x0000000D    ' xxx
+$$WM_GETTEXTLENGTH           = 0x0000000E    ' xxx
+$$WM_PAINT                   = 0x0000000F
+$$WM_CLOSE                   = 0x00000010    ' xxx
+$$WM_QUERYENDSESSION         = 0x00000011    ' xxx
+$$WM_QUIT                    = 0x00000012
+$$WM_QUERYOPEN               = 0x00000013    ' xxx
+$$WM_ERASEBKGND              = 0x00000014    ' xxx
+$$WM_SYSCOLORCHANGE          = 0x00000015    ' xxx
+$$WM_ENDSESSION              = 0x00000016    ' xxx
+$$WM_SHOWWINDOW              = 0x00000018    ' xxx
+$$WM_WININICHANGE            = 0x0000001A    ' xxx
+$$WM_DEVMODECHNAGE           = 0x0000001B    ' xxx
+$$WM_ACTIVATEAPP             = 0x0000001C    ' xxx
+$$WM_FONTCHANGE              = 0x0000001D    ' xxx
+$$WM_TIMECHANGE              = 0x0000001E    ' xxx
+$$WM_CANCELMODE              = 0x0000001F    ' xxx
+$$WM_SETCURSOR               = 0x00000020    ' xxx
+$$WM_MOUSEACTIVATE           = 0x00000021
+$$WM_CHILDACTIVATE           = 0x00000022    ' xxx
+$$WM_QUEUESYNC               = 0x00000023    ' xxx
+$$WM_GETMINMAXINFO           = 0x00000024    ' xxx
+$$WM_PAINTICON               = 0x00000026    ' xxx
+$$WM_ICONERASEBKGND          = 0x00000027    ' xxx
+$$WM_NEXTDLGCTL              = 0x00000028    ' xxx
+$$WM_SPOOLERSTATUS           = 0x0000002A    ' xxx
+$$WM_DRAWITEM                = 0x0000002B    ' xxx
+$$WM_MEASUREITEM             = 0x0000002C    ' xxx
+$$WM_DELETEITEM              = 0x0000002D    ' xxx
+$$WM_VKEYTOITEM              = 0x0000002E    ' xxx
+$$WM_CHARTOITEM              = 0x0000002F    ' xxx
+$$WM_SETFONT                 = 0x00000030    ' xxx
+$$WM_GETFONT                 = 0x00000031    ' xxx
+$$WM_SETHOTKEY               = 0x00000032    ' xxx
+$$WM_GETHOTKEY               = 0x00000033    ' xxx
+$$WM_QUERYDRAGICON           = 0x00000037
+$$WM_COMPAREITEM             = 0x00000039    ' xxx
+$$WM_COMPACTING              = 0x00000041    ' xxx
+$$WM_OTHERWINDOWCREATED      = 0x00000042    ' xxx
+$$WM_OTHERWINDOWDESTROYED    = 0x00000043    ' xxx
+$$WM_COMMNOTIFY              = 0x00000044    ' xxx
+$$WM_WINDOWPOSCHANGING       = 0x00000046    ' xxx
+$$WM_WINDOWPOSCHANGED        = 0x00000047    ' xxx
+$$WM_POWER                   = 0x00000048    ' xxx
+$$WM_COPYDATA                = 0x0000004A    ' xxx
+$$WM_CANCELJOURNAL           = 0x0000004B    ' xxx
+$$WM_GETICON                 = 0x0000007F    ' ???
+$$WM_SETICON                 = 0x00000080    ' ???
+$$WM_NCCREATE                = 0x00000081    ' xxx
+$$WM_NCDESTROY               = 0x00000082    ' xxx
+$$WM_NCCALCSIZE              = 0x00000083    ' xxx
+$$WM_NCHITTEST               = 0x00000084    ' xxx
+$$WM_NCPAINT                 = 0x00000085    ' xxx
+$$WM_NCACTIVATE              = 0x00000086    ' xxx
+$$WM_GETDLGCODE              = 0x00000087    ' xxx
+$$WM_NCMOUSEMOVE             = 0x000000A0
+$$WM_NCLBUTTONDOWN           = 0x000000A1
+$$WM_NCLBUTTONUP             = 0x000000A2
+$$WM_NCLBUTTONDBLCLK         = 0x000000A3
+$$WM_NCRBUTTONDOWN           = 0x000000A4
+$$WM_NCRBUTTONUP             = 0x000000A5
+$$WM_NCRBUTTONDBLCLK         = 0x000000A6
+$$WM_NCMBUTTONDOWN           = 0x000000A7
+$$WM_NCMBUTTONUP             = 0x000000A8
+$$WM_NCMBUTTONDBLCLK         = 0x000000A9
+$$WM_KEYFIRST                = 0x00000100
+$$WM_KEYDOWN                 = 0x00000100
+$$WM_KEYUP                   = 0x00000101
+$$WM_CHAR                    = 0x00000102
+$$WM_DEADCHAR                = 0x00000103    ' xxx
+$$WM_SYSKEYDOWN              = 0x00000104
+$$WM_SYSKEYUP                = 0x00000105
+$$WM_SYSCHAR                 = 0x00000106    ' xxx
+$$WM_SYSDEADCHAR             = 0x00000107    ' xxx
+$$WM_KEYLAST                 = 0x00000108    ' xxx
+$$WM_INITDIALOG              = 0x00000110    ' xxx
+$$WM_COMMAND                 = 0x00000111    ' xxx
+$$WM_SYSCOMMAND              = 0x00000112
+$$WM_TIMER                   = 0x00000113
+$$WM_HSCROLL                 = 0x00000114    ' xxx
+$$WM_VSCROLL                 = 0x00000115    ' xxx
+$$WM_INITMENU                = 0x00000116    ' xxx
+$$WM_INITMENUPOPUP           = 0x00000117    ' xxx
+$$WM_MENUSELECT              = 0x0000011F    ' xxx
+$$WM_MENUCHAR                = 0x00000120    ' xxx
+$$WM_ENTERIDLE               = 0x00000121    ' xxx
+$$WM_CTLCOLORMSGBOX          = 0x00000132    ' xxx
+$$WM_CTLCOLOREDIT            = 0x00000133    ' xxx
+$$WM_CTLCOLORLISTBOX         = 0x00000134    ' xxx
+$$WM_CTLCOLORBTN             = 0x00000135    ' xxx
+$$WM_CTLCOLORDLG             = 0x00000136    ' xxx
+$$WM_CTLCOLORSCROLLBAR       = 0x00000137    ' xxx
+$$WM_CGLCOLORSTATIC          = 0x00000138    ' xxx
+$$WM_MOUSEFIRST              = 0x00000200
+$$WM_MOUSEMOVE               = 0x00000200
+$$WM_LBUTTONDOWN             = 0x00000201
+$$WM_LBUTTONUP               = 0x00000202
+$$WM_LBUTTONDBLCLK           = 0x00000203
+$$WM_RBUTTONDOWN             = 0x00000204
+$$WM_RBUTTONUP               = 0x00000205
+$$WM_RBUTTONDBLCLK           = 0x00000206
+$$WM_MBUTTONDOWN             = 0x00000207
+$$WM_MBUTTONUP               = 0x00000208
+$$WM_MBUTTONDBLCLK           = 0x00000209
+$$WM_MOUSEWHEEL              = 0x0000020A
+$$WM_XBUTTONDOWN             = 0x0000020B
+$$WM_XBUTTONUP               = 0x0000020C
+$$WM_XBUTTONDBLCLK           = 0x0000020D
+$$WM_MOUSELAST               = 0x0000020D
+$$WM_PARENTNOTIFY            = 0x00000210    ' xxx
+$$WM_ENTERMENULOOP           = 0x00000211    ' xxx
+$$WM_EXITMENULOOP            = 0x00000212    ' xxx
+$$WM_MDICREATE               = 0x00000220    ' xxx
+$$WM_MDIDESTROY              = 0x00000221    ' xxx
+$$WM_MDIACTIVATE             = 0x00000222    ' xxx
+$$WM_MDIRESTORE              = 0x00000223    ' xxx
+$$WM_MDINEXT                 = 0x00000224    ' xxx
+$$WM_MDIMAXIMIZE             = 0x00000225    ' xxx
+$$WM_MDITILE                 = 0x00000226    ' xxx
+$$WM_MDICASCADE              = 0x00000227    ' xxx
+$$WM_MDIICONARRANGE          = 0x00000228    ' xxx
+$$WM_MDIGETACTIVE            = 0x00000229    ' xxx
+$$WM_MDISETMENU              = 0x00000230    ' xxx
+$$WM_DROPFILES               = 0x00000233    ' xxx
+$$WM_MDIREFRESHMENU          = 0x00000234    ' xxx
+$$WM_CUT                     = 0x00000300    ' xxx
+$$WM_COPY                    = 0x00000301    ' xxx
+$$WM_PASTE                   = 0x00000302    ' xxx
+$$WM_CLEAR                   = 0x00000303    ' xxx
+$$WM_UNDO                    = 0x00000304    ' xxx
+$$WM_RENDERFORMAT            = 0x00000305    ' xxx
+$$WM_RENDERALLFORMATS        = 0x00000306    ' xxx
+$$WM_DESTROYCLIPBOARD        = 0x00000307    ' xxx
+$$WM_DRAWCLIPBOARD           = 0x00000308    ' xxx
+$$WM_PAINTCLIPBOARD          = 0x00000309    ' xxx
+$$WM_VSCROLLCLIPBOARD        = 0x0000030A    ' xxx
+$$WM_SIZECLIPBOARD           = 0x0000030B    ' xxx
+$$WM_ASKCBFORMATNAME         = 0x0000030C    ' xxx
+$$WM_CHANGECBCHAIN           = 0x0000030D    ' xxx
+$$WM_HSCROLLCLIPBOARD        = 0x0000030E    ' xxx
+$$WM_QUERYNEWPALETTE         = 0x0000030F    ' xxx
+$$WM_PALETTEISCHANGING       = 0x00000310    ' xxx
+$$WM_PALETTECHANGED          = 0x00000311    ' xxx
+$$WM_HOTKEY                  = 0x00000312    ' xxx
+$$WM_PENWINFIRST             = 0x00000380    ' xxx
+$$WM_PENWINLAST              = 0x0000038F    ' xxx
+$$WM_USER                    = 0x00000400    ' xxx
+$$WM_LASTMESSAGE             = 0x000003FF
+
+$$MB_OK                      = 0x00000000
+$$MB_OKCANCEL                = 0x00000001
+$$MB_ABORTRETRYIGNORE        = 0x00000002
+$$MB_YESNOCANCEL             = 0x00000003
+$$MB_YESNO                   = 0x00000004
+$$MB_RETRYCANCEL             = 0x00000005
+$$MB_ICONHAND                = 0x00000010
+$$MB_ICONQUESTION            = 0x00000020
+$$MB_ICONEXCLAMATION         = 0x00000030
+$$MB_ICONASTERISK            = 0x00000040
+$$MB_USERICON                = 0x00000080
+$$MB_ICONWARNING             = $$MB_ICONEXCLAMATION
+$$MB_ICONERROR               = $$MB_ICONHAND
+$$MB_ICONINFORMATION         = $$MB_ICONASTERISK
+$$MB_ICONSTOP                = $$MB_ICONHAND
+$$MB_DEFBUTTON1              = 0x00000000
+$$MB_DEFBUTTON2              = 0x00000100
+$$MB_DEFBUTTON3              = 0x00000200
+$$MB_DEFBUTTON4              = 0x00000300
+$$MB_APPLMODAL               = 0x00000000
+$$MB_SYSTEMMODAL             = 0x00001000
+$$MB_TASKMODAL               = 0x00002000
+$$MB_HELP                    = 0x00004000
+$$MB_NOFOCUS                 = 0x00008000
+$$MB_SETFOREGROUND           = 0x00010000
+$$MB_DEFAULT_DESKTOP_ONLY    = 0x00020000
+$$MB_TOPMOST                 = 0x00040000
+$$MB_RIGHT                   = 0x00080000
+$$MB_RTLREADING              = 0x00100000
+$$MB_TYPEMASK                = 0x0000000F
+$$MB_ICONMASK                = 0x000000F0
+$$MB_DEFMASK                 = 0x00000F00
+$$MB_MODEMASK                = 0x00003000
+$$MB_MISCMASK                = 0x0000C000

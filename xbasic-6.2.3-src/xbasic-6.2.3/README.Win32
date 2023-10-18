@@ -1,0 +1,94 @@
+'
+'
+' ####################  Max Reason
+' #####  XBasic  #####  copyright 1988-2000
+' ####################  Windows XBasic readme.txt file
+'
+' http://www.xbasic.org
+' http://groups.yahoo.com/group/xbasic
+' maxreason@maxreason.com
+'
+' for Windows XBasic
+'
+'
+' XBasic installation is discussed at the bottom of this file.
+' XBasic will not work properly if you install XBasic improperly.
+'
+' After you start this software for the first time, select HelpNotes
+' from the menu bar in the main window and read the release notes for
+' this and some previous versions.  The release notes describe known
+' bugs, problems, and incompatibilities in this software.
+'
+' Also select HelpNew to see what features have been added recently.
+'
+' Review all the Help menu entries to find lots of helpful info.
+'
+' XBasic is subject to GPL and LGPL licenses, copies of which are
+' included with this distribution in files COPYING and COPYING_LIB for
+' your reference.  Which license applies to a particular file is
+' specified in the file.  a*.x sample programs are public domain.
+'
+'
+'
+' ############################
+' #####  install XBasic  #####
+' ############################
+'
+' This following is the installation process for Windows XBasic only.
+'
+' Windows XBasic is distributed in 2 forms:
+' - A self-installing executable:
+'   Launch the executable and select the directory in which to install
+'   XBasic. To start XBasic select the XBasic entry from the Start menu
+'
+' - A zip-file:
+'   Extract the zip-file into any directory by using a program like
+'   WinZip. Make SURE to "recreate directories".
+'
+' The installation process does not alter the Windows system registry.
+'
+' Note: previous versions of XBasic needed to be installed in C:\XB, D:\XB,
+' ... This is no longer the case, from version 6.1.0 onwards XBasic can
+' be installed anywhere. A good place may be C:\Program Files\XBasic.
+'
+' IMPORTANT : Windows95 has a bug that makes it necessary to create
+' a duplicate copy of \xb\xb.dll called \xb\xb.dup - do not forget.
+'
+'
+' To be able to build standalone .exe/.dll files from the command-line you
+' have to run the xbvars.bat batch-file. This sets some environment variables
+' needed by the build-process. xbvars.bat is automatically generated during
+' install if you used the self-installing executable. If you used the zip-file
+' you'll have to create one yourself. It should look like this (assuming you
+' installed XBasic in C:\Program Files\XBasic and C:\PROGRA~1 is the 'short
+' name' of it.
+'
+' @echo off
+' set PATH=C:\PROGRA~1\XBasic\bin;%PATH%
+' set LIB=C:\PROGRA~1\XBasic\lib;%LIB%
+' set INCLUDE=C:\PROGRA~1\XBasic\include;%INCLUDE%
+'
+' To be able to run standalone (i.e. non-PDE) programs you need to use
+' xbrun.dll instead of xb.dll. To use it: copy it and rename that copy to
+' xb.dll. Make sure that that copy is found before the standard xb.dll is
+' found (e.g. by putting it in the current directory). If you don't do this
+' then your standalone program will start the PDE.
+'
+' ##############################
+' #####  Compiling XBasic  #####
+' ##############################
+'
+' To be able to compile XBasic itself you need the following things
+' - A working XBasic compiler (note: XBasic is largely written in XBasic
+'   itself)
+' - The CygWin utilities. This can be the full distribution (available from
+'   http://sources.redhat.com/cygwin/ ) or a 'light' distribution (available
+'   from http://download.sourceforge.net/xbasic/xbasic-Util-1.1.exe )
+'
+' To compile XBasic:
+' - unpack the sources into a separate directory (from the XBasic binary
+'   directory)
+' - Goto that directory
+' - make
+' - make install
+'

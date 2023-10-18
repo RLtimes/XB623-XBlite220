@@ -1,0 +1,15 @@
+scrabble ICON    scrabble.ico
+
+menu MENU
+BEGIN
+    POPUP        "&Options"
+      BEGIN
+        MENUITEM    "&Line",            102
+        MENUITEM    "&Box",             103, CHECKED
+        MENUITEM    "&Dotted Line",     104
+        MENUITEM    "&Circle",          107
+        MENUITEM    "&Retain",          105
+        MENUITEM    SEPARATOR
+        MENUITEM    "&Exit",            106
+      END
+END

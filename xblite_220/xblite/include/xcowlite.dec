@@ -1,0 +1,530 @@
+TYPE FUNCARG
+	XLONG			.token
+	XLONG			.varType
+	XLONG			.argType
+	SBYTE			.stack
+	SBYTE			.byRef
+	UBYTE			.kind
+	UBYTE			.res
+END TYPE
+' SECTION:		See GetExternalAddresses()
+'TYPE SECTION
+'	STRING*8	.name
+'	XLONG			.virtualSize
+'	XLONG			.virtualAddress
+'	XLONG			.physicalSize
+'	XLONG			.physicalAddress
+'	XLONG			.reserved0
+'	XLONG			.reserved1
+'	XLONG			.reserved2
+'	XLONG			.sectionFlags
+'END TYPE
+' SYMBOL:		See GetExternalAddresses()
+'TYPE SYMBOL
+'	STRING*8	.name
+'	XLONG			.value
+'	USHORT		.section
+'	USHORT		.type
+'	UBYTE			.class
+'	UBYTE			.aux
+'END TYPE
+TYPE LINEINFO
+	XLONG      .line
+	STRING*128 .file
+END TYPE
+' ********************************
+' *****  Compiler Functions  *****
+' ********************************
+EXTERNAL FUNCTION  Xnt ()
+EXTERNAL FUNCTION  XxxXBasic ()
+' Compiler Constants
+	$$VALUEABS					= 0				' addressing modes for Value ()
+	$$VALUEDISP					= 1
+	$$TEXTSECTION				= 0
+	$$DATASECTION				= 1
+	$$USERSECTION				= 2
+	$$STACKSECTION			= 3
+	$$XGET							= 0				' get token (also generic GET)
+	$$XSET							= 1				' set token (also generic SET)
+	$$XADD							= 1				' add token
+	$$XNEW							= 2				' add token (override existing)
+	$$GETADDR						= 0				' see Composite()
+	$$GETHANDLE					= 1				' see Composite()
+	$$GETDATAADDR				= 2				' see Composite()
+	$$GETDATA						= 3				' see Composite()
+	$$NORMAL_SYMBOL			= 0				' see GetSymbol()			normalSymbol
+	$$LOCAL_CONSTANT		= 1				' see GetSymbol()			$LOCAL_CONSTANT
+	$$GLOBAL_CONSTANT		= 2				' see GetSymbol()			$$GLOBAL_CONSTANT
+	$$SHARED_VARIABLE		= 3				' see GetSymbol()			#SharedVariable
+	$$EXTERNAL_VARIABLE	= 4				' see GetSymbol()			##ExternalVariable
+	$$SOLO_POUND				= 5				' see GetSymbol()			solo #
+	$$DUAL_POUND				= 6				' see GetSymbol()			dual ##
+	$$COMPONENT					= 7				' see GetSymbol()			.component
+	$$NONE							= 0				' not data kind
+	$$VAR_TOKEN					= 1				' variable  (built-in or user-defined)
+	$$ARRAY_TOKEN				= 2				' whole array of any type
+	$$ARRAY_NODE				= 3				' array node of any type
+	$$DATA_ADDR					= 4				' data address of any type
+' r30 offsets for system variables:
+'		replace with computed values as soon as available
+	$$xerrorOffset      = 0x0180						' &($$XERROR) - r30
+	$$walkbaseOffset    = 0x01B8
+	$$walkoffsetOffset  = 0x01BC
+	$$softBreakOffset   = 0x01C0
+	$$BREAKPOINT   = 0x80000000		' Start token:  indicates BP at this line
+	$$CURRENTEXE   = 0x40000000		'      "     :  marks current execution line
+' *****  BITFIELD TOKENS  *****
+	$$SPACE					= BITFIELD ( 3, 29)		' spaces following token symbol
+	$$KIND					= BITFIELD ( 5, 24)		' kind of token
+	$$ALLO					= BITFIELD ( 3, 21)		' allocation of data objects
+	$$ARGS					= BITFIELD ( 3, 21)		' max # of args to intrinsics
+	$$TYPE					= BITFIELD ( 5, 16)		' data type
+	$$PREC					= BITFIELD ( 4, 16)		' precedence of operators
+	$$NUMBER				= BITFIELD (16,  0)		' token #
+	$$RAWTYPE				= BITFIELD ( 8, 16)		' type and allo field
+	$$RAWALLO				= BITFIELD ( 8, 16)		' type and allo field
+	$$BYTE0					= BITFIELD ( 8,  0)		' byte 0  (low byte)
+	$$BYTE1					= BITFIELD ( 8,  8)		' byte 1
+	$$BYTE2					= BITFIELD ( 8, 16)		' byte 2
+	$$BYTE3					= BITFIELD ( 8, 24)		' byte 3  (high byte)
+	$$WORD0					= BITFIELD (16,  0)		' word 0  (low word)
+	$$WORD1					= BITFIELD (16, 16)		' word 1  (high word)
+	$$CLEAR_BP_EXE	= BITFIELD (30, 0)		' clear BP/EXE from start token
+' *****  PROTOTYPE TOKENS  *****
+	$$T_SYMBOLS				= 0x00000000
+	$$T_VARIABLES			= 0x01000000
+	$$T_ARRAYS				= 0x02000000
+	$$T_LITERALS			= 0x03000000
+	$$T_CONSTANTS			= 0x04000000
+	$$T_COMPOSITES		= 0x05000000
+	$$T_LABELS				= 0x06000000
+	$$T_FUNCTIONS			= 0x07000000
+	$$T_ARRAY_SYMBOLS	= 0x08000000
+	$$T_CHARCONS			= 0x0B000000
+	$$T_SYSCONS				= 0x0C000000
+	$$T_STATEMENTS		= 0x0D000000
+	$$T_INTRINSICS		= 0x0E000000
+	$$T_STATE_INTRIN	= 0x0F000000
+	$$T_TYPES					= 0x10000000
+	$$T_STARTS				= 0x11000000
+	$$T_SEPARATORS		= 0x12000000
+	$$T_TERMINATORS		= 0x13000000
+	$$T_LPARENS				= 0x14000000
+	$$T_RPARENS				= 0x15000000
+	$$T_BINARY_OPS		= 0x16000000
+	$$T_UNARY_OPS			= 0x17000000
+	$$T_ADDR_OPS			= 0x18000000
+	$$T_COMMENTS			= 0x19000000
+	$$T_CHARACTERS		= 0x1A000000
+	$$T_WHITES				= 0x1B000000
+' *****  KIND TOKENS  *****
+	$$KIND_SYMBOLS				= 0x00
+	$$KIND_VARIABLES			= 0x01
+	$$KIND_ARRAYS					= 0x02
+	$$KIND_LITERALS				= 0x03
+	$$KIND_CONSTANTS			= 0x04
+'	$$KIND_COMPOSITES			= 0x05			' not used
+	$$KIND_LABELS					= 0x06
+	$$KIND_FUNCTIONS			= 0x07
+	$$KIND_ARRAY_SYMBOLS	= 0x08
+	$$KIND_CHARCONS				= 0x0B
+	$$KIND_SYSCONS				= 0x0C
+	$$KIND_STATEMENTS			= 0x0D
+	$$KIND_INTRINSICS			= 0x0E
+	$$KIND_STATE_INTRIN		= 0x0F
+	$$KIND_STATEMENTS_INTRINSICS      = 0x0F		' long name duplicate
+	$$KIND_TYPES					= 0x10
+	$$KIND_STARTS					= 0x11
+	$$KIND_SEPARATORS			= 0x12
+	$$KIND_TERMINATORS		= 0x13
+	$$KIND_LPARENS				= 0x14
+	$$KIND_RPARENS				= 0x15
+	$$KIND_BINARY_OPS			= 0x16
+	$$KIND_UNARY_OPS			= 0x17
+	$$KIND_ADDR_OPS				= 0x18
+	$$KIND_COMMENTS				= 0x19
+	$$KIND_CHARACTERS			= 0x1A
+	$$KIND_WHITES					= 0x1B
+	$$KIND_INLINEASM			= 0x1C
+' *****  PRECEDENCE  *****
+	$$PREC_NONE				= 0
+	$$PREC_ORL				= 1:		$$PREC_LOR			= 1
+	$$PREC_XORL				= 1:		$$PREC_LXOR			= 1
+	$$PREC_ANDL				= 2
+	$$PREC_EQ					= 3:		$$PREC_NNE			= 3:		$$PREC_EQL		= 3
+	$$PREC_NE					= 3:		$$PREC_NEQ			= 3
+	$$PREC_LT					= 4:		$$PREC_NGE			= 4
+	$$PREC_LE					= 4:		$$PREC_NGT			= 4
+	$$PREC_GE					= 4:		$$PREC_NLT			= 4
+	$$PREC_GT					= 4:		$$PREC_NLE			= 4
+	$$PREC_OR					= 5:		$$PREC_ORBIT		= 5
+	$$PREC_XOR				= 5:		$$PREC_XORBIT		= 5
+	$$PREC_AND				= 6:		$$PREC_ANDBIT		= 6
+	$$PREC_SUBTRACT		= 7
+	$$PREC_ADD				= 7
+	$$PREC_MOD				= 8
+	$$PREC_REMAINDER	= 8
+	$$PREC_IDIV				= 8
+	$$PREC_MUL				= 8
+	$$PREC_DIV				= 8
+	$$PREC_POWER			= 9
+	$$PREC_RSHIFT			= 10
+	$$PREC_LSHIFT			= 10
+	$$PREC_DSHIFT			= 10
+	$$PREC_USHIFT			= 10
+	$$PREC_UNARY			= 11
+	$$PREC_MINUS			= 11
+	$$PREC_PLUS				= 11
+	$$PREC_NOT				= 11:   $$PREC_NOTBIT  = 11:   $$PREC_TILDA   = 11
+	$$PREC_TESTL			= 11
+	$$PREC_NOTL				= 11
+	$$PREC_ADDR_OP		= 11
+	$$PREC_HANDLE_OP	= 11
+	$$PREC_STORE_OP		= 11
+' *****  OPERATOR CONVERSION TABLE NUMBERS  *****
+	$$COP0      = 0x00
+	$$COP1      = 0x10
+	$$COP2      = 0x20
+	$$COP3      = 0x30
+	$$COP4      = 0x40
+	$$COP5      = 0x50
+	$$COP6      = 0x60
+	$$COP7      = 0x70
+	$$COP8      = 0x80
+	$$COP9      = 0x90
+	$$COPA      = 0xA0
+	$$COPB			= 0xB0
+	$$R0 = 0:    $$R8  =  8:    $$R16 = 16:    $$R24 = 24
+	$$R1 = 1:    $$R9  =  9:    $$R17 = 17:    $$R25 = 25
+	$$R2 = 2:    $$R10 = 10:    $$R18 = 18:    $$R26 = 26
+	$$R3 = 3:    $$R11 = 11:    $$R19 = 19:    $$R27 = 27
+	$$R4 = 4:    $$R12 = 12:    $$R20 = 20:    $$R28 = 28
+	$$R5 = 5:    $$R13 = 13:    $$R21 = 21:    $$R29 = 29
+	$$R6 = 6:    $$R14 = 14:    $$R22 = 22:    $$R30 = 30
+	$$R7 = 7:    $$R15 = 15:    $$R23 = 23:    $$R31 = 31
+	$$RA0							= $$R10
+	$$RA1							= $$R12
+	$$IMM16						= 32
+	$$NEG16						= 33
+	$$LITNUM					= 34
+	$$CONNUM					= 35
+	$$TYPE_ALLO				= 0xE0	' allocation TYPE_MASK
+	$$TYPE_TYPE				= 0x1F	' data type  TYPE_MASK
+	$$TYPE_DECLARED		= 0x80	' for functions, go_labels, sub_labels
+	$$TYPE_DEFINED		= 0x40	' for functions, go_labels, sub_labels
+	$$TYPE_INPUT			= 0x11
+	$$MASK_ALLO				= 0xE00000
+	$$MASK_DECDEF			= 0xC00000		' declared | defined mask
+	$$MASK_DECLARED		= 0x800000		' declared in DECLARE, EXTERNAL, INTERNAL
+	$$MASK_DEFINED		= 0x400000		' defined in FUNCTION block
+	$$XFUNC						= 0x01				' Native function (see funcKind[])
+	$$SFUNC						= 0x02				' System function (see funcKind[])
+	$$CFUNC						= 0x03				' C function      (see funcKind[])
+'	DECLARE FUNCTION STYLES
+	$$FUNC_DECLARE		= 2
+	$$FUNC_INTERNAL		= 1
+	$$FUNC_EXTERNAL		= 0
+	$$ARGS0						= 0x00
+	$$ARGS1						= 0x20
+	$$ARGS2						= 0x40
+	$$ARGS3						= 0x60
+	$$ARGS4						= 0x80
+	$$MIN_SBYTE				= -128
+	$$MAX_SBYTE				=  127
+	$$MIN_UBYTE				= 0
+	$$MAX_UBYTE				= 255
+	$$MIN_SSHORT			= -32768
+	$$MAX_SSHORT			= 32767
+	$$MIN_USHORT			= 0
+	$$MAX_USHORT			= 65535
+	$$MIN_SLONG				= -2147483648
+	$$MAX_SLONG				= 2147483647
+	$$MIN_ULONG				= 0
+	$$MAX_ULONG				= 4294967295$$
+	$$MIN_XLONG				= $$MIN_SLONG
+	$$MAX_XLONG				= $$MAX_ULONG
+	$$MIN_GOADDR			= $$MIN_XLONG
+	$$MAX_GOADDR			= $$MAX_XLONG
+	$$MIN_SUBADDR			= $$MIN_XLONG
+	$$MAX_SUBADDR			= $$MAX_XLONG
+	$$MIN_FUNCADDR		= $$MIN_XLONG
+	$$MAX_FUNCADDR		= $$MAX_XLONG
+	$$MIN_SINGLE			= 0sFF7FFFFF
+	$$MAX_SINGLE			= 0s7F7FFFFF
+	$$MIN_DOUBLE			= 0dFFEFFFFFFFFFFFFF
+	$$MAX_DOUBLE			= 0d7FEFFFFFFFFFFFFF
+	$$MIN_GIANT				= 0x8000000000000000
+	$$MAX_GIANT				= 0x7FFFFFFFFFFFFFFF
+' $$MIN_LONGDOUBLE  =
+' $$MAX_LONGDOUBLE  =
+	$$outdisk					= 2
+	$$errors					= 3
+	$$infile					= 4
+	$$termfile				= 0
+	$$diskfile				= 1
+' i486 register equivalences
+	$$al		= $$R2
+	$$dl		= $$R3
+	$$bl		= $$R4
+	$$cl		= $$R5
+	$$ax		= $$R6
+	$$dx		= $$R7
+	$$bx		= $$R8
+	$$cx		= $$R9
+	$$eax		= $$R10
+	$$edx		= $$R11
+	$$ebx		= $$R12
+	$$ecx		= $$R13
+	$$esi		= $$R26
+	$$edi		= $$R27
+	$$ebp		= $$R31
+	$$esp		= $$R1
+	$$o0		= 0x0000
+	$$o1		= 0x0001
+	$$o2		= 0x0002
+	$$o3		= 0x0003
+	$$o4		= 0x0004
+	$$o5		= 0x0005
+	$$o6		= 0x0006
+	$$o7		= 0x0007
+	$$o8		= 0x0008
+	$$o9		= 0x0009
+	$$o10		= 0x000A
+	$$o11		= 0x000B
+	$$o12		= 0x000C
+	$$o13		= 0x000D
+	$$o14		= 0x000E
+	$$o15		= 0x000F
+	$$o16		= 0x0010
+	$$o17		= 0x0011
+	$$o18		= 0x0012
+	$$o19		= 0x0013
+	$$o20		= 0x0014
+	$$o21		= 0x0015
+	$$o22		= 0x0016
+	$$o23		= 0x0017
+	$$o24		= 0x0018
+	$$o25		= 0x0019
+	$$o26		= 0x001A
+	$$o27		= 0x001B
+	$$o28		= 0x001C
+	$$o29		= 0x001D
+	$$o30		= 0x001E
+	$$o31		= 0x001F
+	$$o32		= 0x0000
+' 80486 machine instructions
+	$$nope									= 0
+	$$adc										= 1
+	$$add										= 2
+	$$and										= 3
+	$$bsf										= 4
+	$$bsr										= 5
+	$$bt										= 6
+	$$btc										= 7
+	$$btr										= 8
+	$$bts										= 9
+	$$call									= 10
+	$$cbw										= 11
+	$$cdq										= 12
+	$$clc										= 13
+	$$cld										= 14
+	$$cmc										= 15
+	$$cmp										= 16
+	$$cmpsb									= 17
+	$$cmpsw									= 18
+	$$cmpsd									= 19
+	$$cwd										= 20
+	$$cwde									= 21
+	$$dec										= 22
+	$$div										= 23
+	$$f2xm1									= 24
+	$$fabs									= 25
+	$$fadd									= 26
+	$$faddp									= 27
+	$$fchs									= 28
+	$$fclex									= 29
+	$$fnclex								= 30
+	$$fcom									= 31
+	$$fcomp									= 32
+	$$fcompp								= 33
+	$$fcos									= 34
+	$$fdecstp								= 35
+	$$fdiv									= 36
+	$$fdivp									= 37
+	$$fdivr									= 38
+	$$fdivrp								= 39
+	$$fild									= 40
+	$$fincstp								= 41
+	$$fist									= 42
+	$$fistp									= 43
+	$$fld										= 44
+	$$fldlg2								= 45
+	$$fldln2								= 46
+	$$fldl2e								= 47
+	$$fldl2t								= 48
+	$$fldpi									= 49
+	$$fldz									= 50
+	$$fld1									= 51
+	$$fmul									= 52
+	$$fmulp									= 53
+	$$fnop									= 54
+	$$fpatan								= 55
+	$$fprem									= 56
+	$$fprem1								= 57
+	$$fptan									= 58
+	$$frndint								= 59
+	$$fscale								= 60
+	$$fsin									= 61
+	$$fsincos								= 62
+	$$fsqrt									= 63
+	$$fst										= 64
+	$$fstp									= 65
+	$$fstsw									= 66
+	$$fnstsw								= 67
+	$$fsub									= 68
+	$$fsubp									= 69
+	$$fsubr									= 70
+	$$fsubrp								= 71
+	$$ftst									= 72
+	$$fucom									= 73
+	$$fucomp								= 74
+	$$fucompp								= 75
+	$$fxam									= 76
+	$$fxch									= 77
+	$$fxtract								= 78
+	$$fyl2x									= 79
+	$$fyl2xp1								= 80
+	$$f2xn1									= 81
+	$$idiv									= 82
+	$$imul									= 83
+	$$inc										= 84
+	$$int										= 85
+	$$ja										= 86
+	$$jae										= 87
+	$$jbe										= 88
+	$$jc										= 89
+	$$jcxz									= 90
+	$$jecxz									= 91
+	$$je										= 92
+	$$jg										= 93
+	$$jge										= 94
+	$$jl										= 95
+	$$jle										= 96
+	$$jna										= 97
+	$$jnae									= 98
+	$$jnb										= 99
+	$$jnbe									= 100
+	$$jnc										= 101
+	$$jne										= 102
+	$$jng										= 103
+	$$jnge									= 104
+	$$jnl										= 105
+	$$jnle									= 106
+	$$jno										= 107
+	$$jnp										= 108
+	$$jns										= 109
+	$$jnz										= 110
+	$$jo										= 111
+	$$jp										= 112
+	$$jpe										= 113
+	$$jpo										= 114
+	$$js										= 115
+	$$jz										= 116
+	$$jmp										= 117
+	$$lahf									= 118
+	$$ld										= 119
+	$$lea										= 120
+	$$lodsb									= 121
+	$$lodsw									= 122
+	$$lodsd									= 123
+	$$loop									= 124
+	$$loopz									= 125
+	$$loopnz								= 126
+	$$movsb									= 127
+	$$movsw									= 128
+	$$movsd									= 129
+	$$mul										= 130
+	$$neg										= 131
+	$$nop										= 132
+	$$not										= 133
+	$$or										= 134
+	$$pop										= 135
+	$$popad									= 136
+	$$popfd									= 137
+	$$push									= 138
+	$$pushad								= 139
+	$$pushfd								= 140
+	$$rcl										= 141
+	$$rcr										= 142
+	$$rol										= 143
+	$$ror										= 144
+	$$rep										= 145
+	$$repz									= 146
+	$$repnz									= 147
+	$$ret										= 148
+	$$sahf									= 149
+	$$sal										= 150
+	$$sar										= 151
+	$$shl										= 152
+	$$shr										= 153
+	$$sbb										= 154
+	$$scasb									= 155
+	$$scasw									= 156
+	$$scasd									= 157
+	$$shld									= 158
+	$$shrd									= 159
+	$$st										= 160
+	$$stc										= 161
+	$$std										= 162
+	$$stosb									= 163
+	$$stosw									= 164
+	$$stosd									= 165
+	$$sub										= 166
+	$$test									= 167
+	$$xchg									= 168
+	$$xor										= 169
+	$$jb										= 170
+	$$into									= 171
+	$$mov										= 172
+	$$movsx									= 173
+	$$movzx									= 174
+	$$zlast									= 175
+	$$ufld									= 0x002C0000			' make = $$fld  << 16
+	$$ufstp									= 0x00410000			' make = $$fstp << 16
+	$$uld										= 0x00770000			' make = $$ld   << 16
+	$$ulda									= 0x00780000			' make = $$lda  << 16
+	$$ust										= 0x00A00000			' make = $$st   << 16
+' 80486 addressing modes
+	$$none									= 0
+	$$abs										= 1
+	$$rel										= 2
+	$$reg										= 3
+	$$imm										= 4
+	$$r0										= 5
+	$$ro										= 6
+	$$rr										= 7
+	$$rs										= 8
+	$$regreg								= 9
+	$$regimm								= 10
+	$$regabs								= 11
+	$$regr0									= 12
+	$$regro									= 13
+	$$regrr									= 14
+	$$regrs									= 15
+	$$absreg								= 16
+	$$r0reg									= 17
+	$$roreg									= 18
+	$$rrreg									= 19
+	$$rsreg									= 20
+	$$absimm								= 21
+	$$r0imm									= 22
+	$$roimm									= 23
+	$$rrimm									= 24
+	$$rsimm									= 25
+	$$regimm8								= 26		'special bogus addressing modes for
+	$$absimm8								= 27		'bit-twiddling instructions in Code()
+	$$r0imm8								= 28
+	$$roimm8								= 29
+	$$rrimm8								= 30
+	$$rsimm8								= 31
+

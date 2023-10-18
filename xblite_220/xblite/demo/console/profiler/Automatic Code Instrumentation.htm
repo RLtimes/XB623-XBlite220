@@ -1,0 +1,330 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; U) [Netscape]">
+   <title>Automatic Code Instrumentation</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF">
+
+<h2>
+<font color="#FF0000">(From C/C++ Users Journal, January 1999)</font></h2>
+
+<hr>
+<center>
+<h2>
+<font color="#800000">Automatic Code Instrumentation</font></h2></center>
+
+<center>
+<h3>
+<font color="#800000">John Panzer</font></h3></center>
+
+<blockquote>You can profile function execution times easily with just a
+little help from a VC++ hook and any web browser.</blockquote>
+
+<hr>
+<blockquote><i>Copyright &copy; 1998 John Panzer</i>
+<p>Profilers and coverage analyzers are useful tools that can help provide
+information about bottlenecks and control flow. Occasionally they can be
+critically important to a successful project. Although many development
+environments provide these tools, they lack the functionality necessary
+to solve all control-flow and timing problems. Commercial products can
+be costly and may not be customizable. Faced with problems like these,
+I created the CallMonitor utility framework. CallMonitor traces a client
+program's function calls and provides simple hooks for building more sophisticated
+tools.
+<p>The CallMonitor utility is implemented as a support DLL. It requires
+no client-code changes, just a recompile and relink. It can instrument
+only portions of a program if desired. It is thread safe and traces exceptions
+cleanly.
+  <p>I used CallMonitor to implement a hierarchical call profiler, which pinpointed 
+    several bottlenecks in a large project. Other possible applications include 
+    a trace utility, a coverage analyzer, and an error test-case exerciser. Tools 
+    can extend CallMonitor by inheriting from class <b>CallMonitor</b> (<a href="LIST1.HTM">Listing 
+    1</a>, <b>callmon.h</b>). 
+  <p>CallMonitor does have a couple of limitations. The mechanism it uses
+is limited to function-call tracing and cannot be used to trace the execution
+of individual statements. It makes use of a Microsoft-specific compiler
+switch to help insert instrumentation calls, so it is currently limited
+to Visual C++. <b>CallMonitor</b> has been tested under Visual C++ versions
+5.0 and 6.0, Professional and Enterprise editions.
+<h4>
+<font face="Garamond"><font color="#000080">How to Instrument Procedure
+Calls</font></font></h4>
+A function profiler needs to know when each function call begins and ends.
+The Microsoft VC++ compiler provides half of the solution: the semi-documented
+<b>/Gh</b>
+compile flag makes the compiler insert a hidden call to a <b>_penter</b>
+function at the start of each client function. (The Win32 SDK Call Attributed
+Profiler uses this method as well.) Although the source code remains unchanged,
+the object code includes the hidden call as the first instruction in the
+function. For example, the function
+<pre>void client() {}</pre>
+generates the following assembly code on the Intel platform:
+<pre>_client&nbsp;&nbsp; PROC NEAR
+call __penter
+push ebp
+mov&nbsp; ebp, esp
+pop&nbsp; ebp
+ret&nbsp; 0</pre>
+The next step is to provide a <b>_penter</b> function in a support library
+and link it in. The prototype for <b>_penter</b> is:
+<pre>extern "C" void _penter();</pre>
+  (see <a href="FIG1.HTM">Figure 1</a>, <b>CallMonitor.cpp</b>). Once inside the 
+  <b>_penter</b> function, CallMonitor needs to know the address of the client 
+  function that called it. The <b>_penter</b> function can deduce this with a 
+  small amount of inline assembly. It loads the current frame pointer, stored 
+  in the Intel CPU's <b>ebp</b> register, into a local variable. This gives access 
+  to the frame record, which provides the return address for the current <b>_penter</b> 
+  call. Subtracting five bytes yields the address of the client function. Of course, 
+  all of this is nonportable and is processor and compiler dependent. Fortunately, 
+  the nonportable code can be isolated to a handful of small functions. 
+  <p>The CallMonitor maintains a separate stack, called the shadow stack,
+where it records information pertaining to the client function call. This
+stack is a member of the <b>CallMonitor</b> class, <b>callInfoStack</b>,
+and is implemented as a vector of <b>CallInfo</b> objects (described later).
+The shadow stack stores the client function's address and the time of entry
+to the function. It also stores the client function's return address, which
+will eventually be used to return control from <b>CallMonitor</b> to the
+client function's caller.
+<p>Given the client function address, the support library can record the
+calls made to each function. This is enough for a coverage analyzer, but
+a profiler needs to know when the function ends as well. Unfortunately,
+the compiler doesn't generate a call to a <b>_pexit</b> function parallel
+to <b>_penter</b>. But given a little stack manipulation, it's possible
+to trick the client function into returning to a <b>_pexit</b> thunk instead
+of to its caller. The <b>_pexit</b> thunk calls instrumentation code and
+then returns to the original address (cached by <b>_penter</b>).
+<h4>
+<font face="Garamond"><font color="#000080">Manipulating the Program Stack</font></font></h4>
+Within the <b>_penter</b> function, the <b>ebp</b> register points at the current 
+  stack frame. <b>_penter</b> first moves the contents of <b>ebp</b> into a local 
+  variable, <b>framePtr</b>, for easier access (see <a href="FIG1.HTM">Figure 
+  1</a>). Starting at <b>framePtr</b>, the stack contains three useful pieces 
+  of information: 
+  <pre>framePtr[0]&nbsp;&nbsp;&nbsp; Parent stack frame pointer
+framePtr[1]&nbsp;&nbsp;&nbsp; Return address of _penter function call
+framePtr[2]&nbsp;&nbsp;&nbsp; Return address of client function</pre>
+  The return address for the client is stored in <b>framePtr[2]</b>. Changing 
+  <b>framePtr[2]</b> to the address of a support library function (<b>_pexitThunk</b>, 
+  <a href="FIG1.HTM">Figure 1</a>) will make the client return to that function 
+  instead of to its caller. This gives the support library the needed hook to 
+  record the client function exit. 
+  <p>Since <b>_pexitThunk</b> gets control through a <b>ret</b> instruction
+instead of a <b>call</b>, it can't use a normal return sequence. The thunk
+first pushes a placeholder null value on the stack. The <b>eax</b> register
+contains the client function's return value, so the thunk saves this value
+temporarily by pushing <b>eax</b> onto the stack. Finally, the thunk routine
+calls a normal <b>_pexit</b> function to complete the exit processing.
+When <b>_pexit</b> returns, the thunk restores the <b>eax</b> register
+value and returns.
+  <p>The <b>_pexit</b> function uses its frame pointer to find the address of the 
+    placeholder pushed onto the stack by <b>_pexitThunk</b>. It passes the address 
+    of this word to the <b>exitProcedure</b> method, which restores the client 
+    function's original return address from information stored in the <b>CallMonitor</b> 
+    object (see <a href="FIG2.HTM">Figure 2</a>, <b>callmon.cpp</b>). When <b>_pexitThunk</b> 
+    eventually returns, it pops this address from the program stack. 
+  <h4>
+<font face="Garamond"><font color="#000080">Tracing Exceptions</font></font></h4>
+The code for <b>exitProcedure</b> is complicated by client exceptions.
+When a function exits because of an exception, it does not return normally,
+so <b>_pexitThunk</b> never gets control. Usually, the exception is eventually
+handled by a higher-level function. When that function returns, it will
+be redirected through <b>_pexitThunk</b>. If there is no way of synchronizing
+the program stack with the shadow stack maintained by the support library,
+the code will insert the wrong return address and most likely crash the
+program.
+<p>In order to deal with this, <b>exitProcedure</b> doesn't just pop the
+top of the shadow stack. It walks the shadow stack looking for a record
+whose frame pointer matches the frame pointer on the program stack. Only
+when it finds a matching frame pointer does it restore the corresponding
+return address. This recovery scheme may fail under some unlikely circumstances
+(by incorrectly matching frame pointers). This has not been a problem in
+practice.
+<h4>
+<font face="Garamond"><font color="#000080">The CallMonitor Class</font></font></h4>
+The job of a <b>CallMonitor</b> object is to monitor and measure calls for a given 
+  thread. Each thread in the client process automatically gets its own <b>CallMonitor</b> 
+  object. This occurs when the <b>CallMonitor::threadAttach</b> function is executed 
+  (see <a href="LIST2.HTM">Listing 2</a>, <b>dllmain.cpp</b>). 
+  <p>Upon entry to a client function, control passes to the <b>_penter</b>
+function, which in turn calls the <b>CallMonitor::enterProcedure</b> function.
+Within this function, <b>CallMonitor</b> gathers information and performs
+housekeeping on its internal data structures and then calls function <b>logEntry</b>.
+The CallInfo structure passed into <b>logEntry</b> contains two useful
+pieces of information: <b>funcAddr</b> is the address of the client function,
+and <b>entryTime</b> is the approximate time the client function was called.
+(Times are measured in ticks, and are stored in variables of type <b>TICKS</b>.
+Both ticks and <b>TICKS</b> are platform-dependent entities.) Typically,
+not much needs to be done within method <b>logEntry</b>. The default implementation
+writes the information to <b>stdout</b>, which can be useful for testing.
+<p>The <b>logExit</b> function is called in two situations. Either a client
+function has returned normally, in which case <b>normalRet</b> is <b>true</b>,
+or the function exited via a client exception. In either case, for each
+<b>logEntry</b>,
+there is always a corresponding <b>logExit</b>. The <b>CallInfo</b> structure
+passed into <b>logExit</b> contains additional timing information.
+<b>startTime</b>
+contains the approximate time at which the body of the procedure began
+execution; <b>endTime</b> contains the approximate time at which the body
+finished execution. The elapsed time spent within the function and its
+children is <b>(endTime-startTime)</b>.
+<p><b>CallMonitor</b>'s <b>callInfoStack</b> member contains the shadow
+call records, and is accessible to derived classes.
+<p><b>CallMonitor</b> provides some useful static utility methods. <b>threadObj</b>
+returns a reference to the CallMonitor object for the current thread. <b>getFuncInfo</b>
+retrieves the name of a function from debugging information, given its
+address. This is useful for reporting statistics. <b>queryTicks</b> retrieves
+the value of a platform-dependent timer. <b>queryTickFrequency</b> retrieves
+the number of ticks per second for the current platform.
+<h4>
+<font face="Garamond"><font color="#000080">Using CallMonitor</font></font></h4>
+The most common way to use <b>CallMonitor</b> is to extend it via inheritance.
+To extend <b>CallMonitor</b>, create a derived class and instantiate objects
+of that class inside <b>DllMain</b>. In the derived class, override the
+<b>logEntry</b>
+and <b>logExit</b> methods.
+  <p>To use CallMonitor as the basis for a new tool, first create a DLL to contain 
+    a class derived from <b>CallMonitor</b>. Within the <b>DllMain</b> procedure, 
+    create instances of the derived class and register them with <b>threadAttach</b> 
+    (see <a href="LIST2.HTM">Listing 2</a>). Include <b>CallMonitor.cpp</b> (<a href="FIG1.HTM">Figure 
+    1</a>) in the DLL and build normally. 
+  <p>To use the DLL with a client program, modify the client program's build
+procedure to include the <b>/Gh</b> compile flag and to link with the DLL's
+import library. Then rebuild the client and run it normally. The client
+can consist of an executable and any number of related DLLs, either implicitly
+or dynamically loaded. (The latter situation is one where the built-in
+Visual C++ profiler falls short.)
+<h4>
+<font face="Garamond"><font color="#000080">Applications</font></font></h4>
+The most straightforward application of CallMonitor is a trace utility.
+The default implementations of <b>logEntry</b> and <b>logExit</b> already
+print a generic trace to the console. Additional useful features would
+be the ability to separate the output from different threads, display output
+in a graphical UI, or filter output based on depth, function address, or
+global flags.
+<h4>
+<font face="Garamond"><font color="#000080">A Coverage Analyzer</font></font></h4>
+By keeping a map of function addresses vs. call counts, it is simple to
+create a <b>logEntry</b> method that tracks the number of times each function
+was called. In combination with a <b>.MAP</b> file or by using <b>IMAGEHLP</b>
+functions, it would not be difficult to create a table of all available
+functions and then a report showing which functions were called and which
+weren't.
+<h4>
+<font face="Garamond"><font color="#000080">An Error Simulator</font></font></h4>
+Although a large percentage of production code is devoted to error handling,
+testing this code through black-box techniques can be difficult. Modifying
+code to insert special error conditions is a possibility [1], but does
+require modifying source code. The CallMonitor library provides a way to
+induce simulated errors into a program as part of a test suite.
+<p>Within <b>logEntry</b> and <b>logExit</b> methods, the exerciser can
+throw any client exception to simulate error conditions. By modifying the
+<b>_pexitThunk</b>
+code to pass the address of the client return value, the <b>logExit</b>
+method could also modify return values from selected functions to simulate
+errors. The utility could read a configuration file containing a table
+of functions and exceptions to throw when encountered, and then trigger
+the exceptions when necessary.
+<h4>
+<font face="Garamond"><font color="#000080">A Call Time Profiler</font></font></h4>
+A profiler needs to track the time spent within the body of each client
+function. It also needs to be able to differentiate between time spent
+in a function and time spent in the function's children. The CallMonitor
+framework provides the timing information needed for these tasks. The basic
+strategy is as follows.
+<p>In the <b>logExit</b> method, the profiler calculates the elapsed time
+as <b>(ci.endTime-ci.startTime)</b>. It adds this elapsed time to a running
+total for the current function, <b>ci.funcAddr</b>. This enables the profiler
+to track the total amount of time spent in each client function overall.
+The profiler also needs to adjust times for the CallMonitor entry and exit
+overhead. The overhead of the CallMonitor entry code can be estimated by
+<b>(ci.startTime-ci.entryTime)</b>.
+The overhead of the exit code is harder to estimate accurately, since part
+of the overhead of the exit code is the calculation and storage of the
+overhead itself. This means that a significant part of the overhead can't
+be measured directly. The profiler can get around this by using the overhead
+of the previous <b>logExit</b> call as an estimate for the current call.
+<p>The profiler needs to keep track of how much of each function's elapsed
+time is spent in its children, so that it can report both the overall time
+and also the time spent within the function itself. It can track this with
+an additional counter, <b>childTimes</b>, associated with each function.
+The parent address for the current function can be found on the <b>callInfoStack</b>.
+<p>Finally, the profiler needs to adjust all times for the overhead that
+instrumentation introduces into the program times. This can be a major
+source of error for small, frequently called functions. If the profiler
+is not calibrated correctly, these functions can appear to take orders
+of magnitude more time than they actually do. Since elapsed times also
+include the overhead for all children, calculating the correct adjustments
+can be quite tricky.
+<p>Of course, it helps to get the most accurate clock available. The Windows
+API function <b>QueryPerformanceCounter</b> accesses a moderately high-resolution
+timer. However, if CallMonitor is running on a Pentium processor, there
+is a much better alternative available. The RDTSC assembly instruction
+accesses a 64-bit cycle counter built into the chip [2]. The portable version
+of CallMonitor uses <b>QueryPerformanceCounter</b>, but the Pentium-specific
+version uses RDTSC to implement <b>queryTicks</b>.
+<p>When profiling a multithreaded program, function times will include
+time spent in other threads. This may be a problem or an advantage, depending
+on what is being profiled.
+<h4>
+<font face="Garamond"><font color="#000080">Hierarchical Profiling</font></font></h4>
+Although recording the total time spent within each function is useful,
+it may not provide all the necessary information. For example, it might
+not be useful to know that 30% of the program's time is spent in an optimized
+<b>FastStrCpy</b>
+function, but it could be helpful to see which functions call it heavily.
+Hierarchical profilers provide this. They display children and parents
+for each function, along with times and call counts in the context of that
+function.
+<p>Although the profiler can collect this information at run time, storing
+it is a problem. To keep track separately of all generations of descendants
+of a given call would be too slow for real-world programs. Fortunately,
+many of the benefits of a hierarchical profiler can be realized by storing
+only one additional level of information with each function record. By
+keeping track of the call times for each function's immediate children,
+the code provides a good picture of which children are taking the most
+time within that function. Drilling down to that child function, then,
+gives a picture of that child's average behavior.
+<p>Given the tables of function statistics, it is fairly simple to write
+out a basic report listing functions in order of total time. But it can
+be much more effective to see hierarchical-profiling information as a tree
+or graph. Some commercial products have extensive UI support for this,
+displaying a graph of function calls and allowing the user to simulate
+the effects of optimization. Lacking the time to create such a UI, I found
+that a simple HTML report was a great way to present this information.
+The report generator took only a short time to develop.
+  <p>The HTML report displays each function in its own section. The children of 
+    each function appear in a table, along with the child times and call counts. 
+    Since each child function name is a hyperlink, the user can drill down into 
+    the most expensive child and see where it typically spends its time. <a href="FIG3.HTM">Figure 
+    3</a> shows the general layout of such a report. 
+  <p>When profiling, it's best to take measured times with a grain of salt.
+All profilers have measurement error, and the act of measurement affects
+performance as well. Profiling can impact processor cache hits, thread
+synchronization, and paging. The best approach is to profile using a modified
+release-mode build, with small, frequently called functions inlined. Use
+the profiler to identify likely candidates for optimization, and check
+the effects with the profiler disabled.
+<h4>
+<font face="Garamond"><font color="#000080">Conclusion</font></font></h4>
+The <b>CallMonitor</b> class provides an extensible way to monitor and
+measure procedure calls within a client program. It is a customizable and
+extensible framework. It is currently the basis for a hierarchical call
+profiler and can be used for other tools as well. o
+<h4>
+<font face="Garamond"><font color="#000080">References</font></font></h4>
+[1] Dave Pomerantz. "Testing Error Handlers by Simulating Errors." <i>C/C++
+Users Journal</i>, June 1998.
+<p>[2] Mark Russinovich. "Performance Instrumenting Device Drivers." <b><a href="http://www.sysinternals.com/sysperf.htm">http://www.sysinternals.com/sysperf.htm</a></b>.
+<p><i>John Panzer is a developer with Computer Associates in Sarasota,
+FL. He has nine years of experience in software development, specializing
+in C++, Windows, graphical interfaces, and software tools. John has an
+MS in Computer and Information Sciences from UC Santa Cruz. He can be reached
+at <b>jpanzer@acm.org</b>.</i>
+<h4>
+<a href="aci_src.zip">Get Article Source Code</a></h4>
+</blockquote>
+
+</body>
+</html>

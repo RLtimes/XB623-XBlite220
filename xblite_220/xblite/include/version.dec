@@ -1,0 +1,151 @@
+' #########################  XBLite
+' #####  version.dec  #####  copyright 2003
+' #########################  Windows XBLite declarations for Windows "version"
+'
+' subject to GPLL license - see gpll.txt
+'
+' VERSION  "0.0001"  ' 2003/04/16
+'
+'
+' ###########################
+' #####  declare types  #####
+' ###########################
+'
+TYPE VS_FIXEDFILEINFO
+    XLONG	.dwSignature 		' e.g. 0xfeef04bd 
+    XLONG	.dwStrucVersion 		' e.g. 0x00000042 = "0.42" 
+    XLONG	.dwFileVersionMS 		' e.g. 0x00030075 = "3.75" 
+    XLONG	.dwFileVersionLS		' e.g. 0x00000031 = "0.31" 
+    XLONG	.dwProductVersionMS	' e.g. 0x00030010 = "3.10" 
+    XLONG	.dwProductVersionLS	' e.g. 0x00000031 = "0.31" 
+    XLONG	.dwFileFlagsMask 		' = 0x3F for version "0.42"
+    XLONG	.dwFileFlags 		' e.g. VFF_DEBUG | VFF_PRERELEASE
+    XLONG	.dwFileOS 			' e.g. VOS_DOS_WINDOWS16
+    XLONG	.dwFileType			' e.g. VFT_DRIVER 
+    XLONG	.dwFileSubtype		' e.g. VFT2_DRV_KEYBOARD 
+    XLONG	.dwFileDateMS 
+    XLONG	.dwFileDateLS 
+END TYPE
+
+' ###############################
+' #####  declare functions  #####
+' ###############################
+
+EXTERNAL FUNCTION  GetFileVersionInfoA (lpstrFilename, dwHandle, dwLen, lpData)
+EXTERNAL FUNCTION  GetFileVersionInfoSizeA (lpstrFilename, lpdwHandle)
+EXTERNAL FUNCTION  GetFileVersionInfoSizeW (lpstrFilename, lpdwHandle)
+EXTERNAL FUNCTION  GetFileVersionInfoW ()
+EXTERNAL FUNCTION  VerFThk_ThunkData32 ()
+EXTERNAL FUNCTION  VerFindFileA (dwFlags, szFileName, szWinDir, szAppDir, szCurDir, lpuCurDirLen, szDestDir, lpuDestDirLen)
+EXTERNAL FUNCTION  VerFindFileW (dwFlags, szFileName, szWinDir, szAppDir, szCurDir, lpuCurDirLen, szDestDir, lpuDestDirLen)
+EXTERNAL FUNCTION  VerInstallFileA (uFlags, szSrcFileName, szDestFileName, szSrcDir, szDestDir, szCurDir, szTmpFile, lpuTmpFileLen)
+EXTERNAL FUNCTION  VerInstallFileW (uFlags, szSrcFileName, szDestFileName, szSrcDir, szDestDir, szCurDir, szTmpFile, lpuTmpFileLen)
+EXTERNAL FUNCTION  VerLanguageNameA (wLang, szLang, nSize)
+EXTERNAL FUNCTION  VerLanguageNameW (wLang, szLang, nSize)
+EXTERNAL FUNCTION  VerQueryValueA (bBlock, lpSubBlock, lplpBuffer, puLen)
+EXTERNAL FUNCTION  VerQueryValueW (bBlock, lpSubBlock, lplpBuffer, puLen)
+EXTERNAL FUNCTION  VerThkSL_ThunkData32 ()
+
+' #######################
+' #####  constants  #####
+' #######################
+
+' ----- Symbols ----- 
+$$VS_FILE_INFO            = 16	' RT_VERSION ??? MAKEINTRESOURCE (16)
+$$VS_VERSION_INFO         = 1
+$$VS_USER_DEFINED         = 100
+
+' ----- VS_VERSION.dwFileFlags ----- 
+$$VS_FFI_SIGNATURE        = 0xFEEF04BD
+$$VS_FFI_STRUCVERSION     = 0x00010000
+$$VS_FFI_FILEFLAGSMASK    = 0x0000003F
+
+' ----- VS_VERSION.dwFileFlags ----- 
+$$VS_FF_DEBUG             = 0x00000001
+$$VS_FF_PRERELEASE        = 0x00000002
+$$VS_FF_PATCHED           = 0x00000004
+$$VS_FF_PRIVATEBUILD      = 0x00000008
+$$VS_FF_INFOINFERRED      = 0x00000010
+$$VS_FF_SPECIALBUILD      = 0x00000020
+
+' ----- VS_VERSION.dwFileOS ----- 
+$$VOS_UNKNOWN             = 0x00000000
+$$VOS_DOS                 = 0x00010000
+$$VOS_OS216               = 0x00020000
+$$VOS_OS232               = 0x00030000
+$$VOS_NT                  = 0x00040000
+
+$$VOS__BASE               = 0x00000000
+$$VOS__WINDOWS16          = 0x00000001
+$$VOS__PM16               = 0x00000002
+$$VOS__PM32               = 0x00000003
+$$VOS__WINDOWS32          = 0x00000004
+
+$$VOS_DOS_WINDOWS16       = 0x00010001
+$$VOS_DOS_WINDOWS32       = 0x00010004
+$$VOS_OS216_PM16          = 0x00020002
+$$VOS_OS232_PM32          = 0x00030003
+$$VOS_NT_WINDOWS32        = 0x00040004
+
+' ----- VS_VERSION.dwFileType ----- 
+$$VFT_UNKNOWN             = 0x00000000
+$$VFT_APP                 = 0x00000001
+$$VFT_DLL                 = 0x00000002
+$$VFT_DRV                 = 0x00000003
+$$VFT_FONT                = 0x00000004
+$$VFT_VXD                 = 0x00000005
+$$VFT_STATIC_LIB          = 0x00000007
+
+' ----- VS_VERSION.dwFileSubtype for VFT_WINDOWS_DRV ----- 
+$$VFT2_UNKNOWN            = 0x00000000
+$$VFT2_DRV_PRINTER        = 0x00000001
+$$VFT2_DRV_KEYBOARD       = 0x00000002
+$$VFT2_DRV_LANGUAGE       = 0x00000003
+$$VFT2_DRV_DISPLAY        = 0x00000004
+$$VFT2_DRV_MOUSE          = 0x00000005
+$$VFT2_DRV_NETWORK        = 0x00000006
+$$VFT2_DRV_SYSTEM         = 0x00000007
+$$VFT2_DRV_INSTALLABLE    = 0x00000008
+$$VFT2_DRV_SOUND          = 0x00000009
+$$VFT2_DRV_COMM           = 0x0000000A
+$$VFT2_DRV_INPUTMETHOD    = 0x0000000B
+
+' ----- VS_VERSION.dwFileSubtype for VFT_WINDOWS_FONT ----- 
+$$VFT2_FONT_RASTER        = 0x00000001
+$$VFT2_FONT_VECTOR        = 0x00000002
+$$VFT2_FONT_TRUETYPE      = 0x00000003
+
+' ----- VerFindFile() flags ----- 
+$$VFFF_ISSHAREDFILE       = 0x0001
+
+$$VFF_CURNEDEST           = 0x0001
+$$VFF_FILEINUSE           = 0x0002
+$$VFF_BUFFTOOSMALL        = 0x0004
+
+' ----- VerInstallFile() flags ----- 
+$$VIFF_FORCEINSTALL       = 0x0001
+$$VIFF_DONTDELETEOLD      = 0x0002
+
+$$VIF_TEMPFILE            = 0x00000001
+$$VIF_MISMATCH            = 0x00000002
+$$VIF_SRCOLD              = 0x00000004
+
+$$VIF_DIFFLANG            = 0x00000008
+$$VIF_DIFFCODEPG          = 0x00000010
+$$VIF_DIFFTYPE            = 0x00000020
+
+$$VIF_WRITEPROT           = 0x00000040
+$$VIF_FILEINUSE           = 0x00000080
+$$VIF_OUTOFSPACE          = 0x00000100
+$$VIF_ACCESSVIOLATION     = 0x00000200
+$$VIF_SHARINGVIOLATION    = 0x00000400
+$$VIF_CANNOTCREATE        = 0x00000800
+$$VIF_CANNOTDELETE        = 0x00001000
+$$VIF_CANNOTRENAME        = 0x00002000
+$$VIF_CANNOTDELETECUR     = 0x00004000
+$$VIF_OUTOFMEMORY         = 0x00008000
+
+$$VIF_CANNOTREADSRC       = 0x00010000
+$$VIF_CANNOTREADDST       = 0x00020000
+
+$$VIF_BUFFTOOSMALL        = 0x00040000

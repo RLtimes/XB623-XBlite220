@@ -1,0 +1,210 @@
+LIBRARY  xbl
+VERSION  0.03
+
+EXPORTS  DllMain
+EXPORTS  XxxMain
+EXPORTS  XxxTerminate
+EXPORTS  InitProgram
+EXPORTS  %_XxxXstInitialize
+EXPORTS  %_ZeroMemory
+EXPORTS  %_eeeAllocation
+EXPORTS  %_eeeOverflow
+EXPORTS  %_eeeErrorNT
+EXPORTS  %_OutOfBounds
+EXPORTS  %_NeedNullNode
+EXPORTS  %_UnexpectedLowestDim
+EXPORTS  %_UnexpectedHigherDim
+EXPORTS  malloc
+EXPORTS  _malloc
+EXPORTS  __malloc
+EXPORTS  Xmalloc
+EXPORTS  %____malloc
+EXPORTS  %_____malloc
+EXPORTS  realloc
+EXPORTS  _realloc
+EXPORTS  __realloc
+EXPORTS  Xrealloc
+EXPORTS  %____realloc
+EXPORTS  %_____realloc
+EXPORTS  free
+EXPORTS  _free
+EXPORTS  __free
+EXPORTS  Xfree
+EXPORTS  %____free
+EXPORTS  %_____free
+EXPORTS  calloc
+EXPORTS  _calloc
+EXPORTS  __calloc
+EXPORTS  Xcalloc
+EXPORTS  %____calloc
+EXPORTS  %_____calloc
+EXPORTS  recalloc
+EXPORTS  _recalloc
+EXPORTS  __recalloc
+EXPORTS  Xrecalloc
+EXPORTS  %____recalloc
+; EXPORTS  %_beginAlloCode
+EXPORTS  %_clone.a0
+EXPORTS  %_clone.a1
+EXPORTS  %_concat.ubyte.a0.eq.a0.plus.a1.vv
+EXPORTS  %_concat.ubyte.a0.eq.a0.plus.a1.vs
+EXPORTS  %_concat.ubyte.a0.eq.a0.plus.a1.sv
+EXPORTS  %_concat.ubyte.a0.eq.a0.plus.a1.ss
+EXPORTS  %_concat.ubyte.a0.eq.a1.plus.a0.vv
+EXPORTS  %_concat.ubyte.a0.eq.a1.plus.a0.vs
+EXPORTS  %_concat.ubyte.a0.eq.a1.plus.a0.sv
+EXPORTS  %_concat.ubyte.a0.eq.a1.plus.a0.ss
+EXPORTS  %_concat.string.a0.eq.a0.plus.a1.vv
+EXPORTS  %_concat.string.a0.eq.a0.plus.a1.vs
+EXPORTS  %_concat.string.a0.eq.a0.plus.a1.sv
+EXPORTS  %_concat.string.a0.eq.a0.plus.a1.ss
+EXPORTS  %_concat.string.a0.eq.a1.plus.a0.vv
+EXPORTS  %_concat.string.a0.eq.a1.plus.a0.vs
+EXPORTS  %_concat.string.a0.eq.a1.plus.a0.sv
+EXPORTS  %_concat.string.a0.eq.a1.plus.a0.ss
+EXPORTS  %_DimArray
+EXPORTS  %_FreeArray
+EXPORTS  %_RedimArray
+EXPORTS  XxxSwapMemory
+EXPORTS  %_assignComposite
+EXPORTS  %_AssignComposite
+EXPORTS  %_CompositeStringToString
+EXPORTS  %_assignCompositeString.v
+EXPORTS  %_assignCompositeString.s
+EXPORTS  %_assignCompositeStringlet.v
+EXPORTS  %_assignCompositeStringlet.s
+; EXPORTS  %_VarargArrays
+; EXPORTS  %_endAlloCode
+; EXPORTS  %_space.string
+; EXPORTS  %_newline.string
+EXPORTS  %_print.console.newline
+EXPORTS  %_print.tab.a0.eq.a0.tab.a1
+EXPORTS  %_print.tab.a0.eq.a1.tab.a0
+EXPORTS  %_print.tab.a0.eq.a0.tab.a1.ss
+EXPORTS  %_print.tab.a0.eq.a1.tab.a0.ss
+EXPORTS  %_print.first.spaces.a0
+EXPORTS  %_print.tab.first.a0
+EXPORTS  %_print.tab.first.a1
+EXPORTS  %_Print
+EXPORTS  %_PrintConsoleNewline
+EXPORTS  %_PrintFileNewline
+EXPORTS  %_PrintThenFree
+EXPORTS  %_PrintWithNewlineThenFree
+EXPORTS  %_PrintAppendComma
+EXPORTS  %_PrintFirstComma
+EXPORTS  %_PrintAppendSpaces
+EXPORTS  %_string.compare.vv
+EXPORTS  %_string.compare.vs
+EXPORTS  %_string.compare.sv
+EXPORTS  %_string.compare.ss
+EXPORTS  %_error
+EXPORTS  %_InvalidFunctionCall
+
+EXPORTS  Xst
+EXPORTS  XstCauseException
+EXPORTS  XstErrorNumberToName
+EXPORTS  XstErrorNameToNumber
+EXPORTS  XstExceptionNumberToName
+EXPORTS  XstExceptionToSystemException
+EXPORTS  XstFileToSystemFile
+EXPORTS  XstFindMemoryMatch
+EXPORTS  XstGetEnvironmentVariable
+EXPORTS  XstGetException
+EXPORTS  XstGetExceptionFunction
+EXPORTS  XstGetSystemError
+EXPORTS  XstLockFileSection
+EXPORTS  XstPathString$
+EXPORTS  XstSetException
+EXPORTS  XstSetExceptionFunction
+EXPORTS  XstSetSystemError
+EXPORTS  XstStringToNumber
+EXPORTS  XstSystemErrorNumberToName
+EXPORTS  XstSystemErrorToError
+EXPORTS  XstSystemExceptionNumberToName
+EXPORTS  XstSystemExceptionToException
+EXPORTS  XstUnlockFileSection
+EXPORTS  XstVersion$
+EXPORTS  XxxXstLoadLibrary
+
+EXPORTS  XstCenterWindow
+
+EXPORTS  XstExceptionNameToNumber
+EXPORTS  XstGetExceptionInformation
+EXPORTS  XstRaiseException
+EXPORTS  XstRegisterException
+EXPORTS  XstTry
+
+EXPORTS  XxxEof
+EXPORTS  XxxReadFile
+EXPORTS  XxxWriteFile
+EXPORTS  XxxClose
+EXPORTS  XxxLof
+EXPORTS  XxxOpen
+EXPORTS  XxxPof
+EXPORTS  XxxInfile$
+EXPORTS  XxxInline$
+EXPORTS  XxxSeek
+EXPORTS  XxxShell
+
+EXPORTS  XxxXstFreeLibrary
+EXPORTS  XxxXstLoadLibrary
+
+EXPORTS  MAKELONG
+EXPORTS  RGB
+EXPORTS  LOWORD
+EXPORTS  HIWORD
+
+EXPORTS  Xit
+
+EXPORTS  XstStringToLongDouble
+EXPORTS  XstLongDoubleToString$
+
+EXPORTS  XstEnableFPExceptions
+EXPORTS  XstGetFPUControlWord
+EXPORTS  XstSetFPUControlWord
+EXPORTS  XstSetFPUPrecision
+EXPORTS  XstSetFPURounding
+
+EXPORTS  FPClassifyL
+EXPORTS  IsFiniteL
+EXPORTS  IsInfL
+EXPORTS  IsNanL
+EXPORTS  IsNormalL
+EXPORTS  IsSubNormalL
+EXPORTS  IsZeroL
+EXPORTS  SignBitL
+
+EXPORTS	CODE0
+EXPORTS	CPU
+EXPORTS	DYNO0
+EXPORTS	DYNO
+EXPORTS	DYNOX
+EXPORTS	DYNOZ
+EXPORTS	ERROR
+EXPORTS	EXCEPTION
+EXPORTS	LOCKOUT
+EXPORTS	SIGNALACTIVE
+EXPORTS	OSEXCEPTION
+EXPORTS	TABSAT
+EXPORTS	WHOMASK
+EXPORTS	USERRUNNING
+; EXPORTS	WIN32S
+
+EXPORTS SOFTBREAK
+EXPORTS errno
+EXPORTS GLOBAL0
+EXPORTS GLOBAL
+EXPORTS GLOBALX
+EXPORTS GLOBALZ
+EXPORTS ENTERED
+EXPORTS HINSTANCEDLL
+EXPORTS UCODE
+EXPORTS MAIN
+EXPORTS XBDir$
+
+EXPORTS EXCEPTION_MEMORY_ALLOCATION
+EXPORTS EXCEPTION_INT_OVERFLOW
+EXPORTS EXCEPTION_OUT_OF_BOUNDS
+EXPORTS EXCEPTION_NODE_NOT_EMPTY
+EXPORTS EXCEPTION_ARRAY_DIMENSION
+EXPORTS EXCEPTION_INVALID_ARGUMENT

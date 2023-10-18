@@ -1,0 +1,148 @@
+Implementing OpenGL applications in XBasic for Windows
+
+(Thanks Ken for working out these examples and
+ explaining the mysteries of OpenGL to us in
+ simple laymans terms).
+
+ The following discussion makes use of three DLLs, and their associated DEC and LIB files:
+
+  opengl32.dll - the basic Microsoft OpenGL implementation
+  glu32.dll    - the OpenGL Utility Library
+  glut32.dll   - the Windows version of GLUT, a portable (X Window System
+                 and Windows 9x/NT) OpenGL Utility Toolkit. GLUT contains
+                 functions similar to glaux.dll, but glaux.dll is obsolete
+                 and works only on Windows.
+
+ opengl32.dll and glu32.dll are distributed as a part of all Windows versions except early Win95. These DLLs should be in your \Windows or \Windows\System folder or equivalent locations. If for some reason you don't have them, see the Users, Downloads link at www.opengl.org.
+
+ glut32.dll is not part of Windows.  It can be downloaded, along with documentation, by following links at www.opengl.org (look under Developers, Documentation). It can be placed in the \Windows, \Windows\System, or XBasic\bin folder.
+
+Or try downloading the Win32 GLUT dll and lib from:
+http://www.xmission.com/~nate/glut.html
+
+An important note on GLUT (and glaux.dll):
+
+  GLUT contains, among other things, a window management system.  After some initializing steps, a program using GLUT calls glutMainLoop(), which passes control to the GLUT window system.  After this point, the XBasic window system is effectively disabled, because all messages are intercepted by GLUT.  XBasic windows will not redraw, or respond to user input.
+
+  Also, programs that call glutMainLoop() should not be run in the XBasic PDE, because when the window created by GLUT is closed, the PDE is terminated, without warning and without saving your code.  This is not a bug, but simply an incompatibility between XBasic and GLUT.  The auxiliary toolkit that comes with at least some Windows versions (glaux.dll) has similar problems.
+
+  For these reasons, it is probably not a good idea to use the GLUT (or glaux) window system in XBasic, except maybe for 'quick-and-dirty' translations of C-coded examples.  
+-----------------------------------------------------------------
+
+Using OpenGL in XBasic/XBLite
+
+The following example comes from Chapter 3 in the OpenGL tutorial at
+
+ http://ask.ii.uib.no/ebt-bin/nph-dweb/dynaweb/SGI_Developer/OpenGL_PG
+
+
+1. Original C code for Example 3-1 : cube.c
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+
+void init(void)
+{
+   glClearColor (0.0, 0.0, 0.0, 0.0);
+   glShadeModel (GL_FLAT);
+}
+
+void display(void)
+{
+   glClear (GL_COLOR_BUFFER_BIT);
+   glColor3f (1.0, 1.0, 1.0);
+   glLoadIdentity ();             /* clear the matrix */
+           /* viewing transformation  */
+   gluLookAt (0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+   glScalef (1.0, 2.0, 1.0);      /* modeling transformation */
+   glutWireCube (1.0);
+   glFlush ();
+}
+
+void reshape (int w, int h)
+{
+   glViewport (0, 0, (GLsizei) w, (GLsizei) h);
+   glMatrixMode (GL_PROJECTION);
+   glLoadIdentity ();
+   glFrustum (-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
+   glMatrixMode (GL_MODELVIEW);
+}
+
+int main(int argc, char** argv)
+{
+   glutInit(&argc, argv);
+   glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+   glutInitWindowSize (500, 500);
+   glutInitWindowPosition (100, 100);
+   glutCreateWindow (argv[0]);
+   init ();
+   glutDisplayFunc(display);
+   glutReshapeFunc(reshape);
+   glutMainLoop();
+   return 0;
+}
+
+
+2. Straight XBasic translation. This is the easiest method for translating directly from C-coded examples. 
+
+The callback functions required by GLUT must be declared as CFUNCTIONs. Create the function in the usual way (View, New function), then edit the function declarations to change the word FUNCTION to CFUNCTION.
+
+PROGRAM "cube"
+
+IMPORT  "xst"
+IMPORT  "opengl32"
+IMPORT  "glu32"
+IMPORT  "glut32"
+
+DECLARE FUNCTION Entry ()
+DECLARE FUNCTION Init()
+DECLARE CFUNCTION Display()
+DECLARE CFUNCTION Reshape (w, h)
+
+' Entry() contains the code from the C function main()
+FUNCTION Entry ()
+  XstGetCommandLineArguments (@argc, @argv$[])
+  glutInit (&argc, &&argv$[])
+  glutInitDisplayMode ($$GLUT_SINGLE | $$GLUT_RGB)
+  glutInitWindowSize (500, 400)
+  glutInitWindowPosition (100, 100)
+  glutCreateWindow (argv$[0])
+  Init ()
+  glutDisplayFunc (&Display())
+  glutReshapeFunc (&Reshape())
+  glutMainLoop()
+END FUNCTION
+
+FUNCTION Init()
+  glClearColor (0.0, 0.0, 0.0, 0.0)
+  glShadeModel ($$GL_FLAT)
+END FUNCTION
+
+'Called by GLUT when the window needs to be redrawn
+' Must be declared as a CFUNCTION.
+CFUNCTION Display()
+  glClear ($$GL_COLOR_BUFFER_BIT | $$GL_DEPTH_BUFFER_BIT)
+  glColor3f (1.0, 1.0, 1.0)
+  glLoadIdentity ()            ' clear the matrix
+' viewing transformation
+  gluLookAt (0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+  glScalef (1.0, 2.0, 1.0)     ' modeling transformation
+  glutWireCube (1.0)
+  glFlush ()
+END FUNCTION
+
+'Called by GLUT when the window needs to be resized or repositioned
+' Must be declared as a CFUNCTION
+CFUNCTION Reshape (w, h)
+  glViewport (0, 0, w, h)
+  glMatrixMode ($$GL_PROJECTION)
+  glLoadIdentity ()
+  glFrustum (-1.0, 1.0, -1.0, 1.0, 1.5, 20.0)
+  glMatrixMode ($$GL_MODELVIEW)
+END FUNCTION
+
+END PROGRAM
+
+
+

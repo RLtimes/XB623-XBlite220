@@ -1,0 +1,17 @@
+scrabble ICON    scrabble.ico
+pid      BITMAP  pid.bmp
+
+menu MENU 
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "E&xit",                       	100
+	END
+	POPUP "&Help"
+	BEGIN
+		MENUITEM "&About",         		   	110
+		MENUITEM "&Help",					111
+	END
+END
+
+

@@ -1,0 +1,48 @@
+TYPE NMSPLITTER
+    NMHDR  .hdr' WM_NOTIFY message header
+    XLONG	 .x' X-parameter of notification
+    XLONG	 .y' Y-parameter of notification
+END TYPE
+EXTERNAL FUNCTION  DockSplitter ()
+EXTERNAL FUNCTION GetRed (color)
+EXTERNAL FUNCTION GetGreen (color)
+EXTERNAL FUNCTION GetBlue (color)
+EXTERNAL FUNCTION DrawLine (hdc, x1, y1, x2, y2, penStyle, width, color)
+EXTERNAL FUNCTION DrawArrow (hdc, x, y, color, direction)
+EXTERNAL FUNCTION DrawRectangle (hdc, x, y, w, h, color)
+' splitter class name
+$$DOCKSPLITTERCLASSNAME = "docksplitterctrl"
+' define gripper button styles
+$$BS_MOZILLA    = 0
+$$BS_DOUBLEDOTS = 1
+$$BS_WIN9X      = 2
+$$BS_WINXP      = 3
+$$BS_LINES      = 4
+' define splitter styles
+$$SS_HORZ = 0
+$$SS_VERT = 1
+' define docking styles
+$$DS_LEFT   = 0
+$$DS_RIGHT  = 1
+$$DS_TOP    = 2
+$$DS_BOTTOM = 3
+' define custom window messages
+$$WM_SET_SPLITTER_PANEL_HWND     = 1025' this msg MUST be called, wParam = left/top panel hWnd, lParam = right/bottom panel hWnd
+$$WM_SET_SPLITTER_MIN_PANEL_SIZE = 1026' wParam = left/top panel minimum size, lParam = right/bottom panel minimum size
+$$WM_SET_SPLITTER_SIZE           = 1027' size of splitter panel, wParam = 0, lParam = width/height of splitter panel in pixels
+$$WM_SET_SPLITTER_STYLE          = 1028' splitter control style, wParam = 0, lParam = style flag (default = $$SS_HORZ)
+$$WM_SET_SPLITTER_POSITION       = 1029' splitter position, wParam = x position (for $$SS_HORZ style), lParam = y position (for $$SS_VERT style), only one arg is necessary
+$$WM_GET_SPLITTER_POSITION       = 1030' return is current splitter panel position
+$$WM_GET_SPLITTER_MIN_SIZE       = 1031' return is minimum splitter control size (splitterSize + minPanel1Size + minPanel2Size)
+$$WM_SET_SPLITTER_DOCKING_STYLE  = 1033' set the docking style, wParam = 0, lParam = style ($$DS_RIGHT, $$DS_LEFT, $$DS_TOP, $$DS_BOTTOM)
+$$WM_SET_SPLITTER_BUTTON_STYLE   = 1034' set the button style, wParam = 0, lParam = style ($$BS_MOZILLA, $$BS_DOUBLEDOTS, $$BS_WIN9X...see above)
+$$WM_DOCK_SPLITTER               = 1035' dock splitter
+$$WM_UNDOCK_SPLITTER             = 1036' restore splitter to last position
+' Splitter notifications
+$$NM_SPLITTER_BAR_MOVED = -2000' this notification message is sent to splitter parent after splitter bar has been moved
+' triangle directions
+$$TriangleUp     = 0x0010
+$$TriangleRight  = 0x0014
+$$TriangleDown   = 0x0018
+$$TriangleLeft   = 0x001C
+

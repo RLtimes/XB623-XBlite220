@@ -1,0 +1,12 @@
+#include "winres.h"
+
+puzzle ICON    puzzle.ico
+
+MAINMENU MENU
+BEGIN
+    POPUP "&File"
+        BEGIN
+        MENUITEM "&New Game", 200
+        MENUITEM "&Exit", 201
+        END
+END

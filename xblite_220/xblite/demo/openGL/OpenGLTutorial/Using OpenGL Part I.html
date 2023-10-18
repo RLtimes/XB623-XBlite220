@@ -1,0 +1,397 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>DevCentral - Using OpenGL in Visual C++: Part I</title>
+  <meta http-equiv="CONTENT-TYPE"
+ content="TEXT/HTML; CHARSET=ISO-8859-1">
+  <meta name="keywords"
+ content="ITI, Interface, custom, software, development, technology, technologies, devcentral, devjournal, programmers, program, web, technical, project, professional, programming, design, application, ASP, Internet, developer, C, C++, VB, Java, VBScript, JavaScript, Swing, ASP, HTML, PHP, Windows, NT, 2000, UNIX, Linux, SQL, Server, Oracle, Microsoft, Win32, Transaction, MFC, ATL, OLE, JDBC, ODBC,  ADO, Object, Oriented, COM, DCOM,  ActiveX, CORBA, web-based, tools, Raleigh, NC, RTP, Triangle, Research, article, tutorial, SourceVizor, ITCLib">
+  <meta name="description"
+ content="DevCentral - Articles and tutorials with easy to understand examples for the seasoned professional to the student.">
+</head>
+<body bgcolor="#ffffff" leftmargin="0" topmargin="0">
+<!-- This is the include file for the header -->
+<table width="750" border="0" cellspacing="0" cellpadding="0">
+	<tbody>
+    <tr valign="top">
+		 				 				 		<td width="5"><img
+ src="Using%20OpenGL%20Part%20I_files/spacer.gif" width="5"></td>
+		 		<td width="454"><!-- This is the main body text --><big><br>
+      <font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="3"><big><b>Using
+OpenGL in Visual C++:  Part I</b></big></font>                <font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Writing an OpenGL
+Program</big></font>					 </big>
+      <p align="right"><big>                    <font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="2"><big><i><b>by Alan
+Oursland</b></i></big></font>                </big></p>
+<!-- \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\   End TITLE SECTION --><!-- PDF File Download --><!-- /////////////////////////////////////////// Begin CONTENT --><big>
+          <font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="3"><big><b>Series
+Overview</b></big></font></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		With the release of NT 3.5, OpenGL became a part of the
+Windows 		operating system. Now with support for OpenGL in  Windows 95 and
+Windows 98  		and low priced graphics accelerators becoming readily available
+even on 		low end machines, the prospects of using OpenGL on any Windows 		machine
+is becoming more attractive every day. If you are interested 		in creating
+quality 2-D or 3-D graphics in Windows, or if you 		already know another
+variant of GL, keep reading. This tutorial 		will show you how to use OpenGL
+and some of its basic commands. 	</big></font></big></p>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		GL is a programming interface designed by Silicon Graphics.
+OpenGL 		is a generic version of the interface made available to a wide 		variety
+of outside vendors in the interest of standardization 		of the language.
+OpenGL allows you to create high quality 3-D 		images without dealing with
+the heavy math usually associated 		with computer graphics. OpenGL handles
+graphics primitives, 2-D 		and 3-D transformations, lighting, shading, Z-buffering,
+hidden 		surface removal, and a host of other features. I'll use some of 		these
+topics in the sample programs following; others I'll leave 		to you to explore
+yourself. If you want to learn more about OpenGL 		you can search the MSDN
+website for the keyword "OpenGL". 	</big></font></big></p>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Here is the list of topics covered in this series: 	</big></font>
+      </big></p>
+      <big></big>
+      <ul>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Writing an OpenGL
+Program </big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Simple 2-D Graphics</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Transformations
+and the Matrix Stack</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Simple 3-D Graphics</big></font></big></li>
+        <big></big>
+      </ul>
+      <big><a
+ href="http://download.iftech.com/DevCentral/source/openGL_part1.zip"><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>[Download the
+example source]</big></font></a>  <font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="3"><big><b>Writing an
+OpenGL Program</b></big></font></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		The first program demonstrated here will show you the minimum
+requirements for setting up a Windows program to display OpenGL graphics.
+As GDI needs a Device Context (DC) to draw images, OpenGL requires a Rendering
+Context (RC). Unlike GDI, in which each GDI command requires that a DC is
+passed into it, OpenGL uses the concept of a current RC. Once a rendering
+context has been made current in a thread, all OpenGL calls in that thread
+will use the same current rendering context. While multiple rendering contexts
+may be used to draw in a single window, only one rendering context may be
+current at any time in a single thread. 	</big></font></big></p>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		The goal of this sample is to create and make current an
+OpenGL rendering context. There are three steps to creating and making current
+a rendering context: 	</big></font></big></p>
+      <big></big>
+      <ul>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Set the window's
+pixel format.</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Create the rendering
+context.</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Make the rendering
+context current.</big></font></big></li>
+        <big> </big>
+      </ul>
+      <big></big>
+      <p><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>Take the following steps to create the project: </big></font></big></p>
+      <big></big>
+      <ul>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Create a new
+Project Workspace of type "MFC AppWizard (exe)". Select the directory you
+where you want the project directory to be created, and type "GLSample1" as
+the project name. Click "Create" to enter the AppWizard. Following is a list
+of the steps in the AppWizard and the parameters you should enter in each
+of them. Any parameters not listed are optional.</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Single Document
+Interface</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Database support:
+None</big></font></big></li>
+        <big>  	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Compond Document
+Support: None</big></font></big></li>
+        <big>  	</big><li><big>		<font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>			Docking Toolbar:
+OFF (optional)<br>
+			Initial Status Bar: OFF (optional)<br>
+			Printing an Print Preview: OFF (Printing OpenGL images is accomplished
+by creating an RC using a printer DC. If you would like to experiment with
+this later, without rebuilding everything, go ahead and turn this option on).<br>
+  			Context-Sensitive Help: OFF (optional)<br>
+			3D Controls: ON (optional) 		</big></font>	</big></li>
+        <big>	</big><li><big>		<font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>			Use the MFC
+Standard style of project<br>
+			Generate Source File Comments: Yes<br>
+			Use the MFC library as a shared DLL. 		</big></font>	</big></li>
+        <big>	</big><li><big>		<font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>			Keep everything
+at the default.<br>
+			Press Finish  		</big></font>	</big></li>
+        <big></big>
+      </ul>
+      <big></big>
+      <p><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>Check the "New Project Information" dialog to make sure everything
+is as it should be and press OK. The new project will be created in the subdirectory
+"GLSample1".</big></font></big></p>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		First we will include all necessary OpenGL files and libraries
+		in this project. Select "Project-Settings" from the menu. 		Click on the
+"Link" tab (or press Ctrl-Tab to move there). 		Select the "General" category
+(it should already be 		selected by default), and enter the following into
+the Object/Library 		Modules edit box: "opengl32.lib glu32.lib glaux.lib".
+		Press OK. Now open the file "stdafx.h". Insert the following 		lines into
+the file: 	</big></font></big></p>
+      <big></big>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>#define VC_EXTRALEAN  // Exclude rarely-used stuff from Windows headers<br>#include &lt;afxwin.h&gt; // MFC core and standard components <br>#include &lt;afxext.h&gt; // MFC extensions<br>#include &lt;gl\gl.h&gt;<br>#include &lt;gl\glu.h&gt;<br>#ifndef _AFX_NO_AFXCMN_SUPPORT<br>#include &lt;afxcmn.h&gt; // MFC support for Windows 95 Common Controls<br><br>#endif  // _AFX_NO_AFXCMN_SUPPORT</big></font></big></pre>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		OpenGL requires the window to have styles WS_CLIPCHILDREN
+		and WS_CLIPSIBLINGS set. Edit OnPreCreate so that 		it looks like this:
+	</big></font></big></p>
+      <big></big>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>BOOL CGLSample1View::PreCreateWindow(CREATESTRUCT&amp; cs)<br>{<br>   cs.style |= (WS_CLIPCHILDREN | WS_CLIPSIBLINGS);<br>   return CView::PreCreateWindow(cs);<br>}</big></font></big></pre>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		The first set to creating a rendering context is to define
+the 		window's pixel format. The pixel format describes how the graphics 		that
+the window displays are represented in memory. Parameters 		controlled by
+the pixel format include color depth, buffering 		method, and supported drawing
+interfaces. We will look at some 		of these below. First create a new protected
+member function in 		the CGLSample1View class called "BOOL SetWindowPixelFormat(HDC
+		hDC)" (my preferred method of doing this is right clicking 		on the class
+name in the Project Workspace and selecting "Add 		Function..." from the
+resulting pop-up menu. You may also 		do it manually if you wish) and edit
+the function so that it looks 		like this: 	</big></font></big></p>
+      <big></big>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>BOOL CGLSample1View::SetWindowPixelFormat(HDC hDC)<br>{<br>   PIXELFORMATDESCRIPTOR pixelDesc;<br>   pixelDesc.nSize = sizeof(PIXELFORMATDESCRIPTOR);<br>   pixelDesc.nVersion = 1;<br>   pixelDesc.dwFlags = PFD_DRAW_TO_WINDOW | <br>      PFD_DRAW_TO_BITMAP | <br>      PFD_SUPPORT_OPENGL | <br>      PFD_SUPPORT_GDI | <br>      PFD_STEREO_DONTCARE;<br>   pixelDesc.iPixelType = PFD_TYPE_RGBA;<br>   pixelDesc.cColorBits = 32;<br>   pixelDesc.cRedBits = 8; <br>   pixelDesc.cRedShift = 16;<br>   pixelDesc.cGreenBits = 8;<br>   pixelDesc.cGreenShift = 8;<br>   pixelDesc.cBlueBits = 8;<br>   pixelDesc.cBlueShift = 0;<br>   pixelDesc.cAlphaBits = 0;<br>   pixelDesc.cAlphaShift = 0;<br>   pixelDesc.cAccumBits = 64;    <br>   pixelDesc.cAccumRedBits = 16;<br>   pixelDesc.cAccumGreenBits = 16;<br>   pixelDesc.cAccumBlueBits = 16;<br>   pixelDesc.cAccumAlphaBits = 0;<br>   pixelDesc.cDepthBits = 32;<br>   pixelDesc.cStencilBits = 8;<br>   pixelDesc.cAuxBuffers = 0;<br>   pixelDesc.iLayerType = PFD_MAIN_PLANE;<br>   pixelDesc.bReserved = 0;<br>   pixelDesc.dwLayerMask = 0;<br>   pixelDesc.dwVisibleMask = 0;<br>   pixelDesc.dwDamageMask = 0;<br><br>   m_GLPixelIndex = ChoosePixelFormat( hDC, &amp;pixelDesc);<br>   if (m_GLPixelIndex==0) // Let's choose a default index.<br>   {<br>      m_GLPixelIndex = 1;    <br>      if (DescribePixelFormat(hDC, m_GLPixelIndex, <br>      sizeof(PIXELFORMATDESCRIPTOR), &amp;pixelDesc)==0)<br>      {<br>         return FALSE;<br>      }<br>   }<br><br>   if (SetPixelFormat( hDC, m_GLPixelIndex, &amp;pixelDesc)==FALSE)<br>   {<br>      return FALSE;<br>   }<br><br>   return TRUE;<br><br>}</big></font></big></pre>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Now add the following member variable to the CGLSample1View
+class 		(again, I like to use the right mouse button on the class name 		and
+select "Add Variable..."): 	</big></font></big></p>
+      <big></big>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>int m_GLPixelIndex; // protected</big></font></big></pre>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Finally, in the ClassWizard, add the function OnCreate in
+response 		to a WM_CREATE message and edit it to look like this: 	</big></font>
+      </big></p>
+      <big></big>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>int CGLSample1View::OnCreate(LPCREATESTRUCT lpCreateStruct) <br>{<br>   if (CView::OnCreate(lpCreateStruct) == -1)<br>      return -1;<br> 	<br>   HWND hWnd = GetSafeHwnd();<br>   HDC hDC = ::GetDC(hWnd);<br><br>   if (SetWindowPixelFormat(hDC)==FALSE)<br>      return 0;<br><br>   return 0;<br>}</big></font></big></pre>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Compile the program and fix any syntax errors. You may run
+the 		program if you wish but at the moment, it will look like a generic 		MFC
+shell. Try playing with the pixel format descriptor. You may 		want to try
+passing other indices into DescribePixelFormat 		to see what pixel formats
+are available. I'll spend some time 		now explaining what the code does and
+precautions you should take 		in the future. 	</big></font></big></p>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		PIXELFORMATDESCRIPTOR contains all of the information defining
+		a pixel format. I'll explain some of the important points here, 		but for
+a complete description look in the VC++ online help. 	</big></font></big></p>
+      <big></big>
+      <ul>
+        <big>	</big><li><big>		<font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>			<b>dwFlags</b>
+&nbsp; Defines the devices and interfaces with which the pixel format is
+compatible. 			Not all of these flags are implemented in the generic release
+			of OpenGL. Refer to the documentation for more information. dwFlags 			can
+accept the following flags:<br>
+          <br>
+         		PFD_DRAW_TO_WINDOW -- Enables drawing to a window or device surface.<br>
+    		PFD_DRAW_TO_BITMAP -- Enables drawing to a bitmap in memory.<br>
+    		PFD_SUPPORT_GDI -- Enables GDI calls. Note: This option is not valid
+if <tt>PFD_DOUBLEBUFFER</tt> is specified.<br>
+    		PFD_SUPPORT_OPENGL -- Enables OpenGL calls.<br>
+    		PFD_GENERIC_FORMAT -- Specifies if this pixel format is supported by
+the Windows GDI library or by a vendor hardware device driver.<br>
+    		PFD_NEED_PALETTE -- Tells if the buffer requires a palette. This tutorial
+assumes color will be done with 24 or 32 bits and will not cover palettes.<br>
+    		PFD_NEED_SYSTEM_PALETTE -- This flag indicates if the buffer requires
+the reserved system palette as part of its palette. As stated above, this
+tutorial will not cover palettes.<br>
+    		PFD_DOUBLEBUFFER -- Indicates that double-buffering is used. Note that
+GDI cannot be used with windows that are double buffered.<br>
+    		PFD_STEREO -- Indicates that left and right buffers are maintained
+for stereo images.<br>
+    	</big></font>   </big></li>
+        <big>   </big><li><big>    	<font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>    		<b>iPixelType</b>
+&nbsp; Defines the method used to display colors. PFD_TYPE_RGBA     		means
+each set of bits represents a Red, Green, and Blue value, 			while PFD_TYPE_COLORINDEX
+means that each set of bits is an index into a color lookup table. All of
+the examples 			in this program will use PFD_TYPE_RGBA. 		</big></font>	</big></li>
+        <big>	</big><li><big>	 	<font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>	 		<b>cColorBits</b>
+&nbsp; Defines the number of bits used to define a color. For RGBA it is
+the 			number of bits used to represent the red, green, and blue components
+			of the color ( but not the alpha). For indexed colors, it is the 			number
+of colors in the table. 		</big></font>	</big></li>
+        <big>	</big><li><big>	 	<font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>	 		<b>cRedBits,
+cGreenBits, cBlueBits, cAlphaBits</b> &nbsp; The number of bits used to represent
+			the respective components. 		</big></font>	</big></li>
+        <big>	</big><li><big>		<font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>			<b>cRedShift,
+cGreenShift, cBlueShift, cAlphaShift</b> &nbsp; The number of bits each componet
+is offset from the beginning of the color. 		</big></font>	 </big></li>
+        <big></big>
+      </ul>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Once we initialize our structure, we try to find the system
+pixel 		format that is closest to the one we want. We do this by calling:
+	</big></font></big></p>
+      <big></big>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>m_hGLPixelIndex = ChoosePixelFormat(hDC, &amp;pixelDesc);</big></font></big></pre>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		ChoosePixelFormat takes an hDC and a PIXELFORMATDESCRIPTOR*,
+		and returns an index used to reference that pixel format, or 0 		if the
+function fails. If the function fails, we just set the 		index to 1 and get
+the pixel format description using DescribePixelFormat. 		There are a limited
+number of pixel formats, and the system defines 		what their properties are.
+If you ask for pixel format properties 		that are not supported, ChoosePixelFormat
+will return an integer 		to the format that is closest to the one you requested.
+Once we 		have a valid pixel format index and the corresponding description
+		we can call SetPixelFormat. A window's pixel format may 		be set only once.
+	</big></font></big></p>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		 Now that the pixel format is set, all we have to do is
+create 		the rendering context and make it current. Start by adding a new
+		protected member function to the CGLSample1View class called "BOOL 		CreateViewGLContext(HDC
+hDC)" and edit it so that it looks 		like this: 	</big></font></big></p>
+      <big></big>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>BOOL CGLSample1View::CreateViewGLContext(HDC hDC)<br>{<br>   m_hGLContext = wglCreateContext(hDC);<br>   if (m_hGLContext == NULL)<br>   {<br>      return FALSE;<br>   }<br><br>   if (wglMakeCurrent(hDC, m_hGLContext)==FALSE)<br>   {<br>      return FALSE;<br>   }<br><br>   return TRUE;<br>}</big></font></big></pre>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Add the following member variable to the CGLSample1View
+class: 	</big></font></big></p>
+      <big></big>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>HGLRC m_hGLContext; // protected</big></font></big></pre>
+      <big></big>
+      <p><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>Edit OnCreate to call the new function:</big></font></big></p>
+      <big></big>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>int CGLSample1View::OnCreate(LPCREATESTRUCT lpCreateStruct) <br>{<br>   if (CView::OnCreate(lpCreateStruct) == -1)<br>   return -1;<br><br>   HWND hWnd = GetSafeHwnd();<br>   HDC hDC = ::GetDC(hWnd);<br><br>   if (SetWindowPixelFormat(hDC)==FALSE)<br>      return 0;<br><br>   if (CreateViewGLContext(hDC)==FALSE)<br>      return 0;<br><br>   return 0;<br>}</big></font></big></pre>
+      <big></big>
+      <p><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>Add the function OnDestroy in response to a WM_DESTROY message
+and edit it to look like this:</big></font></big></p>
+      <big></big>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>void CGLSample1View::OnDestroy() <br>{<br>   if(wglGetCurrentContext()!=NULL) <br>   {<br>      // make the rendering context not current<br>      wglMakeCurrent(NULL, NULL) ;<br>   }<br><br>   if (m_hGLContext!=NULL)<br>   {<br>      wglDeleteContext(m_hGLContext);<br>      m_hGLContext = NULL;<br>   }<br><br>   // Now the associated DC can be released.<br>   CView::OnDestroy(); <br>}</big></font></big></pre>
+      <big></big>
+      <p><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>And lastly, edit the CGLSample1View class constructor  to
+look like this:</big></font></big></p>
+      <big></big>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>CGLSample1View::CGLSample1View()<br>{<br>   m_hGLContext = NULL;<br>   m_GLPixelIndex = 0;<br>}</big></font></big></pre>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Once again compile the program and fix any syntax errors.
+When 		you run the program it will still look like a generic MFC program,
+		but it is now enabled for OpenGL drawing. You may have noticed 		that we
+created one rendering context at the beginning of the 		program and used
+it the entire time. This goes against most GDI 		programs where DCs are created
+only when drawing is required and 		freed immediately afterwards. This is
+a valid option with RCs 		as well, however creating an RC can be quite processor
+intensive. 		Because we are trying to achieve high performance graphics,
+the 		code only creates the RC once and uses it the entire time. 	</big></font>
+      </big></p>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		CreateViewGLContext creates and makes current a rendering
+context. 		wglCreateContext returns a handle to an RC. The pixel format for
+		the device associated with the DC you pass into this function 		must be
+set before you call CreateViewGLContext. wglMakeCurrent 		sets the RC as
+the current context. The DC passed into this function 		does not need to
+be the same DC you used to create the context, 		but it must have the same
+device and pixel format. If another 		rendering context is current when you
+call wglMakeCurrent, the 		function simply flushes the old RC and replaces
+it with the new 		one. You may call wglMakeCurrent(NULL, NULL) to make no
+rendering 		context current.  	</big></font></big></p>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Because OnDestroy releases the window's RC, we need to delete
+		the rendering context there. But before we delete the RC, we need 		to
+make sure it is not current. We use wglGetCurrentContext to 		see if there
+is a current rendering context. If there is, we remove 		it by calling wglMakeCurrent(NULL,
+NULL). Next we call wglDeleteContext 		to delete out RC. It is now safe to
+allow the view class to release 		the DC. Note that since the RC was current
+to our thread we could 		have just called wglDeleteContext without first
+making it not 		current. Don't get into the habit of doing this. If you ever
+start 		using multi-threaded applications that laziness is going to bite 		you.
+	</big></font></big></p>
+      <big></big>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Congratulations on your first OpenGL program, even if it
+doesn't 		do much! If you already know OpenGL on another platform read the
+		tips below and go write the next killer graphics applications. 		If you
+don't know OpenGL keep reading. I'll give you a tour of 		some of its functions.
+	</big></font></big></p>
+      <big></big>
+      <p><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>OpenGL Tips:</big></font></big></p>
+      <big></big>
+      <ul>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Set the viewport
+and matrix modes in response to a WM_SIZE message.</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Do all of your
+drawing in response to a WM_PAINT message.</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Creating a rendering
+context can take up a lot of CPU time. Only create it once and use it for
+the life of your program.</big></font></big></li>
+        <big>   </big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Try encapsulating
+your drawing commands in the document class.  That way you can use the same
+document in different views.</big></font></big></li>
+        <big></big>
+      </ul>
+      <big></big>
+      <table border="1">
+        <big></big><tbody>
+          <tr>
+            <big>	</big><td><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Developed Under:<br>
+            <br>
+	Visual C++ 5+</big></font></big></td>
+            <big></big></tr>
+          <big></big>
+        </tbody>
+      </table>
+      <big>			 		</big></td>
+		<!-- RHS Margin -->				 		<!-- RHS divider line -->		<td width="1"
+ bgcolor="#48115b"><big>			<img
+ src="Using%20OpenGL%20Part%20I_files/spacer.gif">		</big></td>
+		<!-- RHS Margin -->				<!-- RHS proper -->			</tr>
+  </tbody>
+</table>
+<!-- This is the include file for the footer -->
+<table width="750" cellpadding="0" cellspacing="0" border="0">
+  <big></big><tbody>
+    <big></big>
+  </tbody>
+</table>
+<!-- End Footer --><br>
+</body>
+</html>

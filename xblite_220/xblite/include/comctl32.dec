@@ -1,0 +1,3714 @@
+
+' *********************************
+' ***** comctl32.dll DEC file *****
+' ***** riched32.dll DEC file ***** 
+' ***** riched20.dll DEC file ***** 
+' ********************************* Windows XBLite declaration file for comctl32.dll
+
+' NOTE: riched32.dll is imported within the calling
+'       program with the LoadLibrary() function.
+'       DO NOT use IMPORT "riched32" or IMPORT "riched20"
+'       since this will cause the link program to 
+'       attempt to link to riched32.lib or riched20.lib
+
+' v0.007   2006-01-02
+
+'IMPORT "gdi32"
+'IMPORT "kernel32"
+
+TYPE NMHDR
+	XLONG	.hwndFrom 
+	XLONG	.idFrom 
+	XLONG	.code 
+END TYPE
+
+TYPE INITCOMMONCONTROLSEX
+	ULONG	.dwSize  ' size of this structure
+	ULONG	.dwICC   ' flags indicating which classes to be initialized
+END TYPE
+
+TYPE COLORSCHEME
+	ULONG	.dwSize
+	ULONG	.clrBtnHighlight		' highlight color
+	ULONG	.clrBtnShadow    		' shadow color
+END TYPE
+
+TYPE NMTOOLTIPSCREATED
+	NMHDR	.hdr  
+	ULONG	.hwndToolTips
+END TYPE
+
+TYPE COMCTL_POINT   ' use POINT
+	XLONG	.x
+	XLONG	.y
+END TYPE
+
+TYPE NMMOUSE
+	NMHDR	.hdr
+	ULONG	.dwItemSpec
+	ULONG	.dwItemData
+	POINT	.pt
+	ULONG	.dwHitInfo  	' any specifics about where on the item or control the mouse is
+END TYPE
+
+TYPE NMCLICK
+	NMHDR	.hdr 
+	ULONG	.dwItemSpec
+	ULONG	.dwItemData
+	POINT	.pt 
+	ULONG	.dwHitInfo  	' any specifics about where on the item or control the mouse is
+END TYPE
+
+' Generic structure to request an object of a specific type.
+
+TYPE NMOBJECTNOTIFY
+	NMHDR	.hdr
+	ULONG	.iItem
+	ULONG	.piid
+	ULONG	.pObject
+	ULONG	.hResult
+	ULONG	.dwFlags
+END TYPE
+
+' Generic structure for a key
+
+TYPE NMKEY
+	NMHDR	.hdr 
+	ULONG	.nVKey
+	ULONG	.uFlags
+END TYPE
+
+' Generic structure for a character
+
+TYPE NMCHAR
+	NMHDR	.hdr 
+	ULONG	.ch
+	ULONG	.dwItemPrev 	' item previously selected
+	ULONG	.dwItemNext 	' item to be selected
+END TYPE
+
+TYPE COMCTL_RECT   ' use RECT
+	XLONG	.left 
+	XLONG	.top 
+	XLONG	.right 
+	XLONG	.bottom 
+END TYPE
+
+TYPE COMCTL_SYSTEMTIME ' use SYSTEMTIME in kernel32.dec
+  USHORT  .year
+  USHORT  .month
+  USHORT  .weekDay
+  USHORT  .day
+  USHORT  .hour
+  USHORT  .minute
+  USHORT  .second
+  USHORT  .msec
+END TYPE
+
+TYPE COMCTL_SIZE   ' use SIZEAPI
+	XLONG	.cx
+	XLONG	.cy
+END TYPE
+
+TYPE DLLVERSIONINFO
+	XLONG	.cbSize
+	XLONG	.dwMajor
+	XLONG	.dwMinor
+	XLONG	.dwBuildNumber
+	XLONG	.dwPlatformID
+END TYPE
+
+' property sheet types
+
+'typedef UINT (CALLBACK *LPFNPSPCALLBACKA)(HWND,UINT,struct _PROPSHEETPAGEA*);
+'typedef UINT (CALLBACK *LPFNPSPCALLBACKW)(HWND,UINT,struct _PROPSHEETPAGEW*);
+
+TYPE PROPSHEETPAGEA
+    XLONG .dwSize
+    XLONG .dwFlags
+    XLONG .hInstance
+    UNION
+        XLONG .pszTemplate
+        XLONG .pResource
+    END UNION
+    UNION
+        XLONG .hIcon
+        XLONG .pszIcon
+    END UNION
+    XLONG .pszTitle
+    XLONG .pfnDlgProc
+    XLONG .lParam
+    XLONG .pfnCallback
+    XLONG .pcRefParent
+    XLONG .pszHeaderTitle
+    XLONG .pszHeaderSubTitle
+END TYPE
+
+TYPE PROPSHEETPAGEW
+    XLONG .dwSize
+    XLONG .dwFlags
+    XLONG .hInstance
+    UNION
+        XLONG .pszTemplate
+        XLONG .pResource
+    END UNION
+    UNION
+        XLONG .hIcon
+        XLONG .pszIcon
+    END UNION
+    XLONG .pszTitle
+    XLONG .pfnDlgProc
+    XLONG .lParam
+    XLONG .pfnCallback
+    XLONG .pcRefParent
+    XLONG .pszHeaderTitle
+    XLONG .pszHeaderSubTitle
+END TYPE
+
+'typedef int (CALLBACK *PFNPROPSHEETCALLBACK)(HWND,UINT,LPARAM)
+
+TYPE PROPSHEETHEADERA
+    XLONG .dwSize
+    XLONG .dwFlags
+    XLONG .hwndParent
+    XLONG .hInstance
+    UNION
+        XLONG .hIcon
+        XLONG .pszIcon
+    END UNION
+    XLONG .pszCaption
+    XLONG .nPages
+    UNION
+        XLONG .nStartPage
+        XLONG .pStartPage
+    END UNION
+    UNION
+        XLONG .ppsp
+        XLONG .phpage
+    END UNION
+    XLONG .pfnCallback
+    UNION
+        XLONG .hbmWatermark
+        XLONG .pszbmWatermark
+    END UNION
+    XLONG .hplWatermark
+    UNION
+        XLONG .hbmHeader
+        XLONG .pszbmHeader
+    END UNION
+END TYPE
+
+TYPE PROPSHEETHEADERW
+    XLONG .dwSize
+    XLONG .dwFlags
+    XLONG .hwndParent
+    XLONG .hInstance
+    UNION
+        XLONG .hIcon
+        XLONG .pszIcon
+    END UNION
+    XLONG .pszCaption
+    XLONG .nPages
+    UNION
+        XLONG .nStartPage
+        XLONG .pStartPage
+    END UNION
+    UNION
+        XLONG .ppsp
+        XLONG .phpage
+    END UNION
+    XLONG .pfnCallback
+    UNION
+        XLONG .hbmWatermark
+        XLONG .pszbmWatermark
+    END UNION
+    XLONG .hplWatermark
+    UNION
+        XLONG .hbmHeader
+        XLONG .pszbmHeader
+    END UNION
+END TYPE
+
+'typedef BOOL (CALLBACK *LPFNADDPROPSHEETPAGE)(HPROPSHEETPAGE,LPARAM)
+'typedef BOOL (CALLBACK *LPFNADDPROPSHEETPAGES)(LPVOID,LPFNADDPROPSHEETPAGE,LPARAM)
+
+TYPE PSHNOTIFY
+    NMHDR .hdr
+    XLONG .lParam
+END TYPE
+
+' comctl32 function declarations
+
+EXTERNAL FUNCTION  MenuHelp (uMsg, wParam, lParam, hMainMenu, hInst, hwndStatus, lpwlDs)
+EXTERNAL FUNCTION  ShowHideMenuCtl (hWnd, uFlags, lpInfo)
+EXTERNAL FUNCTION  GetEffectiveClientRect (hWnd, lprc, lpInfo)
+EXTERNAL FUNCTION  DrawStatusTextA (hdc, lprc, pszText, uFlags)
+EXTERNAL FUNCTION  CreateStatusWindowA (style, lpszText, hwndParent, wID)
+EXTERNAL FUNCTION  CreateMappedBitmap (hInstance, idBitmap, wFlags, lpColorMap, iNumMaps)
+EXTERNAL FUNCTION  DllGetVersion (lpDLLVERSIONINFO)
+EXTERNAL FUNCTION  MakeDragList (hLB)
+EXTERNAL FUNCTION  LBItemFromPt (hLB, pt, bAutoScroll)
+EXTERNAL FUNCTION  DrawInsert (handParent, hLB, nItem)
+EXTERNAL FUNCTION  CreateUpDownControl (dwStyle, x, y, cx, cy, hParent, nID, hInst, hBuddy, nUpper, nLower, nPos)
+EXTERNAL FUNCTION  InitCommonControls ()
+EXTERNAL FUNCTION  CreatePropertySheetPage (lppsp)
+EXTERNAL FUNCTION  CreatePropertySheetPageA (lppsp)
+EXTERNAL FUNCTION  CreatePropertySheetPageW (lppsp)
+EXTERNAL FUNCTION  CreateStatusWindow (style, lpszText, hwndParent, wID)
+EXTERNAL FUNCTION  CreateStatusWindowW (style, lpszText, hwndParent, wID)
+EXTERNAL FUNCTION  CreateToolbarEx (hwnd, ws, wID, nBitmaps, hBMinst, wBMID, lpButtons, iNumButtons, dxButton, dyButton, dxBitmap, dyBitmap, uStructSize)
+EXTERNAL FUNCTION  DestroyPropertySheetPage (hPSPage)
+EXTERNAL FUNCTION  DrawStatusText (hdc, lprc, pszText, uFlags)
+EXTERNAL FUNCTION  DrawStatusTextW (hdc, lprc, pszText, uFlags)
+EXTERNAL FUNCTION  ImageList_Add (himl, hbmImage, hbmMask)
+EXTERNAL FUNCTION  ImageList_AddIcon (himl, hicon)
+EXTERNAL FUNCTION  ImageList_AddMasked (himl, hbmImage, crMask)
+EXTERNAL FUNCTION  ImageList_BeginDrag (himlTrack, iTrack, dxHotspot, dyHotspot)
+EXTERNAL FUNCTION  ImageList_Copy (himlDst, iDst, himlSrc, iSrc, uFlags)
+EXTERNAL FUNCTION  ImageList_Create (cx, cy, flags, cInitial, cGrow)
+EXTERNAL FUNCTION  ImageList_Destroy (himl)
+EXTERNAL FUNCTION  ImageList_DragEnter (hwndLock, x, y)
+EXTERNAL FUNCTION  ImageList_DragLeave (hwndLock)
+EXTERNAL FUNCTION  ImageList_DragMove (x, y)
+EXTERNAL FUNCTION  ImageList_DragShowNolock (fShow)
+EXTERNAL FUNCTION  ImageList_Draw (himl, i, hdcDst, x, y, fStyle)
+EXTERNAL FUNCTION  ImageList_DrawEx (himl, i, hdcDst, x, y, dx, dy, rgbBk, rgbFg, fStyle)
+EXTERNAL FUNCTION  ImageList_DrawIndirect (pimldp)
+EXTERNAL FUNCTION  ImageList_Duplicate (himl)
+EXTERNAL FUNCTION  ImageList_EndDrag ()
+EXTERNAL FUNCTION  ImageList_GetBkColor (himl)
+EXTERNAL FUNCTION  ImageList_GetDragImage (ppt, pptHotspot)
+EXTERNAL FUNCTION  ImageList_GetFlags ()
+EXTERNAL FUNCTION  ImageList_GetIcon (himl, i, flags)
+EXTERNAL FUNCTION  ImageList_GetIconSize (himl, cx, cy)
+EXTERNAL FUNCTION  ImageList_GetImageCount (himl)
+EXTERNAL FUNCTION  ImageList_GetImageInfo (himl, i, pImageInfo)
+EXTERNAL FUNCTION  ImageList_GetImageRect ()
+EXTERNAL FUNCTION  ImageList_LoadImage (hi, lpbmp, cx, cGrow, crMask, uType, uFlags)
+EXTERNAL FUNCTION  ImageList_LoadImageA (hi, lpbmp, cx, cGrow, crMask, uType, uFlags)
+EXTERNAL FUNCTION  ImageList_LoadImageW (hi, lpbmp, cx, cGrow, crMask, uType, uFlags)
+EXTERNAL FUNCTION  ImageList_Merge (himl1, i1, himl2, i2, dx, dy)
+EXTERNAL FUNCTION  ImageList_Read (pstm)
+EXTERNAL FUNCTION  ImageList_Remove (himl, i)
+EXTERNAL FUNCTION  ImageList_Replace (himl, i, hbmImage, hbmMask)
+EXTERNAL FUNCTION  ImageList_ReplaceIcon (himl, i, hicon)
+EXTERNAL FUNCTION  ImageList_SetBkColor (himl, clrBk)
+EXTERNAL FUNCTION  ImageList_SetDragCursorImage (himlDrag, iDrag, dxHotspot, dyHotspot)
+EXTERNAL FUNCTION  ImageList_SetFilter ()
+EXTERNAL FUNCTION  ImageList_SetFlags ()
+EXTERNAL FUNCTION  ImageList_SetIconSize (himl, cx, cy)
+EXTERNAL FUNCTION  ImageList_SetImageCount (himl, newCount)
+EXTERNAL FUNCTION  ImageList_SetOverlayImage (himl, iImage, iOverlay)
+EXTERNAL FUNCTION  ImageList_Write (himl, pstm)
+EXTERNAL FUNCTION  InitCommonControlsEx (icc)
+EXTERNAL FUNCTION  PropertySheet (lppsph)
+EXTERNAL FUNCTION  PropertySheetA (lppsph)
+EXTERNAL FUNCTION  PropertySheetW (lppsph)
+EXTERNAL FUNCTION  InitializeFlatSB (hWnd)
+EXTERNAL FUNCTION  UninitializeFlatSB (hWnd)
+EXTERNAL FUNCTION  FlatSB_EnableScrollBar (hWnd, wSBFlags, wArrows)
+EXTERNAL FUNCTION  FlatSB_GetScrollInfo (hWnd, type, lpsi)
+EXTERNAL FUNCTION  FlatSB_GetScrollPos (hWnd, type)
+EXTERNAL FUNCTION  FlatSB_GetScrollProp (hWnd, indexWSBPROP, pValue)
+EXTERNAL FUNCTION  FlatSB_GetScrollRange (hWnd, type, lpMinPos, lpMaxPos)
+EXTERNAL FUNCTION  FlatSB_SetScrollInfo (hWnd, type, lpsi, fRedraw)
+EXTERNAL FUNCTION  FlatSB_SetScrollPos (hWnd, type, nPos, fRedraw)
+EXTERNAL FUNCTION  FlatSB_SetScrollProp (hWnd, index, newValue, fRedraw)
+EXTERNAL FUNCTION  FlatSB_SetScrollRange (hWnd, type, nMinPos, nMaxPos, fRedraw)
+EXTERNAL FUNCTION  FlatSB_ShowScrollBar (hWnd, type, fShow)
+
+$$ICC_LISTVIEW_CLASSES    = 0x00000001 ' listview, header
+$$ICC_TREEVIEW_CLASSES    = 0x00000002 ' treeview, tooltips
+$$ICC_BAR_CLASSES         = 0x00000004 ' toolbar, statusbar, trackbar, tooltips
+$$ICC_TAB_CLASSES         = 0x00000008 ' tab, tooltips
+$$ICC_UPDOWN_CLASS        = 0x00000010 ' updown
+$$ICC_PROGRESS_CLASS      = 0x00000020 ' progress
+$$ICC_HOTKEY_CLASS        = 0x00000040 ' hotkey
+$$ICC_ANIMATE_CLASS       = 0x00000080 ' animate
+$$ICC_WIN95_CLASSES       = 0x000000FF
+$$ICC_DATE_CLASSES        = 0x00000100 ' month picker, date picker, time picker, updown
+$$ICC_USEREX_CLASSES      = 0x00000200 ' comboex
+$$ICC_COOL_CLASSES        = 0x00000400 ' rebar (coolbar) control
+$$ICC_INTERNET_CLASSES    = 0x00000800
+$$ICC_PAGESCROLLER_CLASS  = 0x00001000 ' page scroller
+$$ICC_NATIVEFNTCTL_CLASS  = 0x00002000 ' native font control
+
+$$ODT_HEADER              = 100
+$$ODT_TAB                 = 101
+$$ODT_LISTVIEW            = 102
+
+' Ranges for control message IDs
+
+$$LVM_FIRST               = 4096	'0x1000      ' ListView messages
+$$TV_FIRST                = 4352	'0x1100      ' TreeView messages
+$$HDM_FIRST               = 4608	'0x1200      ' Header messages
+$$TCM_FIRST               = 4864	'0x1300      ' Tab control messages
+$$PGM_FIRST               = 5120	'0x1400      ' Pager control messages
+$$CCM_FIRST               = 8192               ' Common control shared messages
+
+$$COMCTL32_VERSION 				= 5
+
+$$CCM_SETBKCOLOR          = 8193 ' lParam is bkColor
+$$CCM_SETCOLORSCHEME      = 8194 ' lParam is color scheme
+$$CCM_GETCOLORSCHEME      = 8195 ' fills in COLORSCHEME pointed to by lParam
+$$CCM_GETDROPTARGET       = 8196
+$$CCM_SETUNICODEFORMAT    = 8197
+$$CCM_GETUNICODEFORMAT    = 8198
+$$CCM_SETVERSION          = 8199
+$$CCM_GETVERSION          = 8200
+$$CCM_SETNOTIFYWINDOW     = 8201 ' wParam = hwndParent.
+
+' for tooltips
+$$INFOTIPSIZE = 1024
+
+' Generic WM_NOTIFY notification codes
+
+$$NM_FIRST           = 0
+$$NM_LAST            = -99
+
+$$LVN_FIRST          = -100       ' listview
+$$LVN_LAST           = -199
+
+$$HDN_FIRST          = -300       ' header
+$$HDN_LAST           = -399
+
+$$TVN_FIRST          = -400       ' treeview
+$$TVN_LAST           = -499
+
+$$TTN_FIRST          = -520       ' tooltips
+$$TTN_LAST           = -549
+
+$$TCN_FIRST          = -550       ' tab control
+$$TCN_LAST           = -580
+
+$$CDN_FIRST          = -601       ' common dialog (new)
+$$CDN_LAST           = -699
+
+$$TBN_FIRST          = -700       ' toolbar
+$$TBN_LAST           = -720
+
+$$UDN_FIRST          = -721       ' updown
+$$UDN_LAST           = -740
+
+$$MCN_FIRST          = -750       ' monthcal
+$$MCN_LAST           = -759
+
+$$DTN_FIRST          = -760       ' datetimepick
+$$DTN_LAST           = -799
+
+$$CBEN_FIRST         = -800       ' combo box ex
+$$CBEN_LAST          = -830
+
+$$RBN_FIRST          = -831       ' rebar
+$$RBN_LAST           = -859
+
+$$IPN_FIRST          = -860       ' internet address
+$$IPN_LAST           = -879       ' internet address
+
+$$SBN_FIRST          = -880       ' status bar
+$$SBN_LAST           = -899
+
+$$PGN_FIRST          = -900       ' Pager Control
+$$PGN_LAST           = -950
+
+$$WMN_FIRST          = -1000
+$$WMN_LAST           = -1200
+
+$$NM_OUTOFMEMORY     = -1
+$$NM_CLICK           = -2  ' uses NMCLICK type
+$$NM_DBLCLK          = -3
+$$NM_RETURN          = -4
+$$NM_RCLICK          = -5  ' uses NMCLICK type
+$$NM_RDBLCLK         = -6
+$$NM_SETFOCUS        = -7
+$$NM_KILLFOCUS       = -8
+$$NM_CUSTOMDRAW      = -12
+$$NM_HOVER           = -13
+$$NM_NCHITTEST       = -14 ' uses NMMOUSE type
+$$NM_KEYDOWN         = -15 ' uses NMKEY type
+$$NM_RELEASEDCAPTURE = -16
+$$NM_SETCURSOR       = -17 ' uses NMMOUSE type
+$$NM_CHAR            = -18 ' uses NMCHAR type
+$$NM_TOOLTIPSCREATED = -19 ' notify of when the tooltips window is create
+$$NM_LDOWN           = -20
+$$NM_RDOWN           = -21
+
+$$MSGF_COMMCTRL_BEGINDRAG   = 0x4200
+$$MSGF_COMMCTRL_SIZEHEADER  = 0x4201
+$$MSGF_COMMCTRL_DRAGSELECT  = 0x4202
+$$MSGF_COMMCTRL_TOOLBARCUST = 0x4203
+
+
+'==============================================================================
+' CUSTOM DRAW APIS
+
+' custom draw return flags
+' values under 0x00010000 are reserved for global custom draw values.
+' above that are for specific controls
+$$CDRF_DODEFAULT          = 0x00000000
+$$CDRF_NEWFONT            = 0x00000002
+$$CDRF_SKIPDEFAULT        = 0x00000004
+$$CDRF_NOTIFYPOSTPAINT    = 0x00000010
+$$CDRF_NOTIFYITEMDRAW     = 0x00000020
+$$CDRF_NOTIFYSUBITEMDRAW  = 0x00000020  ' flags are the same, we can distinguish by context
+$$CDRF_NOTIFYPOSTERASE    = 0x00000040
+
+' drawstage flags
+' values under 0x00010000 are reserved for global custom draw values.
+' above that are for specific controls
+$$CDDS_PREPAINT           = 0x00000001
+$$CDDS_POSTPAINT          = 0x00000002
+$$CDDS_PREERASE           = 0x00000003
+$$CDDS_POSTERASE          = 0x00000004
+' the 0x000010000 bit means it's individual item specific
+$$CDDS_ITEM               = 0x00010000
+$$CDDS_ITEMPREPAINT       = 0x10001
+$$CDDS_ITEMPOSTPAINT      = 0x10002
+$$CDDS_ITEMPREERASE       = 0x10003
+$$CDDS_ITEMPOSTERASE      = 0x10004
+$$CDDS_SUBITEM            = 0x00020000
+
+' itemState flags
+$$CDIS_SELECTED       = 0x0001
+$$CDIS_GRAYED         = 0x0002
+$$CDIS_DISABLED       = 0x0004
+$$CDIS_CHECKED        = 0x0008
+$$CDIS_FOCUS          = 0x0010
+$$CDIS_DEFAULT        = 0x0020
+$$CDIS_HOT            = 0x0040
+$$CDIS_MARKED         = 0x0080
+$$CDIS_INDETERMINATE  = 0x0100
+
+TYPE NMCUSTOMDRAW
+	NMHDR	.hdr         
+	ULONG	.dwDrawStage
+	ULONG	.hdc        
+	RECT	.rc
+	ULONG	.dwItemSpec    ' this is control specific, but it's how to specify an item. valid only with CDDS_ITEM bit set
+	ULONG	.uItemState  
+	XLONG	.lItemlParam 
+END TYPE
+
+TYPE NMTTCUSTOMDRAW
+	NMCUSTOMDRAW	.nmcd 
+	ULONG	.uDrawFlags
+END TYPE
+
+'==============================================================================
+' IMAGE APIS
+
+$$CLR_NONE                = 0xFFFFFFFF
+$$CLR_DEFAULT             = 0xFF000000
+
+TYPE IMAGELISTDRAWPARAMS
+	ULONG	.cbSize  
+	ULONG	.himl    
+	XLONG	.i       
+	ULONG	.hdcDst  
+	XLONG	.x      
+	XLONG	.y      
+	XLONG	.cx      
+	XLONG	.cy     
+	XLONG	.xBitmap     ' x offest from the upperleft of bitmap
+	XLONG	.yBitmap     ' y offest from the upperleft of bitmap
+	ULONG	.rgbBk   
+	ULONG	.rgbFg 
+	ULONG	.fStyle  
+	ULONG	.dwRop  
+END TYPE
+
+$$ILC_MASK       = 0x0001
+$$ILC_COLOR      = 0x0000
+$$ILC_COLORDDB   = 0x00FE
+$$ILC_COLOR4     = 0x0004
+$$ILC_COLOR8     = 0x0008
+$$ILC_COLOR16    = 0x0010
+$$ILC_COLOR24    = 0x0018
+$$ILC_COLOR32    = 0x0020
+$$ILC_PALETTE    = 0x0800     ' (not implemented)
+
+$$ILD_NORMAL              = 0x0000
+$$ILD_TRANSPARENT         = 0x0001
+$$ILD_MASK                = 0x0010
+$$ILD_IMAGE               = 0x0020
+$$ILD_ROP                 = 0x0040
+$$ILD_BLEND25             = 0x0002
+$$ILD_BLEND50             = 0x0004
+$$ILD_OVERLAYMASK         = 0x0F00
+
+$$ILD_SELECTED            = 0x0004
+$$ILD_FOCUS               = 0x0002
+$$ILD_BLEND               = 0x0004
+$$CLR_HILIGHT             = 0xFF000000
+
+$$ILCF_MOVE = 0x00000000
+$$ILCF_SWAP = 0x00000001
+
+TYPE IMAGEINFO
+	ULONG	.hbmImage
+	ULONG	.hbmMask 
+	XLONG	.Unused1
+	XLONG	.Unused2 
+	RECT	.rcImage
+END TYPE
+
+'==============================================================================
+' HEADER CONTROL
+
+$$WC_HEADER       = "SysHeader32"
+
+$$HDS_HORZ        = 0x0000
+$$HDS_BUTTONS     = 0x0002
+$$HDS_HOTTRACK    = 0x0004
+$$HDS_HIDDEN      = 0x0008
+$$HDS_DRAGDROP    = 0x0040
+$$HDS_FULLDRAG    = 0x0080
+$$HDS_FILTERBAR   = 0x0100
+
+$$HDFT_ISSTRING   = 0x0000  ' HD_ITEM.pvFilter points to a HD_TEXTFILTER
+$$HDFT_ISNUMBER   = 0x0001  ' HD_ITEM.pvFilter points to a INT
+$$HDFT_HASNOVALUE = 0x8000  ' clear the filter, by setting this bit
+
+TYPE HD_TEXTFILTER
+	ULONG	.pszText      ' [in] pointer to the buffer containing the filter (ANSI)
+	XLONG	.cchTextMax   ' [in] max size of buffer/edit control buffer
+END TYPE
+
+TYPE HD_ITEM
+	ULONG	.mask       
+	XLONG	.cxy       
+	ULONG	.pszText  
+	ULONG	.hbm       
+	XLONG	.cchTextMax 
+	XLONG	.fmt        
+	XLONG	.lParam    
+	XLONG	.iImage         ' index of bitmap in ImageList
+	XLONG	.iOrder         ' where to draw this item
+	ULONG	.dType          ' [in] filter type (defined what pvFilter is a pointer to)
+	ULONG	.pvFilter       ' [in] filter data see above
+END TYPE
+
+$$HDI_WIDTH            = 0x0001
+$$HDI_HEIGHT           = 0x0001
+$$HDI_TEXT             = 0x0002
+$$HDI_FORMAT           = 0x0004
+$$HDI_LPARAM           = 0x0008
+$$HDI_BITMAP           = 0x0010
+$$HDI_IMAGE            = 0x0020
+$$HDI_DI_SETITEM       = 0x0040
+$$HDI_ORDER            = 0x0080
+$$HDI_FILTER           = 0x0100
+
+$$HDF_LEFT             = 0
+$$HDF_RIGHT            = 1
+$$HDF_CENTER           = 2
+$$HDF_JUSTIFYMASK      = 0x0003
+$$HDF_RTLREADING       = 4
+
+$$HDF_OWNERDRAW        = 0x8000
+$$HDF_STRING           = 0x4000
+$$HDF_BITMAP           = 0x2000
+$$HDF_BITMAP_ON_RIGHT  = 0x1000
+$$HDF_IMAGE            = 0x0800
+
+$$HDM_GETITEMCOUNT        = 4608
+$$HDM_INSERTITEM          = 4609
+$$HDM_INSERTITEMW         = 4618
+$$HDM_DELETEITEM          = 4610
+$$HDM_GETITEM             = 4611
+$$HDM_GETITEMW            = 4619
+$$HDM_SETITEM             = 4612
+$$HDM_SETITEMW            = 4620
+$$HDM_LAYOUT              = 4613
+$$HDM_HITTEST             = 4614
+$$HDM_GETITEMRECT         = 4615
+$$HDM_SETIMAGELIST        = 4616
+$$HDM_GETIMAGELIST        = 4617
+$$HDM_ORDERTOINDEX        = 4623
+$$HDM_CREATEDRAGIMAGE     = 4624  ' wparam = which item (by index)
+$$HDM_GETORDERARRAY       = 4625
+$$HDM_SETORDERARRAY       = 4626
+$$HDM_SETHOTDIVIDER       = 4627
+$$HDM_SETBITMAPMARGIN     = 4628
+$$HDM_GETBITMAPMARGIN     = 4629
+$$HDM_SETFILTERCHANGETIMEOUT = 4630
+$$HDM_EDITFILTER             = 4631
+$$HDM_CLEARFILTER            = 4632
+'$$HDM_SETUNICODEFORMAT    = $$CCM_SETUNICODEFORMAT
+'$$HDM_GETUNICODEFORMAT    = $$CCM_GETUNICODEFORMAT
+
+TYPE HD_LAYOUT
+	ULONG	.prc
+	ULONG	.pwpos
+END TYPE
+
+TYPE HDLAYOUT
+	ULONG	.prc
+	ULONG	.pwpos 
+END TYPE
+
+$$HHT_NOWHERE             = 0x0001
+$$HHT_ONHEADER            = 0x0002
+$$HHT_ONDIVIDER           = 0x0004
+$$HHT_ONDIVOPEN           = 0x0008
+$$HHT_ABOVE               = 0x0100
+$$HHT_BELOW               = 0x0200
+$$HHT_TORIGHT             = 0x0400
+$$HHT_TOLEFT              = 0x0800
+
+TYPE HD_HITTESTINFO
+	POINT	.pt 
+	ULONG	.flags
+	XLONG	.iItem
+END TYPE
+
+$$HDN_ITEMCHANGING        = -300
+$$HDN_ITEMCHANGINGW       = -320
+$$HDN_ITEMCHANGED         = -301
+$$HDN_ITEMCHANGEDW        = -321
+$$HDN_ITEMCLICK           = -301
+$$HDN_ITEMCLICKW          = -322
+$$HDN_ITEMDBLCLICK        = -303
+$$HDN_ITEMDBLCLICKW       = -323
+$$HDN_DIVIDERDBLCLICK     = -305
+$$HDN_DIVIDERDBLCLICKW    = -325
+$$HDN_BEGINTRACK          = -306
+$$HDN_BEGINTRACKW         = -326
+$$HDN_ENDTRACK            = -307
+$$HDN_ENDTRACKW           = -327
+$$HDN_TRACK               = -308
+$$HDN_TRACKW              = -328
+$$HDN_GETDISPINFO         = -309
+$$HDN_GETDISPINFOW        = -329
+$$HDN_BEGINDRAG           = -310
+$$HDN_ENDDRAG             = -311
+$$HDN_FILTERCHANGE        = -312
+$$HDN_FILTERBTNCLICK      = -313
+
+TYPE HD_NOTIFY
+	NMHDR	.hdr     
+	XLONG	.iItem  
+	XLONG	.iButton 
+	ULONG	.pitem   
+END TYPE
+
+TYPE NMHEADER
+	NMHDR	.hdr     
+	XLONG	.iItem  
+	XLONG	.iButton 
+	ULONG	.pitem   
+END TYPE
+
+TYPE NMHDDISPINFO
+	NMHDR	.hdr       
+	XLONG	.iItem     
+	ULONG	.mask       
+	ULONG	.pszText    
+	XLONG	.cchTextMax 
+	XLONG	.iImage     
+	XLONG	.lParam    
+END TYPE
+
+TYPE NMHDFILTERBTNCLICK
+	NMHDR	.hdr 
+	XLONG	.iItem
+	RECT	.rc
+END TYPE
+
+'==============================================================================
+' TOOLBAR CONTROL
+
+$$TOOLBARCLASSNAME      = "ToolbarWindow32"
+
+TYPE COLORMAP
+	ULONG	.from
+	ULONG	.to
+END TYPE
+
+TYPE TBADDBITMAP
+	ULONG	.hInst
+	ULONG	.nID
+END TYPE
+
+TYPE TBBUTTON
+	ULONG	.iBitmap 
+	ULONG	.idCommand 
+	UBYTE	.fsState 
+	UBYTE	.fsStyle 
+	ULONG	.dwData 
+	ULONG	.iString 
+END TYPE
+
+TYPE TBNOTIFY
+	NMHDR	.hdr
+	ULONG	.iItem
+	TBBUTTON	.tbButton
+	ULONG	.cchText
+	ULONG	.pszText
+END TYPE
+
+$$CMB_MASKED             = 0x02
+
+$$TBSTATE_CHECKED        = 0x01
+$$TBSTATE_PRESSED        = 0x02
+$$TBSTATE_ENABLED        = 0x04
+$$TBSTATE_HIDDEN         = 0x08
+$$TBSTATE_INDETERMINATE  = 0x10
+$$TBSTATE_WRAP           = 0x20
+$$TBSTATE_ELLIPSES       = 0x40
+$$TBSTATE_MARKED         = 0x80
+
+$$TBSTYLE_BUTTON         = 0x0000
+$$TBSTYLE_SEP            = 0x0001
+$$TBSTYLE_CHECK          = 0x0002
+$$TBSTYLE_GROUP          = 0x0004
+$$TBSTYLE_CHECKGROUP     = 0x0006
+$$TBSTYLE_DROPDOWN       = 0x0008
+$$TBSTYLE_AUTOSIZE       = 0x0010 ' automatically calculate the cx of the button
+$$TBSTYLE_NOPREFIX       = 0x0020 ' if this button should not have accel prefix
+
+$$TBSTYLE_TOOLTIPS        = 0x0100
+$$TBSTYLE_WRAPABLE        = 0x0200
+$$TBSTYLE_ALTDRAG         = 0x0400
+$$TBSTYLE_FLAT            = 0x0800
+$$TBSTYLE_LIST            = 0x1000
+$$TBSTYLE_CUSTOMERASE     = 0x2000
+$$TBSTYLE_REGISTERDROP    = 0x4000
+$$TBSTYLE_TRANSPARENT     = 0x8000
+$$TBSTYLE_EX_DRAWDDARROWS = 0x00000001
+
+$$BTNS_BUTTON     = $$TBSTYLE_BUTTON      ' 0x0000
+$$BTNS_SEP        = $$TBSTYLE_SEP         ' 0x0001
+$$BTNS_CHECK      = $$TBSTYLE_CHECK       ' 0x0002
+$$BTNS_GROUP      = $$TBSTYLE_GROUP       ' 0x0004
+$$BTNS_CHECKGROUP = $$TBSTYLE_CHECKGROUP  ' ($$TBSTYLE_GROUP OR $$TBSTYLE_CHECK)
+$$BTNS_DROPDOWN   = $$TBSTYLE_DROPDOWN    ' 0x0008
+$$BTNS_AUTOSIZE   = $$TBSTYLE_AUTOSIZE    ' 0x0010 automatically calculate the cx of the button
+$$BTNS_NOPREFIX   = $$TBSTYLE_NOPREFIX    ' 0x0020 this button should not have accel prefix
+$$BTNS_SHOWTEXT   = 0x0040              ' ignored unless $$TBSTYLE_EX_MIXEDBUTTONS is set
+$$BTNS_WHOLEDROPDOWN  = 0x0080          ' draw drop-down arrow, but without split arrow section
+
+$$TBSTYLE_EX_MIXEDBUTTONS        = 0x00000008
+$$TBSTYLE_EX_HIDECLIPPEDBUTTONS  = 0x00000010  ' don't show partially obscured buttons
+
+TYPE NMTBCUSTOMDRAW
+	NMCUSTOMDRAW	.nmcd         
+	ULONG	.hbrMonoDither        
+	ULONG	.hbrLines               ' For drawing lines on buttons
+	ULONG	.hpenLines              ' For drawing lines on buttons
+	ULONG	.clrText                ' Color of text
+	ULONG	.clrMark                ' Color of text bk when marked (only if TBSTATE_MARKED)
+	ULONG	.clrTextHighlight       ' Color of text when highlighted
+	ULONG	.clrBtnFace             ' Background of the button
+	ULONG	.clrBtnHighlight        ' 3D highlight
+	ULONG	.clrHighlightHotTrack   ' In conjunction with fHighlightHotTrack,
+	RECT	.rcText           ' will cause button to highlight like a menu
+	XLONG	.nStringBkMode          ' Rect for text
+	XLONG	.nHLStringBkMode      
+END TYPE
+
+' Toolbar custom draw return flags
+$$TBCDRF_NOEDGES        = 0x00010000 ' Don't draw button edges
+$$TBCDRF_HILITEHOTTRACK = 0x00020000 ' Use color of the button bk when hottracked
+$$TBCDRF_NOOFFSET       = 0x00040000 ' Don't offset button if pressed
+$$TBCDRF_NOMARK         = 0x00080000 ' Don't draw default highlight of image/text for TBSTATE_MARKED
+$$TBCDRF_NOETCHEDEFFECT = 0x00100000 ' Don't draw etched effect for disabled items
+$$TBCDRF_BLENDICON      = 0x00200000 ' Use ILD_BLEND50 on the icon image
+
+'WM_USER = 1024  ' found in user32.dec
+
+$$TB_ENABLEBUTTON             = 1025 
+$$TB_CHECKBUTTON              = 1026 
+$$TB_PRESSBUTTON              = 1027
+$$TB_HIDEBUTTON               = 1028 
+$$TB_INDETERMINATE            = 1029 
+$$TB_MARKBUTTON               = 1030
+$$TB_ISBUTTONENABLED          = 1033 
+$$TB_ISBUTTONCHECKED          = 1034
+$$TB_ISBUTTONPRESSED          = 1035
+$$TB_ISBUTTONHIDDEN           = 1036
+$$TB_ISBUTTONINDETERMINATE    = 1037
+$$TB_ISBUTTONHIGHLIGHTED      = 1038 
+$$TB_SETSTATE                 = 1041
+$$TB_GETSTATE                 = 1042
+$$TB_ADDBITMAP                = 1043
+
+$$HINST_COMMCTRL          = 0xFFFFFFFF   ' -1
+$$IDB_STD_SMALL_COLOR     = 0
+$$IDB_STD_LARGE_COLOR     = 1
+$$IDB_VIEW_SMALL_COLOR    = 4
+$$IDB_VIEW_LARGE_COLOR    = 5
+$$IDB_HIST_SMALL_COLOR    = 8
+$$IDB_HIST_LARGE_COLOR    = 9
+
+' icon indexes for standard bitmap
+
+$$STD_CUT                 = 0
+$$STD_COPY                = 1
+$$STD_PASTE               = 2
+$$STD_UNDO                = 3
+$$STD_REDOW               = 4
+$$STD_DELETE              = 5
+$$STD_FILENEW             = 6
+$$STD_FILEOPEN            = 7
+$$STD_FILESAVE            = 8
+$$STD_PRINTPRE            = 9
+$$STD_PROPERTIES          = 10
+$$STD_HELP                = 11
+$$STD_FIND                = 12
+$$STD_REPLACE             = 13
+$$STD_PRINT               = 14
+
+' icon indexes for standard view bitmap
+
+$$VIEW_LARGEICONS         = 0
+$$VIEW_SMALLICONS         = 1
+$$VIEW_LIST               = 2
+$$VIEW_DETAILS            = 3
+$$VIEW_SORTNAME           = 4
+$$VIEW_SORTSIZE           = 5
+$$VIEW_SORTDATE           = 6
+$$VIEW_SORTTYPE           = 7
+$$VIEW_PARENTFOLDER       = 8
+$$VIEW_NETCONNECT         = 9
+$$VIEW_NETDISCONNECT      = 10
+$$VIEW_NEWFOLDER          = 11
+$$VIEW_VIEWMENU           = 12
+
+$$HIST_BACK               = 0
+$$HIST_FORWARD            = 1
+$$HIST_FAVORITES          = 2
+$$HIST_ADDTOFAVORITES     = 3
+$$HIST_VIEWTREE           = 4
+
+$$TB_ADDBUTTONS               = 1044
+$$TB_INSERTBUTTON             = 1045
+$$TB_DELETEBUTTON             = 1046
+$$TB_GETBUTTON                = 1047
+$$TB_BUTTONCOUNT              = 1048
+$$TB_COMMANDTOINDEX           = 1049
+
+TYPE TBSAVEPARAMS
+	ULONG	.hkr 
+	ULONG	.pszSubKey 
+	ULONG	.pszValueName 
+END TYPE
+
+$$TB_SAVERESTORE              = 1050	'$$WM_USER + 26
+$$TB_SAVERESTOREW             = 1100	'$$WM_USER + 76
+$$TB_CUSTOMIZE                = 1051	'$$WM_USER + 27
+$$TB_ADDSTRING                = 1052	'$$WM_USER + 28
+$$TB_ADDSTRINGW               = 1101	'$$WM_USER + 77
+$$TB_GETITEMRECT              = 1053	'$$WM_USER + 29
+$$TB_BUTTONSTRUCTSIZE         = 1054	'$$WM_USER + 30
+$$TB_SETBUTTONSIZE            = 1055	'$$WM_USER + 31
+$$TB_SETBITMAPSIZE            = 1056	'$$WM_USER + 32
+$$TB_AUTOSIZE                 = 1057	'$$WM_USER + 33
+$$TB_GETTOOLTIPS              = 1059	'$$WM_USER + 35
+$$TB_SETTOOLTIPS              = 1060	'$$WM_USER + 36
+$$TB_SETPARENT                = 1061	'$$WM_USER + 37
+$$TB_SETROWS                  = 1063	'$$WM_USER + 39
+$$TB_GETROWS                  = 1064	'$$WM_USER + 40
+$$TB_SETCMDID                 = 1066	'$$WM_USER + 42
+$$TB_CHANGEBITMAP             = 1067	'$$WM_USER + 43
+$$TB_GETBITMAP                = 1068	'$$WM_USER + 44
+$$TB_GETBUTTONTEXT            = 1069	'$$WM_USER + 45
+$$TB_GETBUTTONTEXTW           = 1099	'$$WM_USER + 75
+$$TB_REPLACEBITMAP            = 1070	'$$WM_USER + 46
+$$TB_SETINDENT                = 1071	'$$WM_USER + 47
+$$TB_SETIMAGELIST             = 1072	'$$WM_USER + 48
+$$TB_GETIMAGELIST             = 1073	'$$WM_USER + 49
+$$TB_LOADIMAGES               = 1074	'$$WM_USER + 50
+$$TB_GETRECT                  = 1075	'$$WM_USER + 51  ' wParam is the Cmd instead of index
+$$TB_SETHOTIMAGELIST          = 1076	'$$WM_USER + 52
+$$TB_GETHOTIMAGELIST          = 1077	'$$WM_USER + 53
+$$TB_SETDISABLEDIMAGELIST     = 1078	'$$WM_USER + 54
+$$TB_GETDISABLEDIMAGELIST     = 1079	'$$WM_USER + 55
+$$TB_SETSTYLE                 = 1080	'$$WM_USER + 56
+$$TB_GETSTYLE                 = 1081	'$$WM_USER + 57
+$$TB_GETBUTTONSIZE            = 1082	'$$WM_USER + 58
+$$TB_SETBUTTONWIDTH           = 1083	'$$WM_USER + 59
+$$TB_SETMAXTEXTROWS           = 1084	'$$WM_USER + 60
+$$TB_GETTEXTROWS              = 1085	'$$WM_USER + 61
+$$TB_GETOBJECT                = 1086	'$$WM_USER + 62  ' wParam == IID, lParam void **ppv
+$$TB_GETHOTITEM               = 1095	'$$WM_USER + 71
+$$TB_SETHOTITEM               = 1096	'$$WM_USER + 72  ' wParam == iHotItem
+$$TB_SETANCHORHIGHLIGHT       = 1097	'$$WM_USER + 73  ' wParam == TRUE/FALSE
+$$TB_GETANCHORHIGHLIGHT       = 1098	'$$WM_USER + 74
+$$TB_MAPACCELERATOR           = 1102	'$$WM_USER + 78  ' wParam == ch, lParam int * pidBtn
+
+TYPE TBINSERTMARK
+	ULONG	.iButton
+	ULONG	.dwFlags
+END TYPE
+
+$$TBIMHT_AFTER      = 0x00000001 ' TRUE = insert After iButton, otherwise before
+$$TBIMHT_BACKGROUND = 0x00000002 ' TRUE iff missed buttons completely
+
+$$TB_GETINSERTMARK            = 1103	'$$WM_USER + 79  ' lParam == LPTBINSERTMARK
+$$TB_SETINSERTMARK            = 1104	'$$WM_USER + 80  ' lParam == LPTBINSERTMARK
+$$TB_INSERTMARKHITTEST        = 1105	'$$WM_USER + 81  ' wParam == LPPOINT lParam == LPTBINSERTMARK
+$$TB_MOVEBUTTON               = 1106	'$$WM_USER + 82
+$$TB_GETMAXSIZE               = 1107	'$$WM_USER + 83  ' lParam == LPSIZE
+$$TB_SETEXTENDEDSTYLE         = 1108	'$$WM_USER + 84  ' For TBSTYLE_EX_*
+$$TB_GETEXTENDEDSTYLE         = 1109	'$$WM_USER + 85  ' For TBSTYLE_EX_*
+$$TB_GETPADDING               = 1110	'$$WM_USER + 86
+$$TB_SETPADDING               = 1111	'$$WM_USER + 87
+$$TB_SETINSERTMARKCOLOR       = 1112	'$$WM_USER + 88
+$$TB_GETINSERTMARKCOLOR       = 1113	'$$WM_USER + 89
+
+$$TB_SETCOLORSCHEME       = $$CCM_SETCOLORSCHEME  ' lParam is color scheme
+$$TB_GETCOLORSCHEME       = $$CCM_GETCOLORSCHEME  ' fills in COLORSCHEME pointed to by lParam
+
+$$TB_SETUNICODEFORMAT     = $$CCM_SETUNICODEFORMAT
+$$TB_GETUNICODEFORMAT     = $$CCM_GETUNICODEFORMAT
+
+$$TB_MAPACCELERATORW      = 1114	'$$WM_USER + 90  ' wParam == ch, lParam int * pidBtn
+
+$$TBBF_LARGE              = 0x0001
+
+$$TB_GETBITMAPFLAGS       = 1065	'($$WM_USER + 41)
+
+$$TBIF_IMAGE              = 0x00000001
+$$TBIF_TEXT               = 0x00000002
+$$TBIF_STATE              = 0x00000004
+$$TBIF_STYLE              = 0x00000008
+$$TBIF_LPARAM             = 0x00000010
+$$TBIF_COMMAND            = 0x00000020
+$$TBIF_SIZE               = 0x00000040
+$$TBIF_BYINDEX            = 0x80000000 ' this specifies that the wparam in Get/SetButtonInfo is an index, not id
+
+TYPE TBBUTTONINFO
+	ULONG	.cbSize 
+	ULONG	.dwMask 
+	XLONG	.idCommand 
+	XLONG	.iImage 
+	UBYTE	.fsState 
+	UBYTE	.fsStyle 
+	ULONG	.cx 
+	ULONG	.lParam 
+	ULONG	.pszText 
+	XLONG	.cchText 
+END TYPE
+
+' BUTTONINFO APIs do NOT support the string pool.
+$$TB_GETBUTTONINFOW        = 1087	'$$WM_USER + 63
+$$TB_SETBUTTONINFOW        = 1088	'$$WM_USER + 64
+$$TB_GETBUTTONINFO         = 1089	'$$WM_USER + 65
+$$TB_SETBUTTONINFO         = 1090	'$$WM_USER + 66
+
+' New post Win95/NT4 for InsertButton and AddButton.  if iString member
+' is a pointer to a string, it will be handled as a string like listview
+' (although LPSTR_TEXTCALLBACK is not supported).
+
+$$TB_INSERTBUTTONW        = 1091	'$$WM_USER + 67
+$$TB_ADDBUTTONSW          = 1092	'$$WM_USER + 68
+$$TB_HITTEST              = 1093	'$$WM_USER + 69
+$$TB_SETDRAWTEXTFLAGS     = 1094	'$$WM_USER + 70  ' wParam == mask lParam == bit values
+
+$$TB_GETSTRINGW           = 1115	'$$WM_USER + 91
+$$TB_GETSTRING            = 1116	'$$WM_USER + 92
+
+$$TBN_GETBUTTONINFO       = -700
+$$TBN_GETBUTTONINFOW      = -720
+$$TBN_BEGINDRAG           = -701
+$$TBN_ENDDRAG             = -702
+$$TBN_BEGINADJUST         = -703
+$$TBN_ENDADJUST           = -704
+$$TBN_RESET               = -705
+$$TBN_QUERYINSERT         = -706
+$$TBN_QUERYDELETE         = -707
+$$TBN_TOOLBARCHANGE       = -708
+$$TBN_CUSTHELP            = -709
+$$TBN_DROPDOWN            = -710
+$$TBN_GETOBJECT           = -712
+
+' Structure for $$TBN_HOTITEMCHANGE notification
+'
+TYPE NMTBHOTITEM
+	NMHDR	.hdr 
+	XLONG	.idOld 
+	XLONG	.idNew 
+	ULONG	.dwFlags     
+END TYPE
+
+' Hot item change flags
+$$HICF_OTHER          = 0x00000000
+$$HICF_MOUSE          = 0x00000001    ' Triggered by mouse
+$$HICF_ARROWKEYS      = 0x00000002    ' Triggered by arrow keys
+$$HICF_ACCELERATOR    = 0x00000004    ' Triggered by accelerator
+$$HICF_DUPACCEL       = 0x00000008    ' This accelerator is not unique
+$$HICF_ENTERING       = 0x00000010    ' idOld is invalid
+$$HICF_LEAVING        = 0x00000020    ' idNew is invalid
+$$HICF_RESELECT       = 0x00000040    ' hot item reselected
+
+$$TBN_HOTITEMCHANGE       = -713
+$$TBN_DRAGOUT             = -714 ' this is sent when the user clicks down on a button then drags off the button
+$$TBN_DELETINGBUTTON      = -715 ' uses $$TBNOTIFY
+$$TBN_GETDISPINFO         = -716 ' This is sent when the toolbar needs some display information
+$$TBN_GETDISPINFOW        = -717 ' This is sent when the toolbar needs some display information
+$$TBN_GETINFOTIP          = -718
+$$TBN_GETINFOTIPW         = -719
+$$TBN_RESTORE             = -721
+$$TBN_SAVE                = -722
+$$TBN_INITCUSTOMIZE       = -723
+$$TBNRF_HIDEHELP       = 0x00000001
+$$TBNRF_ENDCUSTOMIZE   = 0x00000002
+
+TYPE NMTBSAVE
+	NMHDR	.hdr       
+	ULONG	.pData     
+	ULONG	.pCurrent   
+	ULONG	.cbData    
+	XLONG	.iItem     
+	XLONG	.cButtons   
+	TBBUTTON	.tButton  
+END TYPE
+
+TYPE NMTBRESTORE
+	NMHDR	.hdr             
+	ULONG	.pData           
+	ULONG	.pCurrent         
+	ULONG	.cbData           
+	XLONG	.iItem            
+	XLONG	.cButtons         
+	XLONG	.cbBytesPerRecord 
+	TBBUTTON	.tButton          
+END TYPE
+
+TYPE NMTBGETINFOTIP
+	NMHDR	.hdr       
+	ULONG	.pszText    
+	XLONG	.cchTextMax 
+	XLONG	.iItem     
+	XLONG	.lParam     
+END TYPE
+
+$$TBNF_IMAGE              = 0x00000001
+$$TBNF_TEXT               = 0x00000002
+$$TBNF_DI_SETITEM         = 0x10000000
+
+TYPE NMTBDISPINFO
+	NMHDR	.hdr       
+	ULONG	.dwMask           ' [in] Specifies the values requested .[out] Client ask the data to be set for future use
+	XLONG	.idCommand        ' [in] id of button we're requesting info for
+	ULONG	.lParam           ' [in] lParam of button
+	XLONG	.iImage           ' [out] image index
+	ULONG	.pszText          ' [out] new text for item
+	XLONG	.chText           ' [in] size of buffer pointed to by pszText
+END TYPE
+
+' Return codes for TBN_DROPDOWN
+$$TBDDRET_DEFAULT         = 0
+$$TBDDRET_NODEFAULT       = 1
+$$TBDDRET_TREATPRESSED    = 2       ' Treat as a standard press button
+
+TYPE NMTOOLBAR
+	NMHDR	.hdr  
+	ULONG	.iItem    
+	TBBUTTON	.tbButton 
+	XLONG	.cchText  
+	ULONG	.pszText   
+	RECT	.rcButton  
+END TYPE
+
+'====== REBAR CONTROL ========================================================
+
+$$REBARCLASSNAME  = "ReBarWindow32"
+
+$$RBIM_IMAGELIST  = 0x00000001
+
+$$RBS_TOOLTIPS        = 0x0100
+$$RBS_VARHEIGHT       = 0x0200
+$$RBS_BANDBORDERS     = 0x0400
+$$RBS_FIXEDORDER      = 0x0800
+$$RBS_REGISTERDROP    = 0x1000
+$$RBS_AUTOSIZE        = 0x2000
+$$RBS_VERTICALGRIPPER = 0x4000  	' this always has the vertical gripper (default for horizontal mode)
+$$RBS_DBLCLKTOGGLE    = 0x8000
+
+TYPE REBARINFO
+	ULONG	.cbSize
+	ULONG	.fMask 
+	ULONG	.himl 
+END TYPE
+
+$$RBBS_BREAK          = 0x00000001  ' break to new line
+$$RBBS_FIXEDSIZE      = 0x00000002  ' band can't be sized
+$$RBBS_CHILDEDGE      = 0x00000004  ' edge around top & bottom of child window
+$$RBBS_HIDDEN         = 0x00000008  ' don't show
+$$RBBS_NOVERT         = 0x00000010  ' don't show when vertical
+$$RBBS_FIXEDBMP       = 0x00000020  ' bitmap doesn't move during band resize
+$$RBBS_VARIABLEHEIGHT = 0x00000040  ' allow autosizing of this child vertically
+$$RBBS_GRIPPERALWAYS  = 0x00000080  ' always show the gripper
+$$RBBS_NOGRIPPER      = 0x00000100  ' never show the gripper
+$$RBBS_USECHEVRON     = 0x00000200  ' display drop-down button for this band if it's sized smaller than ideal width
+$$RBBS_HIDETITLE      = 0x00000400  ' keep band title hidden
+
+$$RBBIM_STYLE         = 0x00000001
+$$RBBIM_COLORS        = 0x00000002
+$$RBBIM_TEXT          = 0x00000004
+$$RBBIM_IMAGE         = 0x00000008
+$$RBBIM_CHILD         = 0x00000010
+$$RBBIM_CHILDSIZE     = 0x00000020
+$$RBBIM_SIZE          = 0x00000040
+$$RBBIM_BACKGROUND    = 0x00000080
+$$RBBIM_ID            = 0x00000100
+$$RBBIM_IDEALSIZE     = 0x00000200
+$$RBBIM_LPARAM        = 0x00000400
+$$RBBIM_HEADERSIZE    = 0x00000800  ' control the size of the header
+
+TYPE REBARBANDINFO
+	ULONG	.cbSize  
+	ULONG	.fMask    
+	ULONG	.fStyle    
+	ULONG	.clrFore  
+	ULONG	.clrBack   
+	ULONG	.lpText    
+	ULONG	.cch       
+	XLONG	.iImage     
+	ULONG	.hwndChild  
+	ULONG	.cxMinChild 
+	ULONG	.cyMinChild 
+	ULONG	.cx         
+	ULONG	.hbmBack    
+	ULONG	.wID        
+	ULONG	.cyChild    
+	ULONG	.cyMaxChild 
+	ULONG	.cyIntegral 
+	ULONG	.cxIdeal    
+	XLONG	.lParam     
+	ULONG	.cxHeader   
+END TYPE
+
+$$RB_INSERTBAND   = 1025	'($$WM_USER + 1)
+$$RB_DELETEBAND   = 1026	'($$WM_USER + 2)
+$$RB_GETBARINFO   = 1027	'($$WM_USER + 3)
+$$RB_SETBARINFO   = 1028	'($$WM_USER + 4)
+'$$RB_GETBANDINFO  = 1029	'($$WM_USER + 5)    ' for _WIN32_IE < 0x0400
+$$RB_SETBANDINFO  = 1030	'($$WM_USER + 6)
+$$RB_SETPARENT    = 1031	'($$WM_USER + 7)
+$$RB_HITTEST      = 1032	'($$WM_USER + 8)
+$$RB_GETRECT      = 1033	'($$WM_USER + 9)
+$$RB_INSERTBANDW  = 1034	'($$WM_USER + 10)
+$$RB_SETBANDINFOW = 1035	'($$WM_USER + 11)
+$$RB_GETBANDCOUNT = 1036	'($$WM_USER + 12)
+$$RB_GETROWCOUNT  = 1037	'($$WM_USER + 13)
+$$RB_GETROWHEIGHT = 1038	'($$WM_USER + 14)
+$$RB_IDTOINDEX    = 1040	'($$WM_USER + 16) ' wParam == id
+$$RB_GETTOOLTIPS  = 1041	'($$WM_USER + 17)
+$$RB_SETTOOLTIPS  = 1042	'($$WM_USER + 18)
+$$RB_SETBKCOLOR   = 1043	'($$WM_USER + 19) ' sets the default BK color
+$$RB_GETBKCOLOR   = 1044	'($$WM_USER + 20) ' defaults to CLR_NONE
+$$RB_SETTEXTCOLOR = 1045	'($$WM_USER + 21)
+$$RB_GETTEXTCOLOR = 1046	'($$WM_USER + 22) ' defaults to 0x00000000
+$$RB_SIZETORECT   = 1047	'($$WM_USER + 23) ' resize the rebar/break bands and such to this rect (lparam)
+' for manual drag control
+' lparam == cursor pos
+        ' -1 means do it yourself.
+        ' -2 means use what you had saved before
+$$RB_BEGINDRAG    = 1048	'($$WM_USER + 24)
+$$RB_ENDDRAG      = 1049	'($$WM_USER + 25)
+$$RB_DRAGMOVE     = 1050	'($$WM_USER + 26)
+$$RB_GETBARHEIGHT = 1051	'($$WM_USER + 27)
+$$RB_GETBANDINFOW = 1052	'($$WM_USER + 28)
+$$RB_GETBANDINFO  = 1053	'($$WM_USER + 29)
+$$RB_MINIMIZEBAND = 1054	'($$WM_USER + 30)
+$$RB_MAXIMIZEBAND = 1055	'($$WM_USER + 31)
+$$RB_GETBANDBORDERS = 1058	'($$WM_USER + 34)  ' returns in lparam = lprc the amount of edges added to band wparam
+$$RB_SHOWBAND     = 1059	'($$WM_USER + 35)      ' show/hide band
+$$RB_SETPALETTE   = 1061	'($$WM_USER + 37)
+$$RB_GETPALETTE   = 1062	'($$WM_USER + 38)
+$$RB_MOVEBAND     = 1063	'($$WM_USER + 39)
+$$RB_PUSHCHEVRON  = 1067	'($$WM_USER + 43)
+
+$$RB_SETCOLORSCHEME   = $$CCM_SETCOLORSCHEME  ' lParam is color scheme
+$$RB_GETCOLORSCHEME   = $$CCM_GETCOLORSCHEME  ' fills in COLORSCHEME pointed to by lParam
+
+$$RB_GETDROPTARGET    = $$CCM_GETDROPTARGET
+$$RB_SETUNICODEFORMAT = $$CCM_SETUNICODEFORMAT
+$$RB_GETUNICODEFORMAT = $$CCM_GETUNICODEFORMAT
+
+$$RBN_HEIGHTCHANGE    = -831	'($$RBN_FIRST - 0)
+$$RBN_GETOBJECT       = -832	'($$RBN_FIRST - 1)
+$$RBN_LAYOUTCHANGED   = -833	'($$RBN_FIRST - 2)
+$$RBN_AUTOSIZE        = -834	'($$RBN_FIRST - 3)
+$$RBN_BEGINDRAG       = -835	'($$RBN_FIRST - 4)
+$$RBN_ENDDRAG         = -836	'($$RBN_FIRST - 5)
+$$RBN_DELETINGBAND    = -837	'($$RBN_FIRST - 6)     ' Uses NMREBAR
+$$RBN_DELETEDBAND     = -838	'($$RBN_FIRST - 7)     ' Uses NMREBAR
+$$RBN_CHILDSIZE       = -839	'($$RBN_FIRST - 8)
+$$RBN_CHEVRONPUSHED   = -841	'($$RBN_FIRST - 10)
+$$RBN_MINMAX          = -852	'($$RBN_FIRST - 21)
+
+TYPE NMREBARCHILDSIZE
+	NMHDR	.hdr
+	ULONG	.uBand 
+	ULONG	.wID 
+	RECT	.rcChild
+	RECT	.rcBand
+END TYPE
+
+TYPE NMREBAR
+	NMHDR	.hdr 
+	ULONG	.dwMask
+	ULONG	.uBand
+	ULONG	.fStyle
+	ULONG	.wID 
+	XLONG	.lParam 
+END TYPE
+
+' Mask flags for NMREBAR
+$$RBNM_ID         = 0x00000001
+$$RBNM_STYLE      = 0x00000002
+$$RBNM_LPARAM     = 0x00000004
+
+TYPE NMRBAUTOSIZE
+	NMHDR	.hdr      
+	XLONG	.fChanged 
+	RECT .rcTarget 
+	RECT .rcActual 
+END TYPE
+
+$$RBHT_NOWHERE = 0x0001
+$$RBHT_CAPTION = 0x0002
+$$RBHT_CLIENT  = 0x0003
+$$RBHT_GRABBER = 0x0004
+$$RBHT_CHEVRON = 0x0008
+
+TYPE RBHITTESTINFO
+	POINT	.pt    
+	ULONG	.flags 
+	XLONG	.iBand 
+END TYPE
+
+'==============================================================================
+' TOOLTIPS CONTROL
+
+$$TOOLTIPS_CLASS         = "tooltips_class32"
+
+$$TTS_ALWAYSTIP           = 0x01
+$$TTS_NOPREFIX            = 0x02
+$$TTS_NOANIMATE           = 0x10
+$$TTS_NOFADE              = 0x20
+$$TTS_BALLOON             = 0x40
+
+$$TTF_IDISHWND            = 0x0001
+
+' Use this to center around trackpoint in trackmode
+' -OR- to center around tool in normal mode.
+' Use TTF_ABSOLUTE to place the tip exactly at the track coords when
+' in tracking mode. TTF_ABSOLUTE can be used in conjunction with TTF_CENTERTIP
+' to center the tip absolutely about the track point.
+
+$$TTF_CENTERTIP           = 0x0002
+$$TTF_RTLREADING          = 0x0004
+$$TTF_SUBCLASS            = 0x0010
+$$TTF_TRACK               = 0x0020
+$$TTF_ABSOLUTE            = 0x0080
+$$TTF_TRANSPARENT         = 0x0100
+$$TTF_DI_SETITEM          = 0x8000  ' valid only on the TTN_NEEDTEXT callback
+
+$$TTDT_AUTOMATIC          = 0
+$$TTDT_RESHOW             = 1
+$$TTDT_AUTOPOP            = 2
+$$TTDT_INITIAL            = 3
+
+' ToolTip Icons (Set with TTM_SETTITLE)
+$$TTI_NONE                = 0
+$$TTI_INFO                = 1
+$$TTI_WARNING             = 2
+$$TTI_ERROR               = 3
+
+' Tool Tip Messages
+$$TTM_ACTIVATE                = 1025	'$$WM_USER +  1
+$$TTM_SETDELAYTIME            = 1027	'$$WM_USER +  3
+$$TTM_ADDTOOL                 = 1028	'$$WM_USER +  4
+$$TTM_DELTOOL                 = 1029	'$$WM_USER +  5
+$$TTM_NEWTOOLRECT             = 1030	'$$WM_USER +  6
+$$TTM_RELAYEVENT              = 1031	'$$WM_USER +  7
+$$TTM_GETTOOLINFO             = 1032	'$$WM_USER +  8
+$$TTM_SETTOOLINFO             = 1033	'$$WM_USER +  9
+$$TTM_HITTEST                 = 1034	'$$WM_USER + 10
+$$TTM_GETTEXT                 = 1035	'$$WM_USER + 11
+$$TTM_UPDATETIPTEXT           = 1036	'$$WM_USER + 12
+$$TTM_GETTOOLCOUNT            = 1037	'$$WM_USER + 13
+$$TTM_ENUMTOOLS               = 1038	'$$WM_USER + 14
+$$TTM_GETCURRENTTOOL          = 1039	'$$WM_USER + 15
+$$TTM_WINDOWFROMPOINT         = 1040	'$$WM_USER + 16
+$$TTM_TRACKACTIVATE           = 1041	'$$WM_USER + 17
+$$TTM_TRACKPOSITION           = 1042	'$$WM_USER + 18
+$$TTM_SETTIPBKCOLOR           = 1043	'$$WM_USER + 19
+$$TTM_SETTIPTEXTCOLOR         = 1044	'$$WM_USER + 20
+$$TTM_GETDELAYTIME            = 1045	'$$WM_USER + 21
+$$TTM_GETTIPBKCOLOR           = 1046	'$$WM_USER + 22
+$$TTM_GETTIPTEXTCOLOR         = 1047	'$$WM_USER + 23
+$$TTM_SETMAXTIPWIDTH          = 1048	'$$WM_USER + 24
+$$TTM_GETMAXTIPWIDTH          = 1049	'$$WM_USER + 25
+$$TTM_SETMARGIN               = 1050	'$$WM_USER + 26
+$$TTM_GETMARGIN               = 1051	'$$WM_USER + 27
+$$TTM_POP                     = 1052	'$$WM_USER + 28
+$$TTM_UPDATE                  = 1053	'$$WM_USER + 29
+$$TTM_GETBUBBLESIZE           = 1054	'$$WM_USER + 30
+$$TTM_ADJUSTRECT              = 1055	'$$WM_USER + 31
+$$TTM_SETTITLE                = 1056	'$$WM_USER + 32  ' wParam = TTI_*, lParam = char* szTitle
+$$TTM_SETTITLEW               = 1057	'$$WM_USER + 33  ' wParam = TTI_*, lParam = wchar* szTitle
+
+$$TTM_ADDTOOLW                = 1074	'$$WM_USER + 50
+$$TTM_DELTOOLW                = 1075	'$$WM_USER + 51
+$$TTM_NEWTOOLRECTW            = 1076	'$$WM_USER + 52
+$$TTM_GETTOOLINFOW            = 1077	'$$WM_USER + 53
+$$TTM_SETTOOLINFOW            = 1078	'$$WM_USER + 54
+$$TTM_HITTESTW                = 1079	'$$WM_USER + 55
+$$TTM_GETTEXTW                = 1080	'$$WM_USER + 56
+$$TTM_UPDATETIPTEXTW          = 1081	'$$WM_USER + 57
+$$TTM_ENUMTOOLSW              = 1082	'$$WM_USER + 58
+$$TTM_GETCURRENTTOOLW         = 1083	'$$WM_USER + 59
+
+TYPE TOOLINFO
+	ULONG	.cbSize 
+	ULONG	.uFlags 
+	ULONG	.hwnd 
+	ULONG	.uId 
+	RECT	.rect 
+	ULONG	.hinst 
+	ULONG	.lpszText 
+END TYPE
+
+TYPE TTHITTESTINFO
+	ULONG	.hWnd 
+	POINT	.pt    
+	TOOLINFO	.ti    
+END TYPE
+
+$$TTN_GETDISPINFO             = -520	'($$TTN_FIRST - 0)
+$$TTN_GETDISPINFOW            = -530	'($$TTN_FIRST - 10)
+$$TTN_SHOW                    = -521	'($$TTN_FIRST - 1)
+$$TTN_POP                     = -522	'($$TTN_FIRST - 2)
+
+$$TTN_NEEDTEXT                = $$TTN_GETDISPINFO
+$$TTN_NEEDTEXTW               = $$TTN_GETDISPINFOW
+
+TYPE NMTTDISPINFO
+	NMHDR	.hdr     
+	ULONG	.lpszText 
+	UBYTE	.szText[79]
+	ULONG	.hInst
+	ULONG	.uFlags
+	ULONG	.lParam
+END TYPE
+
+TYPE TOOLTIPTEXT  
+	NMHDR	.hdr 
+	ULONG	.lpszText 
+	UBYTE	.szText[79] 
+	ULONG	.hinst 
+ 	ULONG	.uFlags 
+END TYPE
+
+'==============================================================================
+' STATUS BAR CONTROL
+
+$$SBARS_SIZEGRIP          = 0x0100
+$$SBARS_TOOLTIPS          = 0x0800
+
+$$STATUSCLASSNAME = "msctls_statusbar32"
+
+$$SB_SETTEXT                  = 1025	'$$WM_USER + 1
+$$SB_GETTEXT                  = 1026	'$$WM_USER + 2
+$$SB_GETTEXTLENGTH            = 1027	'$$WM_USER + 3
+$$SB_SETPARTS                 = 1028	'$$WM_USER + 4
+$$SB_GETPARTS                 = 1030	'$$WM_USER + 6
+$$SB_GETBORDERS               = 1031	'$$WM_USER + 7
+$$SB_SETMINHEIGHT             = 1032	'$$WM_USER + 8
+$$SB_SIMPLE                   = 1033	'$$WM_USER + 9
+$$SB_GETRECT                  = 1034	'$$WM_USER + 10
+$$SB_SETTEXTW                 = 1035	'$$WM_USER + 11
+$$SB_GETTEXTLENGTHW           = 1036	'$$WM_USER + 12
+$$SB_GETTEXTW                 = 1037	'$$WM_USER + 13
+$$SB_ISSIMPLE                 = 1038	'$$WM_USER + 14
+$$SB_SETICON                  = 1039	'$$WM_USER + 15
+$$SB_SETTIPTEXT               = 1040	'$$WM_USER + 16
+$$SB_SETTIPTEXTW              = 1041	'$$WM_USER + 17
+$$SB_GETTIPTEXT               = 1042	'$$WM_USER + 18
+$$SB_GETTIPTEXTW              = 1043	'$$WM_USER + 19
+$$SB_GETICON                  = 1044	'$$WM_USER + 20
+$$SB_SETUNICODEFORMAT         = $$CCM_SETUNICODEFORMAT
+$$SB_GETUNICODEFORMAT         = $$CCM_GETUNICODEFORMAT
+
+$$SBT_OWNERDRAW               = 0x1000
+$$SBT_NOBORDERS               = 0x0100
+$$SBT_POPOUT                  = 0x0200
+$$SBT_RTLREADING              = 0x0400
+$$SBT_TOOLTIPS                = 0x0800
+$$SBT_NOTABPARSING            = 0x0800
+
+$$SB_SETBKCOLOR               = $$CCM_SETBKCOLOR  ' lParam = bkColor
+
+$$SBN_SIMPLEMODECHANGE        = $$SBN_FIRST
+
+' refers to the data saved for simple mode
+$$SB_SIMPLEID = 0x00FF
+
+'==============================================================================
+' MENU HELP
+
+$$MINSYSCOMMAND  = 0xF000
+
+'==============================================================================
+' TRACKBAR CONTROL
+
+$$TRACKBAR_CLASS        = "msctls_trackbar32"
+
+$$TBS_AUTOTICKS          = 0x0001
+$$TBS_VERT               = 0x0002
+$$TBS_HORZ               = 0x0000
+$$TBS_TOP                = 0x0004
+$$TBS_BOTTOM             = 0x0000
+$$TBS_LEFT               = 0x0004
+$$TBS_RIGHT              = 0x0000
+$$TBS_BOTH               = 0x0008
+$$TBS_NOTICKS            = 0x0010
+$$TBS_ENABLESELRANGE     = 0x0020
+$$TBS_FIXEDLENGTH        = 0x0040
+$$TBS_NOTHUMB            = 0x0080
+$$TBS_TOOLTIPS           = 0x0100
+$$TBS_REVERSED           = 0x0200  ' Accessibility hint: the smaller number (usually the min value) means "high" and the larger number (usually the max value) means "low"
+
+$$TBM_GETPOS             = 1024	'$$WM_USER
+$$TBM_GETRANGEMIN        = 1025	'$$WM_USER + 1
+$$TBM_GETRANGEMAX        = 1026	'$$WM_USER + 2
+$$TBM_GETTIC             = 1027	'$$WM_USER + 3
+$$TBM_SETTIC             = 1028	'$$WM_USER + 4
+$$TBM_SETPOS             = 1029	'$$WM_USER + 5
+$$TBM_SETRANGE           = 1030	'$$WM_USER + 6
+$$TBM_SETRANGEMIN        = 1031	'$$WM_USER + 7
+$$TBM_SETRANGEMAX        = 1032	'$$WM_USER + 8
+$$TBM_CLEARTICS          = 1033	'$$WM_USER + 9
+$$TBM_SETSEL             = 1034	'$$WM_USER + 10
+$$TBM_SETSELSTART        = 1035	'$$WM_USER + 11
+$$TBM_SETSELEND          = 1036	'$$WM_USER + 12
+$$TBM_GETPTICS           = 1038	'$$WM_USER + 14
+$$TBM_GETTICPOS          = 1039	'$$WM_USER + 15
+$$TBM_GETNUMTICS         = 1040	'$$WM_USER + 16
+$$TBM_GETSELSTART        = 1041	'$$WM_USER + 17
+$$TBM_GETSELEND          = 1042	'$$WM_USER + 18
+$$TBM_CLEARSEL           = 1043	'$$WM_USER + 19
+$$TBM_SETTICFREQ         = 1044	'$$WM_USER + 20
+$$TBM_SETPAGESIZE        = 1045	'$$WM_USER + 21
+$$TBM_GETPAGESIZE        = 1046	'$$WM_USER + 22
+$$TBM_SETLINESIZE        = 1047	'$$WM_USER + 23
+$$TBM_GETLINESIZE        = 1048	'$$WM_USER + 24
+$$TBM_GETTHUMBRECT       = 1049	'$$WM_USER + 25
+$$TBM_GETCHANNELRECT     = 1050	'$$WM_USER + 26
+$$TBM_SETTHUMBLENGTH     = 1051	'$$WM_USER + 27
+$$TBM_GETTHUMBLENGTH     = 1052	'$$WM_USER + 28
+$$TBM_SETTOOLTIPS        = 1053	'$$WM_USER + 29
+$$TBM_GETTOOLTIPS        = 1054	'$$WM_USER + 30
+$$TBM_SETTIPSIDE         = 1055	'$$WM_USER + 31
+$$TBM_SETBUDDY           = 1056	'$$WM_USER + 32 ' wparam = BOOL fLeft (or right)
+$$TBM_GETBUDDY           = 1057	'$$WM_USER + 33 ' wparam = BOOL fLeft (or right)
+
+' TrackBar Tip Side flags
+$$TBTS_TOP               = 0
+$$TBTS_LEFT              = 1
+$$TBTS_BOTTOM            = 2
+$$TBTS_RIGHT             = 3
+
+$$TBM_SETUNICODEFORMAT   = $$CCM_SETUNICODEFORMAT
+$$TBM_GETUNICODEFORMAT   = $$CCM_GETUNICODEFORMAT
+
+$$TB_LINEUP              = 0
+$$TB_LINEDOWN            = 1
+$$TB_PAGEUP              = 2
+$$TB_PAGEDOWN            = 3
+$$TB_THUMBPOSITION       = 4
+$$TB_THUMBTRACK          = 5
+$$TB_TOP                 = 6
+$$TB_BOTTOM              = 7
+$$TB_ENDTRACK            = 8
+
+' custom draw item specs
+$$TBCD_TICS    = 0x0001
+$$TBCD_THUMB   = 0x0002
+$$TBCD_CHANNEL = 0x0003
+
+'==============================================================================
+' DRAG LIST CONTROL
+
+TYPE DRAGLISTINFO
+	ULONG	.uNotification
+	ULONG	.hWnd  
+	POINT	.ptCursor 
+END TYPE
+
+$$DL_BEGINDRAG           = 1157	'$$WM_USER + 133
+$$DL_DRAGGING            = 1158	'$$WM_USER + 134
+$$DL_DROPPED             = 1159	'$$WM_USER + 135
+$$DL_CANCELDRAG          = 1160	'$$WM_USER + 136
+
+$$DL_CURSORSET           = 0
+$$DL_STOPCURSOR          = 1
+$$DL_COPYCURSOR          = 2
+$$DL_MOVECURSOR          = 3
+
+$$DRAGLISTMSGSTRING      = "commctrl_DragListMsg"
+
+'==============================================================================
+' UPDOWN CONTROL
+
+$$UPDOWN_CLASS           = "msctls_updown32"
+
+TYPE UDACCEL
+	ULONG	.nSec
+	ULONG	.nInc
+END TYPE
+
+$$UD_MAXVAL              = 0x7FFF
+$$UD_MINVAL              = -$$UD_MAXVAL
+
+$$UDS_WRAP               = 0x0001
+$$UDS_SETBUDDYINT        = 0x0002
+$$UDS_ALIGNRIGHT         = 0x0004
+$$UDS_ALIGNLEFT          = 0x0008
+$$UDS_AUTOBUDDY          = 0x0010
+$$UDS_ARROWKEYS          = 0x0020
+$$UDS_HORZ               = 0x0040
+$$UDS_NOTHOUSANDS        = 0x0080
+$$UDS_HOTTRACK           = 0x0100
+
+$$UDM_SETRANGE           = 1125	'$$WM_USER + 101
+$$UDM_GETRANGE           = 1126	'$$WM_USER + 102
+$$UDM_SETPOS             = 1127	'$$WM_USER + 103
+$$UDM_GETPOS             = 1128	'$$WM_USER + 104
+$$UDM_SETBUDDY           = 1129	'$$WM_USER + 105
+$$UDM_GETBUDDY           = 1130	'$$WM_USER + 106
+$$UDM_SETACCEL           = 1131	'$$WM_USER + 107
+$$UDM_GETACCEL           = 1132	'$$WM_USER + 108
+$$UDM_SETBASE            = 1133	'$$WM_USER + 109
+$$UDM_GETBASE            = 1134	'$$WM_USER + 110
+$$UDM_SETRANGE32         = 1135	'$$WM_USER + 111
+$$UDM_GETRANGE32         = 1136	'$$WM_USER + 112 ' wParam & lParam are LPINT
+$$UDM_SETPOS32           = 1137	'$$WM_USER + 113
+$$UDM_GETPOS32           = 1138	'$$WM_USER + 114
+
+$$UDM_SETUNICODEFORMAT   = $$CCM_SETUNICODEFORMAT
+$$UDM_GETUNICODEFORMAT   = $$CCM_GETUNICODEFORMAT
+
+TYPE NM_UPDOWN
+	NMHDR	.hdr
+	XLONG	.iPos 
+	XLONG	.iDelta
+END TYPE
+
+TYPE NMUPDOWN
+	NMHDR	.hdr
+	XLONG	.iPos 
+	XLONG	.iDelta
+END TYPE
+
+$$UDN_DELTAPOS = -722	'$$UDN_FIRST - 1
+
+'==============================================================================
+' PROGRESS CONTROL
+
+$$PROGRESS_CLASS         = "msctls_progress32"
+
+$$PBS_SMOOTH             = 0x01
+$$PBS_VERTICAL           = 0x04
+
+$$PBM_SETRANGE           = 1025	'$$WM_USER + 1
+$$PBM_SETPOS             = 1026	'$$WM_USER + 2
+$$PBM_DELTAPOS           = 1027	'$$WM_USER + 3
+$$PBM_SETSTEP            = 1028	'$$WM_USER + 4
+$$PBM_STEPIT             = 1029	'$$WM_USER + 5
+$$PBM_SETRANGE32         = 1030	'$$WM_USER + 6     ' lParam = high, wParam = low
+$$PBM_GETRANGE           = 1031	'$$WM_USER + 7     ' wParam = return (TRUE ? low : high). lParam = PPBRANGE or NULL
+$$PBM_SETBKCOLOR         = $$CCM_SETBKCOLOR        ' lParam = bkColor
+$$PBM_SETBARCOLOR        = 1033	'$$WM_USER + 9     ' lParam = bar color
+
+TYPE PBRANGE
+	XLONG	.iLow 
+	XLONG	.iHigh
+END TYPE
+
+'==============================================================================
+' HOTKEY CONTROL
+
+$$HOTKEYF_SHIFT          = 0x01
+$$HOTKEYF_CONTROL        = 0x02
+$$HOTKEYF_ALT            = 0x04
+$$HOTKEYF_EXT            = 0x08
+
+$$HKCOMB_NONE            = 0x0001
+$$HKCOMB_S               = 0x0002
+$$HKCOMB_C               = 0x0004
+$$HKCOMB_A               = 0x0008
+$$HKCOMB_SC              = 0x0010
+$$HKCOMB_SA              = 0x0020
+$$HKCOMB_CA              = 0x0040
+$$HKCOMB_SCA             = 0x0080
+
+$$HKM_SETHOTKEY          = 1025	'$$WM_USER + 1
+$$HKM_GETHOTKEY          = 1026	'$$WM_USER + 2
+$$HKM_SETRULES           = 1027	'$$WM_USER + 3
+
+$$HOTKEY_CLASS           = "msctls_hotkey32"
+
+'==============================================================================
+' COMMON CONTROL STYLES
+
+$$CCS_TOP                 = 0x00000001
+$$CCS_NOMOVEY             = 0x00000002
+$$CCS_BOTTOM              = 0x00000003
+$$CCS_NORESIZE            = 0x00000004
+$$CCS_NOPARENTALIGN       = 0x00000008
+$$CCS_ADJUSTABLE          = 0x00000020
+$$CCS_NODIVIDER           = 0x00000040
+$$CCS_VERT                = 0x00000080
+$$CCS_LEFT                = 0x00000081			' $$CCS_VERT OR $$CCS_TOP
+$$CCS_RIGHT               = 0x00000083			' $$CCS_VERT OR $$CCS_BOTTOM
+$$CCS_NOMOVEX             = 0x00000082			' $$CCS_VERT OR $$CCS_NOMOVEY
+
+'==============================================================================
+' LISTVIEW CONTROL
+
+$$WC_LISTVIEW            = "SysListView32"
+
+$$LVS_ICON            = 0x00000000
+$$LVS_REPORT          = 0x00000001
+$$LVS_SMALLICON       = 0x00000002
+$$LVS_LIST            = 0x00000003
+$$LVS_TYPEMASK        = 0x00000003
+$$LVS_SINGLESEL       = 0x00000004
+$$LVS_SHOWSELALWAYS   = 0x00000008
+$$LVS_SORTASCENDING   = 0x00000010
+$$LVS_SORTDESCENDING  = 0x00000020
+$$LVS_SHAREIMAGELISTS = 0x00000040
+$$LVS_NOLABELWRAP     = 0x00000080
+$$LVS_AUTOARRANGE     = 0x00000100
+$$LVS_EDITLABELS      = 0x00000200
+$$LVS_OWNERDATA       = 0x00001000
+$$LVS_NOSCROLL        = 0x00002000
+
+$$LVS_TYPESTYLEMASK   = 0x0000FC00
+
+$$LVS_ALIGNTOP        = 0x00000000
+$$LVS_ALIGNLEFT       = 0x00000800
+$$LVS_ALIGNMASK       = 0x00000C00
+
+$$LVS_OWNERDRAWFIXED  = 0x00000400
+$$LVS_NOCOLUMNHEADER  = 0x00004000
+$$LVS_NOSORTHEADER    = 0x00008000
+
+$$LVM_SETUNICODEFORMAT   = $$CCM_SETUNICODEFORMAT
+$$LVM_GETUNICODEFORMAT   = $$CCM_GETUNICODEFORMAT
+
+$$LVM_GETBKCOLOR         = 4096	'$$LVM_FIRST + 0
+$$LVM_SETBKCOLOR         = 4097	'$$LVM_FIRST + 1
+$$LVM_GETIMAGELIST       = 4098	'$$LVM_FIRST + 2
+$$LVM_SETIMAGELIST       = 4099	'$$LVM_FIRST + 3
+$$LVM_GETITEMCOUNT       = 4100	'$$LVM_FIRST + 4
+$$LVM_GETITEM            = 4101	'$$LVM_FIRST + 5
+$$LVM_SETITEM            = 4102	'$$LVM_FIRST + 6
+$$LVM_INSERTITEM         = 4103	'$$LVM_FIRST + 7
+$$LVM_DELETEITEM         = 4104	'$$LVM_FIRST + 8
+$$LVM_DELETEALLITEMS     = 4105	'$$LVM_FIRST + 9
+$$LVM_GETCALLBACKMASK    = 4106	'$$LVM_FIRST + 10
+$$LVM_SETCALLBACKMASK    = 4107	'$$LVM_FIRST + 11
+$$LVM_GETNEXTITEM        = 4108	'$$LVM_FIRST + 12
+$$LVM_FINDITEM           = 4109	'$$LVM_FIRST + 13
+$$LVM_GETITEMRECT        = 4110	'$$LVM_FIRST + 14
+$$LVM_SETITEMPOSITION    = 4111	'$$LVM_FIRST + 15
+$$LVM_GETITEMPOSITION    = 4112	'$$LVM_FIRST + 16
+$$LVM_GETSTRINGWIDTH     = 4113	'$$LVM_FIRST + 17
+$$LVM_HITTEST            = 4114	'$$LVM_FIRST + 18
+$$LVM_ENSUREVISIBLE      = 4115	'$$LVM_FIRST + 19
+$$LVM_SCROLL             = 4116	'$$LVM_FIRST + 20
+$$LVM_REDRAWITEMS        = 4117	'$$LVM_FIRST + 21
+$$LVM_ARRANGE            = 4118	'$$LVM_FIRST + 22
+$$LVM_EDITLABEL          = 4119	'$$LVM_FIRST + 23
+$$LVM_GETEDITCONTROL     = 4120	'$$LVM_FIRST + 24
+$$LVM_GETCOLUMN          = 4121	'$$LVM_FIRST + 25
+$$LVM_SETCOLUMN          = 4122	'$$LVM_FIRST + 26
+$$LVM_INSERTCOLUMN       = 4123	'$$LVM_FIRST + 27
+$$LVM_DELETECOLUMN       = 4124	'$$LVM_FIRST + 28
+$$LVM_GETCOLUMNWIDTH     = 4125	'$$LVM_FIRST + 29
+$$LVM_SETCOLUMNWIDTH     = 4126	'$$LVM_FIRST + 30
+$$LVM_GETHEADER          = 4127	'$$LVM_FIRST + 31
+$$LVM_CREATEDRAGIMAGE    = 4129	'$$LVM_FIRST + 33
+$$LVM_GETVIEWRECT        = 4130	'$$LVM_FIRST + 34
+$$LVM_GETTEXTCOLOR       = 4131	'$$LVM_FIRST + 35
+$$LVM_SETTEXTCOLOR       = 4132	'$$LVM_FIRST + 36
+$$LVM_GETTEXTBKCOLOR     = 4133	'$$LVM_FIRST + 37
+$$LVM_SETTEXTBKCOLOR     = 4134	'$$LVM_FIRST + 38
+$$LVM_GETTOPINDEX        = 4135	'$$LVM_FIRST + 39
+$$LVM_GETCOUNTPERPAGE    = 4136	'$$LVM_FIRST + 40
+$$LVM_GETORIGIN          = 4137	'$$LVM_FIRST + 41
+$$LVM_UPDATE             = 4138	'$$LVM_FIRST + 42
+$$LVM_SETITEMSTATE       = 4139	'$$LVM_FIRST + 43
+$$LVM_GETITEMSTATE       = 4140	'$$LVM_FIRST + 44
+$$LVM_GETITEMTEXT        = 4141	'$$LVM_FIRST + 45
+$$LVM_SETITEMTEXT        = 4142	'$$LVM_FIRST + 46
+$$LVM_SETITEMCOUNT       = 4143	'$$LVM_FIRST + 47
+$$LVM_SORTITEMS          = 4144	'$$LVM_FIRST + 48
+$$LVM_SETITEMPOSITION32  = 4145	'$$LVM_FIRST + 49
+$$LVM_GETSELECTEDCOUNT   = 4146	'$$LVM_FIRST + 50
+$$LVM_GETITEMSPACING     = 4147	'$$LVM_FIRST + 51
+$$LVM_GETISEARCHSTRING   = 4148	'$$LVM_FIRST + 52
+$$LVM_SETICONSPACING     = 4149	'$$LVM_FIRST + 53
+$$LVM_SETEXTENDEDLISTVIEWSTYLE = 4150	'$$LVM_FIRST + 54  ' optional wParam == mask
+$$LVM_GETEXTENDEDLISTVIEWSTYLE = 4151	'$$LVM_FIRST + 55
+$$LVM_GETSUBITEMRECT      = 4152	'$$LVM_FIRST + 56
+$$LVM_SUBITEMHITTEST      = 4153	'$$LVM_FIRST + 57
+$$LVM_SETCOLUMNORDERARRAY = 4154	'$$LVM_FIRST + 58
+$$LVM_GETCOLUMNORDERARRAY = 4155	'$$LVM_FIRST + 59
+$$LVM_SETHOTITEM          = 4156	'$$LVM_FIRST + 60
+$$LVM_GETHOTITEM          = 4157	'$$LVM_FIRST + 61
+$$LVM_SETHOTCURSOR        = 4158	'$$LVM_FIRST + 62
+$$LVM_GETHOTCURSOR        = 4159	'$$LVM_FIRST + 63
+$$LVM_APPROXIMATEVIEWRECT = 4160	'$$LVM_FIRST + 64
+$$LVM_SETWORKAREAS        = 4161	'$$LVM_FIRST + 65
+$$LVM_GETSELECTIONMARK    = 4162	'$$LVM_FIRST + 66
+$$LVM_SETSELECTIONMARK    = 4163	'$$LVM_FIRST + 67
+$$LVM_SETBKIMAGE          = 4164	'$$LVM_FIRST + 68
+$$LVM_GETBKIMAGE          = 4165	'$$LVM_FIRST + 69
+$$LVM_GETWORKAREAS        = 4166	'$$LVM_FIRST + 70
+$$LVM_SETHOVERTIME        = 4167	'$$LVM_FIRST + 71
+$$LVM_GETHOVERTIME        = 4168	'$$LVM_FIRST + 72
+$$LVM_GETNUMBEROFWORKAREAS= 4169	'$$LVM_FIRST + 73
+$$LVM_SETTOOLTIPS         = 4170	'$$LVM_FIRST + 74
+$$LVM_GETITEMW            = 4171	'$$LVM_FIRST + 75
+$$LVM_SETITEMW            = 4172	'$$LVM_FIRST + 76
+$$LVM_INSERTITEMW         = 4173	'$$LVM_FIRST + 77
+$$LVM_GETTOOLTIPS         = 4174	'$$LVM_FIRST + 78
+$$LVM_FINDITEMW           = 4179	'$$LVM_FIRST + 83
+$$LVM_GETSTRINGWIDTHW     = 4183	'$$LVM_FIRST + 87
+$$LVM_GETCOLUMNW          = 4191	'$$LVM_FIRST + 95
+$$LVM_SETCOLUMNW          = 4192	'$$LVM_FIRST + 96
+$$LVM_INSERTCOLUMNW       = 4193	'$$LVM_FIRST + 97
+$$LVM_GETITEMTEXTW        = 4211	'$$LVM_FIRST + 115
+$$LVM_SETITEMTEXTW        = 4212	'$$LVM_FIRST + 116
+$$LVM_GETISEARCHSTRINGW   = 4213	'$$LVM_FIRST + 117
+$$LVM_EDITLABELW          = 4214	'$$LVM_FIRST + 118
+$$LVM_SETBKIMAGEW         = 4234	'$$LVM_FIRST + 138
+$$LVM_GETBKIMAGEW         = 4235	'$$LVM_FIRST + 139
+
+$$LVSIL_NORMAL           = 0
+$$LVSIL_SMALL            = 1
+$$LVSIL_STATE            = 2
+
+$$LVIF_TEXT              = 0x0001
+$$LVIF_IMAGE             = 0x0002
+$$LVIF_PARAM             = 0x0004
+$$LVIF_STATE             = 0x0008
+$$LVIF_INDENT            = 0x0010
+$$LVIF_NORECOMPUTE       = 0x0800
+
+$$LVIS_FOCUSED           = 0x0001
+$$LVIS_SELECTED          = 0x0002
+$$LVIS_CUT               = 0x0004
+$$LVIS_DROPHILITED       = 0x0008
+$$LVIS_ACTIVATING        = 0x0020
+
+$$LVIS_OVERLAYMASK       = 0x0F00
+$$LVIS_STATEIMAGEMASK    = 0xF000
+
+TYPE LV_ITEM
+	ULONG	.mask       
+	XLONG	.iItem     
+	XLONG	.iSubItem  
+	ULONG	.state     
+	ULONG	.stateMask 
+	ULONG	.pszText   
+	XLONG	.cchTextMax 
+	XLONG	.iImage   
+	XLONG	.lParam  
+	XLONG	.iIndent 
+END TYPE
+
+TYPE LVITEM
+	ULONG	.mask       
+	XLONG	.iItem     
+	XLONG	.iSubItem  
+	ULONG	.state     
+	ULONG	.stateMask 
+	ULONG	.pszText   
+	XLONG	.cchTextMax 
+	XLONG	.iImage   
+	XLONG	.lParam  
+	XLONG	.iIndent 
+END TYPE
+
+$$LPSTR_TEXTCALLBACKW    = -1
+$$LPSTR_TEXTCALLBACK     = -1
+
+$$I_IMAGECALLBACK        = -1
+$$I_IMAGENONE            = -2
+
+$$LVNI_ALL               = 0x0000
+$$LVNI_FOCUSED           = 0x0001
+$$LVNI_SELECTED          = 0x0002
+$$LVNI_CUT               = 0x0004
+$$LVNI_DROPHILITED       = 0x0008
+$$LVNI_ABOVE             = 0x0100
+$$LVNI_BELOW             = 0x0200
+$$LVNI_TOLEFT            = 0x0400
+$$LVNI_TORIGHT           = 0x0800
+
+$$LVFI_PARAM             = 0x0001
+$$LVFI_STRING            = 0x0002
+$$LVFI_PARTIAL           = 0x0008
+$$LVFI_WRAP              = 0x0020
+$$LVFI_NEARESTXY         = 0x0040
+
+TYPE LV_FINDINFO
+	ULONG	.flags 
+	ULONG	.psz 
+	ULONG	.lParam 
+	POINT	.pt
+	ULONG	.vkDirection
+END TYPE
+
+TYPE LVFINDINFO
+	ULONG	.flags 
+	ULONG	.psz 
+	ULONG	.lParam 
+	POINT	.pt
+	ULONG	.vkDirection
+END TYPE
+
+$$LVIR_BOUNDS            = 0
+$$LVIR_ICON              = 1
+$$LVIR_LABEL             = 2
+$$LVIR_SELECTBOUNDS      = 3
+
+$$LVHT_NOWHERE           = 0x0001
+$$LVHT_ONITEMICON        = 0x0002
+$$LVHT_ONITEMLABEL       = 0x0004
+$$LVHT_ONITEMSTATEICON   = 0x0008
+$$LVHT_ONITEM            = 0x000E			' ($$LVHT_ONITEMICON OR $$LVHT_ONITEMLABEL OR $$LVHT_ONITEMSTATEICON)
+
+$$LVHT_ABOVE             = 0x0008
+$$LVHT_BELOW             = 0x0010
+$$LVHT_TORIGHT           = 0x0020
+$$LVHT_TOLEFT            = 0x0040
+
+TYPE LV_HITTESTINFO
+	POINT	.pt 
+	ULONG	.flags 
+	XLONG	.iItem 
+	XLONG	.iSubItem
+END TYPE
+
+TYPE LVHITTESTINFO
+	POINT	.pt 
+	ULONG	.flags 
+	XLONG	.iItem 
+	XLONG	.iSubItem
+END TYPE
+
+$$LVA_DEFAULT            = 0x0000
+$$LVA_ALIGNLEFT          = 0x0001
+$$LVA_ALIGNTOP           = 0x0002
+$$LVA_SNAPTOGRID         = 0x0005
+
+TYPE LV_COLUMN
+	ULONG	.mask 
+	XLONG	.fmt 
+	XLONG	.cx 
+	ULONG	.pszText 
+	XLONG	.cchTextMax 
+	XLONG	.iSubItem 
+	XLONG	.iImage 
+	XLONG	.iOrder 
+END TYPE
+
+TYPE LVCOLUMN
+	ULONG	.mask 
+	XLONG	.fmt 
+	XLONG	.cx 
+	ULONG	.pszText 
+	XLONG	.cchTextMax 
+	XLONG	.iSubItem 
+	XLONG	.iImage 
+	XLONG	.iOrder 
+END TYPE
+
+$$LVCF_FMT               = 0x0001
+$$LVCF_WIDTH             = 0x0002
+$$LVCF_TEXT              = 0x0004
+$$LVCF_SUBITEM           = 0x0008
+$$LVCF_IMAGE             = 0x0010
+$$LVCF_ORDER             = 0x0020
+
+$$LVCFMT_LEFT            = 0x0000
+$$LVCFMT_RIGHT           = 0x0001
+$$LVCFMT_CENTER          = 0x0002
+$$LVCFMT_JUSTIFYMASK     = 0x0003
+$$LVCFMT_IMAGE           = 0x0800
+$$LVCFMT_BITMAP_ON_RIGHT = 0x1000
+$$LVCFMT_COL_HAS_IMAGES  = 0x8000
+
+$$LVSCW_AUTOSIZE             = -1
+$$LVSCW_AUTOSIZE_USEHEADER   = -2
+
+' these flags only apply to LVS_OWNERDATA listviews in report or list mode
+$$LVSICF_NOINVALIDATEALL  = 0x00000001
+$$LVSICF_NOSCROLL         = 0x00000002
+
+$$LVS_EX_GRIDLINES        = 0x00000001
+$$LVS_EX_SUBITEMIMAGES    = 0x00000002
+$$LVS_EX_CHECKBOXES       = 0x00000004
+$$LVS_EX_TRACKSELECT      = 0x00000008
+$$LVS_EX_HEADERDRAGDROP   = 0x00000010
+$$LVS_EX_FULLROWSELECT    = 0x00000020 ' applies to report mode only
+$$LVS_EX_ONECLICKACTIVATE = 0x00000040
+$$LVS_EX_TWOCLICKACTIVATE = 0x00000080
+$$LVS_EX_FLATSB           = 0x00000100
+$$LVS_EX_REGIONAL         = 0x00000200
+$$LVS_EX_INFOTIP          = 0x00000400 ' listview does InfoTips for you
+$$LVS_EX_UNDERLINEHOT     = 0x00000800
+$$LVS_EX_UNDERLINECOLD    = 0x00001000
+$$LVS_EX_MULTIWORKAREAS   = 0x00002000
+$$LVS_EX_LABELTIP         = 0x00004000 ' listview unfolds partly hidden labels if it does not have infotip text
+
+TYPE LVBKIMAGE
+	ULONG	.ulFlags   
+	ULONG	.hbm      
+	ULONG	.pszImage     
+	ULONG	.cchImageMax  
+	XLONG	.xOffsetPercent
+	XLONG	.yOffsetPercent 
+END TYPE
+
+$$LVBKIF_SOURCE_NONE      = 0x00000000
+$$LVBKIF_SOURCE_HBITMAP   = 0x00000001
+$$LVBKIF_SOURCE_URL       = 0x00000002
+$$LVBKIF_SOURCE_MASK      = 0x00000003
+$$LVBKIF_STYLE_NORMAL     = 0x00000000
+$$LVBKIF_STYLE_TILE       = 0x00000010
+$$LVBKIF_STYLE_MASK       = 0x00000010
+
+$$LV_MAX_WORKAREAS         = 16
+
+TYPE NM_LISTVIEW
+	NMHDR	.hdr     
+	XLONG	.iItem    
+	XLONG	.iSubItem 
+	ULONG	.uNewState 
+	ULONG	.uOldState 
+	ULONG	.uChanged 
+	POINT	.ptAction 
+	XLONG	.lParam   
+END TYPE
+
+' NMITEMACTIVATE is used instead of NMLISTVIEW in IE >= 0x400
+' therefore all the fields are the same except for extra uKeyFlags
+' they are used to store key flags at the time of the single click with
+' delayed activation - because by the time the timer goes off a user may
+' not hold the keys (shift, ctrl) any more
+
+TYPE NMITEMACTIVATE
+	NMHDR	.hdr     
+	XLONG	.iItem    
+	XLONG	.iSubItem 
+	ULONG	.uNewState 
+	ULONG	.uOldState 
+	ULONG	.uChanged 
+	POINT	.ptAction 
+	XLONG	.lParam   
+	ULONG	.uKeyFlags
+END TYPE
+
+' key flags stored in uKeyFlags
+$$LVKF_ALT       = 0x0001
+$$LVKF_CONTROL   = 0x0002
+$$LVKF_SHIFT     = 0x0004
+
+TYPE NMLVCUSTOMDRAW
+	NMCUSTOMDRAW	.nmcd 
+	ULONG	.clrText 
+	ULONG	.clrTextBk
+	XLONG	.iSubItem
+END TYPE
+
+TYPE NMLVCACHEHINT
+	NMHDR	.hdr 
+	XLONG	.iFrom 
+	XLONG	.iTo
+END TYPE
+
+TYPE NM_CACHEHINT
+	NMHDR	.hdr 
+	XLONG	.iFrom 
+	XLONG	.iTo 
+END TYPE
+
+TYPE NMLVFINDITEM
+	NMHDR	.hdr 
+	XLONG	.iStart
+	LVFINDINFO	.lvfi 
+END TYPE
+
+TYPE NM_FINDITEM
+	NMHDR	.hdr 
+	XLONG	.iStart
+	LVFINDINFO	.lvfi
+END TYPE
+
+TYPE NMLVODSTATECHANGE
+	NMHDR	.hdr 
+	XLONG	.iFrom 
+	XLONG	.iTo 
+	ULONG	.uNewState
+	ULONG	.uOldState 
+END TYPE
+
+TYPE NM_ODSTATECHANGE
+	NMHDR	.hdr 
+	XLONG	.iFrom 
+	XLONG	.iTo 
+	ULONG	.uNewState
+	ULONG	.uOldState 
+END TYPE
+
+$$LVN_ITEMCHANGING       = -100	'$$LVN_FIRST - 0
+$$LVN_ITEMCHANGED        = -101	'$$LVN_FIRST - 1
+$$LVN_INSERTITEM         = -102	'$$LVN_FIRST - 2
+$$LVN_DELETEITEM         = -103	'$$LVN_FIRST - 3
+$$LVN_DELETEALLITEMS     = -104	'$$LVN_FIRST - 4
+$$LVN_BEGINLABELEDIT     = -105	'$$LVN_FIRST - 5
+$$LVN_ENDLABELEDIT       = -106	'$$LVN_FIRST - 6
+$$LVN_COLUMNCLICK        = -108	'$$LVN_FIRST - 8
+$$LVN_BEGINDRAG          = -109	'$$LVN_FIRST - 9
+$$LVN_BEGINRDRAG         = -111	'$$LVN_FIRST - 11
+$$LVN_ODCACHEHINT        = -113	'$$LVN_FIRST - 13
+$$LVN_ITEMACTIVATE       = -114	'$$LVN_FIRST - 14
+$$LVN_ODSTATECHANGED     = -115	'$$LVN_FIRST - 15
+$$LVN_HOTTRACK           = -121	'$$LVN_FIRST - 21
+$$LVN_GETDISPINFO        = -150	'$$LVN_FIRST - 50
+$$LVN_SETDISPINFO        = -151	'$$LVN_FIRST - 51
+$$LVN_ODFINDITEM         = -152	'$$LVN_FIRST - 52
+$$LVN_KEYDOWN            = -155	'$$LVN_FIRST - 55
+$$LVN_MARQUEEBEGIN       = -156	'$$LVN_FIRST - 56
+$$LVN_GETINFOTIP         = -157	'$$LVN_FIRST - 57
+$$LVN_GETINFOTIPW        = -158	'$$LVN_FIRST - 58
+$$LVN_BEGINLABELEDITW    = -175	'$$LVN_FIRST - 75
+$$LVN_ENDLABELEDITW      = -176	'$$LVN_FIRST - 76
+$$LVN_GETDISPINFOW       = -177	'$$LVN_FIRST - 77
+$$LVN_SETDISPINFOW       = -178	'$$LVN_FIRST - 78
+$$LVN_ODFINDITEMW        = -179	'$$LVN_FIRST - 79
+
+$$LVIF_DI_SETITEM        = 0x1000
+
+TYPE LV_DISPINFO
+	NMHDR	.hdr
+	LV_ITEM	.item
+END TYPE
+
+TYPE LV_KEYDOWN 
+	NMHDR	.hdr
+	USHORT .wVKey
+	USHORT .flags
+END TYPE
+
+TYPE NMLVKEYDOWN
+	NMHDR	.hdr
+	USHORT	.wVKey
+	USHORT	.flags
+END TYPE
+
+TYPE NMLVGETINFOTIP
+	NMHDR	.hdr   
+	ULONG	.dwFlags  
+	ULONG	.pszText   
+	XLONG	.cchTextMax 
+	XLONG	.iItem    
+	XLONG	.iSubItem  
+	XLONG	.lParam    
+END TYPE
+
+' NMLVGETINFOTIPA.dwFlag values
+
+$$LVGIT_UNFOLDED  = 0x0001
+
+'==============================================================================
+' TREEVIEW CONTROL
+
+$$WC_TREEVIEW            = "SysTreeView32"
+
+TYPE TV_ITEM
+	ULONG	.mask  
+	ULONG	.hItem   
+	ULONG	.state  
+	ULONG	.stateMask  
+	ULONG	.pszText  
+	XLONG	.cchTextMax 
+	XLONG	.iImage    
+	XLONG	.iSelectedImage 
+	XLONG	.cChildren   
+	XLONG	.lParam      
+END TYPE
+
+TYPE TVITEM
+	ULONG	.mask  
+	ULONG	.hItem   
+	ULONG	.state  
+	ULONG	.stateMask  
+	ULONG	.pszText  
+	XLONG	.cchTextMax 
+	XLONG	.iImage    
+	XLONG	.iSelectedImage 
+	XLONG	.cChildren   
+	XLONG	.lParam      
+END TYPE
+
+' only used for Get and Set messages.  no notifies
+
+TYPE TVITEMEX
+	ULONG	.mask  
+	ULONG	.hItem   
+	ULONG	.state  
+	ULONG	.stateMask  
+	ULONG	.pszText  
+	XLONG	.cchTextMax 
+	XLONG	.iImage    
+	XLONG	.iSelectedImage 
+	XLONG	.cChildren   
+	XLONG	.lParam      
+	XLONG	.iIntegral
+END TYPE
+
+TYPE TV_INSERTSTRUCT
+	ULONG	.hParent
+	ULONG	.hInsertAfter
+	TV_ITEM	.item
+END TYPE
+
+$$TVS_HASBUTTONS         = 0x0001
+$$TVS_HASLINES           = 0x0002
+$$TVS_LINESATROOT        = 0x0004
+$$TVS_EDITLABELS         = 0x0008
+$$TVS_DISABLEDRAGDROP    = 0x0010
+$$TVS_SHOWSELALWAYS      = 0x0020
+$$TVS_RTLREADING         = 0x0040
+$$TVS_NOTOOLTIPS         = 0x0080
+$$TVS_CHECKBOXES         = 0x0100
+$$TVS_TRACKSELECT        = 0x0200
+$$TVS_SINGLEEXPAND       = 0x0400
+$$TVS_INFOTIP            = 0x0800
+$$TVS_FULLROWSELECT      = 0x1000
+$$TVS_NOSCROLL           = 0x2000
+$$TVS_NONEVENHEIGHT      = 0x4000
+$$TVS_NOHSCROLL          = 0x8000  ' TVS_NOSCROLL overrides this
+
+$$TVIF_TEXT              = 0x0001
+$$TVIF_IMAGE             = 0x0002
+$$TVIF_PARAM             = 0x0004
+$$TVIF_STATE             = 0x0008
+$$TVIF_HANDLE            = 0x0010
+$$TVIF_SELECTEDIMAGE     = 0x0020
+$$TVIF_CHILDREN          = 0x0040
+$$TVIF_INTEGRAL          = 0x0080
+
+$$TVIS_SELECTED          = 0x0002
+$$TVIS_CUT               = 0x0004
+$$TVIS_DROPHILITED       = 0x0008
+$$TVIS_BOLD              = 0x0010
+$$TVIS_EXPANDED          = 0x0020
+$$TVIS_EXPANDEDONCE      = 0x0040
+$$TVIS_EXPANDPARTIAL     = 0x0080
+
+$$TVIS_OVERLAYMASK       = 0x0F00
+$$TVIS_STATEIMAGEMASK    = 0xF000
+$$TVIS_USERMASK          = 0xF000
+
+$$I_CHILDRENCALLBACK     = -1
+
+$$TVI_ROOT               = 0xFFFF0000
+$$TVI_FIRST              = 0xFFFF0001
+$$TVI_LAST               = 0xFFFF0002
+$$TVI_SORT               = 0xFFFF0003
+
+$$TVE_COLLAPSE           = 0x0001
+$$TVE_EXPAND             = 0x0002
+$$TVE_TOGGLE             = 0x0003
+$$TVE_EXPANDPARTIAL      = 0x4000
+$$TVE_COLLAPSERESET      = 0x8000
+
+$$TVM_INSERTITEM         = 4352	'$$TV_FIRST + 0
+$$TVM_DELETEITEM         = 4353	'$$TV_FIRST + 1
+$$TVM_EXPAND             = 4354	'$$TV_FIRST + 2
+$$TVM_GETITEMRECT        = 4356	'$$TV_FIRST + 4
+$$TVM_GETCOUNT           = 4357	'$$TV_FIRST + 5
+$$TVM_GETINDENT          = 4358	'$$TV_FIRST + 6
+$$TVM_SETINDENT          = 4359	'$$TV_FIRST + 7
+$$TVM_GETIMAGELIST       = 4360	'$$TV_FIRST + 8
+$$TVM_SETIMAGELIST       = 4361	'$$TV_FIRST + 9
+$$TVM_GETNEXTITEM        = 4362	'$$TV_FIRST + 10
+$$TVM_SELECTITEM         = 4363	'$$TV_FIRST + 11
+$$TVM_GETITEM            = 4364	'$$TV_FIRST + 12
+$$TVM_SETITEM            = 4365	'$$TV_FIRST + 13
+$$TVM_EDITLABEL          = 4366	'$$TV_FIRST + 14
+$$TVM_GETEDITCONTROL     = 4367	'$$TV_FIRST + 15
+$$TVM_GETVISIBLECOUNT    = 4368	'$$TV_FIRST + 16
+$$TVM_HITTEST            = 4369	'$$TV_FIRST + 17
+$$TVM_CREATEDRAGIMAGE    = 4370	'$$TV_FIRST + 18
+$$TVM_SORTCHILDREN       = 4371	'$$TV_FIRST + 19
+$$TVM_ENSUREVISIBLE      = 4372	'$$TV_FIRST + 20
+$$TVM_SORTCHILDRENCB     = 4373	'$$TV_FIRST + 21
+$$TVM_ENDEDITLABELNOW    = 4374	'$$TV_FIRST + 22
+$$TVM_GETISEARCHSTRING   = 4375	'$$TV_FIRST + 23
+$$TVM_SETTOOLTIPS        = 4376	'$$TV_FIRST + 24
+$$TVM_GETTOOLTIPS        = 4377	'$$TV_FIRST + 25
+$$TVM_SETINSERTMARK      = 4378	'$$TV_FIRST + 26
+$$TVM_SETITEMHEIGHT      = 4379	'$$TV_FIRST + 27
+$$TVM_GETITEMHEIGHT      = 4380	'$$TV_FIRST + 28
+$$TVM_SETBKCOLOR         = 4381	'$$TV_FIRST + 29
+$$TVM_SETTEXTCOLOR       = 4382	'$$TV_FIRST + 30
+$$TVM_GETBKCOLOR         = 4383	'$$TV_FIRST + 31
+$$TVM_GETTEXTCOLOR       = 4384	'$$TV_FIRST + 32
+$$TVM_SETSCROLLTIME      = 4385	'$$TV_FIRST + 33
+$$TVM_GETSCROLLTIME      = 4386	'$$TV_FIRST + 34
+$$TVM_SETINSERTMARKCOLOR = 4389	'$$TV_FIRST + 37
+$$TVM_GETINSERTMARKCOLOR = 4390	'$$TV_FIRST + 38
+$$TVM_GETITEMSTATE       = 4391	'$$TV_FIRST + 39
+$$TVM_SETLINECOLOR       = 4392	'$$TV_FIRST + 40
+$$TVM_GETLINECOLOR       = 4393	'$$TV_FIRST + 41
+$$TVM_INSERTITEMW        = 4402	'$$TV_FIRST + 50
+$$TVM_GETITEMW           = 4414	'$$TV_FIRST + 62
+$$TVM_SETITEMW           = 4415	'$$TV_FIRST + 63
+$$TVM_EDITLABELW         = 4417	'$$TV_FIRST + 65
+
+$$TVSIL_NORMAL           = 0
+$$TVSIL_STATE            = 2
+
+$$TVGN_ROOT              = 0x0000
+$$TVGN_NEXT              = 0x0001
+$$TVGN_PREVIOUS          = 0x0002
+$$TVGN_PARENT            = 0x0003
+$$TVGN_CHILD             = 0x0004
+$$TVGN_FIRSTVISIBLE      = 0x0005
+$$TVGN_NEXTVISIBLE       = 0x0006
+$$TVGN_PREVIOUSVISIBLE   = 0x0007
+$$TVGN_DROPHILITE        = 0x0008
+$$TVGN_CARET             = 0x0009
+$$TVGN_LASTVISIBLE       = 0x000A
+
+TYPE TV_HITTESTINFO
+	POINT	.pt
+	ULONG	.flags
+	ULONG	.hItem
+END TYPE
+
+$$TVHT_NOWHERE           = 0x0001
+$$TVHT_ONITEMICON        = 0x0002
+$$TVHT_ONITEMLABEL       = 0x0004
+$$TVHT_ONITEMINDENT      = 0x0008
+$$TVHT_ONITEMBUTTON      = 0x0010
+$$TVHT_ONITEMRIGHT       = 0x0020
+$$TVHT_ONITEMSTATEICON   = 0x0040
+$$TVHT_ABOVE             = 0x0100
+$$TVHT_BELOW             = 0x0200
+$$TVHT_TORIGHT           = 0x0400
+$$TVHT_TOLEFT            = 0x0800
+$$TVHT_ONITEM            = 0x0046		' $$TVHT_ONITEMICON OR $$TVHT_ONITEMLABEL OR $$TVHT_ONITEMSTATEICON
+
+TYPE TV_SORTCB
+	ULONG	.hParent
+	ULONG	.lpfnCompare
+	XLONG	.lParam 
+END TYPE
+
+$$TVM_SETUNICODEFORMAT   = $$CCM_SETUNICODEFORMAT
+$$TVM_GETUNICODEFORMAT   = $$CCM_GETUNICODEFORMAT
+
+TYPE NM_TREEVIEW
+	NMHDR	.hdr 
+	ULONG	.action 
+	TV_ITEM	.itemOld 
+	TV_ITEM 	.itemNew 
+	POINT	.ptDrag 
+END TYPE
+
+$$TVN_SELCHANGING        = -401	'$$TVN_FIRST - 1
+$$TVN_SELCHANGED         = -402	'$$TVN_FIRST - 2
+$$TVN_GETDISPINFO        = -403	'$$TVN_FIRST - 3
+$$TVN_SETDISPINFO        = -404	'$$TVN_FIRST - 4
+$$TVN_ITEMEXPANDING      = -405	'$$TVN_FIRST - 5
+$$TVN_ITEMEXPANDED       = -406	'$$TVN_FIRST - 6
+$$TVN_BEGINDRAG          = -407	'$$TVN_FIRST - 7
+$$TVN_BEGINRDRAG         = -408	'$$TVN_FIRST - 8
+$$TVN_DELETEITEM         = -409	'$$TVN_FIRST - 9
+$$TVN_BEGINLABELEDIT     = -410	'$$TVN_FIRST - 10
+$$TVN_ENDLABELEDIT       = -411	'$$TVN_FIRST - 11
+$$TVN_KEYDOWN            = -412	'$$TVN_FIRST - 12
+$$TVN_GETINFOTIP         = -413	'$$TVN_FIRST - 13
+$$TVN_GETINFOTIPW        = -414	'$$TVN_FIRST - 14
+$$TVN_SINGLEEXPAND       = -415	'$$TVN_FIRST - 15
+
+$$TVN_SELCHANGINGW       = -450	'$$TVN_FIRST - 50
+$$TVN_SELCHANGEDW        = -451	'$$TVN_FIRST - 51
+$$TVN_GETDISPINFOW       = -452	'$$TVN_FIRST - 52
+$$TVN_SETDISPINFOW       = -453	'$$TVN_FIRST - 53
+$$TVN_ITEMEXPANDINGW     = -454	'$$TVN_FIRST - 54
+$$TVN_ITEMEXPANDEDW      = -455	'$$TVN_FIRST - 55
+$$TVN_BEGINDRAGW         = -456	'$$TVN_FIRST - 56
+$$TVN_BEGINRDRAGW        = -457	'$$TVN_FIRST - 57
+$$TVN_DELETEITEMW        = -458	'$$TVN_FIRST - 58
+$$TVN_BEGINLABELEDITW    = -459	'$$TVN_FIRST - 59
+$$TVN_ENDLABELEDITW      = -460	'$$TVN_FIRST - 60
+
+$$TVC_UNKNOWN            = 0x0000
+$$TVC_BYMOUSE            = 0x0001
+$$TVC_BYKEYBOARD         = 0x0002
+
+$$TVIF_DI_SETITEM        = 0x1000
+
+TYPE TV_DISPINFO
+	NMHDR	.hdr 
+	TV_ITEM	.item 
+END TYPE
+
+$$TVNRET_DEFAULT         = 0
+$$TVNRET_SKIPOLD         = 1
+$$TVNRET_SKIPNEW         = 2
+
+PACKED TV_KEYDOWN
+	NMHDR	.hdr
+	USHORT	.wVKey 
+	XLONG	.flags
+END TYPE
+
+TYPE NMTVKEYDOWN
+	NMHDR	.hdr
+	ULONG	.wVKey 
+	ULONG	.flags
+END TYPE
+
+TYPE NMTVCUSTOMDRAW
+	NMCUSTOMDRAW	.nmcd 
+	ULONG	.clrText
+	ULONG	.clrTextBk
+	XLONG	.iLevel 
+END TYPE
+
+TYPE NMTVGETINFOTIP
+	NMHDR	.hdr       
+	ULONG	.pszText   
+	XLONG	.cchTextMax 
+	ULONG	.hItem     
+	XLONG	.lParam    
+END TYPE
+
+' treeview's customdraw return meaning don't draw images.
+
+' valid on CDRF_NOTIFYITEMPREPAINT
+$$TVCDRF_NOIMAGES        = 0x00010000
+
+'==============================================================================
+' COMBOBOXEX Control
+
+$$WC_COMBOBOXEX          = "ComboBoxEx32"
+
+$$CBEIF_TEXT             = 0x00000001
+$$CBEIF_IMAGE            = 0x00000002
+$$CBEIF_SELECTEDIMAGE    = 0x00000004
+$$CBEIF_OVERLAY          = 0x00000008
+$$CBEIF_INDENT           = 0x00000010
+$$CBEIF_LPARAM           = 0x00000020
+
+$$CBEIF_DI_SETITEM       = 0x10000000
+
+TYPE COMBOBOXEXITEM
+	ULONG	.mask         
+	XLONG	.iItem       
+	ULONG	.pszText     
+	XLONG	.cchTextMax  
+	XLONG	.iImage   
+	XLONG	.iSelectedImage
+	XLONG	.iOverlay      
+	XLONG	.iIndent        
+	XLONG	.lParam        
+END TYPE
+
+$$CBEM_INSERTITEM        = 1025	'$$WM_USER + 1
+$$CBEM_SETIMAGELIST      = 1026	'$$WM_USER + 2
+$$CBEM_GETIMAGELIST      = 1027	'$$WM_USER + 3
+$$CBEM_GETITEM           = 1028	'$$WM_USER + 4
+$$CBEM_SETITEM           = 1029	'$$WM_USER + 5
+$$CBEM_DELETEITEM        = 0x144	' = $$CB_DELETESTRING = 0x144
+$$CBEM_GETCOMBOCONTROL   = 1030	'$$WM_USER + 6
+$$CBEM_GETEDITCONTROL    = 1031	'$$WM_USER + 7
+$$CBEM_SETEXSTYLE        = 1032	'$$WM_USER + 8     ' use  SETEXTENDEDSTYLE instead
+$$CBEM_GETEXSTYLE        = 1033	'$$WM_USER + 9     ' use GETEXTENDEDSTYLE instead
+$$CBEM_GETEXTENDEDSTYLE  = 1033	'$$WM_USER + 9
+$$CBEM_SETUNICODEFORMAT  = $$CCM_SETUNICODEFORMAT
+$$CBEM_GETUNICODEFORMAT  = $$CCM_GETUNICODEFORMAT
+$$CBEM_HASEDITCHANGED    = 1034	'$$WM_USER + 10
+$$CBEM_INSERTITEMW       = 1035	'$$WM_USER + 11
+$$CBEM_SETITEMW          = 1036	'$$WM_USER + 12
+$$CBEM_GETITEMW          = 1037	'$$WM_USER + 13
+$$CBEM_SETEXTENDEDSTYLE  = 1038	'$$WM_USER + 14    ' lparam == new style, wParam (optional) == mask
+
+
+$$CBES_EX_NOEDITIMAGE         = 0x00000001
+$$CBES_EX_NOEDITIMAGEINDENT   = 0x00000002
+$$CBES_EX_PATHWORDBREAKPROC   = 0x00000004
+$$CBES_EX_NOSIZELIMIT         = 0x00000008
+$$CBES_EX_CASESENSITIVE       = 0x00000010
+
+TYPE NMCOMBOBOXEX
+	NMHDR	.hdr    
+	COMBOBOXEXITEM	.ceItem 
+END TYPE
+
+$$CBEN_GETDISPINFO        = -800	'$$CBEN_FIRST - 0
+$$CBEN_INSERTITEM         = -801	'$$CBEN_FIRST - 1
+$$CBEN_DELETEITEM         = -802	'$$CBEN_FIRST - 2
+$$CBEN_BEGINEDIT          = -804	'$$CBEN_FIRST - 4
+$$CBEN_ENDEDIT            = -805	'$$CBEN_FIRST - 5
+$$CBEN_ENDEDITW           = -806	'$$CBEN_FIRST - 6
+$$CBEN_GETDISPINFOW       = -807	'$$CBEN_FIRST - 7
+$$CBEN_DRAGBEGIN          = -808	'$$CBEN_FIRST - 8
+$$CBEN_DRAGBEGINW         = -809	'$$CBEN_FIRST - 9
+
+$$CBENF_KILLFOCUS         = 1
+$$CBENF_RETURN            = 2
+$$CBENF_ESCAPE            = 3
+$$CBENF_DROPDOWN          = 4
+
+$$CBEMAXSTRLEN            = 260
+
+' CBEN_DRAGBEGIN sends this information ...
+
+TYPE NMCBEDRAGBEGIN
+	NMHDR	.hdr 
+	XLONG	.iItemid
+	UBYTE	.szText[259] 
+END TYPE
+
+' CBEN_ENDEDIT sends this information...
+' fChanged if the user actually did anything
+' iNewSelection gives what would be the new selection unless the notify failed
+'                      iNewSelection may be CB_ERR if there's no match
+TYPE NMCBEENDEDIT
+	NMHDR	.hdr
+	XLONG	.fChanged 
+	XLONG	.iNewSelection
+	UBYTE	.szText[259] 
+	XLONG	.iWhy
+END TYPE
+
+'==============================================================================
+' TAB CONTROL
+
+$$WC_TABCONTROL           = "SysTabControl32"
+
+$$TCS_SCROLLOPPOSITE      = 0x0001  ' assumes multiline tab
+$$TCS_BOTTOM              = 0x0002
+$$TCS_RIGHT               = 0x0002
+$$TCS_MULTISELECT         = 0x0004  ' allow multi-select in button mode
+$$TCS_FLATBUTTONS         = 0x0008
+$$TCS_FORCEICONLEFT       = 0x0010
+$$TCS_FORCELABELLEFT      = 0x0020
+$$TCS_HOTTRACK            = 0x0040
+$$TCS_VERTICAL            = 0x0080
+$$TCS_TABS                = 0x0000
+$$TCS_BUTTONS             = 0x0100
+$$TCS_SINGLELINE          = 0x0000
+$$TCS_MULTILINE           = 0x0200
+$$TCS_RIGHTJUSTIFY        = 0x0000
+$$TCS_FIXEDWIDTH          = 0x0400
+$$TCS_RAGGEDRIGHT         = 0x0800
+$$TCS_FOCUSONBUTTONDOWN   = 0x1000
+$$TCS_OWNERDRAWFIXED      = 0x2000
+$$TCS_TOOLTIPS            = 0x4000
+$$TCS_FOCUSNEVER          = 0x8000
+
+' EX styles for use with TCM_SETEXTENDEDSTYLE
+$$TCS_EX_FLATSEPARATORS   = 0x00000001
+$$TCS_EX_REGISTERDROP     = 0x00000002
+
+$$TCM_GETIMAGELIST        = 4866	'$$TCM_FIRST + 2
+$$TCM_SETIMAGELIST        = 4867	'$$TCM_FIRST + 3
+$$TCM_GETITEMCOUNT        = 4868	'$$TCM_FIRST + 4
+$$TCM_GETITEM             = 4869	'$$TCM_FIRST + 5
+$$TCM_SETITEM             = 4870	'$$TCM_FIRST + 6
+$$TCM_INSERTITEM          = 4871	'$$TCM_FIRST + 7
+$$TCM_DELETEITEM          = 4872	'$$TCM_FIRST + 8
+$$TCM_DELETEALLITEMS      = 4873	'$$TCM_FIRST + 9
+$$TCM_GETITEMRECT         = 4874	'$$TCM_FIRST + 10
+$$TCM_GETCURSEL           = 4875	'$$TCM_FIRST + 11
+$$TCM_SETCURSEL           = 4876	'$$TCM_FIRST + 12
+$$TCM_HITTEST             = 4877	'$$TCM_FIRST + 13
+$$TCM_SETITEMEXTRA        = 4878	'$$TCM_FIRST + 14
+$$TCM_ADJUSTRECT          = 4904	'$$TCM_FIRST + 40
+$$TCM_SETITEMSIZE         = 4905	'$$TCM_FIRST + 41
+$$TCM_REMOVEIMAGE         = 4906	'$$TCM_FIRST + 42
+$$TCM_SETPADDING          = 4907	'$$TCM_FIRST + 43
+$$TCM_GETROWCOUNT         = 4908	'$$TCM_FIRST + 44
+$$TCM_GETTOOLTIPS         = 4909	'$$TCM_FIRST + 45
+$$TCM_SETTOOLTIPS         = 4910	'$$TCM_FIRST + 46
+$$TCM_GETCURFOCUS         = 4911	'$$TCM_FIRST + 47
+$$TCM_SETCURFOCUS         = 4912	'$$TCM_FIRST + 48
+$$TCM_SETMINTABWIDTH      = 4913	'$$TCM_FIRST + 49
+$$TCM_DESELECTALL         = 4914	'$$TCM_FIRST + 50
+$$TCM_HIGHLIGHTITEM       = 4915	'$$TCM_FIRST + 51
+$$TCM_SETEXTENDEDSTYLE    = 4916	'$$TCM_FIRST + 52  ' optional wParam == mask
+$$TCM_GETEXTENDEDSTYLE    = 4917	'$$TCM_FIRST + 53
+
+$$TCM_GETITEMW            = 4924	'$$TCM_FIRST + 60
+$$TCM_SETITEMW            = 4925	'$$TCM_FIRST + 61
+$$TCM_INSERTITEMW         = 4926	'$$TCM_FIRST + 62
+
+$$TCIF_TEXT               = 0x0001
+$$TCIF_IMAGE              = 0x0002
+$$TCIF_RTLREADING         = 0x0004
+$$TCIF_PARAM              = 0x0008
+$$TCIF_STATE              = 0x0010
+
+$$TCIS_BUTTONPRESSED      = 0x0001
+$$TCIS_HIGHLIGHTED        = 0x0002
+
+TYPE TC_ITEMHEADER
+	ULONG	.Mask     
+	ULONG	.lpReserved1 
+	ULONG	.lpReserved2 
+	ULONG	.pszText     
+	XLONG	.cchTextMax  
+	XLONG	.iImage     
+END TYPE
+
+TYPE TC_ITEM
+	ULONG	.mask     
+	ULONG	.dwState     
+	ULONG	.dwStateMask 
+	ULONG	.pszText   
+	XLONG	.cchTextMax 
+	XLONG	.iImage   
+	XLONG	.lParam  
+END TYPE
+
+$$TCHT_NOWHERE            = 0x0001
+$$TCHT_ONITEMICON         = 0x0002
+$$TCHT_ONITEMLABEL        = 0x0004
+$$TCHT_ONITEM             = 0x0006		' $$TCHT_ONITEMICON OR $$TCHT_ONITEMLABEL
+
+TYPE TC_HITTESTINFO
+	POINT	.pt 
+	ULONG	.flags 
+END TYPE
+
+$$TCM_SETUNICODEFORMAT    = $$CCM_SETUNICODEFORMAT
+$$TCM_GETUNICODEFORMAT    = $$CCM_GETUNICODEFORMAT
+
+TYPE TC_KEYDOWN
+	NMHDR	.hdr   
+	ULONG	.wVKey 
+	ULONG	.flags 
+END TYPE
+
+$$TCN_KEYDOWN             = -550	'$$TCN_FIRST - 0
+$$TCN_SELCHANGE           = -551	'$$TCN_FIRST - 1
+$$TCN_SELCHANGING         = -552	'$$TCN_FIRST - 2
+$$TCN_GETOBJECT           = -553	'$$TCN_FIRST - 3
+$$TCN_FOCUSCHANGE         = -554	'$$TCN_FIRST - 4
+
+'====== MONTHCAL CONTROL ======================================================
+
+$$MONTHCAL_CLASS = "SysMonthCal32"
+
+' bit-packed array of "bold" info for a month
+' if a bit is on, that day is drawn bold
+' typedef DWORD MONTHDAYSTATE, FAR * LPMONTHDAYSTATE
+
+$$MCM_FIRST = 4096
+
+$$MCM_GETCURSEL         = 4097	'$$MCM_FIRST + 1
+$$MCM_SETCURSEL         = 4098	'$$MCM_FIRST + 2
+$$MCM_GETMAXSELCOUNT    = 4099	'$$MCM_FIRST + 3
+$$MCM_SETMAXSELCOUNT    = 4100	'$$MCM_FIRST + 4
+$$MCM_GETSELRANGE       = 4101	'$$MCM_FIRST + 5
+$$MCM_SETSELRANGE       = 4102	'$$MCM_FIRST + 6
+$$MCM_GETMONTHRANGE     = 4103	'$$MCM_FIRST + 7
+$$MCM_SETDAYSTATE       = 4104	'$$MCM_FIRST + 8
+$$MCM_GETMINREQRECT     = 4105	'$$MCM_FIRST + 9
+$$MCM_SETCOLOR          = 4106	'$$MCM_FIRST + 10
+$$MCM_GETCOLOR          = 4107	'$$MCM_FIRST + 11
+$$MCM_SETTODAY          = 4108	'$$MCM_FIRST + 12
+$$MCM_GETTODAY          = 4109	'$$MCM_FIRST + 13
+$$MCM_HITTEST           = 4110	'$$MCM_FIRST + 14
+$$MCM_SETFIRSTDAYOFWEEK = 4111	'$$MCM_FIRST + 15
+$$MCM_GETFIRSTDAYOFWEEK = 4112	'$$MCM_FIRST + 16
+$$MCM_GETRANGE          = 4113	'$$MCM_FIRST + 17
+$$MCM_SETRANGE          = 4114	'$$MCM_FIRST + 18
+$$MCM_GETMONTHDELTA     = 4115	'$$MCM_FIRST + 19
+$$MCM_SETMONTHDELTA     = 4116	'$$MCM_FIRST + 20
+$$MCM_GETMAXTODAYWIDTH  = 4117	'$$MCM_FIRST + 21
+
+$$MCM_SETUNICODEFORMAT  = $$CCM_SETUNICODEFORMAT
+$$MCM_GETUNICODEFORMAT  = $$CCM_GETUNICODEFORMAT
+
+$$MCSC_BACKGROUND   = 0   ' the background color (between months)
+$$MCSC_TEXT         = 1   ' the dates
+$$MCSC_TITLEBK      = 2   ' background of the title
+$$MCSC_TITLETEXT    = 3
+$$MCSC_MONTHBK      = 4   ' background within the month cal
+$$MCSC_TRAILINGTEXT = 5   ' the text color of header & trailing days
+
+TYPE MCHITTESTINFO
+	ULONG					.cbSize 
+	POINT	        .pt
+	ULONG					.uHit 
+	SYSTEMTIME		.st 
+END TYPE
+
+$$MCHT_TITLE         = 0x00010000
+$$MCHT_CALENDAR      = 0x00020000
+$$MCHT_TODAYLINK     = 0x00030000
+
+$$MCHT_NEXT          = 0x01000000  ' these indicate that hitting
+$$MCHT_PREV          = 0x02000000  ' here will go to the next/prev month
+$$MCHT_NOWHERE       = 0x00000000
+
+$$MCHT_TITLEBK            = $$MCHT_TITLE
+$$MCHT_TITLEMONTH         = 0x00010001		' $$MCHT_TITLE OR 0x0001
+$$MCHT_TITLEYEAR          = 0x00010002		' $$MCHT_TITLE OR 0x0002
+$$MCHT_TITLEBTNNEXT       = 0x01010003		' $$MCHT_TITLE OR $$MCHT_NEXT OR 0x0003
+$$MCHT_TITLEBTNPREV       = 0x02010003		' $$MCHT_TITLE OR $$MCHT_PREV OR 0x0003
+
+$$MCHT_CALENDARBK         = $$MCHT_CALENDAR
+$$MCHT_CALENDARDATE       = 0x00020001		' $$MCHT_CALENDAR OR 0x0001
+$$MCHT_CALENDARDATENEXT   = 0x01020001		' $$MCHT_CALENDARDATE OR $$MCHT_NEXT
+$$MCHT_CALENDARDATEPREV   = 0x02020001		' $$MCHT_CALENDARDATE OR $$MCHT_PREV
+$$MCHT_CALENDARDAY        = 0x00020002		' $$MCHT_CALENDAR OR 0x0002
+$$MCHT_CALENDARWEEKNUM    = 0x00020003		' $$MCHT_CALENDAR OR 0x0003
+
+TYPE NMSELCHANGE
+	NMHDR	.hdr         			' this must be first, so we don't break WM_NOTIFY
+	SYSTEMTIME	.stSelStart
+	SYSTEMTIME	.stSelEnd 
+END TYPE
+
+TYPE NMSELECT
+	NMHDR	.hdr          		' this must be first, so we don't break WM_NOTIFY
+	SYSTEMTIME	.stSelStart
+	SYSTEMTIME	.stSelEnd 
+END TYPE
+
+$$MCN_SELCHANGE       = -749	'$$MCN_FIRST + 1
+$$MCN_GETDAYSTATE     = -747	'$$MCN_FIRST + 3
+$$MCN_SELECT          = -746	'$$MCN_FIRST + 4
+
+' MCN_GETDAYSTATE is sent for MCS_DAYSTATE controls whenever new daystate
+' information is needed (month or year scroll) to draw bolding information.
+' The app must fill in cDayState months worth of information starting from
+' stStart date. The app may fill in the array at prgDayState or change
+' prgDayState to point to a different array out of which the information
+' will be copied. (similar to tooltips)
+'
+TYPE NMDAYSTATE
+	NMHDR	.hdr         			' this must be first, so we don't break WM_NOTIFY
+	SYSTEMTIME	.stStart
+	XLONG	.cDayState 
+	ULONG	.prgDayState  		' points to cDayState MONTHDAYSTATEs
+END TYPE
+
+' MCN_SELECT is sent whenever a selection has occured (via mouse or keyboard)
+'
+$$MCS_DAYSTATE        = 0x0001
+$$MCS_MULTISELECT     = 0x0002
+$$MCS_WEEKNUMBERS     = 0x0004
+$$MCS_NOTODAYCIRCLE   = 0x0008
+$$MCS_NOTODAY         = 0x0010
+
+$$GMR_VISIBLE     = 0       ' visible portion of display
+$$GMR_DAYSTATE    = 1       ' above plus the grayed out parts of
+                           ' partially displayed months
+
+'====== DATETIMEPICK CONTROL ==================================================
+
+$$DATETIMEPICK_CLASS = "SysDateTimePick32"
+
+$$DTM_FIRST           = 4096
+$$DTM_GETSYSTEMTIME   = 4097	'$$DTM_FIRST + 1
+$$DTM_SETSYSTEMTIME   = 4098	'$$DTM_FIRST + 2
+$$DTM_GETRANGE        = 4099	'$$DTM_FIRST + 3
+$$DTM_SETRANGE        = 4100	'$$DTM_FIRST + 4
+$$DTM_SETFORMAT       = 4101	'$$DTM_FIRST + 5
+$$DTM_SETMCCOLOR      = 4102	'$$DTM_FIRST + 6
+$$DTM_GETMCCOLOR      = 4103	'$$DTM_FIRST + 7
+$$DTM_GETMONTHCAL     = 4104	'$$DTM_FIRST + 8
+$$DTM_SETMCFONT       = 4105	'$$DTM_FIRST + 9
+$$DTM_GETMCFONT       = 4106	'$$DTM_FIRST + 10
+$$DTM_SETFORMATW      = 4146	'$$DTM_FIRST + 50
+
+$$DTS_UPDOWN          = 0x0001 ' use UPDOWN instead of MONTHCAL
+$$DTS_SHOWNONE        = 0x0002 ' allow a NONE selection
+$$DTS_SHORTDATEFORMAT = 0x0000 ' use the short date format (app must forward WM_WININICHANGE messages)
+$$DTS_LONGDATEFORMAT  = 0x0004 ' use the long date format (app must forward WM_WININICHANGE messages)
+$$DTS_SHORTDATECENTURYFORMAT = 0x000C ' short date format with century (app must forward WM_WININICHANGE messages)
+$$DTS_TIMEFORMAT      = 0x0009 ' use the time format (app must forward WM_WININICHANGE messages)
+$$DTS_APPCANPARSE     = 0x0010 ' allow user entered strings (app MUST respond to DTN_USERSTRING)
+$$DTS_RIGHTALIGN      = 0x0020 ' right-align popup instead of left-align it
+
+TYPE NMDATETIMECHANGE
+	NMHDR	.hdr  
+	ULONG	.dwFlags       		      ' GDT_VALID or GDT_NONE
+	SYSTEMTIME	.st 				' valid iff dwFlags==GDT_VALID
+END TYPE
+
+$$DTN_DATETIMECHANGE  = -759	'$$DTN_FIRST + 1  ' the systemtime has changed
+$$DTN_USERSTRING      = -758	'$$DTN_FIRST + 2  ' the user has entered a string
+$$DTN_WMKEYDOWN       = -757	'$$DTN_FIRST + 3  ' modify keydown on app format field (X)
+$$DTN_FORMAT          = -756	'$$DTN_FIRST + 4  ' query display for app format field (X)
+$$DTN_FORMATQUERY     = -755	'$$DTN_FIRST + 5  ' query formatting info for app format field (X)
+$$DTN_DROPDOWN        = -754	'$$DTN_FIRST + 6  ' MonthCal has dropped down
+$$DTN_CLOSEUP         = -753	'$$DTN_FIRST + 7  ' MonthCal is popping up
+$$DTN_USERSTRINGW     = -745	'$$DTN_FIRST + 15
+$$DTN_WMKEYDOWNW      = -744	'$$DTN_FIRST + 16
+$$DTN_FORMATW         = -743	'$$DTN_FIRST + 17
+$$DTN_FORMATQUERYW    = -742	'$$DTN_FIRST + 18
+
+TYPE NMDATETIMESTRING
+	NMHDR	.hdr        
+	ULONG	.pszUserString          ' string user entered
+	SYSTEMTIME	.st         ' app fills this in
+	ULONG	.dwFlags                ' GDT_VALID or GDT_NONE
+END TYPE
+
+TYPE NMDATETIMEWMKEYDOWN
+	NMHDR	.hdr    
+	XLONG	.nVirtKey           ' virtual key code of WM_KEYDOWN which MODIFIES an X field
+	ULONG	.pszFormat          ' format substring
+	SYSTEMTIME	.st     ' current systemtime, app should modify based on key
+END TYPE
+
+TYPE NMDATETIMEFORMAT
+	NMHDR	.hdr       
+	ULONG	.pszFormat              ' format substring
+	SYSTEMTIME	.st         ' current systemtime
+	ULONG	.pszDisplay             ' string to display
+	UBYTE	.szDisplay[63]          ' buffer pszDisplay originally points at
+END TYPE
+
+TYPE NMDATETIMEFORMATQUERY
+	NMHDR	.hdr      
+	ULONG	.pszFormat         ' format substring
+	SIZEAPI	.szMax       ' max bounding rectangle app will use for this format string
+END TYPE
+
+$$GDTR_MIN       = 0x0001
+$$GDTR_MAX       = 0x0002
+
+$$GDT_ERROR      = -1
+$$GDT_VALID      = 0
+$$GDT_NONE       = 1
+
+' ==========================================================
+' === Native Font Control ===
+
+'NativeFont Class Name
+$$WC_NATIVEFONTCTL = "NativeFontCtl"
+
+' style definition
+$$NFS_EDIT                = 0x0001
+$$NFS_STATIC              = 0x0002
+$$NFS_LISTCOMBO           = 0x0004
+$$NFS_BUTTON              = 0x0008
+$$NFS_ALL                 = 0x0010
+$$NFS_USEFONTASSOC        = 0x0020
+
+' ==========================================================
+' ***** pager control *****
+
+'page class name
+$$WC_PAGESCROLLER = "SysPager"
+
+'pager styles
+$$PGS_VERT = 0x0
+$$PGS_HORZ = 0x1
+$$PGS_AUTOSCROLL = 0x2
+$$PGS_DRAGNDROP = 0x4
+
+'pager notifications
+'$$PGN_FIRST = -900 
+$$PGN_SCROLL = -901
+$$PGN_CALCSIZE = -902 
+
+'pager button state
+'the scroll can be in one of the following control State
+$$PGF_INVISIBLE = 0        ' Scroll button is not visible
+$$PGF_NORMAL    = 1        ' Scroll button is in normal state
+$$PGF_GRAYED    = 2        ' Scroll button is in grayed state
+$$PGF_DEPRESSED = 4        ' Scroll button is in depressed state
+$$PGF_HOT       = 8        ' Scroll button is in hot state
+
+'pager button control
+$$PGB_TOPORLEFT = 0
+$$PGB_BOTTOMORRIGHT = 1
+
+'pager control messages
+'$$PGM_FIRST      = 5120
+$$PGM_SETCHILD 	= 5121			' (PGM_FIRST + 1) ' // lParam == hwnd
+$$PGM_RECALCSIZE 	= 5122			' (PGM_FIRST + 2)
+$$PGM_FORWARDMOUSE 	= 5123			' (PGM_FIRST + 3)
+$$PGM_SETBKCOLOR 	= 5124			' (PGM_FIRST + 4)
+$$PGM_GETBKCOLOR 	= 5125			' (PGM_FIRST + 5)
+$$PGM_SETBORDER 	= 5126			' (PGM_FIRST + 6)
+$$PGM_GETBORDER 	= 5127			' (PGM_FIRST + 7)
+$$PGM_SETPOS 		= 5128			' (PGM_FIRST + 8)
+$$PGM_GETPOS 		= 5129			' (PGM_FIRST + 9)
+$$PGM_SETBUTTONSIZE 	= 5130			' (PGM_FIRST + 10)
+$$PGM_GETBUTTONSIZE 	= 5131			' (PGM_FIRST + 11)
+$$PGM_GETBUTTONSTATE = 5132			' (PGM_FIRST + 12)
+$$PGM_GETDROPTARGET 	= 8196
+
+'pager PGN_SCROLL Notification Message
+$$PGF_SCROLLUP = 1
+$$PGF_SCROLLDOWN = 2
+$$PGF_SCROLLLEFT = 4
+$$PGF_SCROLLRIGHT = 8
+
+' pager control Keys down
+$$PGK_SHIFT = 1
+$$PGK_CONTROL = 2
+$$PGK_MENU = 4
+
+$$PGF_CALCWIDTH = 1
+$$PGF_CALCHEIGHT = 2
+
+TYPE NMPGSCROLL
+    NMHDR 	.hdr
+    SSHORT	.fwKeys         	' Specifies which keys are down when this notification is send
+    RECT	.rcParent						' Contains Parent Window Rect
+    XLONG	.iDir             	' Scrolling Direction
+    XLONG	.iXpos            	' Horizontal scroll position
+    XLONG	.iYpos            	' Vertical scroll position
+    XLONG	.iScroll          	' [in/out] Amount to scroll
+END TYPE
+
+TYPE NMPGCALCSIZE
+    NMHDR	.hdr				' contains info about notification message
+    XLONG	.dwFlag			' indicates which dimension is being requested, PGF_CALCHEIGHT (height of scrollable area), PGF_CALCWIDTH (width of scrollable area)
+    XLONG	.iWidth			' desired width of scrollable area in pixels
+    XLONG	.iHeight			' desired height of scrollable area in pixels
+END TYPE
+
+' Flatscrollbar constants
+
+$$WSB_PROP_CYVSCROLL	= 1
+$$WSB_PROP_CXHSCROLL	= 2
+$$WSB_PROP_CYHSCROLL	= 4
+$$WSB_PROP_CXVSCROLL	= 8
+$$WSB_PROP_CXHTHUMB	= 0x10
+$$WSB_PROP_CYVTHUMB	= 0x20
+$$WSB_PROP_VBKGCOLOR	= 0x40
+$$WSB_PROP_HBKGCOLOR	= 0x80
+$$WSB_PROP_VSTYLE	= 0x100
+$$WSB_PROP_HSTYLE	= 0x200
+$$WSB_PROP_WINSTYLE	= 0x400
+$$WSB_PROP_PALETTE	= 0x800
+$$WSB_PROP_MASK	= 0xFFF
+$$FSB_FLAT_MODE	= 2
+$$FSB_ENCARTA_MODE	= 1
+$$FSB_REGULAR_MODE	= 0
+
+
+' *********************************
+' ***** riched32.dll DEC file *****  
+' *********************************
+
+' 1 Feb 2002
+' v0.001
+
+' ****************************
+' ***** TYPE DEFINITIONS *****
+' ****************************
+
+' ***** notification structures  *****
+' the following type crashes some programs
+' using UDTs ???
+'TYPE MSGFILTER
+'  NMHDR	.hdr
+'  ULONG	.msg
+'  ULONG	.wParam
+'  ULONG	.lParam
+'END TYPE
+
+TYPE RECT_RICHED
+    XLONG .left 
+    XLONG .top 
+    XLONG .right 
+    XLONG .bottom 
+END TYPE
+
+TYPE REQRESIZE
+  NMHDR	.hdr
+  RECT_RICHED	.rc
+END TYPE
+
+TYPE CHARRANGE
+  XLONG	.cpMin
+  XLONG	.cpMax
+END TYPE
+
+TYPE SELCHANGE
+  NMHDR	.hdr
+  CHARRANGE	.chrg
+  USHORT	.seltyp
+END TYPE
+
+' ***** all character format measurements are in twips  *****
+TYPE CHARFORMAT
+  XLONG	.cbSize
+  ULONG	.dwMask
+  ULONG	.dwEffects
+  XLONG	.yHeight
+  XLONG	.yOffset
+  ULONG	.crTextColor
+  UBYTE	.bCharSet
+  UBYTE	.bPitchAndFamily
+  STRING*32	.szFaceName
+END TYPE
+
+TYPE CHARFORMAT2
+    ULONG	.cbSize
+    ULONG	.dwMask
+    ULONG	.dwEffects
+    XLONG	.yHeight
+    XLONG	.yOffset
+    XLONG	.crTextColor
+    UBYTE	.bCharSet
+    UBYTE 	.bPitchAndFamily
+    STRING*32	.szFaceName
+    USHORT	.wPad2
+    USHORT	.wWeight 			' Font weight (LOGFONT value) 
+    USHORT	.sSpacing 			' Amount to space between letters 
+    XLONG	.crBackColor		' Background color                 
+    XLONG	.lLCID			' Locale ID                        
+    XLONG	.dwReserved			' Reserved. Must be 0              
+    USHORT	.sStyle			' Style handle                     
+    USHORT	.wKerning 			' Twip size above which to kern char pair
+    UBYTE	.bUnderlineType		' Underline type                   
+    UBYTE	.bAnimation			' Animated text like marching ants 
+    UBYTE	.bRevAuthor			' Revision author index            
+    UBYTE	.bReserved1
+END TYPE
+
+TYPE TEXTRANGE
+  CHARRANGE	.chrg
+  ULONG	.lpstrText			
+END TYPE
+
+TYPE EDITSTREAM
+  ULONG	.dwCookie 			
+  ULONG	.dwError			
+  XLONG	.pfnCallback
+END TYPE
+
+TYPE FINDTEXTAPI
+  CHARRANGE	.chrg
+  ULONG	.lpstrText
+END TYPE
+
+TYPE FINDTEXTEX
+  CHARRANGE	.chrg
+  ULONG	.lpstrText
+  CHARRANGE	.chrgText
+END TYPE
+
+TYPE FORMATRANGE
+  XLONG	.hdc
+  XLONG	.hdcTarget
+  RECT_RICHED	.rc 
+  RECT_RICHED	.rcPage
+  CHARRANGE	.chrg
+END TYPE
+
+TYPE PARAFORMAT
+  XLONG	.cbSize
+  ULONG	.dwMask
+  USHORT	.wNumbering
+  USHORT	.wReserved
+  XLONG	.dxStartIndent
+  XLONG	.dxRightIndent
+  XLONG	.dxOffset
+  USHORT	.wAlignment
+  SSHORT	.cTabCount
+  XLONG	.lTabStops[31]
+END TYPE
+
+TYPE PARAFORMAT2
+    XLONG	.cbSize
+    ULONG	.dwMask
+    USHORT	.wNumbering
+    USHORT	.wReserved
+    XLONG	.dxStartIndent
+    XLONG	.dxRightIndent
+    XLONG	.dxOffset
+    USHORT	.wAlignment
+    USHORT	.cTabCount
+    XLONG	.lTabStops[31] 
+    XLONG	.dySpaceBefore 				' Vertical spacing before para        
+    XLONG	.dySpaceAfter 				' Vertical spacing after para         
+    XLONG	.dyLineSpacing 				' Line spacing depending on Rule      
+    USHORT	.sStyle					' Style handle                         
+    UBYTE	.bLineSpacingRule 			' Rule for line spacing (see tom.doc)  
+    UBYTE	.bCRC						' Reserved for CRC for rapid searching 
+    USHORT	.wShadingWeight				' Shading in hundredths of a per cent  
+    USHORT	.wShadingStyle				' Nibble 0: style, 1: cfpat, 2: cbpat  
+    USHORT	.wNumberingStart				' Starting value for numbering         
+    USHORT	.wNumberingStyle				' Alignment, roman/arabic, (), ), ., etc.
+    USHORT	.wNumberingTab 				' Space bet 1st indent and 1st-line text
+    USHORT	.wBorderSpace				' Space between border and text (twips
+    USHORT	.wBorderWidth				' Border pen width (twips)            
+    USHORT	.wBorders					' Byte 0: bits specify which borders   
+            						' Nibble 2: border style, 3: color index
+END TYPE
+
+TYPE ENDROPFILES
+  NMHDR	.hdr
+  XLONG	.hDrop
+  XLONG	.cp
+  XLONG	.fProtected
+END TYPE
+
+TYPE ENPROTECTED
+  NMHDR	.hdr
+  ULONG	.msg
+  ULONG	.wParam
+  ULONG	.lParam
+  CHARRANGE	.chrg
+END TYPE
+
+TYPE ENSAVECLIPBOARD
+  NMHDR	.hdr
+  XLONG	.cObjectCount
+  XLONG	.cch
+END TYPE
+
+TYPE ENOLEOPFAILED
+  NMHDR	.hdr
+  XLONG	.iob
+  XLONG	.lOper
+  XLONG	.hr
+END TYPE
+
+' ***** PenWin specific  *****
+TYPE ENCORRECTTEXT
+  NMHDR	.hdr
+  CHARRANGE	.chrg
+  USHORT	.seltyp
+END TYPE
+
+' ***** Far East specific  *****
+TYPE PUNCTUATION
+  XLONG	.iSize
+  ULONG	.szPunctuation
+END TYPE
+
+' ***** Far East specific  *****
+TYPE COMPCOLOR
+  ULONG	.crText
+  ULONG	.crBackground
+  ULONG	.dwEffects
+END TYPE
+
+' ***** Paste Special  *****
+TYPE REPASTESPECIAL
+  ULONG	.dwAspect
+  ULONG	.dwParam
+END TYPE
+
+TYPE ENLINK
+    NMHDR	.hdr 
+    ULONG	.msg
+    ULONG	.wParam
+    ULONG	.lParam 
+    CHARRANGE	.chrg 
+END TYPE
+
+' codepage for translation (CP_ACP for default,1200 for Unicode) 
+TYPE GETTEXTEX
+   ULONG	.cb							
+   ULONG	.flags						
+   ULONG	.codepage						
+   ULONG	.lpDefaultChar					
+   ULONG	.lpUsedDefChar					
+END TYPE
+
+TYPE SETTEXTEX
+	ULONG	.flags
+	ULONG	.codepage
+END TYPE
+' codepage for translation (CP_ACP for default,1200 for Unicode) 
+
+TYPE GETTEXTLENGTHEX
+    ULONG	.flags						
+    ULONG	.codepage						
+END TYPE
+
+' ***** BiDi specific features *****
+TYPE BIDIOPTIONS
+    ULONG	.cbSize 
+    USHORT	.wPad1
+    USHORT	.wMask 
+    USHORT	.wEffects 
+END TYPE
+
+' ***** Richedit Window Class Names *****
+$$RICHEDITCLASSNAME = "RichEdit"			' riched32.dll
+$$RICHEDITCLASSNAME10A = "RichEdit"			' riched32.dll
+$$RICHEDITCLASSNAME20A = "RichEdit20A"		' riched20.dll
+
+$$cchTextLimitDefault = 32767
+
+' ***** RichEdit messages  *****
+'WM_USER = 1024
+
+$$EM_CANPASTE           = 1074
+$$EM_DISPLAYBAND        = 1075
+$$EM_EXGETSEL           = 1076
+$$EM_EXLIMITTEXT        = 1077
+$$EM_EXLINEFROMCHAR     = 1078
+$$EM_EXSETSEL           = 1079
+$$EM_FINDTEXT           = 1080
+$$EM_FORMATRANGE        = 1081
+$$EM_GETCHARFORMAT      = 1082
+$$EM_GETEVENTMASK       = 1083
+$$EM_GETOLEINTERFACE    = 1084
+$$EM_GETPARAFORMAT      = 1085
+$$EM_GETSELTEXT         = 1086
+$$EM_HIDESELECTION      = 1087
+$$EM_PASTESPECIAL       = 1088
+$$EM_REQUESTRESIZE      = 1089
+$$EM_SELECTIONTYPE      = 1090
+$$EM_SETBKGNDCOLOR      = 1091
+$$EM_SETCHARFORMAT      = 1092
+$$EM_SETEVENTMASK       = 1093
+$$EM_SETOLECALLBACK     = 1094
+$$EM_SETPARAFORMAT      = 1095
+$$EM_SETTARGETDEVICE    = 1096
+$$EM_STREAMIN           = 1097
+$$EM_STREAMOUT          = 1098
+$$EM_GETTEXTRANGE       = 1099
+$$EM_FINDWORDBREAK      = 1100
+$$EM_SETOPTIONS         = 1101
+$$EM_GETOPTIONS         = 1102
+$$EM_FINDTEXTEX         = 1103
+$$EM_GETWORDBREAKPROCEX = 1104
+$$EM_SETWORDBREAKPROCEX = 1105
+
+' ***** RichEd20.dll messages *****
+$$EM_SETUNDOLIMIT    = 1106	
+$$EM_REDO            = 1107	
+$$EM_CANREDO         = 1108	
+$$EM_GETUNDONAME     = 1109	
+$$EM_GETREDONAME     = 1110	
+$$EM_STOPGROUPTYPING = 1112	
+$$EM_SETTEXTMODE     = 1113	
+$$EM_GETTEXTMODE     = 1114	
+$$EM_AUTOURLDETECT   = 1115
+$$EM_GETAUTOURLDETECT = 1116	
+$$EM_SETPALETTE      = 1117	
+$$EM_GETTEXTEX       = 1118	
+$$EM_GETTEXTLENGTHEX = 1119	
+
+$$EM_FINDTEXTW       = 1147	
+$$EM_FINDTEXTEXW     = 1148	
+
+$$TM_PLAINTEXT       = 1
+$$TM_RICHTEXT        = 2          
+$$TM_SINGLELEVELUNDO = 4
+$$TM_MULTILEVELUNDO  = 8         
+$$TM_SINGLECODEPAGE  = 16
+$$TM_MULTICODEPAGE   = 32        
+
+' ***** Far East specific messages  *****
+$$EM_SETPUNCTUATION  = 1124
+$$EM_GETPUNCTUATION  = 1125	
+$$EM_SETWORDWRAPMODE = 1126	
+$$EM_GETWORDWRAPMODE = 1127	
+$$EM_SETIMECOLOR     = 1128	
+$$EM_GETIMECOLOR     = 1129	
+$$EM_SETIMEOPTIONS   = 1130	
+$$EM_GETIMEOPTIONS   = 1131	
+$$EM_CONVPOSITION    = 1132	
+
+$$EM_SETLANGOPTIONS  = 1144	
+$$EM_GETLANGOPTIONS  = 1145	
+$$EM_GETIMECOMPMODE  = 1146	
+
+' ***** BiDi specific messages *****
+$$EM_SETBIDIOPTIONS  = 1204	
+$$EM_GETBIDIOPTIONS  = 1205	
+
+' ***** Options for EM_SETLANGOPTIONS and EM_GETLANGOPTIONS *****
+$$IMF_AUTOKEYBOARD        = 0x1
+$$IMF_AUTOFONT            = 0x2
+$$IMF_IMECANCELCOMPLETE   = 0x4      
+$$IMF_IMEALWAYSSENDNOTIFY = 0x8
+
+' ***** Values for EM_GETIMECOMPMODE *****
+$$ICM_NOTOPEN    = 0x0
+$$ICM_LEVEL3     = 0x1
+$$ICM_LEVEL2     = 0x2
+$$ICM_LEVEL2_5   = 0x3
+$$ICM_LEVEL2_SUI = 0x4
+
+' ***** new notifications  *****
+$$EN_MSGFILTER       = 0x0700
+$$EN_REQUESTRESIZE   = 0x0701
+$$EN_SELCHANGE       = 0x0702
+$$EN_DROPFILES       = 0x0703
+$$EN_PROTECTED       = 0x0704
+
+' ***** PenWin specific  *****
+$$EN_CORRECTTEXT     = 0x0705
+
+' ***** back to new notifications  *****
+$$EN_STOPNOUNDO      = 0x0706
+
+' ***** Far East specific notification  *****
+$$EN_IMECHANGE       = 0x0707
+
+' ***** back to new notifications  *****
+$$EN_SAVECLIPBOARD   = 0x0708
+$$EN_OLEOPFAILED     = 0x0709
+
+$$EN_OBJECTPOSITIONS = 0x70A
+$$EN_LINK            = 0x70B
+$$EN_DRAGDROPDONE    = 0x70C
+
+' ***** BiDi specific notifications *****
+$$EN_ALIGN_LTR = 0x710
+$$EN_ALIGN_RTL = 0x711
+
+' ***** event notification masks  *****
+$$ENM_NONE           = 0x00000000
+$$ENM_CHANGE         = 0x00000001
+$$ENM_UPDATE         = 0x00000002
+$$ENM_SCROLL         = 0x00000004
+$$ENM_SCROLLEVENTS   = 0x00000008
+$$ENM_DRAGDROPDONE   = 0x00000010
+$$ENM_KEYEVENTS      = 0x00010000
+$$ENM_MOUSEEVENTS    = 0x00020000
+$$ENM_REQUESTRESIZE  = 0x00040000
+$$ENM_SELCHANGE      = 0x00080000
+$$ENM_DROPFILES      = 0x00100000
+$$ENM_PROTECTED      = 0x00200000
+
+' ***** PenWin specific  *****
+$$ENM_CORRECTTEXT    = 0x00400000
+
+' ***** Far East specific notification mask  *****
+$$ENM_IMECHANGE       = 0x00800000
+$$ENM_LANGCHANGE      = 0x01000000
+$$ENM_OBJECTPOSITIONS = 0x02000000
+$$ENM_LINK            = 0x04000000
+
+' ***** new edit control styles  *****
+$$ES_SAVESEL         = 0x00008000
+$$ES_SUNKEN          = 0x00004000
+$$ES_DISABLENOSCROLL = 0x00002000
+$$ES_NOOLEDRAGDROP   = 0x00000008
+
+' ***** same as WS_MAXIMIZE *****
+$$ES_SELECTIONBAR    = 0x01000000
+
+' ***** new edit control extended style  *****
+$$ES_EX_NOCALLOLEINIT = 0x01000000
+
+' ***** These flag are used in the only FE Windows.  *****
+$$ES_VERTICAL        = 0x00400000
+$$ES_NOIME           = 0x00080000
+$$ES_SELFIME         = 0x00040000
+
+' ***** edit control options  *****
+$$ECO_AUTOWORDSELECTION = 0x00000001
+$$ECO_AUTOVSCROLL       = 0x00000040
+$$ECO_AUTOHSCROLL       = 0x00000080
+$$ECO_NOHIDESEL         = 0x00000100
+$$ECO_READONLY          = 0x00000800
+$$ECO_WANTRETURN        = 0x00001000
+$$ECO_SAVESEL           = 0x00008000
+$$ECO_SELECTIONBAR      = 0x01000000
+
+' ***** used only in FE Windows version  *****
+$$ECO_VERTICAL          = 0x00400000
+
+' ***** ECO operations  *****
+$$ECOOP_SET      = 0x0001
+$$ECOOP_OR       = 0x0002
+$$ECOOP_AND      = 0x0003
+$$ECOOP_XOR      = 0x0004
+
+' ***** new word break function actions  *****
+$$WB_CLASSIFY      = 3
+$$WB_MOVEWORDLEFT  = 4
+$$WB_MOVEWORDRIGHT = 5
+$$WB_LEFTBREAK     = 6
+$$WB_RIGHTBREAK    = 7
+
+' ***** Far East specific flags  *****
+$$WB_MOVEWORDPREV  = 4
+$$WB_MOVEWORDNEXT  = 5
+$$WB_PREVBREAK     = 6
+$$WB_NEXTBREAK     = 7
+
+$$PC_FOLLOWING     = 1
+$$PC_LEADING       = 2
+$$PC_OVERFLOW      = 3
+$$PC_DELIMITER     = 4
+$$WBF_WORDWRAP     = 0x010
+$$WBF_WORDBREAK    = 0x020
+$$WBF_OVERFLOW     = 0x040
+$$WBF_LEVEL1       = 0x080
+$$WBF_LEVEL2       = 0x100
+$$WBF_CUSTOM       = 0x200
+
+' ***** Far East specific flags  *****
+$$IMF_FORCENONE         = 0x0001
+$$IMF_FORCEENABLE       = 0x0002
+$$IMF_FORCEDISABLE      = 0x0004
+$$IMF_CLOSESTATUSWINDOW = 0x0008
+$$IMF_VERTICAL          = 0x0020
+$$IMF_FORCEACTIVE       = 0x0040
+$$IMF_FORCEINACTIVE     = 0x0080
+$$IMF_FORCEREMEMBER     = 0x0100
+$$IMF_MULTIPLEEDIT      = 0x0400
+
+' ***** word break flags (used with WB_CLASSIFY)  *****
+$$WBF_CLASS      = 0x0F
+$$WBF_ISWHITE    = 0x10
+$$WBF_BREAKLINE  = 0x20
+$$WBF_BREAKAFTER = 0x40
+
+' ***** CHARFORMAT masks  *****
+$$CFM_BOLD      = 0x00000001
+$$CFM_ITALIC    = 0x00000002
+$$CFM_UNDERLINE = 0x00000004
+$$CFM_STRIKEOUT = 0x00000008
+$$CFM_PROTECTED = 0x00000010
+$$CFM_LINK      = 0x00000020
+$$CFM_SMALLCAPS = 0x40                 
+$$CFM_ALLCAPS   = 0x80                  
+$$CFM_HIDDEN    = 0x100                   
+$$CFM_OUTLINE   = 0x200               
+$$CFM_SHADOW    = 0x400                  
+$$CFM_EMBOSS    = 0x800                  
+$$CFM_IMPRINT   = 0x1000                
+$$CFM_DISABLED  = 0x2000
+$$CFM_REVISED   = 0x4000
+$$CFM_SIZE      = 0x80000000
+$$CFM_COLOR     = 0x40000000
+$$CFM_FACE      = 0x20000000
+$$CFM_OFFSET    = 0x10000000
+$$CFM_CHARSET   = 0x08000000
+$$CFM_BACKCOLOR     = 0x4000000
+$$CFM_LCID          = 0x2000000
+$$CFM_UNDERLINETYPE = 0x0800000 
+$$CFM_WEIGHT        = 0x0400000
+$$CFM_SPACING       = 0x0200000           
+$$CFM_KERNING       = 0x0100000           
+$$CFM_STYLE         = 0x0080000                
+$$CFM_ANIMATION     = 0x0040000             
+$$CFM_REVAUTHOR     = 0x0008000
+
+' ***** CHARFORMAT effects  *****
+$$CFE_BOLD      = 0x0001
+$$CFE_ITALIC    = 0x0002
+$$CFE_UNDERLINE = 0x0004
+$$CFE_STRIKEOUT = 0x0008
+$$CFE_PROTECTED = 0x0010
+$$CFE_LINK      = 0x0020
+$$CFE_SUBSCRIPT   = 0x10000             ' Superscript and subscript are
+$$CFE_SUPERSCRIPT = 0x20000             ' mutually exclusive    
+
+$$CFM_SUBSCRIPT = 0x30000			' CFE_SUBSCRIPT Or CFE_SUPERSCRIPT
+$$CFM_SUPERSCRIPT = $$CFM_SUBSCRIPT
+
+' ***** NOTE: CFE_AUTOCOLOR corresponds to CFM_COLOR, which controls it  *****
+$$CFE_AUTOCOLOR = 0x40000000
+
+$$CFE_SMALLCAPS = $$CFM_SMALLCAPS
+$$CFE_ALLCAPS   = $$CFM_ALLCAPS
+$$CFE_HIDDEN    = $$CFM_HIDDEN
+$$CFE_OUTLINE   = $$CFM_OUTLINE
+$$CFE_SHADOW    = $$CFM_SHADOW
+$$CFE_EMBOSS    = $$CFM_EMBOSS
+$$CFE_IMPRINT   = $$CFM_IMPRINT
+$$CFE_DISABLED  = $$CFM_DISABLED
+$$CFE_REVISED   = $$CFM_REVISED
+
+$$CFE_AUTOBACKCOLOR = $$CFM_BACKCOLOR 
+
+' ***** Underline types *****
+$$CFU_CF1UNDERLINE    = 0xFF      
+$$CFU_INVERT          = 0xFE       
+$$CFU_UNDERLINEDOTTED = 0x4       
+$$CFU_UNDERLINEDOUBLE = 0x3     
+$$CFU_UNDERLINEWORD   = 0x2    
+$$CFU_UNDERLINE       = 0x1
+$$CFU_UNDERLINENONE   = 0x0
+
+$$yHeightCharPtsMost = 1638
+
+' ***** EM_SETCHARFORMAT wParam masks  *****
+$$SCF_DEFAULT    = 0x0000
+$$SCF_SELECTION  = 0x0001
+$$SCF_WORD       = 0x0002
+$$SCF_ALL        = 0x0004
+$$SCF_USEUIRULES = 0x0008
+
+' ***** stream formats  *****
+$$SF_TEXT      = 0x0001
+$$SF_RTF       = 0x0002
+$$SF_RTFNOOBJS = 0x0003 
+$$SF_TEXTIZED  = 0x0004
+$$SF_UNICODE   = 0x0010
+
+' ***** Flag telling stream operations to operate on the selection only  *****
+' ***** EM_STREAMIN will replace the current selection  *****
+' ***** EM_STREAMOUT will stream out the current selection  *****
+$$SFF_SELECTION = 0x8000
+
+' ***** Flag telling stream operations to operate on the common RTF keyword only  *****
+' ***** EM_STREAMIN will accept the only common RTF keyword  *****
+' ***** EM_STREAMOUT will stream out the only common RTF keyword  *****
+$$SFF_PLAINRTF = 0x4000
+
+' ***** all paragraph measurements are in twips  *****
+
+$$MAX_TAB_STOPS = 32
+$$lDefaultTab   = 720
+
+' ***** PARAFORMAT mask values  *****
+$$PFM_STARTINDENT    = 0x00000001
+$$PFM_RIGHTINDENT    = 0x00000002
+$$PFM_OFFSET         = 0x00000004
+$$PFM_ALIGNMENT      = 0x00000008
+$$PFM_TABSTOPS       = 0x00000010
+$$PFM_NUMBERING      = 0x00000020
+$$PFM_SPACEBEFORE    = 0x40
+$$PFM_SPACEAFTER      = 0x80
+$$PFM_LINESPACING     = 0x100
+$$PFM_STYLE           = 0x400
+$$PFM_BORDER          = 0x800              
+$$PFM_SHADING         = 0x1000               
+$$PFM_NUMBERINGSTYLE  = 0x2000         
+$$PFM_NUMBERINGTAB    = 0x4000           
+$$PFM_NUMBERINGSTART  = 0x8000         
+$$PFM_DIR             = 0x10000
+$$PFM_RTLPARA         = 0x10000          
+$$PFM_KEEP            = 0x20000              
+$$PFM_KEEPNEXT        = 0x40000            
+$$PFM_PAGEBREAKBEFORE = 0x80000       
+$$PFM_NOLINENUMBER    = 0x100000         
+$$PFM_NOWIDOWCONTROL  = 0x200000       
+$$PFM_DONOTHYPHEN     = 0x400000          
+$$PFM_SIDEBYSIDE      = 0x800000           
+$$PFM_OFFSETINDENT     = 0x80000000
+$$PFM_TABLE           = 0xC0000000   
+
+$$PFE_TABLEROW     = 0xC000                ' These 3 options are mutually 
+$$PFE_TABLECELLEND = 0x8000                ' exclusive and each imply  
+$$PFE_TABLECELL    = 0x4000                ' that para is part of a table
+          
+' ***** PARAFORMAT numbering options  *****
+$$PFN_BULLET         = 0x0001
+
+' ***** PARAFORMAT alignment options  *****
+$$PFA_LEFT           = 0x0001
+$$PFA_RIGHT          = 0x0002
+$$PFA_CENTER         = 0x0003
+$$PFA_JUSTIFY        = 0x0004
+
+$$SEL_EMPTY       = 0x0000
+$$SEL_TEXT        = 0x0001
+$$SEL_OBJECT      = 0x0002
+$$SEL_MULTICHAR   = 0x0004
+$$SEL_MULTIOBJECT = 0x0008
+
+$$OLEOP_DOVERB  = 1
+
+' ***** clipboard formats - use as parameter to RegisterClipboardFormat()  *****
+$$CF_RTF = "Rich Text Format"
+$$CF_RTFNOOBJS = "Rich Text Format Without Objects"
+$$CF_RETEXTOBJ = "RichEdit Text and Objects"
+
+$$GCM_RIGHTMOUSEDROP = 0x8000  
+
+' ***** flags for the GETTEXTLENGTHEX data structure *****      
+$$GTL_DEFAULT  = 0      		' do the default (return ' # of chars)     
+$$GTL_USECRLF  = 1      		' compute answer using CRLFs for paragraphs
+$$GTL_PRECISE  = 2      		' compute a precise answer            
+$$GTL_CLOSE    = 4        	' fast computation of a "close" answer 
+$$GTL_NUMCHARS = 8     		' return the number of characters 
+$$GTL_NUMBYTES = 16    		' return the number of _bytes_  
+
+' ***** BIDIOPTIONS masks *****
+$$BOM_DEFPARADIR       = 0x1             	' Default paragraph direction (implies alignment) (obsolete)
+$$BOM_PLAINTEXT        = 0x2              	' Use plain text layout (obsolete)
+$$BOM_NEUTRALOVERRIDE  = 0x4        		' Override neutral layout (obsolete) 
+$$BOM_CONTEXTREADING   = 0x8         	' Context reading order 
+$$BOM_CONTEXTALIGNMENT = 0x10      		' Context alignment 
+
+' ***** BIDIOPTIONS effects *****
+$$BOE_RTLDIR           = 0x1                 	' Default paragraph direction (implies alignment) (obsolete) 
+$$BOE_PLAINTEXT        = 0x2              		' Use plain text layout (obsolete) 
+$$BOE_NEUTRALOVERRIDE  = 0x4        			' Override neutral layout (obsolete) 
+$$BOE_CONTEXTREADING   = 0x8         		' Context reading order 
+$$BOE_CONTEXTALIGNMENT = 0x10      			' Context alignment 
+
+' ***** Additional EM_FINDTEXT[EX] flags *****
+$$FR_MATCHDIAC      = 0x20000000
+$$FR_MATCHKASHIDA   = 0x40000000
+$$FR_MATCHALEFHAMZA = 0x80000000
+
+' ***** UNICODE embedding character *****
+$$WCH_EMBEDDING = 0xFFFC
+
+' ***** Property Sheet constants *****
+
+$$MAXPROPPAGES  = 100
+
+$$PSH_DEFAULT  = 0x00000000
+$$PSH_PROPTITLE  = 0x00000001
+$$PSH_USEHICON  = 0x00000002
+$$PSH_USEICONID  = 0x00000004
+$$PSH_PROPSHEETPAGE  = 0x00000008
+$$PSH_WIZARDHASFINISH  = 0x00000010
+$$PSH_WIZARD  = 0x00000020
+$$PSH_USEPSTARTPAGE  = 0x00000040
+$$PSH_NOAPPLYNOW  = 0x00000080
+$$PSH_USECALLBACK  = 0x00000100
+$$PSH_HASHELP  = 0x00000200
+$$PSH_MODELESS  = 0x00000400
+$$PSH_RTLREADING  = 0x00000800
+$$PSH_WIZARDCONTEXTHELP  = 0x00001000
+
+$$PSH_WIZARD97  = 0x01000000
+$$PSH_WATERMARK  = 0x00008000
+$$PSH_USEHBMWATERMARK  = 0x00010000
+$$PSH_USEHPLWATERMARK  = 0x00020000
+$$PSH_STRETCHWATERMARK  = 0x00040000
+$$PSH_HEADER  = 0x00080000
+$$PSH_USEHBMHEADER  = 0x00100000
+$$PSH_USEPAGELANG  = 0x00200000
+
+$$PSH_WIZARD_LITE  = 0x00400000
+$$PSH_NOCONTEXTHELP  = 0x02000000
+
+$$PSP_DEFAULT  = 0x00000000
+$$PSP_DLGINDIRECT  = 0x00000001
+$$PSP_USEHICON  = 0x00000002
+$$PSP_USEICONID  = 0x00000004
+$$PSP_USETITLE  = 0x00000008
+$$PSP_RTLREADING  = 0x00000010
+
+$$PSP_HASHELP  = 0x00000020
+$$PSP_USEREFPARENT  = 0x00000040
+$$PSP_USECALLBACK  = 0x00000080
+$$PSP_PREMATURE  = 0x00000400
+
+$$PSP_HIDEHEADER  = 0x00000800
+$$PSP_USEHEADERTITLE  = 0x00001000
+$$PSP_USEHEADERSUBTITLE  = 0x00002000
+
+$$PSPCB_ADDREF  = 0
+$$PSPCB_RELEASE  = 1
+$$PSPCB_CREATE  = 2
+
+$$PSCB_INITIALIZED  = 1
+$$PSCB_PRECREATE  = 2
+
+$$PSN_FIRST  = -200 '(0U-200U)
+$$PSN_LAST  = -299 '(0U-299U)
+
+$$PSN_SETACTIVE  = -200 '(PSN_FIRST-0)
+$$PSN_KILLACTIVE  = -201 '(PSN_FIRST-1)
+$$PSN_APPLY  = -202 '(PSN_FIRST-2)
+$$PSN_RESET  = -203 '(PSN_FIRST-3)
+$$PSN_HELP  = -205 '(PSN_FIRST-5)
+$$PSN_WIZBACK  = -206 '(PSN_FIRST-6)
+$$PSN_WIZNEXT  = -207 '(PSN_FIRST-7)
+$$PSN_WIZFINISH  = -208 '(PSN_FIRST-8)
+$$PSN_QUERYCANCEL  = -209 '(PSN_FIRST-9)
+$$PSN_GETOBJECT  = -210 '(PSN_FIRST-10)
+$$PSN_TRANSLATEACCELERATOR  = -212 '(PSN_FIRST-12)
+$$PSN_QUERYINITIALFOCUS  = -213 '(PSN_FIRST-13)
+
+$$PSNRET_NOERROR  = 0
+$$PSNRET_INVALID  = 1
+$$PSNRET_INVALID_NOCHANGEPAGE  = 2
+$$PSNRET_MESSAGEHANDLED  = 3
+
+$$PSM_SETCURSEL  = 1125 '(WM_USER+101)
+$$PSM_REMOVEPAGE  = 1126 '(WM_USER+102)
+$$PSM_ADDPAGE  = 1127 '(WM_USER+103)
+$$PSM_CHANGED  = 1128 '(WM_USER+104)
+$$PSM_RESTARTWINDOWS  = 1129 '(WM_USER+105)
+$$PSM_REBOOTSYSTEM  = 1130 '(WM_USER+106)
+$$PSM_CANCELTOCLOSE  = 1131 '(WM_USER+107)
+$$PSM_QUERYSIBLINGS  = 1132 '(WM_USER+108)
+$$PSM_UNCHANGED  = 1133 '(WM_USER+109)
+$$PSM_APPLY  = 1134 '(WM_USER+110)
+$$PSM_SETTITLEA  = 1135 '(WM_USER+111)
+$$PSM_SETWIZBUTTONS  = 1136 '(WM_USER+112)
+$$PSM_PRESSBUTTON  = 1137 '(WM_USER+113)
+$$PSM_SETCURSELID  = 1138 '(WM_USER+114)
+$$PSM_SETFINISHTEXTA  = 1139 '(WM_USER+115)
+$$PSM_GETTABCONTROL  = 1140 '(WM_USER+116)
+$$PSM_ISDIALOGMESSAGE  = 1141 '(WM_USER+117)
+$$PSM_GETCURRENTPAGEHWND  = 1142 '(WM_USER+118)
+$$PSM_INSERTPAGE  = 1143 '(WM_USER+119)
+$$PSM_SETTITLEW  = 1144 '(WM_USER+120)
+$$PSM_SETFINISHTEXTW  = 1145 '(WM_USER+121)
+
+$$PSM_SETHEADERTITLEA  = 1149 '(WM_USER+125)
+$$PSM_SETHEADERTITLEW  = 1150 '(WM_USER+126)
+$$PSM_SETHEADERSUBTITLEA  = 1151 '(WM_USER+127)
+$$PSM_SETHEADERSUBTITLEW  = 1152 '(WM_USER+128)
+$$PSM_HWNDTOINDEX  = 1153 '(WM_USER+129)
+$$PSM_INDEXTOHWND  = 1154 '(WM_USER+130)
+$$PSM_PAGETOINDEX  = 1155 '(WM_USER+131)
+$$PSM_INDEXTOPAGE  = 1156 '(WM_USER+132)
+$$PSM_IDTOINDEX  = 1157 '(WM_USER+133)
+$$PSM_INDEXTOID  = 1158 '(WM_USER+134)
+$$PSM_GETRESULT  = 1159 '(WM_USER+135)
+$$PSM_RECALCPAGESIZES  = 1160 '(WM_USER+136)
+
+$$PSWIZB_BACK  = 0x00000001
+$$PSWIZB_NEXT  = 0x00000002
+$$PSWIZB_FINISH  = 0x00000004
+$$PSWIZB_DISABLEDFINISH = 0x00000008
+
+$$PSBTN_BACK  = 0
+$$PSBTN_NEXT  = 1
+$$PSBTN_FINISH  = 2
+$$PSBTN_OK  = 3
+$$PSBTN_APPLYNOW  = 4
+$$PSBTN_CANCEL  = 5
+$$PSBTN_HELP  = 6
+$$PSBTN_MAX  = 6
+
+$$ID_PSRESTARTWINDOWS  = 0x2
+$$ID_PSREBOOTSYSTEM  = 0x3   '(ID_PSRESTARTWINDOWS|0x1)
+
+$$WIZ_CXDLG  = 276
+$$WIZ_CYDLG  = 140
+$$WIZ_CXBMP  = 80
+$$WIZ_BODYX  = 92
+$$WIZ_BODYCX  = 184
+
+$$PROP_SM_CXDLG  = 212
+$$PROP_SM_CYDLG  = 188
+$$PROP_MED_CXDLG  = 227
+$$PROP_MED_CYDLG  = 215
+$$PROP_LG_CXDLG  = 252
+$$PROP_LG_CYDLG  = 218
+

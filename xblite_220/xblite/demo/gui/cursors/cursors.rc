@@ -1,0 +1,5 @@
+scrabble ICON    scrabble.ico
+hand0    CURSOR  hand0.cur
+hand1    CURSOR  hand1.cur
+hsplit   CURSOR  hsplit.cur
+vsplit   CURSOR  vsplit.cur

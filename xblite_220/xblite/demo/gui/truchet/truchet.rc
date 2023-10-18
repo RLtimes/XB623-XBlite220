@@ -1,0 +1,37 @@
+scrabble ICON    scrabble.ico
+
+menu MENU 
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "&Draw Truchet", 101
+		MENUITEM SEPARATOR
+		MENUITEM "&Save As BMP", 102
+		MENUITEM "E&xit",        103
+	END
+	POPUP "&Image Size"
+	BEGIN
+		MENUITEM "256x256",      130
+		MENUITEM "512x512",      131
+	END
+	POPUP "&Pen Size"
+	BEGIN
+		MENUITEM "&Random",      140
+		MENUITEM "&1",           141
+		MENUITEM "&2",           142
+		MENUITEM "&3",           143
+		MENUITEM "&4",           144
+		MENUITEM "&5",           145
+		MENUITEM "&6",           146
+		MENUITEM "&7",           147
+		MENUITEM "&8",           148
+		MENUITEM "&9",           149
+		MENUITEM "10",           150
+	END
+	POPUP "&Truchet Style"
+	BEGIN
+		MENUITEM "&Arc",         160
+		MENUITEM "&Triangle",    161
+	END
+END
+

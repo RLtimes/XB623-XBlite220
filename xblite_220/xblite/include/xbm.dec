@@ -1,0 +1,126 @@
+TYPE GIF_LOGICAL_SCREEN_DESCRIPTOR
+	UBYTE    .widthLSB
+	UBYTE    .widthMSB
+	UBYTE    .heightLSB
+	UBYTE    .heightMSB
+	UBYTE    .bitfields
+	UBYTE    .backgroundColorIndex
+	UBYTE    .pixelAspectRatio
+END TYPE
+'
+TYPE GifHeader' REQUIRED
+	STRING*3 .signature
+	STRING*3 .version
+END TYPE
+'
+TYPE GifLogicalScreenDescriptor' REQUIRED
+	UBYTE    .widthLSB
+	UBYTE    .widthMSB
+	UBYTE    .heightLSB
+	UBYTE    .heightMSB
+	UBYTE    .bitfields
+	UBYTE    .backgroundColorIndex
+	UBYTE    .pixelAspectRatio
+END TYPE
+'
+TYPE GifColorTableEntry' global/local color tables are optional
+	UBYTE    .r' red
+	UBYTE    .g' green
+	UBYTE    .b' blue
+END TYPE
+'
+TYPE GifDataBlockSize' required if image has any data blocks
+	UBYTE    .blockSize' 0x00 blockSize means end of data
+END TYPE
+'
+TYPE GifImageDescriptor' required for images
+	UBYTE    .imageSeparator
+	UBYTE    .imageLeftPositionLSB
+	UBYTE    .imageLeftPositionMSB
+	UBYTE    .imageTopPositionLSB
+	UBYTE    .imageTopPositionMSB
+	UBYTE    .imageWidthLSB
+	UBYTE    .imageWidthMSB
+	UBYTE    .imageHeightLSB
+	UBYTE    .imageHeightMSB
+	UBYTE    .bitfields
+END TYPE
+'
+TYPE GifTableBasedImageDataHeader' required before 1st image block
+	UBYTE    .minimumCodeSize
+END TYPE
+'
+TYPE GifGraphicControlExtension' OPTIONAL
+	UBYTE    .extensionIntroducer
+	UBYTE    .graphicControlLabel
+	UBYTE    .blockSize
+	UBYTE    .bitfields
+	UBYTE    .delayTimeLSB
+	UBYTE    .delayTimeMSB
+	UBYTE    .transparentColorIndex
+	UBYTE    .blockTerminator
+END TYPE
+'
+TYPE GifCommentExtensionHeader' OPTIONAL
+	UBYTE    .extensionIntroducer
+	UBYTE    .commentLabel
+END TYPE
+'
+TYPE GifPlainTextExtensionHeader' OPTIONAL
+	UBYTE    .extensionIntroducer
+	UBYTE    .plainTextLabel
+	UBYTE    .blockSize
+	UBYTE    .textGridLeftPositionLSB
+	UBYTE    .textGridLeftPositionMSB
+	UBYTE    .textGridWidthLSB
+	UBYTE    .textGridWidthMSB
+	UBYTE    .textGridHeightLSB
+	UBYTE    .textGridHeightMSB
+	UBYTE    .characterCellWidth
+	UBYTE    .characterCellHeight
+	UBYTE    .textForegroundColorIndex
+	UBYTE    .textBackgroundColorIndex
+END TYPE
+'
+TYPE GifApplicationExtensionHeader' OPTIONAL
+	UBYTE    .extensionIntroducer
+	UBYTE    .extensionLabel
+	UBYTE    .blockSize
+	UBYTE    .applicationIdentifier0
+	UBYTE    .applicationIdentifier1
+	UBYTE    .applicationIdentifier2
+	UBYTE    .applicationIdentifier3
+	UBYTE    .applicationIdentifier4
+	UBYTE    .applicationIdentifier5
+	UBYTE    .applicationIdentifier6
+	UBYTE    .applicationIdentifier7
+	UBYTE    .applicationAuthenticationCode0
+	UBYTE    .applicationAuthenticationCode1
+	UBYTE    .applicationAuthenticationCode2
+END TYPE
+'
+TYPE GifTrailer' REQUIRED
+	UBYTE    .gifTrailer
+END TYPE
+EXTERNAL FUNCTION  Xbm ()
+EXTERNAL FUNCTION  XbmLoadImage (fileName$, UBYTE image[])
+EXTERNAL FUNCTION  XbmSetImage (hImage, UBYTE image[])
+EXTERNAL FUNCTION  XbmSaveImage (fileName$, UBYTE image[])
+EXTERNAL FUNCTION  XbmDIBto24Bit (UBYTE image[])
+EXTERNAL FUNCTION  XbmCopyImage (hDest, hSrc)
+EXTERNAL FUNCTION  XbmGetImage (hImage, UBYTE image[])
+EXTERNAL FUNCTION  XbmGetImageArrayInfo (UBYTE image[], @bpp, @width, @height)
+EXTERNAL FUNCTION  XbmDrawImage (hDest, hSrc, sx1, sy1, sx2, sy2, dx1, dy1)
+EXTERNAL FUNCTION  XbmDrawImageEx (hDest, hSrc, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2, fRop, orient)
+EXTERNAL FUNCTION  XbmCreateMemBitmap (hWnd, w, h, @hMemBitmap)
+EXTERNAL FUNCTION  XbmDeleteMemBitmap (hMemBitmap)
+EXTERNAL FUNCTION  XbmGetImageType (hImage)
+EXTERNAL FUNCTION  XbmDrawMaskedImage (hDest, hSrc, sx1, sy1, sx2, sy2, dx1, dy1, hMask, mx1, mx2)
+EXTERNAL FUNCTION  XbmLoadBitmap (name$, UBYTE image[])
+EXTERNAL FUNCTION  XbmGetImageSize (hImage, @width, @height)
+EXTERNAL FUNCTION  XbmLoadGif (gifFile$, UBYTE image[])
+'
+'
+$$IMAGE_SCREEN = 1
+$$IMAGE_MEMORY = 2
+

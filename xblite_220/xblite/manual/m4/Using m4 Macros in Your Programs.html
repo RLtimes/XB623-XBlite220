@@ -1,0 +1,1345 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Programming Support Tools</title>
+</head>
+<body>
+<p></p>
+<p></p>
+<p></p>
+<h1>Using m4 Macros in Your Programs</h1>
+<p>
+This chapter describes the
+<tt>m4</tt>
+macro preprocessor, a front-end filter that lets you define macros
+by placing
+<tt>m4</tt>
+macro definitions at the beginning of your source files. You can use
+the
+<tt>m4</tt>
+preprocessor with either program source files or document source files.
+</p>
+<p></p>
+<p></p>
+<h2>&nbsp;
+Using Macros
+</h2>
+<p>
+Macros ease your programming or writing tasks by allowing you to
+substitute a simple word or two for a great amount of material.
+Macro calls in a source file have the following form:
+<a name="nx_id_498"></a></p>
+<p><font size="+1"><strong><tt><tt><var>name</var></tt> [ <tt>(</tt>
+<tt><var>arg1</var></tt> [ <tt><var>,arg2...</var></tt> ] <tt>)</tt>
+] </tt></strong></font></p>
+<p>For example, suppose you have a C program in which you want to print
+the same message at several points. You could code a series of
+<tt>printf</tt>
+statements like the following:
+<br>
+</p>
+<p></p>
+<pre>printf("\nThese %d files are in %s:\n\n",cnt,dir);<br></pre>
+<p>
+As your program evolves, you decide to change the wording; but you have
+to edit each instance of the message. Defining a macro like the
+following will save you a great deal of work:
+<br>
+</p>
+<p></p>
+<pre>define(filmsg,`printf("\nThese%d files are in %s:\n\n",$1,$2)')<br></pre>
+<p>
+Then, everywhere you want to output this message, you use the macro
+this way:
+<br>
+</p>
+<p></p>
+<pre>filmsg(cnt,dir);<br></pre>
+<p>
+With this implementation, you need only edit the message in one place.
+</p>
+<p>A
+<a name="nx_id_499"></a><strong>macro definition</strong>
+consists of a symbolic name (called a
+<strong>token</strong>)
+and the character string
+that is to replace it. A
+<a name="nx_id_500"></a>token is any string of alphanumeric characters
+(letters, numbers, and
+underscores) beginning with a letter or an underscore and delimited by
+nonalphanumeric characters (punctuation or white space). For example,
+<tt>N12</tt>
+and
+<tt>N</tt>
+are both tokens but
+<tt>A+B</tt>
+is not a token. When you process your file through
+<tt>m4</tt>,
+each occurrence of a recognized macro is replaced by its definition.
+In addition to replacing symbolic names with text,
+<tt>m4</tt>
+can also perform the following operations:
+<br>
+</p>
+<ul>
+  <p></p>
+  <li>Arithmetic calculation
+    <p></p>
+  </li>
+  <li>File manipulation
+    <p></p>
+  </li>
+  <li>Conditional macro expansion
+    <p></p>
+  </li>
+  <li>String and substring functions
+    <p></p>
+  </li>
+  <li>System command execution </li>
+</ul>
+<p></p>
+<p>The
+<tt>m4</tt>
+<a name="nx_id_501"></a>program reads each token in the file and
+determines if the token is a
+macro name. Macro names that are embedded in other tokens are not
+recognized; for example,
+<tt>m4</tt>
+does not interpret
+<tt>N12</tt>
+as containing an occurrence of the token
+<tt>N</tt>.
+If the token is a macro name,
+<tt>m4</tt>
+replaces it with its defining text and pushes the resulting string back
+onto the input to be rescanned.
+</p>
+<p><a name="nx_id_502"></a>
+<a name="nx_id_503"></a><a name="nx_id_504"></a>Macro expansion is thus
+recursive; macro definitions can include nested
+occurrences of other macros to any depth of nesting. You can call
+macros with arguments, in which case the arguments are collected and
+substituted into the right places in the defining text before the
+defining text is rescanned.
+</p>
+<p>The
+<tt>m4</tt>
+preprocessor is a standard UNIX filter. It accepts input from
+standard input or from a list of input files and writes its output to
+standard output. The following lines illustrate correct
+<tt>m4</tt>
+usage:
+<br>
+</p>
+<p><tt>
+%&nbsp;
+<strong>grep&nbsp;-v&nbsp;'#include'&nbsp;file1&nbsp;file2&nbsp;|&nbsp;m4&nbsp;&gt;&nbsp;outfile</strong>
+</tt><br>
+</p>
+<p><tt>
+%&nbsp;
+<strong>m4&nbsp;file1&nbsp;file2&nbsp;|&nbsp;cc</strong>
+</tt><br>
+</p>
+<p>The
+<tt>m4</tt>
+program processes each argument in order. If there are no arguments,
+or if an argument is a minus sign
+(<tt>-</tt>),
+<tt>m4</tt>
+reads standard input as its input file.
+<a name="m4_defining"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h2>&nbsp;
+Defining Macros
+</h2>
+<p>
+<a name="nx_id_505"></a><a name="nx_id_506"></a><a name="nx_id_507"></a>You
+create a macro definition with the
+<tt>define</tt>
+command, one of about 20 built-in macros provided by
+<tt>m4</tt>.
+For example:
+<br>
+</p>
+<p></p>
+<pre>define(N,100)<br></pre>
+<p>
+The open parenthesis must follow the word
+<tt>define</tt>
+with no intervening space.
+</p>
+<p>Given this macro definition, the token
+<tt>N</tt>
+will be replaced by
+<tt>100</tt>
+wherever it appears in the file being processed. The defining text can
+be any text, except that if the text contains parentheses, the number
+of open (left) parentheses must match the number of close (right)
+parentheses unless you protect an unmatched parenthesis by quoting it.
+See <a href="#m4_defining_quoting">Using the Quote Character</a>
+for an explanation of quoting.
+</p>
+<p>Built-in and user-defined macros work the same way except that some
+of
+the built-in macros change the state of the process. Refer to <a
+ href="#m4_macros">Table 1</a>
+for a list of the built-in macros.
+</p>
+<p>You can define macros in terms of other macros. For example:
+<br>
+</p>
+<p></p>
+<pre><a name="nx_id_508"></a>
+<a name="nx_id_509"></a>
+define(N,100)
+define(M,N)
+</pre>
+<p>
+This example defines both
+<tt>M</tt>
+and
+<tt>N</tt>
+to be
+<tt>100</tt>.
+If you later change the definition of
+<tt>N</tt>
+and assign it a new value,
+<tt>M</tt>
+retains the value of
+<tt>100</tt>,
+not the new value you give
+<tt>N</tt>.
+The value of
+<tt>M</tt>
+does not track that of
+<tt>N</tt>
+because the
+<tt>m4</tt>
+preprocessor expands macro names into their defining text as soon as
+possible. The overall result, as far as
+<tt>M</tt>
+is concerned, is the same as using the following input in the first
+place:
+<br>
+</p>
+<p></p>
+<pre>define(M,100)<br></pre>
+<p>
+If you want the value of
+<tt>M</tt>
+to track the value of
+<tt>N</tt>,
+you can reverse the order of the definitions, as follows:
+<br>
+<a name="nx_id_510"></a>
+<a name="nx_id_511"></a></p>
+<p></p>
+<pre>define(M,N)<br>define(N,100)<br></pre>
+<p>
+Now
+<tt>M</tt>
+is defined to be the string
+<tt>N</tt>.
+When the value of
+<tt>M</tt>
+is requested later, the
+<tt>M</tt>
+is replaced by
+<tt>N</tt>,
+which is then rescanned and replaced by whatever value
+<tt>N</tt>
+has at that time.
+</p>
+<p>Macro definitions made with the
+<tt>define</tt>
+command do not delete characters following the close parenthesis. For
+example:
+<br>
+</p>
+<p></p>
+<pre>Now is the time for all good persons.<br>define(N,100)<br>Testing N definition.<br></pre>
+<p>
+This example produces the following result:
+<br>
+</p>
+<p></p>
+<pre>Now is the time for all good persons.<br><br>&nbsp;<br>
+Testing 100 definition.
+</pre>
+<p>
+<a name="nx_id_512"></a><a name="nx_id_513"></a><a name="nx_id_514"></a><a
+ name="nx_id_515"></a>
+The blank line results from the presence of a newline character at the
+end of the line containing the
+<tt>define</tt>
+macro. The built-in
+<tt>dnl</tt>
+macro deletes all characters that follow it, up to and including the
+next newline character. Use this macro to delete empty lines. For
+example:
+<br>
+</p>
+<p></p>
+<pre>Now is the time for all good persons.<br>define(N,100)dnl<br>Testing N definition.<br></pre>
+<p>
+This example produces the following result:
+<br>
+</p>
+<p></p>
+<pre>Now is the time for all good persons.<br>Testing 100 definition.<br></pre>
+<p>
+<a name="m4_defining_quoting"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>&nbsp;
+Using the Quote Characters
+</h3>
+<p>
+<a name="nx_id_516"></a><a name="nx_id_517"></a>To delay the expansion
+of a
+<tt>define</tt>
+macro's arguments, enclose them in a matched pair of quote characters.
+The default quote characters are left and right
+single quotation marks
+(<tt>`</tt>
+and
+<tt>'</tt>),
+but you can use the built-in
+<tt>changequote</tt>
+<a name="nx_id_518"></a>macro to specify different characters. (See
+<a href="#m4_macros">Using Other m4 Macros</a>)
+Any text surrounded by quote characters is not expanded
+<a name="nx_id_519"></a>immediately, but the quote characters are
+removed. The value of a
+quoted string is the string with the quote characters removed.
+Consider the following example:
+<br>
+</p>
+<p></p>
+<pre>define(N,100)<br>define(M,`N')<br></pre>
+<p>
+The quote characters around the
+<tt>N</tt>
+are removed as the argument is being collected. The result of using
+quote characters is to define
+<tt>M</tt>
+as the string
+<tt>N</tt>,
+not
+<tt>100</tt>.
+This example makes the value of
+<tt>M</tt>
+track that of
+<tt>N</tt>,
+and it is thus another way to accomplish the effect of the following
+definitions, shown in <a href="#m4_defining">Defining Macros</a>:
+<br>
+</p>
+<p></p>
+<pre>define(M,N)<br>define(N,100)<br></pre>
+<p>
+The general rule is that
+<tt>m4</tt>
+always strips off one level of quote characters whenever it evaluates
+something. This is true even outside macros. For example, to make
+the word "define" appear in the output, enter the word in quote
+characters, as follows:
+<br>
+</p>
+<p></p>
+<pre>`define' = 1<br></pre>
+<p>
+Because of the way
+<tt>m4</tt>
+handles quoted strings, you must be careful about nesting macros.
+For example:
+<a name="nx_id_520"></a><a name="nx_id_521"></a><br>
+</p>
+<p></p>
+<pre>define(dog,canine)<br>define(cat,animal chased by `dog')<br>define(mouse,animal chased by cat)<br></pre>
+<p>
+When the definition of
+<tt>cat</tt>
+is processed,
+<tt>dog</tt>
+is not replaced with
+<tt>canine</tt>
+because it is quoted.
+But when
+<tt>mouse</tt>
+is processed, the definition of
+<tt>cat</tt>
+(<tt>animal chased by dog</tt>)
+is used; this time,
+<tt>dog</tt>
+is not quoted, and the definition of
+<tt>mouse</tt>
+becomes
+<tt>animal chased by animal chased by canine</tt>.
+</p>
+<p><a name="nx_id_522"></a>
+<a name="nx_id_523"></a><a name="nx_id_524"></a>When you redefine an
+existing macro, you must quote the first
+argument (the macro name), as follows:
+<br>
+</p>
+<p></p>
+<pre>define(N,100)<br><br>.<br>.<br>.<br>
+define(`N',200)
+</pre>
+<p>
+Without the quote characters, the second
+<tt>define</tt>
+macro sees
+<tt>N</tt>,
+recognizes it, and substitutes its value, producing the following
+result:
+<br>
+</p>
+<p></p>
+<pre>define(100,200)<br></pre>
+<p>
+The
+<tt>m4</tt>
+program ignores this statement because it can only define names, not
+numbers.
+<a name="m4_defining_args"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>&nbsp;
+Macro Arguments
+</h3>
+<p>
+<a name="nx_id_525"></a><a name="nx_id_526"></a>The simplest form of
+macro processing is replacing one string with
+another (fixed) string as illustrated in the previous sections.
+However, macros can also have arguments, so that you can use a given
+macro in different places with different results. To indicate where an
+argument is to be used within the replacement text for a macro (the
+second argument of its definition), use the symbol
+<a name="nx_id_527"></a><tt>$<var>n </var></tt>to indicate the
+<tt><var>n</var></tt>th
+argument. For example, the symbol
+<tt>$1</tt>
+refers to the first argument of a macro. When the macro is used,
+<tt>m4</tt>
+replaces the symbol with the value of the indicated argument. For
+example:
+<br>
+</p>
+<p></p>
+<pre>define(bump,$1=$1+1)<br><br>.<br>.<br>.<br>
+bump(x);
+</pre>
+<p>
+In this example,
+<tt>m4</tt>
+will replace the
+<tt>bump(x)</tt>
+statement with
+<tt>x=x+1</tt>.
+</p>
+<p><a name="nx_id_528"></a>
+<a name="nx_id_529"></a>A macro can have as many arguments as needed.
+However, you can access
+only nine arguments by using the
+<tt>$<var>n </var></tt>symbols
+(<tt>$1</tt>
+through
+<tt>$9</tt>).
+To access arguments past the ninth argument, use the
+<a name="nx_id_530"></a><tt>shift</tt>
+macro, which drops the first argument and reassigns the remaining
+arguments to the
+<tt>$<var>n </var></tt>symbols (second argument to
+<tt>$1</tt>,
+third to
+<tt>$2</tt>,
+and so on). Using the
+<tt>shift</tt>
+macro more than once allows access to all arguments used with the
+macro.
+</p>
+<p>The symbol
+<tt>$0</tt>
+<a name="nx_id_531"></a><a name="nx_id_532"></a>returns the name of the
+macro. Arguments that are not supplied are
+replaced by null strings, so that you can define a macro that
+concatenates its arguments as follows:
+<br>
+</p>
+<p></p>
+<pre>define(cat,$1$2$3$4$5$6$7$8$9)<br><br>.<br>.<br>.<br>
+cat(x,y,z)
+</pre>
+<p>
+This example replaces the
+<tt>cat(x,y,z)</tt>
+statement with
+<tt>xyz</tt>.
+Arguments
+<tt>$4</tt>
+through
+<tt>$9</tt>
+in this example are null because corresponding arguments were not
+provided.
+</p>
+<p>When scanning a macro, the
+<tt>m4</tt>
+<a name="nx_id_533"></a><a name="nx_id_534"></a>program discards
+leading unquoted blanks, tabs, or newline characters
+in arguments, but keeps all other white space. For example:
+<br>
+</p>
+<p></p>
+<pre>define(a,     "$1 $2$3")<br><br>.<br>.<br>.<br>
+a(b,
+c,
+d)
+</pre>
+<p>
+<br>
+This example expands the
+<tt>a</tt>
+macro to be
+"<tt>b cd</tt>".
+In the
+<tt>define</tt>
+macro, however, newline characters are meaningful. For example:
+<br>
+</p>
+<p></p>
+<pre>define(a,$1<br>$2$3)<br><br>.<br>.<br>.<br>
+a(b,c,d)
+</pre>
+<p>
+This latter example expands the
+<tt>a</tt>
+macro as follows:
+<br>
+</p>
+<p></p>
+<pre>b<br>cd<br></pre>
+<p>
+<a name="nx_id_535"></a><a name="nx_id_536"></a><a name="nx_id_537"></a>Macro
+arguments are separated by commas. Use
+parentheses to enclose
+arguments containing commas, so that the commas are not misinterpreted
+as ending the arguments containing them. For example, the following
+statement has only two arguments:
+<br>
+</p>
+<p></p>
+<pre>define(a, (b,c))<br></pre>
+<p>
+The first argument is
+<tt>a</tt>,
+and the second is
+<tt>(b,c)</tt>.
+To use a single parenthesis in an argument, enclose it in quote
+characters:
+<br>
+</p>
+<p></p>
+<pre>define(a,b`)'c)<br></pre>
+<p>
+In this example,
+<tt>b)c</tt>
+is the second argument.
+<a name="m4_macros"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h2>Using Other m4 Macros
+</h2>
+<p>
+The
+<tt>m4</tt>
+program provides a set of macros that are already defined (built-in
+macros).
+<a href="#m4_macros_table">Table 1</a>
+lists all of these macros and describes them briefly. The following
+sections further explain many of the macros and how to use them.
+<a name="m4_macros_table"></a></p>
+<h3>Table 1: Built-In m4 Macros
+</h3>
+<a name="nx_id_538"></a>
+<a name="nx_id_539"></a><a name="nx_id_540"></a><a name="nx_id_541"></a>
+<table border="4" cellpadding="4">
+  <tbody>
+    <tr>
+      <td align="left" valign="top"> <strong>Macro </strong></td>
+      <td align="left" valign="top"> <strong>Description </strong></td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>changecom(<var>l</var></tt><tt>,<var>r</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Changes the left and right comment
+characters to the characters
+represented by <tt><var>l</var></tt>
+and <tt><var>r</var></tt>.
+The two characters must be different. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>changequote(<var>l</var></tt><tt>,<var>r</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Changes the left and right quote
+characters to the characters
+represented by <tt><var>l</var></tt>
+and <tt><var>r</var></tt>.
+The two characters must be different. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>decr(<var>n</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Returns the value of <tt><var>n</var></tt>-1.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>define(<var>name</var></tt><tt>,<var>replacement</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Defines a new macro, named <tt>name</tt>,
+with a value of <tt><var>replacement</var></tt>. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>defn(<var>name</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Returns the quoted definition of <tt>name</tt>.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>divert(<var>n</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Changes the output stream to the
+temporary file number <tt><var>n</var></tt>. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>divnum</tt> </td>
+      <td align="left" valign="top">Returns the number of the currently
+active temporary file. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>dnl</tt> </td>
+      <td align="left" valign="top">Deletes text up to a newline
+character. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>dumpdef(<var>`name'</var></tt><tt>[,<var>`name'...</var></tt><tt>])</tt>
+      </td>
+      <td align="left" valign="top">Prints the names and current
+definitions of the named macros. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>errprint(<var>str</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Prints <tt><var>str</var></tt>
+to the standard error file. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>eval(<var>expr</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Evaluates <tt><var>expr</var></tt>
+as a 32-bit arithmetic expression. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>ifdef(<var>`name'</var></tt><tt>,<var>arg1</var></tt><tt>,<var>arg2</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">If macro <tt><var>name</var></tt>
+is defined, returns <tt><var>arg1</var></tt>;
+otherwise, returns <tt><var>arg2</var></tt>. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>ifelse(<var>str1</var></tt><tt>,<var>str2</var></tt><tt>,<var>arg1</var></tt><tt>,<var>arg2</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Compares the strings <tt>str1</tt>
+and <tt>str2</tt>.
+If they match, <tt>ifelse</tt>
+returns the value of <tt>arg1</tt>;
+otherwise, it returns the value of <tt>arg2</tt>. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>include(<var>file</var></tt><tt>)</tt>
+      <br>
+      <tt>sinclude(<var>file</var></tt><tt>)</tt> </td>
+      <td align="left" valign="top">Returns the contents of <tt><var>file</var></tt>.
+The <tt>sinclude</tt>
+macro does not report an error if it cannot access the file. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>incr(<var>n</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Returns the value of <tt><var>n</var></tt>+1.
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>index(<var>str1</var></tt><tt>,<var>str2</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Returns the character position in
+string <tt>str1</tt>
+where <tt>str2</tt>
+starts, or -1 if <tt>str1</tt>
+does not contain <tt>str2</tt>. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>len(<var>str</var></tt><tt>)</tt>
+      <br>
+      <tt>dlen(<var>str</var></tt><tt>)</tt> </td>
+      <td align="left" valign="top">Returns the number of characters in
+      <tt>str</tt>.
+The <tt>dlen</tt>
+macro operates on strings containing 2-byte representations of
+international characters. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>m4exit(<var>code</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Exits <tt>m4</tt>
+with a return code of <tt><var>code</var></tt>. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>m4wrap(<var>name</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Runs macro <tt>name</tt>
+before exiting, after completing all other processing. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>maketemp(<var>str</var></tt><tt>XXXXX<var>str</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Creates a unique file name by
+replacing the literal string <tt>XXXXX</tt>
+in the argument string with the current process ID. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>popdef(<var>name</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Replaces the current definition of <tt>name</tt>
+with the previous definition, saved with the <tt>pushdef</tt>
+macro. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>pushdef(<var>name</var></tt><tt>,<var>replacement</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Saves the current definition of <tt>name</tt>
+and then defines <tt>name</tt>
+to be <tt>replacement</tt>
+in the same way as <tt>define</tt>. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>shift(<var>param_list</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Shifts the parameter list leftward
+one position, destroying the
+original first element of the list. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>substr(<var>string</var></tt><tt>,<var>pos</var></tt><tt>,<var>len</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Returns the substring of <tt><var>string</var></tt>
+that begins at character position <tt><var>pos</var></tt>
+and is <tt><var>len</var></tt>
+characters long. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>syscmd(<var>command</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Executes the specified system
+command with no return value. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>sysval</tt> </td>
+      <td align="left" valign="top">Gets the return code from the last
+use of the <tt>syscmd</tt>
+macro. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>traceoff(<var>macro_list</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Turns off trace for any macro in
+the list. If <tt>macro_list</tt>
+is null, turns off all tracing. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>traceon(<var>name</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Turns on trace for the named macro.
+If <tt>name</tt>
+is null, turns trace on for all macros. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>translit(<var>string</var></tt><tt>,<var>set1</var></tt><tt>,<var>set2</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Replaces any characters from <tt><var>set1</var></tt>
+that appear in <tt><var>string</var></tt>
+with the corresponding characters from <tt><var>set2</var></tt>. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>undefine(<var>`name'</var></tt><tt>)</tt>
+      </td>
+      <td align="left" valign="top">Removes the definition of the named
+macro. </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>undivert(<var>n</var></tt><tt>,<var>n</var></tt><tt>[,<var>n...</var></tt><tt>])</tt>
+      </td>
+      <td align="left" valign="top">Appends the contents of the
+indicated temporary files to the current
+temporary file. </td>
+    </tr>
+  </tbody>
+</table>
+<p><a name="m4_macros_changecom"></a>
+</p>
+<p></p>
+<p></p>
+<p></p>
+<h3>&nbsp;
+Changing the Comment Characters
+</h3>
+<p>
+<a name="nx_id_542"></a><a name="nx_id_543"></a><a name="nx_id_544"></a>To
+include comments in your
+<tt>m4</tt>
+programs, delimit the comment lines with the comment characters. The
+default left comment character is the number sign
+(<tt>#</tt>);
+the default right comment character is the newline character. If these
+characters are not convenient, use the
+built-in
+<tt>changecom</tt>
+macro. For example:
+<br>
+</p>
+<p></p>
+<pre>changecom({,})<br></pre>
+<p>
+This example makes the left and right braces the new comment
+characters. To restore the original comment characters, use
+<tt>changecom</tt>
+as follows:
+<br>
+</p>
+<p></p>
+<pre>changecom(#,)<br></pre>
+<p>
+Using
+<tt>changecom</tt>
+with no arguments disables commenting.
+<a name="m4_macros_changequote"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>Changing the Quote Characters
+</h3>
+<p>
+<a name="nx_id_545"></a><a name="nx_id_546"></a><a name="nx_id_547"></a>The
+default quote characters are the left and
+right single quotation
+marks
+(<tt>`</tt>
+and
+<tt>'</tt>).
+If these characters are not convenient, change the quote characters
+with the built-in
+<tt>changequote</tt>
+macro. For example:
+<br>
+</p>
+<p></p>
+<pre>changequote([,])<br></pre>
+<p>
+This example makes the left and right brackets the new quote
+characters. To restore the original quote characters, use
+<tt>changequote</tt>
+without arguments, as follows:
+<br>
+</p>
+<p></p>
+<pre>changequote<br></pre>
+<p>
+<a name="m4_macros_undefine"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>Removing a Macro Definition
+</h3>
+<p>
+<a name="nx_id_548"></a><a name="nx_id_549"></a><a name="nx_id_550"></a><a
+ name="nx_id_551"></a>
+The
+<tt>undefine</tt>
+macro removes macro definitions. For example:
+<br>
+</p>
+<p></p>
+<pre>undefine(`N')<br></pre>
+<p>
+This example removes the definition of
+<tt>N</tt>.
+You must quote the name of the macro to be undefined. You
+can use
+<tt>undefine</tt>
+to remove built-in macros, but once you remove a built-in macro, you
+cannot recover that macro for later use.
+<a name="m4_macros_ifdef"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>&nbsp;
+Checking for a Defined Macro
+</h3>
+<p>
+<a name="nx_id_552"></a><a name="nx_id_553"></a><a name="nx_id_554"></a>The
+built-in
+<tt>ifdef</tt>
+macro determines if a macro is currently defined. The
+<tt>ifdef</tt>
+macro accepts three arguments. If the first argument is defined, the
+value of
+<tt>ifdef</tt>
+is the second argument. If the first argument is not defined, the
+value of
+<tt>ifdef</tt>
+is the third argument. If there is no third argument, the value of
+<tt>ifdef</tt>
+is null.
+<a name="m4_macros_math"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>Using Integer Arithmetic
+</h3>
+<p>
+<a name="nx_id_555"></a><a name="nx_id_556"></a><a name="nx_id_557"></a><a
+ name="nx_id_558"></a>
+The
+<tt>m4</tt>
+program provides the following built-in functions for doing arithmetic
+on integers only:
+<table border="4" cellpadding="4">
+  <tbody>
+    <tr>
+      <td align="left" valign="top"> <tt>incr </tt></td>
+      <td align="left" valign="top">Increments its numeric argument by
+1 </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>decr </tt></td>
+      <td align="left" valign="top">Decrements its numeric argument by
+1 </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top"> <tt>eval </tt></td>
+      <td align="left" valign="top">Evaluates an arithmetic expression </td>
+    </tr>
+  </tbody>
+</table>
+</p>
+<p><br>
+For example, you can create a variable
+<tt>N1</tt>
+such that its value will always be one greater than
+<tt>N</tt>,
+as follows:
+<br>
+</p>
+<p></p>
+<pre>define(N,100)<br>define(N1,`incr(N)')<br></pre>
+<p>
+</p>
+<p>The
+<tt>eval</tt>
+function can evaluate expressions containing the following operators
+(listed in decreasing order of precedence):
+</p>
+<ul>
+  <p></p>
+  <li>unary + (plus), unary - (minus)
+    <p></p>
+  </li>
+  <li><tt>**</tt>
+or <tt>^</tt>
+(exponentiation)
+    <p></p>
+  </li>
+  <li><tt>*</tt>, <tt>/</tt>, <tt>%</tt>
+(modulo)
+    <p></p>
+  </li>
+  <li><tt>+</tt>, <tt>-</tt>
+    <p></p>
+  </li>
+  <li><tt>==</tt>, <tt>!=</tt>, <tt>&lt;</tt>, <tt>&lt;=</tt>, <tt>&gt;</tt>,
+    <tt>&gt;=</tt>
+    <p></p>
+  </li>
+  <li><tt>!</tt>
+(NOT)
+    <p></p>
+  </li>
+  <li><tt>&amp;</tt>
+or <tt>&amp;&amp;</tt>
+(logical AND)
+    <p></p>
+  </li>
+  <li><tt>|</tt>
+or <tt>||</tt>
+(logical OR) </li>
+</ul>
+<p><a name="nx_id_559"></a>
+Use parentheses to group operations where needed. All operands of an
+expression must be numeric. The numeric value of a true relation such
+as
+<tt>1&gt;0</tt>
+is 1, and false is 0 (zero). The precision in
+<tt>eval</tt>
+is 32 bits. For example, to define
+<tt>M</tt>
+as
+<tt>2==N+1</tt>,
+use
+<tt>eval</tt>
+as follows:
+<br>
+</p>
+<p></p>
+<pre>define(N,3)<br>define(M,`eval(2==N+1)')<br></pre>
+<p>
+Use quote characters around the text that defines a macro, unless the
+text is simple and contains no instances of macro names.
+<a name="m4_macros_include"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>&nbsp;
+Manipulating Files
+</h3>
+<p>
+<a name="nx_id_560"></a><a name="nx_id_561"></a><a name="nx_id_562"></a>To
+merge a new file in the input, use the
+built-in
+<tt>include</tt>
+macro as follows:
+<br>
+</p>
+<p></p>
+<pre>include(myfile)<br></pre>
+<p>
+This example inserts the contents of
+<tt>myfile</tt>
+in place of the
+<tt>include</tt>
+command. As the included file is read,
+<tt>m4</tt>
+scans it for macros as if it were part of the primary input.
+</p>
+<p>With the
+<tt>include</tt>
+macro, a fatal error occurs if the named file cannot be accessed. To
+avoid an error, use the alternative form,
+<tt>sinclude</tt>
+(silent include). The
+<tt>sinclude</tt>
+macro continues without error if the named file cannot be accessed.
+<a name="m4_macros_divert"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>&nbsp;
+Redirecting Output
+</h3>
+<p>
+<a name="nx_id_563"></a><a name="nx_id_564"></a><a name="nx_id_565"></a><a
+ name="nx_id_566"></a>
+You can redirect the output of
+<tt>m4</tt>
+to temporary files during processing, and the collected material can be
+output upon command. The
+<tt>m4</tt>
+program can maintain up to nine temporary files, numbered 1 through 9.
+To
+redirect output, use the
+<a name="nx_id_567"></a><a name="nx_id_568"></a><tt>divert</tt>
+macro as in the following example:
+<br>
+</p>
+<p></p>
+<pre>divert(4)<br></pre>
+<p>
+When this comand is encountered,
+<tt>m4</tt>
+begins writing its output to the end of temporary file 4. The
+<tt>m4</tt>
+program discards the output if you redirect the output to a temporary
+file other than 1 through 9; you can use this feature to make
+<tt>m4</tt>
+omit a portion of the input file. Use
+<tt>divert(0)</tt>
+or
+<tt>divert</tt>
+with no argument to return the output to the standard output stream.
+</p>
+<p>At the end of its processing,
+<tt>m4</tt>
+writes all redirected output to the standard output stream, reading
+from the temporary files in numeric order and then destroying the
+temporary files.
+</p>
+<p>To retrieve the information from all temporary files in numeric
+order
+at any time before processing is completed, use the built-in
+<a name="nx_id_569"></a><a name="nx_id_570"></a><tt>undivert</tt>
+macro with no arguments. To retrieve selected temporary files in a
+specified order, use
+<tt>undivert</tt>
+with arguments. When using
+<tt>undivert</tt>,
+<tt>m4</tt>
+discards the temporary files that are recovered and does not search the
+recovered information for macros.
+</p>
+<p>The value of
+<tt>undivert</tt>
+is not the diverted text.
+</p>
+<p>The built-in
+<a name="nx_id_571"></a><a name="nx_id_572"></a><tt>divnum</tt>
+macro returns the number of the currently active temporary file. If
+you do not change the output file with the
+<tt>divert</tt>
+macro,
+<tt>m4</tt>
+puts all output in temporary file 0 (zero).
+<a name="m4_macros_syscmd"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>Using System Programs in a Program
+</h3>
+<p>
+<a name="nx_id_573"></a><a name="nx_id_574"></a>You can run any program
+in the operating system from a program by using
+the built-in
+<tt>syscmd</tt>
+macro. If the system command returns information, that information is
+the value of the
+<tt>syscmd</tt>
+macro; otherwise, the macro's value is null. For example:
+<br>
+</p>
+<p></p>
+<pre>syscmd(date)<br></pre>
+<p>
+<a name="m4_macros_maketemp"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>Using Unique File Names
+</h3>
+<p>
+<a name="nx_id_575"></a><a name="nx_id_576"></a><a name="nx_id_577"></a><a
+ name="nx_id_578"></a>
+Use the built-in
+<tt>maketemp</tt>
+macro to make a unique file name from a program. If the literal string
+<tt>XXXXX</tt>
+is present in the macro's argument,
+<tt>m4</tt>
+replaces the
+<tt>XXXXX</tt>
+with the process ID of the current process. For example:
+<br>
+</p>
+<p></p>
+<pre>maketemp(myfileXXXXX)<br></pre>
+<p>
+If the current process ID is 23498, this example returns
+<tt>myfile23498</tt>.
+You can use this string to name a temporary file.
+<br>
+<a name="m4_macros_ifelse"></a>
+</p>
+<p></p>
+<p></p>
+<p></p>
+<h3>&nbsp;
+Using Conditional Expressions
+</h3>
+<p>
+<a name="nx_id_579"></a><a name="nx_id_580"></a><a name="nx_id_581"></a><a
+ name="nx_id_582"></a>
+The built-in
+<tt>ifelse</tt>
+macro performs conditional testing. The simplest form is the following:
+<br>
+</p>
+<p></p>
+<pre>ifelse(a,b,c,d)<br></pre>
+<p>
+This example compares the two strings
+<tt>a</tt>
+and
+<tt>b</tt>.
+If they are identical,
+<tt>ifelse</tt>
+returns string
+<tt>c</tt>.
+If they are not identical, it returns string
+<tt>d</tt>.
+For example, you can define a macro called
+<tt>compare</tt>
+to compare two strings and return
+<tt>yes</tt>
+if they are the same or
+<tt>no</tt>
+if they are different, as follows:
+<br>
+</p>
+<p></p>
+<pre>define(compare, `ifelse($1,$2,yes,no)')<br></pre>
+<p>
+The quote characters prevent the evaluation of
+<tt>ifelse</tt>
+from occurring too early. If the fourth argument is missing, it is
+treated as empty.
+</p>
+<p>The
+<tt>ifelse</tt>
+macro can have any number of arguments, and it therefore provides a
+limited form of multiple path decision capability. For example:
+<br>
+</p>
+<p></p>
+<pre>ifelse(a,b,c,d,e,f,g)<br></pre>
+<p>
+This statement is logically the same as the following fragment:
+<br>
+</p>
+<p></p>
+<pre>if(a == b) x = c;<br>else if(d == e) x = f;<br>else  x = g;<br>return(x);<br></pre>
+<p>
+If the final argument is omitted, the result is null.
+<a name="m4_macros_strings"></a></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>&nbsp;
+Manipulating Strings
+</h3>
+<p>
+<a name="nx_id_583"></a><a name="nx_id_584"></a>The built-in
+<a name="nx_id_585"></a><a name="nx_id_586"></a><tt>len</tt>
+macro returns the byte length of the string that makes up its argument.
+For example,
+<tt>len(abcdef)</tt>
+is 6, and
+<tt>len((a,b))</tt>
+is 5.
+</p>
+<p>The built-in
+<a name="nx_id_587"></a><a name="nx_id_588"></a><tt>dlen</tt>
+macro returns the length of the displayable characters in a string.
+In certain international usages, 2-byte codes are displayed as one
+character. Thus, if the string contains any 2-byte international
+character codes, the result of
+<tt>dlen</tt>
+will differ from the result of
+<tt>len</tt>.
+</p>
+<p>The built-in
+<a name="nx_id_589"></a><a name="nx_id_590"></a><tt>substr</tt>
+macro returns the substring (beginning at the character position
+specified by the second argument) from a specified string
+(first argument). The third argument specifies the length in bytes of
+the returned substring. For example:
+<br>
+</p>
+<p></p>
+<pre>substr(Krazy Kat,6,5)<br></pre>
+<p>
+This example returns "Kat", which is the 3-character substring
+beginning at character position 6 of the string "Krazy&nbsp;Kat". The
+first character in the string is at position 0 (zero). If the
+third argument is omitted or if the string is not long enough to
+satisfy the third argument, as in this example, the rest of the string
+is returned.
+</p>
+<p>The built-in
+<a name="nx_id_591"></a><a name="nx_id_592"></a><tt>index</tt>
+macro returns the byte position, or index, in a string (first argument)
+where a substring (second argument) begins. If the substring is not
+present,
+<tt>index</tt>
+returns -1. As with
+<tt>substr</tt>,
+the origin for strings is 0 (zero). For example:
+<br>
+</p>
+<p></p>
+<pre>index(Krazy Kat,Kat)<br></pre>
+<p>
+This example returns 6.
+</p>
+<p>The built-in
+<a name="nx_id_593"></a><a name="nx_id_594"></a><tt>translit</tt>
+macro performs one-for-one character substitution, or transliteration.
+The first argument is a string to be processed. The second and third
+arguments are lists of characters. Each instance of a character from
+the second argument that is found in the string is replaced by the
+corresponding character from the third argument. For example:
+<br>
+</p>
+<p></p>
+<pre>translit(the quick brown fox jumps over the lazy dog,aeiou,AEIOU)<br></pre>
+<p>
+This example returns the following:
+<br>
+</p>
+<p></p>
+<pre>thE qUIck brOwn fOx jUmps OvEr thE lAzy dOg<br></pre>
+<p>
+If the third argument is shorter than the second argument, characters
+from the second argument that are not in the third argument are
+deleted. If the third argument is missing, all characters present in
+the second argument are deleted.
+</p>
+<blockquote>
+  <p align="center"><font size="+1"><strong>Note</strong></font></p>
+  <p>The <tt>substr</tt>, <tt>index</tt>,
+and <tt>translit</tt>
+macros do not differentiate between 1- and 2-byte displayable
+characters and can return unexpected results in some international
+usages. </p>
+</blockquote>
+<p><a name="m4_macros_print"></a>
+</p>
+<p></p>
+<p></p>
+<p></p>
+<h3>Printing
+</h3>
+<p>
+<a name="nx_id_595"></a><a name="nx_id_596"></a><a name="nx_id_597"></a>The
+built-in
+<tt>errprint</tt>
+macro writes its arguments to the standard error file. For example:
+<br>
+</p>
+<p></p>
+<pre>errprint (`error')<br></pre>
+<p>
+The built-in
+<a name="nx_id_598"></a><a name="nx_id_599"></a><tt>dumpdef</tt>
+macro dumps the current names and definitions of items named as
+arguments. Names must be quoted. If you supply no arguments,
+<tt>dumpdef</tt>
+prints all current names and definitions. The
+<tt>dumpdef</tt>
+macro writes to the standard error file.
+</p>
+</body>
+</html>

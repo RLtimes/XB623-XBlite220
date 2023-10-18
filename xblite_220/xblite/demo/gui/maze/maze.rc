@@ -1,0 +1,28 @@
+scrabble ICON    scrabble.ico
+
+menu MENU 
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "&Draw Maze",                 	101
+		MENUITEM "Sol&ve Maze",                 	104
+		MENUITEM SEPARATOR
+		MENUITEM "&Save As BMP",                 	102
+		MENUITEM SEPARATOR
+		MENUITEM "E&xit",                       	103
+	END
+	POPUP "Maze &Generator"
+	BEGIN
+		MENUITEM "A",               	118
+		MENUITEM "B",               	119
+		MENUITEM "C",               	120
+		MENUITEM "D",               	121
+
+	END
+POPUP "Maze &Size"
+	BEGIN
+		MENUITEM "256x256",               	130
+		MENUITEM "512x512",               	131
+	END
+END
+

@@ -1,0 +1,4 @@
+#include "winres.h"
+
+100      ICON    scrabble.ico
+scrabble ICON    scrabble.ico

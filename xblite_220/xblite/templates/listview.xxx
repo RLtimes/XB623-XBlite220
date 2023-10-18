@@ -1,0 +1,1 @@
+NewChild ($$WC_LISTVIEW, "", $$LVS_REPORT | $$WS_TABSTOP, x, y, w, h, hWnd, id, $$WS_EX_CLIENTEDGE)

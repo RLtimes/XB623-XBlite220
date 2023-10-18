@@ -1,0 +1,32 @@
+#include "winres.h"
+
+// the first entry in the string table will be
+// the name of the screensaver in the list on NT platforms
+1000 STRINGTABLE {1,"Colliding Balls"}
+1001 ICON    scrabble.ico
+
+// setup dialog
+100 DIALOG 114, 26, 184, 168
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Colliding Balls Setup"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Ok", 201, 120, 8, 56, 16
+    PUSHBUTTON      "Set Default", 207, 120, 30, 56, 16
+    PUSHBUTTON      "Cancel", 202, 120, 52, 56, 16
+    GROUPBOX        "Settings", 203, 6, 4, 106, 156
+    GROUPBOX        "Speed", 204, 12, 18, 92, 40
+    GROUPBOX        "Number of Balls", 205, 12, 64, 92, 40
+    GROUPBOX        "Radius", 206, 12, 112, 92, 40
+    CONTROL         "Slider1", 301, "msctls_trackbar32", TBS_HORZ | TBS_AUTOTICKS | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 18, 38,  80, 16 
+    CONTROL         "Slider2", 302, "msctls_trackbar32", TBS_HORZ | TBS_AUTOTICKS | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 18, 84,  80, 16 
+    CONTROL         "Slider3", 303, "msctls_trackbar32", TBS_HORZ | TBS_AUTOTICKS | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 18, 130, 80, 16 
+    CONTROL         "Fast", -1, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 18, 28, 20, 10 
+    CONTROL         "Slow", -1, STATIC, SS_RIGHT | WS_CHILD | WS_VISIBLE | WS_GROUP, 80, 28, 20, 10 
+    CONTROL         "10",   -1, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 18, 74, 20, 10 
+    CONTROL         "100",  -1, STATIC, SS_RIGHT | WS_CHILD | WS_VISIBLE | WS_GROUP, 80, 74, 20, 10 
+    CONTROL         "8",    -1, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 18, 120, 20, 10 
+    CONTROL         "32",   -1, STATIC, SS_RIGHT | WS_CHILD | WS_VISIBLE | WS_GROUP, 80, 120, 20, 10 
+    ICON            1001,208,140,130,172,162
+END
+

@@ -1,0 +1,16 @@
+OpenGL FrameWork.
+
+GLFW is a free, open source, portable framework for OpenGL application development. In short, it is a link library that constitutes a powerful API for handling operating system specific tasks, such as opening an OpenGL window and reading keyboard, mouse and joystick input. 
+
+It also provides functions for reading a high precision timer, querying OpenGL extensions, creating and synchronizing threads, reading textures from files and more... 
+
+GLFW is available for both Windows and Unix-like systems (running the X Window System), such as Linux, FreeBSD, Solaris, IRIX etc. 
+
+by Marcus Geelnard
+marcus.geelnard@home.se 
+http://hem.passagen.se/opengl/glfw/
+
+XBasic/XBLite header and example files ported by Michael McElligott
+Mapei_@hotmail.com
+
+5/11/2002

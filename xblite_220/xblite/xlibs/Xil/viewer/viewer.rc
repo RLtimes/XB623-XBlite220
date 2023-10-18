@@ -1,0 +1,98 @@
+scrabble ICON    scrabble.ico
+
+menu MENU 
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "&Open...\tCtrl+O",      101
+		MENUITEM "&Close\tCtrl+W"         102
+		MENUITEM "&Save\tCtrl+S",         103
+		MENUITEM "Save &As...",           104
+		MENUITEM SEPARATOR
+		MENUITEM "&Load Original",        105
+		MENUITEM SEPARATOR
+		MENUITEM "E&xit",                 106
+	END
+	POPUP "&Action"
+	BEGIN
+		MENUITEM "Rotate &45",            120
+		MENUITEM "Rotate &90",						121
+		MENUITEM "Rotate &180",           122
+		MENUITEM "Rotate &270",           123
+		MENUITEM SEPARATOR
+		MENUITEM "&Mirror",          		  124
+		MENUITEM "&Flip",				      		125
+		MENUITEM SEPARATOR
+		MENUITEM "&Crop",               	126
+		MENUITEM "&Resize",           		127
+		MENUITEM "Resize &Proportional",  128
+		MENUITEM "Resize BiCubic",        133
+		MENUITEM "Resize&BiQuad",					131
+		MENUITEM "Resi&ze Canvas",        129
+		MENUITEM "Thumbnail", 						132
+		MENUITEM SEPARATOR
+		MENUITEM "&Tile",          				130
+		MENUITEM SEPARATOR
+		MENUITEM "&Load Original",        105
+	END
+	POPUP "&Filter"
+	BEGIN
+		MENUITEM "In&vert",               140
+		MENUITEM "&Mask",									141
+		MENUITEM "&Icon",               	142
+		MENUITEM "&Lighten",              143
+		MENUITEM "&Fade",          		    144
+		MENUITEM "&Noise",								145
+		MENUITEM SEPARATOR		
+		MENUITEM "&Blur",               	146
+		MENUITEM "Blu&rMore",           	147
+		MENUITEM "&Soften",           		148
+		MENUITEM "Sof&tenMore",          	149
+		MENUITEM "GaussianBlur",					154
+		MENUITEM "SmoothKuwahara", 				182
+		MENUITEM SEPARATOR
+		MENUITEM "Shar&pen",          		150
+		MENUITEM "Sh&arpenMore",          151
+		MENUITEM SEPARATOR
+		MENUITEM "&Emboss",          			152
+		MENUITEM "&QuickEmboss",          153
+		MENUITEM "&Gamma",          			155
+		MENUITEM "&Contrast",          		156
+		MENUITEM "&Normalize",          	157
+		MENUITEM "&HistogramEqualize",    158
+		MENUITEM SEPARATOR
+		MENUITEM "DetectEdgeSobel",       161
+		MENUITEM "DetectEdgeLaplace",     162	
+		MENUITEM "DetectEdgeCanny",       163	
+		MENUITEM "DetectEdgeZeroCrossing",165
+		MENUITEM SEPARATOR
+		MENUITEM "Erode", 								159
+		MENUITEM "Dilate", 								160
+		MENUITEM SEPARATOR
+		MENUITEM "&Load Original",        105
+	END
+	POPUP "&Color"
+	BEGIN
+		MENUITEM "GrayScale&1",            170
+		MENUITEM "GrayScale&2",				     171
+		MENUITEM "GrayScale&3",				     172
+		MENUITEM SEPARATOR
+		MENUITEM "&Colorize",              173
+		MENUITEM SEPARATOR
+		MENUITEM "Dither Floyd-Steinberg", 174
+		MENUITEM "Dither 8x8",             175
+		MENUITEM "Dither Bayer 8x8",       179
+		MENUITEM "Dither Ulichney",        180	
+		MENUITEM "Dither Efficient E-D",   181	
+		MENUITEM SEPARATOR
+		MENUITEM "Halftone Palette &Fast", 176
+		MENUITEM "&Halftone Palette Best", 177
+		MENUITEM "&Websafe Palette",       178
+		MENUITEM SEPARATOR
+		MENUITEM "&Load Original",         105
+	END
+	POPUP "&Help"
+	BEGIN
+		MENUITEM "&About",         		   	 200
+	END
+END

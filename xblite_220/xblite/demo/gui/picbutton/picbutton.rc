@@ -1,0 +1,24 @@
+#include "winres.h"
+
+scrabble ICON    scrabble.ico
+
+100 DIALOG 29, 69, 264, 70
+STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Picture Button Test Program"
+FONT 10, "MS Sans Serif"
+BEGIN
+ CONTROL "NONEXISTENT", 101, "PICTUREBUTTON", 2 | WS_CHILD | WS_VISIBLE | WS_TABSTOP,         18, 12,  60, 36
+ CONTROL "",            106, "static",        WS_CHILD | WS_VISIBLE | WS_BORDER | SS_LEFT,    12, 54,  96, 10
+ CONTROL "CHECKMARK",   102, "PICTUREBUTTON", 2 | WS_CHILD | WS_VISIBLE | WS_TABSTOP,         90, 21,  27, 21
+ CONTROL "CHECKMARK",   103, "PICTUREBUTTON", 0 | WS_CHILD | WS_VISIBLE,                     132, 15,  20, 32
+ CONTROL "SAFE",        104, "PICTUREBUTTON", 2 | WS_CHILD | WS_VISIBLE | WS_TABSTOP,        165, 18,  33, 27
+ CONTROL "SAFE",        105, "PICTUREBUTTON", 2 | WS_CHILD | WS_VISIBLE | WS_TABSTOP,        210, 12,  42, 36
+ CONTROL "",            107, "static",        WS_CHILD | WS_VISIBLE | WS_BORDER | SS_CENTER, 116, 54, 138, 10
+END
+
+CHECKMARK  BITMAP  "checkmark.bmp"
+CHECKMARKX BITMAP  "checkmarkx.bmp"
+SAFEX      BITMAP  "safex.bmp"
+SAFE       BITMAP  "safe.bmp"
+
+ 

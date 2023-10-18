@@ -1,0 +1,130 @@
+/*							ieee.c
+ *
+ *    Extended precision IEEE binary floating point arithmetic routines
+ *
+ * Numbers are stored in C language as arrays of 16-bit unsigned
+ * short integers.  The arguments of the routines are pointers to
+ * the arrays.
+ *
+ *
+ * External e type data structure, simulates Intel 8087 chip
+ * temporary real format but possibly with a larger significand:
+ *
+ *	NE-1 significand words	(least significant word first,
+ *				 most significant bit is normally set)
+ *	exponent		(value = EXONE for 1.0,
+ *				top bit is the sign)
+ *
+ *
+ * Internal data structure of a number (a "word" is 16 bits):
+ *
+ * ei[0]	sign word	(0 for positive, 0xffff for negative)
+ * ei[1]	biased exponent	(value = EXONE for the number 1.0)
+ * ei[2]	high guard word	(always zero after normalization)
+ * ei[3]
+ * to ei[NI-2]	significand	(NI-4 significand words,
+ *				 most significant word first,
+ *				 most significant bit is set)
+ * ei[NI-1]	low guard word	(0x8000 bit is rounding place)
+ *
+ *
+ *
+ *		Routines for external format numbers
+ *
+ *	asctoe( string, e )	ASCII string to extended double e type
+ *	asctoe64( string, &d )	ASCII string to long double
+ *	asctoe53( string, &d )	ASCII string to double
+ *	asctoe24( string, &f )	ASCII string to single
+ *	asctoeg( string, e, prec ) ASCII string to specified precision
+ *	e24toe( &f, e )		IEEE single precision to e type
+ *	e53toe( &d, e )		IEEE double precision to e type
+ *	e64toe( &d, e )		IEEE long double precision to e type
+ *	eabs(e)			absolute value
+ *	eadd( a, b, c )		c = b + a
+ *	eclear(e)		e = 0
+ *	ecmp (a, b)		Returns 1 if a > b, 0 if a == b,
+ *				-1 if a < b, -2 if either a or b is a NaN.
+ *	ediv( a, b, c )		c = b / a
+ *	efloor( a, b )		truncate to integer, toward -infinity
+ *	efrexp( a, exp, s )	extract exponent and significand
+ *	eifrac( e, &l, frac )   e to long integer and e type fraction
+ *	euifrac( e, &l, frac )  e to unsigned long integer and e type fraction
+ *	einfin( e )		set e to infinity, leaving its sign alone
+ *	eldexp( a, n, b )	multiply by 2**n
+ *	emov( a, b )		b = a
+ *	emul( a, b, c )		c = b * a
+ *	eneg(e)			e = -e
+ *	eround( a, b )		b = nearest integer value to a
+ *	esub( a, b, c )		c = b - a
+ *	e24toasc( &f, str, n )	single to ASCII string, n digits after decimal
+ *	e53toasc( &d, str, n )	double to ASCII string, n digits after decimal
+ *	e64toasc( &d, str, n )	long double to ASCII string
+ *	etoasc( e, str, n )	e to ASCII string, n digits after decimal
+ *	etoe24( e, &f )		convert e type to IEEE single precision
+ *	etoe53( e, &d )		convert e type to IEEE double precision
+ *	etoe64( e, &d )		convert e type to IEEE long double precision
+ *	ltoe( &l, e )		long (32 bit) integer to e type
+ *	ultoe( &l, e )		unsigned long (32 bit) integer to e type
+ *      eisneg( e )             1 if sign bit of e != 0, else 0
+ *      eisinf( e )             1 if e has maximum exponent (non-IEEE)
+ *				or is infinite (IEEE)
+ *      eisnan( e )             1 if e is a NaN
+ *	esqrt( a, b )		b = square root of a
+ *
+ *
+ *		Routines for internal format numbers
+ *
+ *	eaddm( ai, bi )		add significands, bi = bi + ai
+ *	ecleaz(ei)		ei = 0
+ *	ecleazs(ei)		set ei = 0 but leave its sign alone
+ *	ecmpm( ai, bi )		compare significands, return 1, 0, or -1
+ *	edivm( ai, bi )		divide  significands, bi = bi / ai
+ *	emdnorm(ai,l,s,exp)	normalize and round off
+ *	emovi( a, ai )		convert external a to internal ai
+ *	emovo( ai, a )		convert internal ai to external a
+ *	emovz( ai, bi )		bi = ai, low guard word of bi = 0
+ *	emulm( ai, bi )		multiply significands, bi = bi * ai
+ *	enormlz(ei)		left-justify the significand
+ *	eshdn1( ai )		shift significand and guards down 1 bit
+ *	eshdn8( ai )		shift down 8 bits
+ *	eshdn6( ai )		shift down 16 bits
+ *	eshift( ai, n )		shift ai n bits up (or down if n < 0)
+ *	eshup1( ai )		shift significand and guards up 1 bit
+ *	eshup8( ai )		shift up 8 bits
+ *	eshup6( ai )		shift up 16 bits
+ *	esubm( ai, bi )		subtract significands, bi = bi - ai
+ *
+ *
+ * The result is always normalized and rounded to NI-4 word precision
+ * after each arithmetic operation.
+ *
+ * Exception flags are NOT fully supported.
+ *
+ * Define INFINITY in mconf.h for support of infinity; otherwise a
+ * saturation arithmetic is implemented.
+ *
+ * Define NANS for support of Not-a-Number items; otherwise the
+ * arithmetic will never produce a NaN output, and might be confused
+ * by a NaN input.
+ * If NaN's are supported, the output of ecmp(a,b) is -2 if
+ * either a or b is a NaN. This means asking if(ecmp(a,b) < 0)
+ * may not be legitimate. Use if(ecmp(a,b) == -1) for less-than
+ * if in doubt.
+ * Signaling NaN's are NOT supported; they are treated the same
+ * as quiet NaN's.
+ *
+ * Denormals are always supported here where appropriate (e.g., not
+ * for conversion to DEC numbers).
+ */
+
+/*
+ * Revision history:
+ *
+ *  5 Jan 84	PDP-11 assembly language version
+ *  2 Mar 86	fixed bug in asctoq()
+ *  6 Dec 86	C language version
+ * 30 Aug 88	100 digit version, improved rounding
+ * 15 May 92    80-bit long double support
+ *
+ * Author:  S. L. Moshier.
+ */

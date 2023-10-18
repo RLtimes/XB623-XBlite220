@@ -1,0 +1,930 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Using the m4 Macro Processor</title>
+  <meta name="keywords"
+ content="linux network server operating systems unix network operating systems network-server operating systems operating systems computers and peripherals debian server os mandrake kondara linux caldera corel server linux red hat server os suse server os turbolinux server os slackware linux vr server os dragon linux server os easy linux server operating system unix desktop workstation operating systems irix posix standard server os x window system compaq tru digital unix aix network operating system freebsd network operating systems sco unixware server os sun solaris server os unix shells desktop linux unix desktop operating systems redhat desktop os kondara linux desktop caldera desktop os corel desktop os debian desktop os suse desktop os turbolinux desktop os mandrake desktop os slackware desktop os linux vr desktop os dragon linux desktop os easy linux desktop linux operating systems open source open source in the">
+  <meta name="description"
+ content="Chief among the the unsung heroes of Linux and Unix is m4. Unsung?  Well, for
+instance, although m4 has been a standard part of Unix since version 7,
+no mention is made of it in that great O'Reilly &amp; Associates book, Unix
+Power Tools.">
+  <link rel="stylesheet" type="text/css" href="itw_main.css"
+ title="default">
+</head>
+<body topmargin="0" leftmargin="0" bgcolor="#ffffff" marginheight="0"
+ marginwidth="0">
+<table border="0" bordercolor="#000000" cellpadding="0" cellspacing="0"
+ width="785">
+  <tbody>
+    <tr>
+      <td><!--end header--><!--This is the Title bar--><!--bar end--><!--MAIN SECTION BEGIN-->
+      <table border="0" bordercolor="yellow" cellpadding="0"
+ cellspacing="0" width="100%">
+        <tbody>
+          <tr width="100%">
+            <td colspan="3" bgcolor="#ffffff" valign="top"><!--Submain section-->
+            <table align="center" border="0" bordercolor="black"
+ cellpadding="0" cellspacing="0" width="100%">
+              <tbody>
+                <tr>
+                  <td valign="top"><!--left column-->
+                  <table align="center" border="0" bordercolor="green"
+ cellpadding="0" cellspacing="0" width="100%">
+                    <tbody>
+                      <tr valign="top">
+                        <td colspan="2" align="left" bgcolor="#ffffff">
+                        <table align="center" border="0"
+ bordercolor="blue" cellpadding="5" cellspacing="1" width="100%">
+<!--Featured Column-->
+<!--Featured Webcast--> <tbody>
+                            <tr>
+                              <td colspan="2" align="left"
+ bgcolor="#ffffff">
+                              <table border="0" bordercolor="pink"
+ cellpadding="3" cellspacing="0" width="100%">
+                                <tbody>
+                                  <tr>
+                                    <td height="100%" valign="top"><!--Headline--> <img
+ src="spacer.gif" height="1" width="5"></td>
+                                    <td><font
+ face="verdana, arial, geneva, sans-serif" size="3"><strong>
+                                    <h1>Using the m4 Macro Processor</h1>
+                                    </strong></font> <font
+ face="verdana, arial, geneva, sans-serif" size="-2"> LinuxWorld.com
+4/25/00</font><br>
+                                    <br>
+<!-- Deck : deck.pt ------------------------------------------------->
+<!-------------------------------------------------------------------><font
+ face="verdana, arial, geneva, sans-serif" size="-2"><strong>
+<!-- Author : ------------------------------------------------------->Paul
+Dunne, <i>LinuxWorld.com</i>
+<!-------------------------------------------------------------------></strong></font>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1"><!-- Body ----------------------------------------------------------->
+                                    </font>
+                                    <div class="articletxt">
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">Chief among the
+the unsung heroes of Linux and Unix is m4. Unsung? Well, for
+instance, although m4 has been a standard part of Unix since version 7,
+no mention is made of it in that great O'Reilly &amp; Associates book, <em>Unix
+Power Tools.</em> What is it
+about m4 that makes it so useful, and yet so overlooked? m4 -- a macro
+processor -- unfortunately has a dry name that disguises a great
+utility. A
+macro processor is basically a program that scans text and looks for
+defined symbols, which it replaces with other text or other symbols.
+Thus, m4 is a powerful general-purpose utility that can be used to
+automate many tasks people often end up doing in <code><font
+ face="Courier">sed</font></code>,
+                                    <code><font face="Courier">awk</font></code>,
+                                    <code><font face="Courier">perl</font></code>,
+and
+even their favorite text editor. Even so, it still doesn't seem like a
+macro
+processor is that big of a deal.
+Unix developers already have a built-in macro processor, in the form
+of the C preprocessor, in their compiler. Perhaps this is
+what accounts for m4's relative neglect. Whatever the case may be, this
+article
+will show Linux users the power and usefulness of this software tool.
+                                    </font></p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>What is m4?</strong></font>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">What is macro
+processing, and what is it good for? In their seminal work,
+                                    <em>Software Tools,</em> Kernighan
+and Plauger have a succinct
+definition:
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><em>"Macros are
+used to extend some underlying language -- to perform a
+translation from one language to another."</em>
+                                    </font></p>
+<!-- Sidebar.pt ----------------------------------------------------->
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">Thus, symbolic
+constants may be defined so that subsequent occurrences
+of the name can be replaced by the defining string of characters,
+regardless of the contents of the definition or its context. Such a
+definition is called a macro, the replacement process is called
+macro expansion, and the program for the process is called a macro
+processor. The task performed by any macro processor is
+the replacement of text by other text. A macro is defined either by
+the m4 program (a built-in) or by the user. In addition to doing macro
+expansion, m4 -- with functions that include other files, perform
+integer
+arithmetic, manipulate text, and so forth -- is a perfect example of
+the
+power
+of the Unix filter concept.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">The contemporary
+implementation of m4 on a Linux system is GNU
+m4, which follows System V Release 3 m4, with extensions. I am
+aware of no other version of m4 that has been ported to Linux.
+m4 implementations on BSD may differ slightly. However, m4 is m4, and
+this
+article should be useful for other Unix users, too. The latest version
+is
+1.4, which was released in October 1994.
+                                    </font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>The
+scanning process</strong></font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1">As m4 reads its
+input, it separates it into tokens. A token is
+either a previously defined name, a string, or any single character
+that is not a part of either a name or string. The input is then
+scanned for recognized macros. This scanning process is recursive,
+which
+means
+that scanning continues until no more macros are recognized. The
+transformed
+input is written to the output. Macros can be built in or user-defined.
+A
+list of built-in macros follows later in the article.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Defining
+macros</strong></font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1">The most important
+of the built-in macros is <code><font face="Courier">define()</font></code>,
+which
+allows users to define their own macros. For example, <code><font
+ face="Courier">define(author,
+Paul Dunne)</font></code> defines a macro "author" -- any occurrence of
+which will
+expand to the string "Paul Dunne". m4 expands macro names into
+their defining text as soon as it possibly can.
+                                    </font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Quoting</strong></font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1">The m4 quote
+characters are <code><font face="Courier">`</font></code> and <code><font
+ face="Courier">'</font></code>. For example,
+                                    <code><font face="Courier">`this is
+quoted'.</font></code> It is often best to quote both macro name and
+substitution text in a definition. This avoids any unwanted side
+effects,
+such as an early expansion of another macro name. m4 uses commas as
+argument
+separators; therefore, any definition that includes commas must be
+quoted.
+                                    </font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Arguments</strong></font></p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1">As mentioned
+earlier, arguments to macros are delimited by commas. They are
+also, as we've seen, enclosed in parentheses. A macro can also be
+called with no arguments. This is common when we simply wish to
+replace one string with another, as in the "author" example above.
+                                    </font>
+                                    <p></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Built-in
+functions</strong></font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1">m4 provides a
+small set of useful built-in functions. We may group
+them under the following headings:
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Flow
+control functions</strong>
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">m4 provides the
+classic "if-then" programming construct, in two
+related forms.
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">ifdef(a,b)</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">defines b if a is
+defined, and
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">ifelse(a,b,c,d)</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">compares the
+strings a and b. If they match, string c is returned
+as the function value; if not, string d. Actually, <code><font
+ face="Courier">ifelse</font></code> is
+not
+limited to four arguments; it can take any greater number, and it thus
+provides a limited multiway decision-making capability. For example,
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">ifelse(a,b,c,d,e,f,g)</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">means that if a
+matches b, then c; else if d matches e, then f; else g.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Arithmetic
+functions</strong>
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">There are three
+arithmetic built-ins.
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">incr</font></font></code><font
+ face="verdana, arial, geneva, sans-serif" size="-1">, which increments
+its numeric argument by one.
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">decr</font></font></code><font
+ face="verdana, arial, geneva, sans-serif" size="-1">, which decrements
+its numeric argument by one.
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">eval</font></font></code><font
+ face="verdana, arial, geneva, sans-serif" size="-1">, which performs
+arbitrary integer arithmetic. </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">Its operators are:
+                                    </font></p>
+                                    <p></p>
+                                    <center>
+                                    <table border="0" width="100%">
+                                      <tbody>
+                                        <tr valign="top">
+                                          <td nowrap="nowrap"><code><font
+ face="Courier">unary + and -</font></code></td>
+                                          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                          <td>&nbsp;</td>
+                                        </tr>
+                                        <tr valign="top">
+                                          <td nowrap="nowrap"><code><font
+ face="Courier">** or ^</font></code></td>
+                                          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                          <td>exponentiation</td>
+                                        </tr>
+                                        <tr valign="top">
+                                          <td nowrap="nowrap"><code><font
+ face="Courier">+ -</font></code></td>
+                                          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                          <td>&nbsp;</td>
+                                        </tr>
+                                        <tr valign="top">
+                                          <td nowrap="nowrap"><code><font
+ face="Courier">== != &lt; &lt;= &gt; &gt;=</font></code></td>
+                                          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                          <td>equal, not equal, less
+than, less than or equal to, greater than, greater than or equal to</td>
+                                        </tr>
+                                        <tr valign="top">
+                                          <td nowrap="nowrap"><code><font
+ face="Courier">!</font></code></td>
+                                          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                          <td>not</td>
+                                        </tr>
+                                        <tr valign="top">
+                                          <td nowrap="nowrap"><code><font
+ face="Courier">&amp; or &amp;&amp;</font></code></td>
+                                          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                          <td>logical and</td>
+                                        </tr>
+                                        <tr valign="top">
+                                          <td nowrap="nowrap"><code><font
+ face="Courier">| or ||</font></code></td>
+                                          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                          <td>logical or</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                    </center>
+                                    <p></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>String
+functions</strong>
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">There are two
+functions for simple operations on strings of characters.
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">len(a)</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">returns the length
+of the string "a".
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">substr(s, m, n)</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">returns a
+substring from the string "s", starting at position m,
+and continuing for n characters.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">As a more
+complicated example than those we've had so far, consider
+this combination of <code><font face="Courier">ifelse</font></code>, <code><font
+ face="Courier">eval</font></code>, and
+                                    <code><font face="Courier">substr</font></code>.
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">define(len,`ifelse($1,,0,`eval(1+len(substr($1,2)))')')</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">Well now, what
+does this do? It is an implementation of the m4
+built-in <code><font face="Courier">len</font></code> in terms of
+other m4 built-ins! Note the two
+layers
+of quotes. The outer layer prevents all initial evaluation. We want
+                                    <code><font face="Courier">len</font></code>
+defined as exactly what's in the second argument. The inner
+layer protects the <code><font face="Courier">eval</font></code>
+built-in from being evaluated while the
+arguments for the <code><font face="Courier">ifelse</font></code> are
+collected.
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">translit(s, f, t)</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">returns the string
+"s" with all occurrences of the characters
+listed in "f" replaced by those listed in "t". It functions
+as a simpler version of the Linux command <code><font face="Courier">`tr'</font></code>.
+For example,
+                                    <code><font face="Courier">translit(s,abcdefghijklmnopqrstuvwxyz,
+nopqrstuvwxyzabcdefghijklm)</font></code> is the well-known rot-13, or
+Caesar.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>File
+functions</strong>
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">File functions, as
+the name suggests, are used for working with files.
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">include(filename)</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">includes the
+contents of "filename" at the point in the input
+stream at which it occurs. This is useful if we have a central
+collection
+of standard m4 macros, which we can then use in another file by simply
+creating an appropriate include macro.
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">divert(n)</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">This is used to
+divert text from the input stream to an internal
+file number. File number -1 is equivalent to discarding the text,
+file number 0 is the normal output stream, and files are usually
+used for temporary storage. For example,
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">divert(-1)</font></font></code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"> is most commonly
+used to get rid of the extraneous
+white space that is often generated by m4. For example,
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">
+divert(-1)<br>
+...<br>
+definitions<br>
+...<br>
+divert<br>
+                                    </font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">ensures that no
+output is performed while the various definitions
+between the ellipses are performed (the ellipses are not part of
+m4 syntax). Otherwise, we would end up with a pack of newlines in our
+output.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong><code><font
+ face="Courier">dnl</font></code></strong>
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">It's hard to
+categorize this one, so I've put it here. dnl is "delete
+to newline." It was used as a comment character in the original m4. As
+the
+name suggests, all characters up to the next newline are deleted
+from the output stream. GNU m4 also allows use of <code><font
+ face="Courier">#</font></code> as a
+comment
+character, with the difference that such comments <em>are</em> passed
+to the
+output stream. Any macro calls or definitions after the <code><font
+ face="Courier">#</font></code> are
+ignored however. The input is passed to the output exactly as is.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>System
+functions</strong>
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">There is one
+system function -- that is, one that communicates with the
+underlying operating system.
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">esyscmd</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">passes a command
+to the system interpreter, usually the unix shell,
+for execution. For example, <code><font face="Courier">esyscmd(date)</font></code>
+returns today's date.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">There are also
+some miscellaneous functions that have been added to
+the original m4 function set:
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">changecom</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">changes the m4
+comment character (normally #).
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">traceon/off</font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">turns tracing on
+and off. This is useful for debugging.</font></p>
+                                    <p></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Usage</strong>
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">m4 is invoked the
+normal way, by simply typing <code><font face="Courier">m4</font></code>.
+It works as
+a classic Unix filter, reading from standard input if no filename
+is given on the command line and writing to standard output.
+Both input and output may be redirected in the shell or by commands
+in the input file.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">A full summary of
+m4 usage, available by typing <code><font face="Courier">m4 --help</font></code>,
+provides:
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">
+Usage: m4 [OPTION]... [FILE]...<br>
+Mandatory or optional arguments attached to long options are mandatory
+and<br>
+optional for short options, too.<br>
+                                    <br>
+Operation modes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--help display this help and exit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--version output version
+information and exit<br>
+&nbsp;&nbsp;-e, --interactive unbuffer output, ignore interrupts<br>
+&nbsp;&nbsp;-E, --fatal-warnings stop execution after first warning<br>
+&nbsp;&nbsp;-Q, --quiet, --silent suppress some warnings for built-ins<br>
+&nbsp;&nbsp;-P, --prefix-built-ins force a `m4_' prefix to all built-ins<br>
+                                    <br>
+Preprocessor features:<br>
+&nbsp;&nbsp;-I, --include=DIRECTORY search this directory second for
+includes<br>
+&nbsp;&nbsp;-D, --define=NAME[=VALUE] enter NAME as having VALUE, or
+empty<br>
+&nbsp;&nbsp;-U, --undefine=NAME delete built-in NAME<br>
+&nbsp;&nbsp;-s, --synclines generate `#line NO "FILE"' lines<br>
+                                    <br>
+Limits control:<br>
+&nbsp;&nbsp;-G, --traditional suppress all GNU extensions<br>
+&nbsp;&nbsp;-H, --hashsize=PRIME set symbol lookup hash table size<br>
+&nbsp;&nbsp;-L, --nesting-limit=NUMBER change artificial nesting limit<br>
+                                    <br>
+Frozen state files:<br>
+&nbsp;&nbsp;-F, --freeze-state=FILE produce a frozen state on FILE at
+end<br>
+&nbsp;&nbsp;-R, --reload-state=FILE reload a frozen state from FILE at
+start<br>
+                                    <br>
+Debugging:<br>
+&nbsp;&nbsp;-d, --debug=[FLAGS] set debug level (no FLAGS implies `aeq')<br>
+&nbsp;&nbsp;-t, --trace=NAME trace NAME when it will be defined<br>
+&nbsp;&nbsp;-l, --arglength=NUM restrict macro tracing size<br>
+&nbsp;&nbsp;-o, --error-output=FILE redirect debug and trace output<br>
+                                    <br>
+FLAGS is any of:<br>
+&nbsp;&nbsp;t trace for all macro calls, not only traceon'ed<br>
+&nbsp;&nbsp;a show actual arguments<br>
+&nbsp;&nbsp;e show expansion<br>
+&nbsp;&nbsp;q quote values as necessary, with a or e flag<br>
+&nbsp;&nbsp;c show before collect, after collect, and after call<br>
+&nbsp;&nbsp;x add a unique macro call ID, useful with c flag<br>
+&nbsp;&nbsp;f say current input file name<br>
+&nbsp;&nbsp;l say current input line number<br>
+&nbsp;&nbsp;p show results of path searches<br>
+&nbsp;&nbsp;i show changes in input files<br>
+&nbsp;&nbsp;V shorthand for all of the above flags<br>
+                                    <br>
+If no FILE or if FILE is `-', standard input is read.<br>
+                                    <br>
+                                    </font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">This is a
+formidable list of options. But we need use only a few.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">In fact, most
+often m4 is run as just <code><font face="Courier">m4</font></code>,
+with perhaps the <code><font face="Courier">-P</font></code> flag
+to specify that built-ins are preceded by <code><font face="Courier">m4_</font></code>,
+e.g., <code><font face="Courier">m4_include</font></code>
+rather than <code><font face="Courier">include</font></code>. Below is
+an example of a line I use in a makefile to
+generate my html pages:
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">
+                                    <br>
+cat $*.m4 | htmlize | m4 -P &gt; $*.html<br>
+                                    <br>
+                                    </font></font></code>
+                                    </p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>m4 at work</strong></font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1">So, we've had an
+overview of m4. Now, lets take a look at how it can be used
+to do useful work.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Example:
+Generating HTML</strong>
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">I use m4, among
+other Linux software tools, to maintain my Web pages.
+Rather than marking each page up in HTML -- a tiresome chore -- I have
+written a set of definitions that translates m4 macros into HTML.
+As well as being easier on the eye and simpler to write than HTML,
+this has other advantages. For example, an often seen feature on
+Websites is the navigational button bar, which has links to the
+main parts of a site. Obviously, it is nicer not to have a link
+from the button bar to our Linux page if that's where we already are,
+for example. This can be automated using m4, so that the correct HTML
+code is generated. The definition I use is as follows:
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">
+m4_define(<br>
+`_button_bar',<br>
+`&lt;HR&gt;<br>
+&lt;P ALIGN="center"&gt;<br>
+m4_ifdef(`_index',[Home],_link(index.html, [Home]))<br>
+m4_ifdef(`_linux',[Linux],_link(linux.html, [Linux]))<br>
+m4_ifdef(`_writing',[Writing],_link(writing.html, [Writing]))<br>
+m4_ifdef(`_bookshop',[Bookshop],_link(bookshop/index.html, [Bookstore]))<br>
+&lt;/P&gt;<br>
+&lt;HR&gt;'<br>
+)<br>
+                                    </font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">Then, in the file <code><font
+ face="Courier">linux.html</font></code>, the macro <code><font
+ face="Courier">_link</font></code> is defined, and so
+when <code><font face="Courier">_button_bar</font></code> is
+referenced later in that file, the button bar
+code generated has no link to the Linux page as the Linux link is
+grayed out.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">Again, we can
+define your email address in the master file. Then,
+if you should change your email address there is no need to do a global
+search-and-replace through all the files that constitute the site. A
+simple make
+updates everything -- but that's the subject of another article.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Example: A
+Linux key-map</strong>
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">Maintenance of
+Linux keymap files is an interesting and imaginative use of
+m4.
+I don't do this myself, since hacking an existing file is simplest
+for me. We don't have the space to examine the file in any depth here.
+If you
+take a look at <code><font face="Courier">/usr/lib/kbd/keymaps/i386/qwerty/hypermap.m4</font></code>
+on
+your Linux system, you will see how using m4 makes defining a
+complicated
+keymap quite a bit simpler and makes it easier to maintain.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Example:
+Sendmail config</strong>
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">m4's most well
+known application helps to demystify sendmail configuration
+files. The sendmail source distribution comes with m4 macros that are
+sufficient to generate a sendmail.cf for most any site. At most, a
+little tweaking of the resulting sendmail.cf file (whose syntax has
+been memorably and justly compared to line noise) may be required.
+For anyone who has tried to write a sendmail config file from scratch
+--
+in the days before the m4 macros -- this is a godsend.
+                                    </font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Differences
+between m4 versions</strong></font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1">Inevitably, there
+are different versions of m4. This is not an
+issue for the Linux user, as you will invariably be using GNU m4.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">The main
+difference is that System V m4 supports multiple arguments for
+                                    <code><font face="Courier">`defn'</font></code>.
+Since the usefulness of this is unclear to GNU m4's
+maintainer (and indeed to me), this feature is not in GNU m4.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">There are several
+other incompatibilities (which shouldn't surprise
+anyone who's tried to use GNU make and then BSD's pmake, or vice
+versa). None are too important, but those interested can read the
+relevant
+info page (alas, no man page has been provided). As this article is
+about
+m4 rather than GNU m4, I won't mention the various extensions
+implemented in the GNU version -- those curious can see the list in the
+info
+page.
+                                    </font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Things to
+watch</strong></font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1">Quoting can be
+cantankerous on occasion. Quoting problems can
+usually be solved by changequote. For example, to
+include one of the quote characters in a macro definition, using
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">
+changequote([[,]])<br>
+                                    </font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">and then
+                                    </font></p>
+                                    <p><code><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><font
+ face="Courier">
+define([[`a quoted macro']])<br>
+                                    </font></font></code>
+                                    </p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">will keep the
+quote characters in the macro definition. Note that
+                                    <code><font face="Courier">`</font></code>
+and <code><font face="Courier">'</font></code> can't be escaped, so we
+have to do it this
+way.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">Another thing to
+watch out for is that if you have the name of an m4 built in
+your text, m4 will interpret such names as calls to that function,
+which is
+presumably not what you want.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">This can be
+avoided by quoting, but that is inconvenient. GNU m4
+offers us a better way. The <code><font face="Courier">-P</font></code>
+command-line switch allows us to
+preface all built-ins with the string <code><font face="Courier">m4_</font></code>
+rather than use the <code><font face="Courier">#</font></code>
+character as
+the C preprocessor does.
+                                    </font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1"><strong>Limitations</strong></font></p>
+                                    <p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1">m4 is a useful
+tool, but it can be overstrained. Although it can be
+made to do most things with ingenuity, m4 is at its best when used
+for straightforward text substitution, as with our HTML example.
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">In <em>Software
+Tools,</em> Kernighan and Plauger sum it up nicely:
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><em>"The main
+thing is to ensure that any operation -- macro call,
+definition, other built-in -- can occur in the middle of any other one.
+If this is possible, then in principle the macro processor is capable
+of doing any computation, although it may well be hard to express....
+In principle, macro [i.e. m4] is capable of performing any computing
+task, but it is all too easy to write incomprehensible macros."</em>
+                                    </font></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1">This article has
+been an introduction to an often overlooked Linux
+program. Hopefully, you'll now be able to go off and do some m4ing
+yourselves.</font></p>
+                                    <p></p>
+                                    <p><font
+ face="verdana, arial, geneva, sans-serif" size="-1"><a name="resources"><strong>Resources</strong></a>
+                                    </font></p>
+                                    <ul>
+                                      <li><font
+ face="verdana, arial, geneva, sans-serif" size="-1">The manual for the
+GNU version of m4:
+                                        <br>
+                                        <a
+ href="http://www.gnu.org/software/m4/manual/index.html">http://www.gnu.org/software/m4/manual/index.html</a></font></li>
+                                      <li><font
+ face="verdana, arial, geneva, sans-serif" size="-1">The classic book <em>Software
+Tools</em> devotes a chapter to the development of a macro processor
+based on m4. <em>Software Tools in Pascal,</em> Brian W. Kernighan and
+P. J. Plauger (Addison-Wesley, 1981):
+                                        <br>
+                                        <a
+ href="http://www.amazon.com/exec/obidos/ASIN/0201103427/pauldunne">http://www.amazon.com/exec/obidos/ASIN/0201103427/pauldunne</a></font></li>
+                                      <li><font
+ face="verdana, arial, geneva, sans-serif" size="-1">Bob Hepple has an
+interesting article about using m4 to generate HTML (in fact, I got the
+idea from his article):
+                                        <br>
+                                        <a
+ href="http://linuxgazette.net/issue22/using_m4.html">http://linuxgazette.net/issue22/using_m4.html</a>
+                                        </font></li>
+                                    </ul>
+                                    <p></p>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-1"> </font></div>
+                                    <font
+ face="verdana, arial, geneva, sans-serif" size="-2">
+<!-- Author Bios : --------------------------------------------------><br>
+                                    <br>
+                                    <br>
+                                    <div class="articlediv">&nbsp;
+                                    </div>
+<!------------------------------------------------------------------->
+                                    </font> </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+<!--begin INCLUDE--><!--begin INCLUDE--> </tr>
+        </tbody>
+      </table>
+<!--FOOTER-->
+      <map name="itw_family">
+      <area shape="RECT" coords="42,2,42,2">
+      <area alt="" coords="1,4,43,21" href="/">
+      <area shape="RECT" coords="47,3,49,3">
+      <area alt="" coords="48,4,108,19" href="/Webcasts/">
+      <area alt="" coords="113,4,187,19" href="/WhitePapers/">
+      <area alt="" coords="192,4,262,19" href="/Newsletters/">
+      <area shape="RECT" coords="290,16,290,15">
+      <area alt="" coords="266,4,312,19" href="/News/">
+      <area alt="" coords="314,1,381,22" href="/Topics/">
+      </map>
+      <script language="JavaScript">function setExecutePopUp(){
+
+		if(GetCookie("popup") != "on"){
+
+		    theURL = 'http://www.itworld.com/popup_storage.html';
+	  	    
+		    window.open(theURL,'infopop',config='width=252,height=450,top=40,left=40,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,directories=no,status=no')
+
+			cookieName="popup"; // change this to whatever you want to call your cookie
+			value="on"; // you will get this value from somewhere else in your own code
+			expires="";
+			document.cookie = cookieName + "=" + value + ";expires=" + expires;
+		}
+
+	}
+
+	function getCookieVal(offset) {
+		var endstr = document.cookie.indexOf (";", offset);
+	  	if (endstr == -1)
+	    	endstr = document.cookie.length;
+	  	return unescape(document.cookie.substring(offset, endstr));
+	}
+
+
+	function GetCookie(name) {
+
+		var arg = name + "=";
+		var alen = arg.length;
+		var clen = document.cookie.length;
+		var i = 0;
+		while (i < clen) {
+	    	var j = i + alen;
+	    	if (document.cookie.substring(i, j) == arg)
+	      		return getCookieVal (j);
+	    	i = document.cookie.indexOf(" ", i) + 1;
+	    	if (i == 0)
+	    		break;
+	  	}
+	  	return null;
+	}
+
+      </script> </td>
+    </tr>
+  </tbody>
+</table>
+<layer
+ src="http://ad.doubleclick.net/adl/aci/;kw=$term;pos=center;sz=336x280;tile=18;ord=03122006123230"
+ width="336" height="280" visibility="hidden"
+ onload="moveToAbsolute(layer18.pageX,layer18.pageY);clip.height=280;clip.width=336; visibility='show';"></layer>
+<layer
+ src="http://ad.doubleclick.net/adl/aci/;pos=line;sz=500x35;tile=12;%20ord=03122006123230"
+ width="500" height="35" visibility="hidden"
+ onload="moveToAbsolute(layer12.pageX,layer12.pageY);clip.height=35;clip.width=500; visibility='show';"></layer>
+<layer
+ src="http://ad.doubleclick.net/adl/aci/;pos=fourth;sz=160x600;tile=13;%20ord=03122006123230"
+ width="160" height="600" visibility="hidden"
+ onload="moveToAbsolute(layer13.pageX+15,layer13.pageY);clip.height=600;clip.width=160; visibility='show';"></layer>
+</body>
+</html>

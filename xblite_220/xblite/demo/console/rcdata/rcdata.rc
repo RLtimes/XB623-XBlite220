@@ -1,0 +1,5 @@
+#include "winres.h"
+
+scrabble ICON    scrabble.ico
+100	 RCDATA  redsilk.gif
+GO	 RCDATA  go.gif

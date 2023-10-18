@@ -1,0 +1,1209 @@
+'
+'
+' ##########################  David Szafranski
+' #####  wininet.dec  ######  copyright 2002
+' ##########################  Windows XBLite declarations for Windows "wininet"
+'
+' subject to LGPL license - see COPYING_LIB
+' version 0.002				04-27-2004
+'
+' Note: the FILETIME and SYSTEMTIME types needs to be imported from kernel32.dec
+' IMPORT "kernel32"
+'
+' ###########################
+' #####  declare types  #####
+' ###########################
+'
+'
+TYPE INTERNET_AUTH_NOTIFY_DATA
+  ULONG      .cbStruct    ' size of this structure  
+  ULONG      .dwOptions   ' reserved: must be set to 0  
+  ULONG      .pfnNotify   ' notification callback to retry InternetErrorDlg  
+  ULONG      .dwContext   ' context to pass to to notification function  
+END TYPE
+'
+TYPE INTERNET_CACHE_ENTRY_INFO
+  ULONG  		.dwStructSize   			' version of cache system  
+  ULONG  		.lpszSourceUrlName   	' embedded pointer to the URL name string  
+  ULONG  		.lpszLocalFileName   	' embedded pointer to the local file name  
+  ULONG  		.CacheEntryType   		' cache type bit mask  
+  ULONG  		.dwUseCount   				' current users count of the cache entry  
+  ULONG  		.dwHitRate   					' num of times the cache entry was retrieved  
+  ULONG  		.dwSizeLow   					' low ULONG of the file size  
+  ULONG     .dwSizeHigh   				' high ULONG of the file size  
+  FILETIME  .LastModifiedTime   	' last modified time of the file in GMT format  
+  FILETIME  .ExpireTime   				' expire time of the file in GMT format  
+  FILETIME  .LastAccessTime   		' last accessed time in GMT format  
+  FILETIME  .LastSyncTime   			' last time the URL was synchronized with the source  
+  ULONG     .lpHeaderInfo   			' embedded pointer to the header info  
+  ULONG     .dwHeaderInfoSize   	' size of the above header  
+  ULONG  		.lpszFileExtension   	' File extension used to retrieve the urldata as a file  
+  ULONG     .dwExemptDelta   			' Exemption delta from last access time  
+END TYPE
+'
+' INTERNET_ASYNC_RESULT - this structure is returned to the application via
+' the callback with INTERNET_STATUS_REQUEST_COMPLETE. It is not sufficient to
+' just return the result of the async operation. If the API failed then the
+' app cannot call GetLastError() because the thread context will be incorrect.
+' Both the value returned by the async API and any resultant error code are
+' made available. The app need not check dwError if dwResult indicates that
+' the API succeeded (in this case dwError will be ERROR_SUCCESS)
+'
+TYPE INTERNET_ASYNC_RESULT
+  ULONG  .dwResult   					' the HINTERNET,  ULONG,  or BOOL return code from an async API  
+  ULONG  .dwError   					' the error code if the API failed  
+END TYPE
+'
+' INTERNET_PROXY_INFO - structure supplied with INTERNET_OPTION_PROXY to get/
+' set proxy information on a InternetOpen handle
+'
+TYPE INTERNET_PROXY_INFO
+  ULONG .dwAccessType   		' dwAccessType - INTERNET_OPEN_TYPE_DIRECT, INTERNET_OPEN_TYPE_PROXY, or INTERNET_OPEN_TYPE_PRECONFIG
+  ULONG .lpszProxy   				' lpszProxy - proxy server list  
+  ULONG .lpszProxyBypass   	' lpszProxyBypass - proxy bypass list  
+END TYPE
+'
+' INTERNET_VERSION_INFO - version information returned via InternetQueryOption
+'
+TYPE INTERNET_VERSION_INFO
+  ULONG  .dwMajorVersion
+  ULONG  .dwMinorVersion
+END TYPE
+'
+' HTTP_VERSION_INFO - query or set global HTTP version (1.0 or 1.1)
+'
+TYPE HTTP_VERSION_INFO
+  ULONG  .dwMajorVersion
+  ULONG  .dwMinorVersion
+END TYPE
+'
+' INTERNET_CONNECTED_INFO - information used to set the global connected state
+'
+TYPE INTERNET_CONNECTED_INFO
+  ULONG  .dwConnectedState			' new connected/disconnected state, See INTERNET_STATE_CONNECTED
+  ULONG  .dwFlags								' flags controlling connected/disconnected state
+END TYPE
+'
+' URL_COMPONENTS - the constituent parts of an URL. Used in InternetCrackUrl()
+' and InternetCreateUrl()
+'
+' For InternetCrackUrl(), if a pointer field and its corresponding length field
+' are both 0 then that component is not returned. If the pointer field is NULL
+' but the length field is not zero, then both the pointer and length fields are
+' returned if both pointer and corresponding length fields are non-zero then
+' the pointer field points to a buffer where the component is copied. The
+' component may be un-escaped, depending on dwFlags
+'
+' For InternetCreateUrl(), the pointer fields should be NULL if the component
+' is not required. If the corresponding length field is zero then the pointer
+' field is the address of a zero-terminated string. If the length field is not
+' zero then it is the string length of the corresponding pointer field
+'
+TYPE URL_COMPONENTS
+  ULONG   .dwStructSize       ' size of this structure  
+  ULONG   .lpszScheme         ' pointer to scheme name  
+  ULONG  	.dwSchemeLength     ' length of scheme name  
+  ULONG   .nScheme            ' enumerated scheme type (if known)  
+  ULONG 	.lpszHostName       ' pointer to host name  
+  ULONG  	.dwHostNameLength   ' length of host name  
+  USHORT 	.nPort              ' converted port number  
+  ULONG   .lpszUserName       ' pointer to user name  
+  ULONG   .dwUserNameLength   ' length of user name  
+  ULONG   .lpszPassword       ' pointer to password  
+  ULONG   .dwPasswordLength   ' length of password  
+  ULONG   .lpszUrlPath        ' pointer to URL-path  
+  ULONG   .dwUrlPathLength    ' length of URL-path  
+  ULONG   .lpszExtraInfo      ' pointer to extra information  
+  ULONG   .dwExtraInfoLength  ' length of extra information  
+END TYPE
+'
+' INTERNET_CERTIFICATE_INFO lpBuffer - contains the certificate returned from the server
+'
+TYPE INTERNET_CERTIFICATE_INFO
+  FILETIME  .ftExpiry              ' date the certificate expires
+  FILETIME  .ftStart               ' date the certificate becomes valid
+  ULONG     .lpszSubjectInfo 	     ' the name of organization, site, and server the cert was issued for 
+  ULONG     .lpszIssuerInfo        ' the name of orgainzation, site, and server the cert was issued by
+  ULONG     .lpszProtocolName      ' the name of the protocol used to provide the secure connection
+  ULONG     .lpszSignatureAlgName  ' the name of the algorithm used for signing the certificate
+  ULONG     .lpszEncryptionAlgName ' the name of the algorithm used for doing encryption over the secure channel [SSL/PCT] connection
+  ULONG  .dwKeySize                ' size of the key
+END TYPE
+'
+' INTERNET_BUFFERS - combines headers and data. May be chained for e.g. file
+' upload or scatter/gather operations. For chunked read/write, lpcszHeader
+' contains the chunked-ext
+'
+TYPE INTERNET_BUFFERS
+  ULONG  .dwStructSize     ' used for API versioning  
+  ULONG  .pNext            ' chain of buffers (pointer to INTERNET_BUFFERS struct)   
+  ULONG  .lpcszHeader      ' pointer to headers [may be NULL]  
+  ULONG  .dwHeadersLength  ' length of headers if not NULL  
+  ULONG  .dwHeadersTotal   ' size of headers if not enough buffer  
+  ULONG  .lpvBuffer        ' pointer to data buffer [may be NULL]  
+  ULONG  .dwBufferLength   ' length of data buffer if not NULL  
+  ULONG  .dwBufferTotal    ' total size of chunk,  or content-length if not chunked  
+  ULONG  .dwOffsetLow      ' used for read-ranges [only used in HttpSendRequest2]  
+  ULONG  .dwOffsetHigh
+END TYPE
+'
+' GOPHER_FIND_DATA - returns the results of a GopherFindFirstFile/InternetFindNextFile request
+'
+TYPE GOPHER_FIND_DATA
+  STRING * 128 .DisplayString
+  ULONG        .GopherType
+  ULONG        .SizeLow
+  ULONG        .SizeHigh
+  FILETIME     .LastModificationTime
+  STRING * 654 .Locator
+END TYPE
+'
+' structured gopher attributes [as defined in gopher+ protocol document]
+'
+TYPE GOPHER_ADMIN_ATTRIBUTE_TYPE
+  ULONG  .Comment
+  ULONG  .EmailAddress
+END TYPE
+'
+TYPE GOPHER_MOD_DATE_ATTRIBUTE_TYPE
+  FILETIME  .DateAndTime
+END TYPE
+'
+TYPE GOPHER_TTL_ATTRIBUTE_TYPE
+  ULONG  .Ttl
+END TYPE
+'
+TYPE GOPHER_SCORE_ATTRIBUTE_TYPE
+  USHORT  .Score
+END TYPE
+'
+TYPE GOPHER_SCORE_RANGE_ATTRIBUTE_TYPE
+  USHORT  .LowerBound
+  USHORT  .UpperBound
+END TYPE
+'
+TYPE GOPHER_SITE_ATTRIBUTE_TYPE
+  ULONG  .Site
+END TYPE
+'
+TYPE GOPHER_ORGANIZATION_ATTRIBUTE_TYPE
+  ULONG  .Organization
+END TYPE
+'
+TYPE GOPHER_LOCATION_ATTRIBUTE_TYPE
+  ULONG  .Location
+END TYPE
+'
+TYPE GOPHER_GEOGRAPHICAL_LOCATION_ATTRIBUTE_TYPE
+  USHORT  .DegreesNorth
+  USHORT  .MinutesNorth
+  USHORT  .SecondsNorth
+  USHORT  .DegreesEast
+  USHORT  .MinutesEast
+  USHORT  .SecondsEast
+END TYPE
+'
+TYPE GOPHER_TIMEZONE_ATTRIBUTE_TYPE
+  USHORT  .Zone
+END TYPE
+'
+TYPE GOPHER_PROVIDER_ATTRIBUTE_TYPE
+  ULONG  .Provider
+END TYPE
+'
+TYPE GOPHER_VERSION_ATTRIBUTE_TYPE
+  ULONG  .Version
+END TYPE
+'
+TYPE GOPHER_ABSTRACT_ATTRIBUTE_TYPE
+  ULONG  .ShortAbstract
+  ULONG  .AbstractFile
+END TYPE
+'
+TYPE GOPHER_VIEW_ATTRIBUTE_TYPE
+  ULONG  .ContentType
+  ULONG  .Language
+  ULONG  .Size
+END TYPE
+'
+TYPE GOPHER_VERONICA_ATTRIBUTE_TYPE
+  ULONG  .TreeWalk
+END TYPE
+'
+TYPE GOPHER_ASK_ATTRIBUTE_TYPE
+  ULONG  .QuestionType
+  ULONG  .QuestionText
+END TYPE
+'
+' GOPHER_UNKNOWN_ATTRIBUTE_TYPE - this is returned if we retrieve an attribute
+' that is not specified in the current gopher/gopher+ documentation. It is up
+' to the application to parse the information
+'
+TYPE GOPHER_UNKNOWN_ATTRIBUTE_TYPE
+  ULONG  .Text
+END TYPE
+'
+' GOPHER_ATTRIBUTE_TYPE - returned in the user's buffer when an enumerated
+' GopherGetAttribute call is made
+'
+TYPE GOPHER_ATTRIBUTE_TYPE_UNION
+UNION
+  GOPHER_ADMIN_ATTRIBUTE_TYPE  .Admin
+  GOPHER_MOD_DATE_ATTRIBUTE_TYPE  .ModDate
+  GOPHER_TTL_ATTRIBUTE_TYPE  .Ttl
+  GOPHER_SCORE_ATTRIBUTE_TYPE  .Score
+  GOPHER_SCORE_RANGE_ATTRIBUTE_TYPE  .ScoreRange
+  GOPHER_SITE_ATTRIBUTE_TYPE  .Site
+  GOPHER_ORGANIZATION_ATTRIBUTE_TYPE  .Organization
+  GOPHER_LOCATION_ATTRIBUTE_TYPE  .Location
+  GOPHER_GEOGRAPHICAL_LOCATION_ATTRIBUTE_TYPE  .GeographicalLocation
+  GOPHER_TIMEZONE_ATTRIBUTE_TYPE  .TimeZone
+  GOPHER_PROVIDER_ATTRIBUTE_TYPE  .Provider
+  GOPHER_VERSION_ATTRIBUTE_TYPE  .Version
+  GOPHER_ABSTRACT_ATTRIBUTE_TYPE  .Abstract
+  GOPHER_VIEW_ATTRIBUTE_TYPE  .View
+  GOPHER_VERONICA_ATTRIBUTE_TYPE  .Veronica
+  GOPHER_ASK_ATTRIBUTE_TYPE  .Ask
+  GOPHER_UNKNOWN_ATTRIBUTE_TYPE  .Unknown
+END UNION
+END TYPE
+'
+TYPE GOPHER_ATTRIBUTE_TYPE
+  ULONG  .CategoryId   ' e.g. GOPHER_CATEGORY_ID_ADMIN
+  ULONG .AttributeId   ' e.g. GOPHER_ATTRIBUTE_ID_ADMIN  
+  GOPHER_ATTRIBUTE_TYPE_UNION  .AttributeType
+END TYPE
+'
+'
+'
+' ###############################
+' #####  declare functions  #####
+' ###############################
+'
+'
+EXTERNAL FUNCTION CommitUrlCacheEntryA (lpszUrlName, lpszLocalFileName, GIANT ExpireTime, GIANT LastModifiedTime, CacheEntryType, lpHeaderInfo, dwHeaderSize, lpszFileExtension, dwReserved)
+EXTERNAL FUNCTION CreateUrlCacheEntryA (lpszUrlName, dwExpectedFileSize, lpszFileExtension, lpszFileName, dwReserved)
+EXTERNAL FUNCTION GIANT CreateUrlCacheGroup (dwFlags, lpReserved)
+EXTERNAL FUNCTION DeleteUrlCacheEntry (lpszUrlName)
+EXTERNAL FUNCTION DeleteUrlCacheGroup (GIANT GroupId, dwFlags, lpReserved)
+EXTERNAL FUNCTION FindCloseUrlCache (hEnumHandle)
+EXTERNAL FUNCTION FindFirstUrlCacheEntryA (lpszUrlSearchPattern, lpFirstCacheEntryInfo, lpdwFirstCacheEntryInfoBufferSize)
+EXTERNAL FUNCTION FindFirstUrlCacheEntryExA (lpszUrlSearchPattern, dwFlags, dwFilter, GIANT GroupId, lpFirstCacheEntryInfo, lpdwFirstCacheEntryInfoBufferSize, lpGroupAttributes, pcbGroupAttributes, lpReserved)
+EXTERNAL FUNCTION FindNextUrlCacheEntryA (hEnumHandle, lpNextCacheEntryInfo, lpdwNextCacheEntryInfoBufferSize)
+EXTERNAL FUNCTION FindNextUrlCacheEntryExA (hEnumHandle, lpFirstCacheEntryInfo, lpdwFirstCacheEntryInfoBufferSize, lpGroupAttributes, pcbGroupAttributes, lpReserved)
+EXTERNAL FUNCTION FtpCreateDirectoryA (hConnect, lpszDirectory)
+EXTERNAL FUNCTION FtpDeleteFileA (hConnect, lpszFileName)
+EXTERNAL FUNCTION FtpFindFirstFileA (hConnect, lpszSearchFile, lpFindFileDataASWIN32_FIND_DATA, dwFlags, dwContext)
+EXTERNAL FUNCTION FtpGetCurrentDirectoryA (hConnect, lpszCurrentDirectory, lpdwCurrentDirectory)
+EXTERNAL FUNCTION FtpGetFileA (hConnect, lpszRemoteFile, lpszNewFile, fFailIfExists, dwFlagsAndAttributes, dwFlags, dwContext)
+EXTERNAL FUNCTION FtpOpenFileA (hConnect, lpszFileName, dwAccess, dwFlags, dwContext)
+EXTERNAL FUNCTION FtpPutFileA (hConnect, lpszLocalFile, lpszNewRemoteFile, dwFlags, dwContext)
+EXTERNAL FUNCTION FtpRemoveDirectoryA (hConnect, lpszDirectory)
+EXTERNAL FUNCTION FtpRenameFileA (hConnect, lpszExisting, lpszNew)
+EXTERNAL FUNCTION FtpSetCurrentDirectoryA (hConnect, lpszDirectory)
+EXTERNAL FUNCTION GetUrlCacheEntryInfoA (lpszUrlName, lpCacheEntryInfo, lpdwCacheEntryInfoBufferSize)
+EXTERNAL FUNCTION GetUrlCacheEntryInfoExA (lpszUrl, lpCacheEntryInfo, lpdwCacheEntryInfoBufSize, lpszReserved, lpdwReserved, lpReserved, dwFlags)
+EXTERNAL FUNCTION GopherCreateLocatorA (lpszHost, nServerPost, lpszDisplayString, lpszSelectorString, dwGopherType, lpszLocator, lpdwBufferLength)
+EXTERNAL FUNCTION GopherFindFirstFileA (hConnect, lpszLocator, lpszSearchString, lpFindData, dwFlags, dwContext)
+EXTERNAL FUNCTION GopherGetAttributeA (hConnect, lpszLocator, lpszAttributeName, lpBuffer, dwBufferLength, lpdwCharactersReturned, lpfnEnumerator, dwContext)
+EXTERNAL FUNCTION GopherGetLocatorTypeA (lpszLocator, lpdwGopherType)
+EXTERNAL FUNCTION GopherOpenFileA (hConnect, lpszLocator, lpszView, dwFlags, dwContext)
+EXTERNAL FUNCTION HttpAddRequestHeadersA (hRequest, lpszHeaders, dwHeadersLength, dwModifiers)
+EXTERNAL FUNCTION HttpEndRequestA (hRequest, lpBuffersOut, dwFlags, dwContext)
+EXTERNAL FUNCTION HttpOpenRequestA (hConnect, lpszVerb, lpszObjectName, lpszVersion, lpszReferrer, lplpszAcceptTypes, dwFlags, dwContext)
+EXTERNAL FUNCTION HttpQueryInfoA (hRequest, dwInfoLevel, lpBuffer, lpdwBufferLength, lpdwIndex)
+EXTERNAL FUNCTION HttpSendRequestA (hRequest, lpszHeaders, dwHeadersLength, lpOptional, dwOptionalLength)
+EXTERNAL FUNCTION HttpSendRequestExA (hRequest, lpBuffersIn, lpBuffersOut, dwFlags, dwContext)
+EXTERNAL FUNCTION InternetAttemptConnect (dwReserved)
+EXTERNAL FUNCTION InternetAutodial (dwFlags, dwReserved)
+EXTERNAL FUNCTION InternetAutodialHangup (dwReserved)
+EXTERNAL FUNCTION InternetCanonicalizeUrlA (lpszUrl, lpszBuffer, lpdwBufferLength, dwFlags)
+EXTERNAL FUNCTION InternetCheckConnectionA (lpszUrl, dwFlags, dwReserved)
+EXTERNAL FUNCTION InternetCloseHandle (hInternet)
+EXTERNAL FUNCTION InternetCombineUrlA (lpszBaseUrl, lpszRelativeUrl, lpszBuffer, lpdwBufferLength, dwFlags)
+EXTERNAL FUNCTION InternetConfirmZoneCrossing (hWnd, szUrlPrev, szUrlNew, bPost)
+EXTERNAL FUNCTION InternetConnectA (hInternet, lpszServerName, USHORT nServerPort, lpszUserName, lpszPassword, dwService, dwFlags, dwContext)
+EXTERNAL FUNCTION InternetCrackUrlA (lpszUrl, dwUrlLength, dwFlags, lpUrlComponents)
+EXTERNAL FUNCTION InternetCreateUrlA (lpUrlComponents, dwFlags, lpszUrl, lpdwUrlLength)
+EXTERNAL FUNCTION InternetDial (hwndParent, lpszConnectoid, dwFlags, lpdwConnection, dwReserved)
+EXTERNAL FUNCTION InternetErrorDlg (hWnd, hRequest, dwError, dwFlags, lppvData)
+EXTERNAL FUNCTION InternetFindNextFileA (hFind, lpvFindData)
+EXTERNAL FUNCTION InternetGetConnectedState (lpdwFlags, dwReserved)
+EXTERNAL FUNCTION InternetGetCookieA (lpszUrl, lpszCookieName, lpCookieData, lpdwSize)
+EXTERNAL FUNCTION InternetGetLastResponseInfoA (lpdwError, lpszBuffer, lpdwBufferLength)
+EXTERNAL FUNCTION InternetGoOnline (lpszURL, hwndParent, dwFlags)
+EXTERNAL FUNCTION InternetHangUp (dwConnection, dwReserved)
+EXTERNAL FUNCTION InternetLockRequestFile (hInternet, lphLockRequestInfo)
+EXTERNAL FUNCTION InternetOpenA (lpszAgent, dwAccessType, lpszProxy, lpszProxyBypass, dwFlags)
+EXTERNAL FUNCTION InternetOpenUrlA (hInternet, lpszUrl, lpszHeaders, dwHeadersLength, dwFlags, dwContext)
+EXTERNAL FUNCTION InternetQueryDataAvailable (hFile, lpdwNumberOfBytesAvailable, dwFlags, dwContext)
+EXTERNAL FUNCTION InternetQueryOptionA (hInternet, dwOption, lpBuffer, lpdwBufferLength)
+EXTERNAL FUNCTION InternetReadFile (hFile, lpBuffer, dwNumberOfBytesToRead, lpdwNumberOfBytesRead)
+EXTERNAL FUNCTION InternetReadFileExA (hFile, lpBuffersOut, dwFlags, dwContext)
+EXTERNAL FUNCTION InternetSetCookieA (lpszUrl, lpszCookieName, lpszCookieData)
+EXTERNAL FUNCTION InternetSetDialState (lpszConnectoid, dwState, dwReserved)
+EXTERNAL FUNCTION InternetSetFilePointer (hFile, lDistanceToMove, pReserved, dwMoveMethod, dwContext)
+EXTERNAL FUNCTION InternetSetOptionA (hInternet, dwOption, lpBuffer, dwBufferLength)
+EXTERNAL FUNCTION InternetSetOptionExA (hInternet, dwOption, lpBuffer, dwBufferLength, dwFlags)
+EXTERNAL FUNCTION InternetSetStatusCallback (hInternet, lpfnInternetCallback)
+EXTERNAL FUNCTION InternetTimeFromSystemTimeA (SYSTEMTIME pst, dwRFC, lpszTime, cbTime)
+EXTERNAL FUNCTION InternetTimeToSystemTimeA (lpszTime, SYSTEMTIME pst, dwReserved)
+EXTERNAL FUNCTION InternetUnlockRequestFile (hLockRequestInfo)
+EXTERNAL FUNCTION InternetWriteFile (hFile, lpBuffer, dwNumberOfBytesToWrite, lpdwNumberOfBytesWritten)
+EXTERNAL FUNCTION ReadUrlCacheEntryStream (hUrlCacheStream, dwLocation, lpBuffer, lpdwLen, dwReserved)
+EXTERNAL FUNCTION RetrieveUrlCacheEntryFileA (lpszUrlName, lpCacheEntryInfo, lpdwCacheEntryInfoBufferSize, dwReserved)
+EXTERNAL FUNCTION RetrieveUrlCacheEntryStreamA (lpszUrlName, lpCacheEntryInfo, lpdwCacheEntryInfoBufferSize, fRandomRead, dwReserved)
+EXTERNAL FUNCTION SetUrlCacheEntryGroup (lpszUrlName, dwFlags, GIANT GroupId, pbGroupAttributes, cbGroupAttributes, lpReserved)
+EXTERNAL FUNCTION SetUrlCacheEntryInfoA (lpszUrlName, lpCacheEntryInfo, dwFieldControl)
+EXTERNAL FUNCTION UnlockUrlCacheEntryFile (lpszUrlName, dwReserved)
+EXTERNAL FUNCTION UnlockUrlCacheEntryStream (hUrlCacheStream, dwReserved)
+'
+'
+' ##########################################
+' #####  declare and define constants  #####
+' ##########################################
+'
+' common per-API flags (new APIs)
+'
+$$WININET_API_FLAG_ASYNC     		= 0x00000001 ' force async operation
+$$WININET_API_FLAG_SYNC      		= 0x00000004 ' force sync operation
+$$WININET_API_FLAG_USE_CONTEXT  = 0x00000008 ' use value supplied in dwContext (even if 0)
+
+$$FTP_TRANSFER_TYPE_UNKNOWN  	= 0x00000000
+$$FTP_TRANSFER_TYPE_ASCII   	= 0x00000001
+$$FTP_TRANSFER_TYPE_BINARY  	= 0x00000002
+$$FTP_TRANSFER_TYPE_MASK   		= 0x00000003					' $$FTP_TRANSFER_TYPE_ASCII OR $$FTP_TRANSFER_TYPE_BINARY
+'
+' the default major/minor HTTP version numbers
+'
+$$HTTP_MAJOR_VERSION   = 1
+$$HTTP_MINOR_VERSION   = 0
+
+$$HTTP_VERSION      = "HTTP/1.0"
+'
+'
+' HttpQueryInfo info levels. Generally,  there is one info level
+' for each potential RFC822/HTTP/MIME header that an HTTP server
+' may send as part of a request response.
+'
+' The HTTP_QUERY_RAW_HEADERS info level is provided for clients
+' that choose to perform their own header parsing.
+'
+$$HTTP_QUERY_MIME_VERSION               = 0
+$$HTTP_QUERY_CONTENT_TYPE               = 1
+$$HTTP_QUERY_CONTENT_TRANSFER_ENCODING  = 2
+$$HTTP_QUERY_CONTENT_ID                 = 3
+$$HTTP_QUERY_CONTENT_DESCRIPTION        = 4
+$$HTTP_QUERY_CONTENT_LENGTH             = 5
+$$HTTP_QUERY_CONTENT_LANGUAGE           = 6
+$$HTTP_QUERY_ALLOW                      = 7
+$$HTTP_QUERY_PUBLIC                     = 8
+$$HTTP_QUERY_DATE                       = 9
+$$HTTP_QUERY_EXPIRES                    = 10
+$$HTTP_QUERY_LAST_MODIFIED              = 11
+$$HTTP_QUERY_MESSAGE_ID                 = 12
+$$HTTP_QUERY_URI                        = 13
+$$HTTP_QUERY_DERIVED_FROM               = 14
+$$HTTP_QUERY_COST                       = 15
+$$HTTP_QUERY_LINK                       = 16
+$$HTTP_QUERY_PRAGMA                     = 17
+$$HTTP_QUERY_VERSION                    = 18 ' special: part of status line
+$$HTTP_QUERY_STATUS_CODE                = 19 ' special: part of status line
+$$HTTP_QUERY_STATUS_TEXT                = 20 ' special: part of status line
+$$HTTP_QUERY_RAW_HEADERS                = 21 ' special: all headers as ASCIIZ
+$$HTTP_QUERY_RAW_HEADERS_CRLF           = 22 ' special: all headers
+$$HTTP_QUERY_CONNECTION                 = 23
+$$HTTP_QUERY_ACCEPT                     = 24
+$$HTTP_QUERY_ACCEPT_CHARSET             = 25
+$$HTTP_QUERY_ACCEPT_ENCODING            = 26
+$$HTTP_QUERY_ACCEPT_LANGUAGE            = 27
+$$HTTP_QUERY_AUTHORIZATION              = 28
+$$HTTP_QUERY_CONTENT_ENCODING           = 29
+$$HTTP_QUERY_FORWARDED                  = 30
+$$HTTP_QUERY_FROM                       = 31
+$$HTTP_QUERY_IF_MODIFIED_SINCE          = 32
+$$HTTP_QUERY_LOCATION                   = 33
+$$HTTP_QUERY_ORIG_URI                   = 34
+$$HTTP_QUERY_REFERER                    = 35
+$$HTTP_QUERY_RETRY_AFTER                = 36
+$$HTTP_QUERY_SERVER                     = 37
+$$HTTP_QUERY_TITLE                      = 38
+$$HTTP_QUERY_USER_AGENT                 = 39
+$$HTTP_QUERY_WWW_AUTHENTICATE           = 40
+$$HTTP_QUERY_PROXY_AUTHENTICATE         = 41
+$$HTTP_QUERY_ACCEPT_RANGES              = 42
+$$HTTP_QUERY_SET_COOKIE                 = 43
+$$HTTP_QUERY_COOKIE                     = 44
+$$HTTP_QUERY_REQUEST_METHOD             = 45 ' special: GET/POST etc.
+$$HTTP_QUERY_REFRESH                    = 46
+$$HTTP_QUERY_CONTENT_DISPOSITION        = 47
+'
+' HTTP 1.1 defined headers
+'
+$$HTTP_QUERY_AGE                        = 48
+$$HTTP_QUERY_CACHE_CONTROL              = 49
+$$HTTP_QUERY_CONTENT_BASE               = 50
+$$HTTP_QUERY_CONTENT_LOCATION           = 51
+$$HTTP_QUERY_CONTENT_MD5                = 52
+$$HTTP_QUERY_CONTENT_RANGE              = 53
+$$HTTP_QUERY_ETAG                       = 54
+$$HTTP_QUERY_HOST                       = 55
+$$HTTP_QUERY_IF_MATCH                   = 56
+$$HTTP_QUERY_IF_NONE_MATCH              = 57
+$$HTTP_QUERY_IF_RANGE                   = 58
+$$HTTP_QUERY_IF_UNMODIFIED_SINCE        = 59
+$$HTTP_QUERY_MAX_FORWARDS               = 60
+$$HTTP_QUERY_PROXY_AUTHORIZATION        = 61
+$$HTTP_QUERY_RANGE                      = 62
+$$HTTP_QUERY_TRANSFER_ENCODING          = 63
+$$HTTP_QUERY_UPGRADE                    = 64
+$$HTTP_QUERY_VARY                       = 65
+$$HTTP_QUERY_VIA                        = 66
+$$HTTP_QUERY_WARNING                    = 67
+$$HTTP_QUERY_MAX                        = 67
+'
+' HTTP_QUERY_CUSTOM - if this special value is supplied as the dwInfoLevel
+' parameter of HttpQueryInfo() then the lpBuffer parameter contains the name
+' of the header we are to query
+'
+$$HTTP_QUERY_CUSTOM            = 65535
+'
+' HTTP_QUERY_FLAG_REQUEST_HEADERS - if this bit is set in the dwInfoLevel
+' parameter of HttpQueryInfo() then the request headers will be queried for the
+' request information
+'
+$$HTTP_QUERY_FLAG_REQUEST_HEADERS   = 0x80000000
+'
+' HTTP_QUERY_FLAG_SYSTEMTIME - if this bit is set in the dwInfoLevel parameter
+' of HttpQueryInfo() AND the header being queried contains date information, 
+' e.g. the "Expires:" header then lpBuffer will contain a SYSTEMTIME structure
+' containing the date and time information converted from the header string
+'
+$$HTTP_QUERY_FLAG_SYSTEMTIME       = 0x40000000
+'
+' HTTP_QUERY_FLAG_NUMBER - if this bit is set in the dwInfoLevel parameter of
+' HttpQueryInfo(),  then the value of the header will be converted to a number
+' before being returned to the caller,  if applicable
+'
+$$HTTP_QUERY_FLAG_NUMBER           = 0x20000000
+' 
+' HTTP_QUERY_FLAG_COALESCE - combine the values from several headers of the
+' same name into the output buffer
+'
+$$HTTP_QUERY_FLAG_COALESCE         = 0x10000000
+'
+$$HTTP_QUERY_MODIFIER_FLAGS_MASK   = 0xF0000000 				' $$HTTP_QUERY_FLAG_REQUEST_HEADERS OR $$HTTP_QUERY_FLAG_SYSTEMTIME OR $$HTTP_QUERY_FLAG_NUMBER OR $$HTTP_QUERY_FLAG_COALESCE
+'
+$$HTTP_QUERY_HEADER_MASK           = 0xFFFFFFF							' NOT $$HTTP_QUERY_MODIFIER_FLAGS_MASK
+'
+' HTTP Response Status Codes:
+'
+$$HTTP_STATUS_CONTINUE           = 100 ' OK to continue with request
+$$HTTP_STATUS_SWITCH_PROTOCOLS   = 101 ' server has switched protocols in upgrade header
+'
+$$HTTP_STATUS_OK                 = 200 ' request completed
+$$HTTP_STATUS_CREATED            = 201 ' object created,  reason = new URI
+$$HTTP_STATUS_ACCEPTED           = 202 ' async completion (TBS)
+$$HTTP_STATUS_PARTIAL            = 203 ' partial completion
+$$HTTP_STATUS_NO_CONTENT         = 204 ' no info to return
+$$HTTP_STATUS_RESET_CONTENT      = 205 ' request completed,  but clear form
+$$HTTP_STATUS_PARTIAL_CONTENT    = 206 ' partial GET furfilled
+'
+$$HTTP_STATUS_AMBIGUOUS          = 300 ' server couldn't decide what to return
+$$HTTP_STATUS_MOVED              = 301 ' object permanently moved
+$$HTTP_STATUS_REDIRECT           = 302 ' object temporarily moved
+$$HTTP_STATUS_REDIRECT_METHOD    = 303 ' redirection w/ new access method
+$$HTTP_STATUS_NOT_MODIFIED       = 304 ' if-modified-since was not modified
+$$HTTP_STATUS_USE_PROXY          = 305 ' redirection to proxy,  location header specifies proxy to use
+$$HTTP_STATUS_REDIRECT_KEEP_VERB = 307 ' HTTP/1.1: keep same verb
+'
+$$HTTP_STATUS_BAD_REQUEST        = 400 ' invalid syntax
+$$HTTP_STATUS_DENIED             = 401 ' access denied
+$$HTTP_STATUS_PAYMENT_REQ        = 402 ' payment required
+$$HTTP_STATUS_FORBIDDEN          = 403 ' request forbidden
+$$HTTP_STATUS_NOT_FOUND          = 404 ' object not found
+$$HTTP_STATUS_BAD_METHOD         = 405 ' method is not allowed
+$$HTTP_STATUS_NONE_ACCEPTABLE    = 406 ' no response acceptable to client found
+$$HTTP_STATUS_PROXY_AUTH_REQ     = 407 ' proxy authentication required
+$$HTTP_STATUS_REQUEST_TIMEOUT    = 408 ' server timed out waiting for request
+$$HTTP_STATUS_CONFLICT           = 409 ' user should resubmit with more info
+$$HTTP_STATUS_GONE               = 410 ' the resource is no longer available
+$$HTTP_STATUS_LENGTH_REQUIRED    = 411 ' the server refused to accept request w/o a length
+$$HTTP_STATUS_PRECOND_FAILED     = 412 ' precondition given in request failed
+$$HTTP_STATUS_REQUEST_TOO_LARGE  = 413 ' request entity was too large
+$$HTTP_STATUS_URI_TOO_LONG       = 414 ' request URI too long
+$$HTTP_STATUS_UNSUPPORTED_MEDIA  = 415 ' unsupported media type
+'
+$$HTTP_STATUS_SERVER_ERROR       = 500 ' internal server error
+$$HTTP_STATUS_NOT_SUPPORTED      = 501 ' required not supported
+$$HTTP_STATUS_BAD_GATEWAY        = 502 ' error response received from gateway
+$$HTTP_STATUS_SERVICE_UNAVAIL    = 503 ' temporarily overloaded
+$$HTTP_STATUS_GATEWAY_TIMEOUT    = 504 ' timed out waiting for gateway
+$$HTTP_STATUS_VERSION_NOT_SUP    = 505 ' HTTP version not supported
+'
+$$HTTP_STATUS_FIRST              = 100	' $$HTTP_STATUS_CONTINUE
+$$HTTP_STATUS_LAST               = 505	' $$HTTP_STATUS_VERSION_NOT_SUP
+'
+' values for dwModifiers parameter of HttpAddRequestHeaders()
+'
+$$HTTP_ADDREQ_INDEX_MASK   = 0x0000FFFF
+$$HTTP_ADDREQ_FLAGS_MASK   = 0xFFFF0000
+'
+' HTTP_ADDREQ_FLAG_ADD_IF_NEW - the header will only be added if it doesn't
+' already exist
+'
+$$HTTP_ADDREQ_FLAG_ADD_IF_NEW = 0x10000000
+'
+' HTTP_ADDREQ_FLAG_ADD - if HTTP_ADDREQ_FLAG_REPLACE is set but the header is
+' not found then if this flag is set,  the header is added anyway,  so long as
+' there is a valid header-value
+'
+$$HTTP_ADDREQ_FLAG_ADD    = 0x20000000
+'
+' HTTP_ADDREQ_FLAG_COALESCE - coalesce headers with same name. e.g.
+' "Accept: text/*" and "Accept: audio/*" with this flag results in a single
+' header: "Accept: text/*,  audio/*"
+'
+$$HTTP_ADDREQ_FLAG_COALESCE_WITH_COMMA      = 0x40000000
+$$HTTP_ADDREQ_FLAG_COALESCE_WITH_SEMICOLON  = 0x01000000
+$$HTTP_ADDREQ_FLAG_COALESCE                 = 0x40000000	' $$HTTP_ADDREQ_FLAG_COALESCE_WITH_COMMA
+'
+' HTTP_ADDREQ_FLAG_REPLACE - replaces the specified header. Only one header can
+' be supplied in the buffer. If the header to be replaced is not the first
+' in a list of headers with the same name,  then the relative index should be
+' supplied in the low 8 bits of the dwModifiers parameter. If the header-value
+' part is missing,  then the header is removed
+'
+$$HTTP_ADDREQ_FLAG_REPLACE  = 0x80000000
+'
+' flags for HttpSendRequestEx(),  HttpEndRequest()
+'
+$$HSR_ASYNC       = 0x00000001  ' $$WININET_API_FLAG_ASYNC     ' force async
+$$HSR_SYNC        = 0x00000004	' $$WININET_API_FLAG_SYNC     ' force sync
+$$HSR_USE_CONTEXT = 0x00000008  ' $$WININET_API_FLAG_USE_CONTEXT  ' use dwContext value
+$$HSR_INITIATE    = 0x00000008  ' iterative operation (completed by HttpEndRequest)
+$$HSR_DOWNLOAD    = 0x00000010  ' download to file
+$$HSR_CHUNKED     = 0x00000020  ' operation is send of chunked data
+'
+$$FLAG_ICC_FORCE_CONNECTION    = 0x00000001
+'
+' Internet API error returns
+'
+$$INTERNET_ERROR_BASE                     = 12000
+'
+$$ERROR_INTERNET_OUT_OF_HANDLES           = 12001        ' $$INTERNET_ERROR_BASE + 1
+$$ERROR_INTERNET_TIMEOUT                  = 12002        ' $$INTERNET_ERROR_BASE + 2
+$$ERROR_INTERNET_EXTENDED_ERROR           = 12003        ' $$INTERNET_ERROR_BASE + 3
+$$ERROR_INTERNET_INTERNAL_ERROR           = 12004        ' $$INTERNET_ERROR_BASE + 4
+$$ERROR_INTERNET_INVALID_URL              = 12005        ' $$INTERNET_ERROR_BASE + 5
+$$ERROR_INTERNET_UNRECOGNIZED_SCHEME      = 12006        ' $$INTERNET_ERROR_BASE + 6
+$$ERROR_INTERNET_NAME_NOT_RESOLVED        = 12007        ' $$INTERNET_ERROR_BASE + 7
+$$ERROR_INTERNET_PROTOCOL_NOT_FOUND       = 12008        ' $$INTERNET_ERROR_BASE + 8
+$$ERROR_INTERNET_INVALID_OPTION           = 12009        ' $$INTERNET_ERROR_BASE + 9
+$$ERROR_INTERNET_BAD_OPTION_LENGTH        = 12010        ' $$INTERNET_ERROR_BASE + 10
+$$ERROR_INTERNET_OPTION_NOT_SETTABLE      = 12011        ' $$INTERNET_ERROR_BASE + 11
+$$ERROR_INTERNET_SHUTDOWN                 = 12012        ' $$INTERNET_ERROR_BASE + 12
+$$ERROR_INTERNET_INCORRECT_USER_NAME      = 12013        ' $$INTERNET_ERROR_BASE + 13
+$$ERROR_INTERNET_INCORRECT_PASSWORD       = 12014        ' $$INTERNET_ERROR_BASE + 14
+$$ERROR_INTERNET_LOGIN_FAILURE            = 12015        ' $$INTERNET_ERROR_BASE + 15
+$$ERROR_INTERNET_INVALID_OPERATION        = 12016        ' $$INTERNET_ERROR_BASE + 16
+$$ERROR_INTERNET_OPERATION_CANCELLED      = 12017        ' $$INTERNET_ERROR_BASE + 17
+$$ERROR_INTERNET_INCORRECT_HANDLE_TYPE    = 12018        ' $$INTERNET_ERROR_BASE + 18
+$$ERROR_INTERNET_INCORRECT_HANDLE_STATE   = 12019        ' $$INTERNET_ERROR_BASE + 19
+$$ERROR_INTERNET_NOT_PROXY_REQUEST        = 12020        ' $$INTERNET_ERROR_BASE + 20
+$$ERROR_INTERNET_REGISTRY_VALUE_NOT_FOUND = 12021        ' $$INTERNET_ERROR_BASE + 21
+$$ERROR_INTERNET_BAD_REGISTRY_PARAMETER   = 12022        ' $$INTERNET_ERROR_BASE + 22
+$$ERROR_INTERNET_NO_DIRECT_ACCESS         = 12023        ' $$INTERNET_ERROR_BASE + 23
+$$ERROR_INTERNET_NO_CONTEXT               = 12024        ' $$INTERNET_ERROR_BASE + 24
+$$ERROR_INTERNET_NO_CALLBACK              = 12025        ' $$INTERNET_ERROR_BASE + 25
+$$ERROR_INTERNET_REQUEST_PENDING          = 12026        ' $$INTERNET_ERROR_BASE + 26
+$$ERROR_INTERNET_INCORRECT_FORMAT         = 12027        ' $$INTERNET_ERROR_BASE + 27
+$$ERROR_INTERNET_ITEM_NOT_FOUND           = 12028        ' $$INTERNET_ERROR_BASE + 28
+$$ERROR_INTERNET_CANNOT_CONNECT           = 12029        ' $$INTERNET_ERROR_BASE + 29
+$$ERROR_INTERNET_CONNECTION_ABORTED       = 12030        ' $$INTERNET_ERROR_BASE + 30
+$$ERROR_INTERNET_CONNECTION_RESET         = 12031        ' $$INTERNET_ERROR_BASE + 31
+$$ERROR_INTERNET_FORCE_RETRY              = 12032        ' $$INTERNET_ERROR_BASE + 32
+$$ERROR_INTERNET_INVALID_PROXY_REQUEST    = 12033        ' $$INTERNET_ERROR_BASE + 33
+$$ERROR_INTERNET_NEED_UI                  = 12034        ' $$INTERNET_ERROR_BASE + 34
+'
+$$ERROR_INTERNET_HANDLE_EXISTS            = 12036        ' $$INTERNET_ERROR_BASE + 36
+$$ERROR_INTERNET_SEC_CERT_DATE_INVALID    = 12037        ' $$INTERNET_ERROR_BASE + 37
+$$ERROR_INTERNET_SEC_CERT_CN_INVALID      = 12038        ' $$INTERNET_ERROR_BASE + 38
+$$ERROR_INTERNET_HTTP_TO_HTTPS_ON_REDIR   = 12039        ' $$INTERNET_ERROR_BASE + 39
+$$ERROR_INTERNET_HTTPS_TO_HTTP_ON_REDIR   = 12040        ' $$INTERNET_ERROR_BASE + 40
+$$ERROR_INTERNET_MIXED_SECURITY           = 12041        ' $$INTERNET_ERROR_BASE + 41
+$$ERROR_INTERNET_CHG_POST_IS_NON_SECURE   = 12042        ' $$INTERNET_ERROR_BASE + 42
+$$ERROR_INTERNET_POST_IS_NON_SECURE       = 12043        ' $$INTERNET_ERROR_BASE + 43
+$$ERROR_INTERNET_CLIENT_AUTH_CERT_NEEDED  = 12044        ' $$INTERNET_ERROR_BASE + 44
+$$ERROR_INTERNET_INVALID_CA               = 12045        ' $$INTERNET_ERROR_BASE + 45
+$$ERROR_INTERNET_CLIENT_AUTH_NOT_SETUP    = 12046        ' $$INTERNET_ERROR_BASE + 46
+$$ERROR_INTERNET_ASYNC_THREAD_FAILED      = 12047        ' $$INTERNET_ERROR_BASE + 47
+$$ERROR_INTERNET_REDIRECT_SCHEME_CHANGE   = 12048        ' $$INTERNET_ERROR_BASE + 48
+$$ERROR_INTERNET_DIALOG_PENDING           = 12049        ' $$INTERNET_ERROR_BASE + 49
+$$ERROR_INTERNET_RETRY_DIALOG             = 12050        ' $$INTERNET_ERROR_BASE + 50
+$$ERROR_INTERNET_HTTPS_HTTP_SUBMIT_REDIR  = 12052        ' $$INTERNET_ERROR_BASE + 52
+$$ERROR_INTERNET_INSERT_CDROM             = 12053        ' $$INTERNET_ERROR_BASE + 53
+'
+' FTP API errors
+'
+$$ERROR_FTP_TRANSFER_IN_PROGRESS          = 12110        ' $$INTERNET_ERROR_BASE + 110
+$$ERROR_FTP_DROPPED                       = 12111        ' $$INTERNET_ERROR_BASE + 111
+$$ERROR_FTP_NO_PASSIVE_MODE               = 12112        ' $$INTERNET_ERROR_BASE + 112
+'
+' gopher API errors
+'
+$$ERROR_GOPHER_PROTOCOL_ERROR             = 12130        ' $$INTERNET_ERROR_BASE + 130
+$$ERROR_GOPHER_NOT_FILE                   = 12131        ' $$INTERNET_ERROR_BASE + 131
+$$ERROR_GOPHER_DATA_ERROR                 = 12132        ' $$INTERNET_ERROR_BASE + 132
+$$ERROR_GOPHER_END_OF_DATA                = 12133        ' $$INTERNET_ERROR_BASE + 133
+$$ERROR_GOPHER_INVALID_LOCATOR            = 12134        ' $$INTERNET_ERROR_BASE + 134
+$$ERROR_GOPHER_INCORRECT_LOCATOR_TYPE     = 12135        ' $$INTERNET_ERROR_BASE + 135
+$$ERROR_GOPHER_NOT_GOPHER_PLUS            = 12136        ' $$INTERNET_ERROR_BASE + 136
+$$ERROR_GOPHER_ATTRIBUTE_NOT_FOUND        = 12137        ' $$INTERNET_ERROR_BASE + 137
+$$ERROR_GOPHER_UNKNOWN_LOCATOR            = 12138        ' $$INTERNET_ERROR_BASE + 138
+'
+' HTTP API errors
+'
+$$ERROR_HTTP_HEADER_NOT_FOUND             = 12150        ' $$INTERNET_ERROR_BASE + 150
+$$ERROR_HTTP_DOWNLEVEL_SERVER             = 12151        ' $$INTERNET_ERROR_BASE + 151
+$$ERROR_HTTP_INVALID_SERVER_RESPONSE      = 12152        ' $$INTERNET_ERROR_BASE + 152
+$$ERROR_HTTP_INVALID_HEADER               = 12153        ' $$INTERNET_ERROR_BASE + 153
+$$ERROR_HTTP_INVALID_QUERY_REQUEST        = 12154        ' $$INTERNET_ERROR_BASE + 154
+$$ERROR_HTTP_HEADER_ALREADY_EXISTS        = 12155        ' $$INTERNET_ERROR_BASE + 155
+$$ERROR_HTTP_REDIRECT_FAILED              = 12156        ' $$INTERNET_ERROR_BASE + 156
+$$ERROR_HTTP_NOT_REDIRECTED               = 12160        ' $$INTERNET_ERROR_BASE + 160
+$$ERROR_HTTP_COOKIE_NEEDS_CONFIRMATION    = 12161        ' $$INTERNET_ERROR_BASE + 161
+$$ERROR_HTTP_COOKIE_DECLINED              = 12162        ' $$INTERNET_ERROR_BASE + 162
+$$ERROR_HTTP_REDIRECT_NEEDS_CONFIRMATION  = 12168        ' $$INTERNET_ERROR_BASE + 168
+'
+' additional Internet API error codes
+'
+$$ERROR_INTERNET_SECURITY_CHANNEL_ERROR  = 120157        ' $$INTERNET_ERROR_BASE + 157
+$$ERROR_INTERNET_UNABLE_TO_CACHE_FILE    = 12158         ' $$INTERNET_ERROR_BASE + 158
+$$ERROR_INTERNET_TCPIP_NOT_INSTALLED     = 12159         ' $$INTERNET_ERROR_BASE + 159
+$$ERROR_INTERNET_DISCONNECTED            = 12163         ' $$INTERNET_ERROR_BASE + 163
+$$ERROR_INTERNET_SERVER_UNREACHABLE      = 12164         ' $$INTERNET_ERROR_BASE + 164
+$$ERROR_INTERNET_PROXY_SERVER_UNREACHABLE = 12165        ' $$INTERNET_ERROR_BASE + 165
+$$ERROR_INTERNET_BAD_AUTO_PROXY_SCRIPT   = 12166         ' $$INTERNET_ERROR_BASE + 166
+$$ERROR_INTERNET_UNABLE_TO_DOWNLOAD_SCRIPT = 12167       ' $$INTERNET_ERROR_BASE + 167
+$$ERROR_INTERNET_SEC_INVALID_CERT        = 12169         ' $$INTERNET_ERROR_BASE + 169
+$$ERROR_INTERNET_SEC_CERT_REVOKED        = 12170         ' $$INTERNET_ERROR_BASE + 170
+'
+' InternetAutodial specific errors
+'
+$$ERROR_INTERNET_FAILED_DUETOSECURITYCHECK = 12171       ' $$INTERNET_ERROR_BASE + 171
+'
+$$INTERNET_ERROR_LAST                    = 12171         ' $$ERROR_INTERNET_FAILED_DUETOSECURITYCHECK
+'
+' URLCACHE APIs
+'
+' datatype definitions.
+'
+' cache entry type flags.
+'
+$$NORMAL_CACHE_ENTRY         = 0x00000001
+$$COOKIE_CACHE_ENTRY         = 0x00100000
+$$URLHISTORY_CACHE_ENTRY     = 0x00200000
+$$TRACK_OFFLINE_CACHE_ENTRY  = 0x00000010
+$$TRACK_ONLINE_CACHE_ENTRY   = 0x00000020
+$$STICKY_CACHE_ENTRY         = 0x00000004
+
+$$SPARSE_CACHE_ENTRY         = 0x00010000
+'
+$$URLCACHE_FIND_DEFAULT_FILTER  = 0x00300035      ' $$NORMAL_CACHE_ENTRY OR $$COOKIE_CACHE_ENTRY OR $$URLHISTORY_CACHE_ENTRY OR $$TRACK_OFFLINE_CACHE_ENTRY OR $$TRACK_ONLINE_CACHE_ENTRY OR $$STICKY_CACHE_ENTRY
+'
+$$CACHE_ENTRY_ATTRIBUTE_FC   = 0x00000004
+$$CACHE_ENTRY_HITRATE_FC     = 0x00000010
+$$CACHE_ENTRY_MODTIME_FC     = 0x00000040
+$$CACHE_ENTRY_EXPTIME_FC     = 0x00000080
+$$CACHE_ENTRY_ACCTIME_FC     = 0x00000100
+$$CACHE_ENTRY_SYNCTIME_FC    = 0x00000200
+$$CACHE_ENTRY_HEADERINFO_FC  = 0x00000400
+$$CACHE_ENTRY_EXEMPT_DELTA_FC = 0x00000800
+'
+' Flags for SetUrlCacheEntryGroup
+$$INTERNET_CACHE_GROUP_ADD     = 0
+$$INTERNET_CACHE_GROUP_REMOVE  = 1
+'
+' Flags for InternetDial - must not conflict with InternetAutodial flags as they are valid here also.
+'
+$$INTERNET_DIAL_UNATTENDED    = 0x8000
+'
+$$INTERENT_GOONLINE_REFRESH   = 0x00000001
+$$INTERENT_GOONLINE_MASK      = 0x00000001
+
+' Flags for InternetAutodial
+$$INTERNET_AUTODIAL_FORCE_ONLINE         = 1
+$$INTERNET_AUTODIAL_FORCE_UNATTENDED     = 2
+$$INTERNET_AUTODIAL_FAILIFSECURITYCHECK  = 4
+$$INTERNET_AUTODIAL_FLAGS_MASK           = 7      ' $$INTERNET_AUTODIAL_FORCE_ONLINE OR $$INTERNET_AUTODIAL_FORCE_UNATTENDED OR $$INTERNET_AUTODIAL_FAILIFSECURITYCHECK
+'
+' Flags for InternetGetConnectedState
+$$INTERNET_CONNECTION_MODEM       = 1
+$$INTERNET_CONNECTION_LAN         = 2
+$$INTERNET_CONNECTION_PROXY       = 4
+$$INTERNET_CONNECTION_MODEM_BUSY  = 8
+'
+' Custom dial handler functions
+'
+' Flags for custom dial handler
+$$INTERNET_CUSTOMDIAL_CONNECT      = 0
+$$INTERNET_CUSTOMDIAL_UNATTENDED   = 1
+$$INTERNET_CUSTOMDIAL_DISCONNECT   = 2
+$$INTERNET_CUSTOMDIAL_SHOWOFFLINE  = 4
+
+' Custom dial handler supported functionality flags
+$$INTERNET_CUSTOMDIAL_SAFE_FOR_UNATTENDED = 1
+$$INTERNET_CUSTOMDIAL_WILL_SUPPLY_STATE   = 2
+$$INTERNET_CUSTOMDIAL_CAN_HANGUP          = 4
+
+' States for InternetSetDialState
+$$INTERNET_DIALSTATE_DISCONNECTED   = 1
+'
+$$INTERNET_INVALID_PORT_NUMBER = 0     ' use the protocol-specific default
+'
+$$INTERNET_DEFAULT_FTP_PORT    = 21    ' default for FTP servers
+$$INTERNET_DEFAULT_GOPHER_PORT = 70    '  "   " gopher "
+$$INTERNET_DEFAULT_HTTP_PORT   = 80    '  "   " HTTP  "
+$$INTERNET_DEFAULT_HTTPS_PORT  = 443   '  "   " HTTPS "
+$$INTERNET_DEFAULT_SOCKS_PORT  = 1080  ' default for SOCKS firewall servers.
+'
+$$MAX_CACHE_ENTRY_INFO_SIZE    = 4096
+'
+' maximum field lengths (arbitrary)
+'
+$$INTERNET_MAX_HOST_NAME_LENGTH   = 256
+$$INTERNET_MAX_USER_NAME_LENGTH   = 128
+$$INTERNET_MAX_PASSWORD_LENGTH    = 128
+$$INTERNET_MAX_PORT_NUMBER_LENGTH = 5     ' $$INTERNET_PORT is unsigned short
+$$INTERNET_MAX_PORT_NUMBER_VALUE  = 65535 ' maximum unsigned short value
+$$INTERNET_MAX_PATH_LENGTH        = 2048
+$$INTERNET_MAX_SCHEME_LENGTH      = 32    ' longest protocol name length
+$$INTERNET_MAX_URL_LENGTH         = 2083
+'
+' values returned by InternetQueryOption() with INTERNET_OPTION_KEEP_CONNECTION:
+'
+$$INTERNET_KEEP_ALIVE_UNKNOWN    = 0xFFFFFFFF  
+$$INTERNET_KEEP_ALIVE_ENABLED    = 1
+$$INTERNET_KEEP_ALIVE_DISABLED   = 0
+'
+' flags returned by InternetQueryOption() with INTERNET_OPTION_REQUEST_FLAGS
+'
+$$INTERNET_REQFLAG_FROM_CACHE    = 0x00000001 ' response came from cache
+$$INTERNET_REQFLAG_ASYNC         = 0x00000002 ' request was made asynchronously
+$$INTERNET_REQFLAG_VIA_PROXY     = 0x00000004 ' request was made via a proxy
+$$INTERNET_REQFLAG_NO_HEADERS    = 0x00000008 ' orginal response contained no headers
+$$INTERNET_REQFLAG_PASSIVE       = 0x00000010 ' FTP: passive-mode connection
+$$INTERNET_REQFLAG_CACHE_WRITE_DISABLED = 0x00000040 ' HTTPS: this request not cacheable
+'
+' flags common to open functions (not InternetOpen()):
+'
+$$INTERNET_FLAG_RELOAD           = 0x80000000 ' retrieve the original item
+'
+' flags for InternetOpenUrl():
+'
+$$INTERNET_FLAG_RAW_DATA         = 0x40000000 ' FTP/gopher find: receive the item as raw (structured) data
+$$INTERNET_FLAG_EXISTING_CONNECT = 0x20000000 ' FTP: use existing InternetConnect handle for server if possible
+'
+' flags for InternetOpen():
+'
+$$INTERNET_FLAG_ASYNC            = 0x10000000 ' this request is asynchronous (where supported)
+'
+' protocol-specific flags:
+'
+$$INTERNET_FLAG_PASSIVE          = 0x08000000 ' used for FTP connections
+'
+' additional cache flags
+'
+$$INTERNET_FLAG_NO_CACHE_WRITE   = 0x04000000 ' don't write this item to the cache
+$$INTERNET_FLAG_DONT_CACHE       = 0x04000000 ' $$INTERNET_FLAG_NO_CACHE_WRITE
+$$INTERNET_FLAG_MAKE_PERSISTENT  = 0x02000000 ' make this item persistent in cache
+$$INTERNET_FLAG_FROM_CACHE       = 0x01000000 ' use offline semantics
+$$INTERNET_FLAG_OFFLINE          = 0x01000000 ' $$INTERNET_FLAG_FROM_CACHE
+'
+' additional flags
+'
+$$INTERNET_FLAG_SECURE           = 0x00800000 ' use PCT/SSL if applicable (HTTP)
+$$INTERNET_FLAG_KEEP_CONNECTION  = 0x00400000 ' use keep-alive semantics
+$$INTERNET_FLAG_NO_AUTO_REDIRECT = 0x00200000 ' don't handle redirections automatically
+$$INTERNET_FLAG_READ_PREFETCH    = 0x00100000 ' do background read prefetch
+$$INTERNET_FLAG_NO_COOKIES       = 0x00080000 ' no automatic cookie handling
+$$INTERNET_FLAG_NO_AUTH          = 0x00040000 ' no automatic authentication handling
+$$INTERNET_FLAG_CACHE_IF_NET_FAIL = 0x00010000 ' return cache file if net request fails
+'
+' Security Ignore Flags,  Allow HttpOpenRequest to overide
+' Secure Channel (SSL/PCT) failures of the following types.
+'
+$$INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP  = 0x00008000 ' ex: https:// to http://
+$$INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS = 0x00004000 ' ex: http:// to https://
+$$INTERNET_FLAG_IGNORE_CERT_DATE_INVALID = 0x00002000 ' expired X509 Cert.
+$$INTERNET_FLAG_IGNORE_CERT_CN_INVALID   = 0x00001000 ' bad common name in X509 Cert.
+'
+' more caching flags
+'
+$$INTERNET_FLAG_RESYNCHRONIZE      = 0x00000800 ' asking wininet to update an item if it is newer
+$$INTERNET_FLAG_HYPERLINK          = 0x00000400 ' asking wininet to do hyperlinking semantic which works right for scripts
+$$INTERNET_FLAG_NO_UI              = 0x00000200 ' no cookie popup
+$$INTERNET_FLAG_PRAGMA_NOCACHE     = 0x00000100 ' asking wininet to add "pragma: no-cache"
+$$INTERNET_FLAG_CACHE_ASYNC        = 0x00000080 ' ok to perform lazy cache-write
+$$INTERNET_FLAG_FORMS_SUBMIT       = 0x00000040 ' this is a forms submit
+$$INTERNET_FLAG_NEED_FILE          = 0x00000010 ' need a file for this request
+$$INTERNET_FLAG_MUST_CACHE_REQUEST = 0x00000010 ' $$INTERNET_FLAG_NEED_FILE
+'
+' flags for FTP
+'
+$$INTERNET_FLAG_TRANSFER_ASCII     = 0x00000001
+$$INTERNET_FLAG_TRANSFER_BINARY    = 0x00000002
+'
+' flags field masks
+'
+$$SECURITY_INTERNET_MASK           = 0x0000F000 ' $$INTERNET_FLAG_IGNORE_CERT_CN_INVALID OR $$INTERNET_FLAG_IGNORE_CERT_DATE_INVALID OR $$INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS OR $$INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP
+'
+$$INTERNET_FLAGS_MASK              = 0xFFFDFFD3 ' $$INTERNET_FLAG_RELOAD OR $$INTERNET_FLAG_RAW_DATA OR $$INTERNET_FLAG_EXISTING_CONNECT OR $$INTERNET_FLAG_ASYNC OR $$INTERNET_FLAG_PASSIVE OR $$INTERNET_FLAG_NO_CACHE_WRITE OR $$INTERNET_FLAG_MAKE_PERSISTENT OR $$INTERNET_FLAG_FROM_CACHE OR $$INTERNET_FLAG_SECURE OR $$INTERNET_FLAG_KEEP_CONNECTION OR $$INTERNET_FLAG_NO_AUTO_REDIRECT OR $$INTERNET_FLAG_READ_PREFETCH OR $$INTERNET_FLAG_NO_COOKIES OR $$INTERNET_FLAG_NO_AUTH OR $$INTERNET_FLAG_CACHE_IF_NET_FAIL OR $$SECURITY_INTERNET_MASK OR $$INTERNET_FLAG_RESYNCHRONIZE OR $$INTERNET_FLAG_HYPERLINK OR $$INTERNET_FLAG_NO_UI OR $$INTERNET_FLAG_PRAGMA_NOCACHE OR $$INTERNET_FLAG_CACHE_ASYNC OR $$INTERNET_FLAG_FORMS_SUBMIT OR $$INTERNET_FLAG_NEED_FILE OR $$INTERNET_FLAG_TRANSFER_BINARY OR $$INTERNET_FLAG_TRANSFER_ASCII
+$$INTERNET_ERROR_MASK_INSERT_CDROM = 0x1
+$$INTERNET_OPTIONS_MASK            = 0x2002C    ' NOT $$INTERNET_FLAGS_MASK
+'
+' INTERNET_NO_CALLBACK - if this value is presented as the dwContext parameter
+' then no call-backs will be made for that API
+'
+$$INTERNET_NO_CALLBACK    = 0
+'
+' structures/types
+'
+' INTERNET_SCHEME - enumerated URL scheme type
+'
+$$INTERNET_SCHEME_PARTIAL = -2
+$$INTERNET_SCHEME_UNKNOWN = -1
+$$INTERNET_SCHEME_DEFAULT = 0
+$$INTERNET_SCHEME_FTP     = 1
+$$INTERNET_SCHEME_GOPHER  = 2
+$$INTERNET_SCHEME_HTTP    = 3
+$$INTERNET_SCHEME_HTTPS   = 4
+$$INTERNET_SCHEME_FILE    = 5
+$$INTERNET_SCHEME_NEWS    = 6
+$$INTERNET_SCHEME_MAILTO  = 7
+$$INTERNET_SCHEME_SOCKS   = 8
+$$INTERNET_SCHEME_FIRST   = 1 ' $$INTERNET_SCHEME_FTP
+$$INTERNET_SCHEME_LAST    = 8 ' $$INTERNET_SCHEME_SOCKS
+'
+' flags for INTERNET_CONNECTED_INFO dwFlags
+'
+' ISO_FORCE_DISCONNECTED - if set when putting Wininet into disconnected mode, 
+' all outstanding requests will be aborted with a cancelled error
+'
+$$ISO_FORCE_DISCONNECTED = 0x00000001
+'
+' Internet UI
+'
+' InternetErrorDlg - Provides UI for certain Errors.
+'
+$$FLAGS_ERROR_UI_FILTER_FOR_ERRORS     = 0x01
+$$FLAGS_ERROR_UI_FLAGS_CHANGE_OPTIONS  = 0x02
+$$FLAGS_ERROR_UI_FLAGS_GENERATE_DATA   = 0x04
+$$FLAGS_ERROR_UI_FLAGS_NO_UI           = 0x08
+$$FLAGS_ERROR_UI_SERIALIZE_DIALOGS     = 0x10
+'
+' constants for InternetTimeFromSystemTime
+'
+$$INTERNET_RFC1123_FORMAT   = 0
+$$INTERNET_RFC1123_BUFSIZE  = 30
+
+'
+' flags for InternetCrackUrl() and InternetCreateUrl()
+'
+$$ICU_ESCAPE    = 0x80000000 ' (un)escape URL characters
+$$ICU_USERNAME  = 0x40000000 ' use internal username & password
+'
+' flags for InternetCanonicalizeUrl() and InternetCombineUrl()
+'
+$$ICU_NO_ENCODE          = 0x20000000 ' Don't convert unsafe characters to escape sequence
+$$ICU_DECODE             = 0x10000000 ' Convert $$XX escape sequences to characters
+$$ICU_NO_META            = 0x08000000 ' Don't convert .. etc. meta path sequences
+$$ICU_ENCODE_SPACES_ONLY = 0x04000000 ' Encode spaces only
+$$ICU_BROWSER_MODE       = 0x02000000 ' Special encode/decode rules for browser
+'
+' access types for InternetOpen()
+'
+$$INTERNET_OPEN_TYPE_PRECONFIG                   = 0  ' use registry configuration
+$$INTERNET_OPEN_TYPE_DIRECT                      = 1  ' direct to net
+$$INTERNET_OPEN_TYPE_PROXY                       = 3  ' via named proxy
+$$INTERNET_OPEN_TYPE_PRECONFIG_WITH_NO_AUTOPROXY = 4  ' prevent using java/script/INS
+'
+' old names for access types
+'
+$$PRE_CONFIG_INTERNET_ACCESS = 0 ' $$INTERNET_OPEN_TYPE_PRECONFIG
+$$LOCAL_INTERNET_ACCESS      = 1 ' $$INTERNET_OPEN_TYPE_DIRECT
+$$CERN_PROXY_INTERNET_ACCESS = 3 ' $$INTERNET_OPEN_TYPE_PROXY
+'
+' service types for InternetConnect()
+'
+$$INTERNET_SERVICE_URL    = 0
+$$INTERNET_SERVICE_FTP    = 1
+$$INTERNET_SERVICE_GOPHER = 2
+$$INTERNET_SERVICE_HTTP   = 3
+'
+' flags for InternetSetOptionEx()
+'
+$$ISO_GLOBAL      = 0x00000001 ' modify option globally
+$$ISO_REGISTRY    = 0x00000002 ' write option to registry (where applicable)
+
+$$ISO_VALID_FLAGS = 0x00000003 ' $$ISO_GLOBAL OR $$ISO_REGISTRY
+'
+' options manifests for Internet{Query OR Set}Option
+'
+$$INTERNET_OPTION_CALLBACK                    = 1
+$$INTERNET_OPTION_CONNECT_TIMEOUT             = 2
+$$INTERNET_OPTION_CONNECT_RETRIES             = 3
+$$INTERNET_OPTION_CONNECT_BACKOFF             = 4
+$$INTERNET_OPTION_SEND_TIMEOUT                = 5
+$$INTERNET_OPTION_CONTROL_SEND_TIMEOUT        = 5 ' $$INTERNET_OPTION_SEND_TIMEOUT
+$$INTERNET_OPTION_RECEIVE_TIMEOUT             = 6
+$$INTERNET_OPTION_CONTROL_RECEIVE_TIMEOUT     = 6 '$$INTERNET_OPTION_RECEIVE_TIMEOUT
+$$INTERNET_OPTION_DATA_SEND_TIMEOUT           = 7
+$$INTERNET_OPTION_DATA_RECEIVE_TIMEOUT        = 8
+$$INTERNET_OPTION_HANDLE_TYPE                 = 9
+$$INTERNET_OPTION_LISTEN_TIMEOUT              = 11
+$$INTERNET_OPTION_READ_BUFFER_SIZE            = 12
+$$INTERNET_OPTION_WRITE_BUFFER_SIZE           = 13
+$$INTERNET_OPTION_ASYNC_ID                    = 15
+$$INTERNET_OPTION_ASYNC_PRIORITY              = 16
+$$INTERNET_OPTION_PARENT_HANDLE               = 21
+$$INTERNET_OPTION_KEEP_CONNECTION             = 22
+$$INTERNET_OPTION_REQUEST_FLAGS               = 23
+$$INTERNET_OPTION_EXTENDED_ERROR              = 24
+$$INTERNET_OPTION_OFFLINE_MODE                = 26
+$$INTERNET_OPTION_CACHE_STREAM_HANDLE         = 27
+$$INTERNET_OPTION_USERNAME                    = 28
+$$INTERNET_OPTION_PASSWORD                    = 29
+$$INTERNET_OPTION_ASYNC                       = 30
+$$INTERNET_OPTION_SECURITY_FLAGS              = 31
+$$INTERNET_OPTION_SECURITY_CERTIFICATE_STRUCT = 32
+$$INTERNET_OPTION_DATAFILE_NAME               = 33
+$$INTERNET_OPTION_URL                         = 34
+$$INTERNET_OPTION_SECURITY_CERTIFICATE        = 35
+$$INTERNET_OPTION_SECURITY_KEY_BITNESS        = 36
+$$INTERNET_OPTION_REFRESH                     = 37
+$$INTERNET_OPTION_PROXY                       = 38
+$$INTERNET_OPTION_SETTINGS_CHANGED            = 39
+$$INTERNET_OPTION_VERSION                     = 40
+$$INTERNET_OPTION_USER_AGENT                  = 41
+$$INTERNET_OPTION_END_BROWSER_SESSION         = 42
+$$INTERNET_OPTION_PROXY_USERNAME              = 43
+$$INTERNET_OPTION_PROXY_PASSWORD              = 44
+$$INTERNET_OPTION_CONTEXT_VALUE               = 45
+$$INTERNET_OPTION_CONNECT_LIMIT               = 46
+$$INTERNET_OPTION_SECURITY_SELECT_CLIENT_CERT = 47
+$$INTERNET_OPTION_POLICY                      = 48
+$$INTERNET_OPTION_DISCONNECTED_TIMEOUT        = 49
+$$INTERNET_OPTION_CONNECTED_STATE             = 50
+$$INTERNET_OPTION_IDLE_STATE                  = 51
+$$INTERNET_OPTION_OFFLINE_SEMANTICS           = 52
+$$INTERNET_OPTION_SECONDARY_CACHE_KEY         = 53
+$$INTERNET_OPTION_CALLBACK_FILTER             = 54
+$$INTERNET_OPTION_CONNECT_TIME                = 55
+$$INTERNET_OPTION_SEND_THROUGHPUT             = 56
+$$INTERNET_OPTION_RECEIVE_THROUGHPUT          = 57
+$$INTERNET_OPTION_REQUEST_PRIORITY            = 58
+$$INTERNET_OPTION_HTTP_VERSION                = 59
+$$INTERNET_OPTION_RESET_URLCACHE_SESSION      = 60
+$$INTERNET_OPTION_ERROR_MASK                  = 62
+'
+$$INTERNET_FIRST_OPTION                       = 1 ' $$INTERNET_OPTION_CALLBACK
+$$INTERNET_LAST_OPTION                        = 62 ' $$INTERNET_OPTION_ERROR_MASK
+'
+' values for INTERNET_OPTION_PRIORITY
+'
+$$INTERNET_PRIORITY_FOREGROUND           = 1000
+'
+' handle types
+'
+$$INTERNET_HANDLE_TYPE_INTERNET          = 1
+$$INTERNET_HANDLE_TYPE_CONNECT_FTP       = 2
+$$INTERNET_HANDLE_TYPE_CONNECT_GOPHER    = 3
+$$INTERNET_HANDLE_TYPE_CONNECT_HTTP      = 4
+$$INTERNET_HANDLE_TYPE_FTP_FIND          = 5
+$$INTERNET_HANDLE_TYPE_FTP_FIND_HTML     = 6
+$$INTERNET_HANDLE_TYPE_FTP_FILE          = 7
+$$INTERNET_HANDLE_TYPE_FTP_FILE_HTML     = 8
+$$INTERNET_HANDLE_TYPE_GOPHER_FIND       = 9
+$$INTERNET_HANDLE_TYPE_GOPHER_FIND_HTML  = 10
+$$INTERNET_HANDLE_TYPE_GOPHER_FILE       = 11
+$$INTERNET_HANDLE_TYPE_GOPHER_FILE_HTML  = 12
+$$INTERNET_HANDLE_TYPE_HTTP_REQUEST      = 13
+'
+' values for $$INTERNET_OPTION_SECURITY_FLAGS
+'
+' query only
+$$SECURITY_FLAG_SECURE           = 0x00000001 ' can query only
+$$SECURITY_FLAG_STRENGTH_WEAK    = 0x10000000
+$$SECURITY_FLAG_STRENGTH_MEDIUM  = 0x40000000
+$$SECURITY_FLAG_STRENGTH_STRONG  = 0x20000000
+$$SECURITY_FLAG_UNKNOWNBIT       = 0x80000000
+$$SECURITY_FLAG_NORMALBITNESS    = $$SECURITY_FLAG_STRENGTH_WEAK
+'
+' The following are unused
+$$SECURITY_FLAG_SSL            = 0x00000002
+$$SECURITY_FLAG_SSL3           = 0x00000004
+$$SECURITY_FLAG_PCT            = 0x00000008
+$$SECURITY_FLAG_PCT4           = 0x00000010
+$$SECURITY_FLAG_IETFSSL4       = 0x00000020
+'
+' The following are for backwards compatability only.
+$$SECURITY_FLAG_40BIT          = $$SECURITY_FLAG_STRENGTH_WEAK
+$$SECURITY_FLAG_128BIT         = $$SECURITY_FLAG_STRENGTH_STRONG
+$$SECURITY_FLAG_56BIT          = $$SECURITY_FLAG_STRENGTH_MEDIUM
+'
+' setable flags
+'
+$$SECURITY_FLAG_IGNORE_REVOCATION        = 0x00000080
+$$SECURITY_FLAG_IGNORE_UNKNOWN_CA        = 0x00000100
+$$SECURITY_FLAG_IGNORE_WRONG_USAGE       = 0x00000200
+$$SECURITY_FLAG_IGNORE_CERT_CN_INVALID   = 0x00001000 ' $$INTERNET_FLAG_IGNORE_CERT_CN_INVALID
+$$SECURITY_FLAG_IGNORE_CERT_DATE_INVALID = 0x00002000 ' $$INTERNET_FLAG_IGNORE_CERT_DATE_INVALID
+$$SECURITY_FLAG_IGNORE_REDIRECT_TO_HTTPS = 0x00004000 ' $$INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS
+$$SECURITY_FLAG_IGNORE_REDIRECT_TO_HTTP  = 0x00008000 ' $$INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP
+$$SECURITY_SET_MASK                      = 0x00003380 ' $$SECURITY_FLAG_IGNORE_REVOCATION OR $$SECURITY_FLAG_IGNORE_UNKNOWN_CA OR $$SECURITY_FLAG_IGNORE_CERT_CN_INVALID OR $$SECURITY_FLAG_IGNORE_CERT_DATE_INVALID OR $$SECURITY_FLAG_IGNORE_WRONG_USAGE
+'
+' flags for InternetReadFileEx()
+'
+$$IRF_ASYNC       = $$WININET_API_FLAG_ASYNC
+$$IRF_SYNC        = $$WININET_API_FLAG_SYNC
+$$IRF_USE_CONTEXT = $$WININET_API_FLAG_USE_CONTEXT
+$$IRF_NO_WAIT     = 0x00000008
+'
+' status manifests for Internet status callback
+'
+$$INTERNET_STATUS_RESOLVING_NAME         = 10
+$$INTERNET_STATUS_NAME_RESOLVED          = 11
+$$INTERNET_STATUS_CONNECTING_TO_SERVER   = 20
+$$INTERNET_STATUS_CONNECTED_TO_SERVER    = 21
+$$INTERNET_STATUS_SENDING_REQUEST        = 30
+$$INTERNET_STATUS_REQUEST_SENT           = 31
+$$INTERNET_STATUS_RECEIVING_RESPONSE     = 40
+$$INTERNET_STATUS_RESPONSE_RECEIVED      = 41
+$$INTERNET_STATUS_CTL_RESPONSE_RECEIVED  = 42
+$$INTERNET_STATUS_PREFETCH               = 43
+$$INTERNET_STATUS_CLOSING_CONNECTION     = 50
+$$INTERNET_STATUS_CONNECTION_CLOSED      = 51
+$$INTERNET_STATUS_HANDLE_CREATED         = 60
+$$INTERNET_STATUS_HANDLE_CLOSING         = 70
+$$INTERNET_STATUS_REQUEST_COMPLETE       = 100
+$$INTERNET_STATUS_REDIRECT               = 110
+$$INTERNET_STATUS_INTERMEDIATE_RESPONSE  = 120
+$$INTERNET_STATUS_STATE_CHANGE           = 200
+'
+' the following can be indicated in a state change notification:
+'
+$$INTERNET_STATE_CONNECTED            = 0x00000001 ' connected state (mutually exclusive with disconnected)
+$$INTERNET_STATE_DISCONNECTED         = 0x00000002 ' disconnected from network
+$$INTERNET_STATE_DISCONNECTED_BY_USER = 0x00000010 ' disconnected by user request
+$$INTERNET_STATE_IDLE                 = 0x00000100 ' no network requests being made (by Wininet)
+$$INTERNET_STATE_BUSY                 = 0x00000200 ' network requests being made (by Wininet)
+'
+' if the following value is returned by InternetSetStatusCallback,  then
+' probably an invalid (non-code) address was supplied for the callback
+'
+$$INTERNET_INVALID_STATUS_CALLBACK    = -1
+'
+' Gopher
+'
+' string field lengths (in characters,  not bytes)
+'
+$$MAX_GOPHER_DISPLAY_TEXT   = 128
+$$MAX_GOPHER_SELECTOR_TEXT  = 256
+$$MAX_GOPHER_HOST_NAME      = 256
+$$MAX_GOPHER_LOCATOR_LENGTH = 653
+'
+' manifests for GopherType
+'
+$$GOPHER_TYPE_TEXT_FILE      = 0x00000001
+$$GOPHER_TYPE_DIRECTORY      = 0x00000002
+$$GOPHER_TYPE_CSO            = 0x00000004
+$$GOPHER_TYPE_ERROR          = 0x00000008
+$$GOPHER_TYPE_MAC_BINHEX     = 0x00000010
+$$GOPHER_TYPE_DOS_ARCHIVE    = 0x00000020
+$$GOPHER_TYPE_UNIX_UUENCODED = 0x00000040
+$$GOPHER_TYPE_INDEX_SERVER   = 0x00000080
+$$GOPHER_TYPE_TELNET         = 0x00000100
+$$GOPHER_TYPE_BINARY         = 0x00000200
+$$GOPHER_TYPE_REDUNDANT      = 0x00000400
+$$GOPHER_TYPE_TN3270         = 0x00000800
+$$GOPHER_TYPE_GIF            = 0x00001000
+$$GOPHER_TYPE_IMAGE          = 0x00002000
+$$GOPHER_TYPE_BITMAP         = 0x00004000
+$$GOPHER_TYPE_MOVIE          = 0x00008000
+$$GOPHER_TYPE_SOUND          = 0x00010000
+$$GOPHER_TYPE_HTML           = 0x00020000
+$$GOPHER_TYPE_PDF            = 0x00040000
+$$GOPHER_TYPE_CALENDAR       = 0x00080000
+$$GOPHER_TYPE_INLINE         = 0x00100000
+$$GOPHER_TYPE_UNKNOWN        = 0x20000000
+$$GOPHER_TYPE_ASK            = 0x40000000
+$$GOPHER_TYPE_GOPHER_PLUS    = 0x80000000
+'
+$$MAX_GOPHER_CATEGORY_NAME    = 128   ' arbitrary
+$$MAX_GOPHER_ATTRIBUTE_NAME   = 128   '   "
+$$MIN_GOPHER_ATTRIBUTE_LENGTH = 256   '   "
+'
+' known gopher attribute categories. See below for ordinals
+'
+$$GOPHER_INFO_CATEGORY      = "+INFO"
+$$GOPHER_ADMIN_CATEGORY     = "+ADMIN"
+$$GOPHER_VIEWS_CATEGORY     = "+VIEWS"
+$$GOPHER_ABSTRACT_CATEGORY  = "+ABSTRACT"
+$$GOPHER_VERONICA_CATEGORY  = "+VERONICA"
+'
+' known gopher attributes. These are the attribute names as defined in the
+' gopher+ protocol document
+'
+$$GOPHER_ADMIN_ATTRIBUTE     = "Admin"
+$$GOPHER_MOD_DATE_ATTRIBUTE  = "Mod-Date"
+$$GOPHER_TTL_ATTRIBUTE       = "TTL"
+$$GOPHER_SCORE_ATTRIBUTE     = "Score"
+$$GOPHER_RANGE_ATTRIBUTE     = "Score-range"
+$$GOPHER_SITE_ATTRIBUTE      = "Site"
+$$GOPHER_ORG_ATTRIBUTE       = "Org"
+$$GOPHER_LOCATION_ATTRIBUTE  = "Loc"
+$$GOPHER_GEOG_ATTRIBUTE      = "Geog"
+$$GOPHER_TIMEZONE_ATTRIBUTE  = "TZ"
+$$GOPHER_PROVIDER_ATTRIBUTE  = "Provider"
+$$GOPHER_VERSION_ATTRIBUTE   = "Version"
+$$GOPHER_ABSTRACT_ATTRIBUTE  = "Abstract"
+$$GOPHER_VIEW_ATTRIBUTE      = "View"
+$$GOPHER_TREEWALK_ATTRIBUTE  = "treewalk"
+'
+' identifiers for attribute strings
+'
+$$GOPHER_ATTRIBUTE_ID_BASE    = 0xABCCCC00
+'
+$$GOPHER_CATEGORY_ID_ALL        = 0xABCCCC01  ' $$GOPHER_ATTRIBUTE_ID_BASE + 1
+$$GOPHER_CATEGORY_ID_INFO       = 0xABCCCC02  ' $$GOPHER_ATTRIBUTE_ID_BASE + 2
+$$GOPHER_CATEGORY_ID_ADMIN      = 0xABCCCC03  ' $$GOPHER_ATTRIBUTE_ID_BASE + 3
+$$GOPHER_CATEGORY_ID_VIEWS      = 0xABCCCC04  ' $$GOPHER_ATTRIBUTE_ID_BASE + 4
+$$GOPHER_CATEGORY_ID_ABSTRACT   = 0xABCCCC05  ' $$GOPHER_ATTRIBUTE_ID_BASE + 5
+$$GOPHER_CATEGORY_ID_VERONICA   = 0xABCCCC06  ' $$GOPHER_ATTRIBUTE_ID_BASE + 6
+$$GOPHER_CATEGORY_ID_ASK        = 0xABCCCC07  ' $$GOPHER_ATTRIBUTE_ID_BASE + 7
+$$GOPHER_CATEGORY_ID_UNKNOWN    = 0xABCCCC08  ' $$GOPHER_ATTRIBUTE_ID_BASE + 8
+$$GOPHER_ATTRIBUTE_ID_ALL       = 0xABCCCC09  ' $$GOPHER_ATTRIBUTE_ID_BASE + 9
+$$GOPHER_ATTRIBUTE_ID_ADMIN     = 0xABCCCC0A  ' $$GOPHER_ATTRIBUTE_ID_BASE + 10
+$$GOPHER_ATTRIBUTE_ID_MOD_DATE  = 0xABCCCC0B  ' $$GOPHER_ATTRIBUTE_ID_BASE + 11
+$$GOPHER_ATTRIBUTE_ID_TTL       = 0xABCCCC0C  ' $$GOPHER_ATTRIBUTE_ID_BASE + 12
+$$GOPHER_ATTRIBUTE_ID_SCORE     = 0xABCCCC0D  ' $$GOPHER_ATTRIBUTE_ID_BASE + 13
+$$GOPHER_ATTRIBUTE_ID_RANGE     = 0xABCCCC0E  ' $$GOPHER_ATTRIBUTE_ID_BASE + 14
+$$GOPHER_ATTRIBUTE_ID_SITE      = 0xABCCCC0F  ' $$GOPHER_ATTRIBUTE_ID_BASE + 15
+$$GOPHER_ATTRIBUTE_ID_ORG       = 0xABCCCC10  ' $$GOPHER_ATTRIBUTE_ID_BASE + 16
+$$GOPHER_ATTRIBUTE_ID_LOCATION  = 0xABCCCC11  ' $$GOPHER_ATTRIBUTE_ID_BASE + 17
+$$GOPHER_ATTRIBUTE_ID_GEOG      = 0xABCCCC12  ' $$GOPHER_ATTRIBUTE_ID_BASE + 18
+$$GOPHER_ATTRIBUTE_ID_TIMEZONE  = 0xABCCCC13  ' $$GOPHER_ATTRIBUTE_ID_BASE + 19
+$$GOPHER_ATTRIBUTE_ID_PROVIDER  = 0xABCCCC14  ' $$GOPHER_ATTRIBUTE_ID_BASE + 20
+$$GOPHER_ATTRIBUTE_ID_VERSION   = 0xABCCCC15  ' $$GOPHER_ATTRIBUTE_ID_BASE + 21
+$$GOPHER_ATTRIBUTE_ID_ABSTRACT  = 0xABCCCC16  ' $$GOPHER_ATTRIBUTE_ID_BASE + 22
+$$GOPHER_ATTRIBUTE_ID_VIEW      = 0xABCCCC17  ' $$GOPHER_ATTRIBUTE_ID_BASE + 23
+$$GOPHER_ATTRIBUTE_ID_TREEWALK  = 0xABCCCC18  ' $$GOPHER_ATTRIBUTE_ID_BASE + 24
+$$GOPHER_ATTRIBUTE_ID_UNKNOWN   = 0xABCCCC19  ' $$GOPHER_ATTRIBUTE_ID_BASE + 25
+'
+' GOPHER_TYPE_FILE_MASK - use this to determine if a locator identifies a
+' (known) file type
+'
+$$GOPHER_TYPE_FILE_MASK    = 0x001FF271 ' $$GOPHER_TYPE_TEXT_FILE OR $$GOPHER_TYPE_MAC_BINHEX OR $$GOPHER_TYPE_DOS_ARCHIVE OR $$GOPHER_TYPE_UNIX_UUENCODED OR $$GOPHER_TYPE_BINARY OR $$GOPHER_TYPE_GIF OR $$GOPHER_TYPE_IMAGE OR $$GOPHER_TYPE_BITMAP OR $$GOPHER_TYPE_MOVIE OR $$GOPHER_TYPE_SOUND OR $$GOPHER_TYPE_HTML OR $$GOPHER_TYPE_PDF OR $$GOPHER_TYPE_CALENDAR OR $$GOPHER_TYPE_INLINE
+'

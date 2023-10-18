@@ -1,0 +1,1 @@
+NewChild ("listbox", "", $$LBS_STANDARD | $$WS_TABSTOP, x, y, w, h, hWnd, id, $$WS_EX_CLIENTEDGE)

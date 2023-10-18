@@ -1,0 +1,211 @@
+XBLite for Windows
+What's New
+
+v.2.2.0
+- Added support for line continuation using underscore character "_" at the end
+  of a line. See the console demo helloworld.x.
+
+- Compiler optimizations and bug fixes.
+
+- PROGRAM statement parameter must match program's filename, otherwise an error
+  will be displayed. This statement is only required for libraries.
+
+- xsed v1.21 released with many new features and xsed HTML Help manual updated.
+
+- Added several new demo programs:
+    helloworld.x
+    fontresource.x
+    mbb.x
+    filesearch.x
+    polygon_rendering.x
+    sendkey.x
+
+v.2.1.0
+- Added static libraries for all xblite DLLs, eg, xst_s.lib can be
+  imported and will replace the need to link to xbl.dll. All static
+  libraries have _s suffix. The utility buildlib.exe can be used to
+  create static libraries. Static libraries are linked at compile-time
+  by the linker so they are incorporated into the final executable, thus
+  removing the need for external DLLs. Special thanks to Greg Heller for
+  making this happen!
+
+- Added the ability to use the m4 macro preprocessor using a -m4 compiler option.
+  This allows user defined macros and the ability to include
+  external files into your programs.
+
+- The keyword COMMENT has been removed.
+
+- The keyword ASM is now used instead of ! as the inline assembly marker.
+
+- The ? character can be used as an equivalent to using a PRINT statement.
+
+- New intrinsics ROUND, ROUNDNE, and CEIL have been added.
+
+- New CSV functions by Alan Gent have been added to Xsx library:
+  XstBuildDataArray
+  XstLoadCompositeDataArray
+  XstLoadData
+  XstSaveCompositeDataArray
+  XstSaveDataArray
+
+- New unicode functions by Alan Gent have been added to Xsx library:
+  XstAnsiToUnicode
+  XstUnicodeToAnsi
+
+- Two new Xma functions by Alan Gent, Fmod and Fround.
+
+- The runtime library xbl.dll has been reduced in size to 71kb.
+
+- Added several new demo programs:
+  editsubclass.x	- a demo to subclass edit control
+  filetree.x		- a tree control which displays a file/directory tree
+  rtracer.x		- raytracing program(s)
+  docksplitter.x 	- a custom splitter control now used in xsed
+  fround.x		- test of Fround function
+  m4test.x		- test of using m4 preprocessor
+  seive.x		- seive algorithm
+  printdirect.x		- printing direct to printer w/o spooling
+  quiner.x		- a new quine using ? as PRINT
+  unicode.x		- demo of XstAnsiToUnicode function
+  comparray1.x		- demo of new CSV functions
+  comparray2.x		- ""
+
+- The xblite distribution has been split into two parts, with the
+  compiler, libraries, and demos in one part, and the source code
+  in the second part.
+
+- Fixed bugs in handling longdouble arrays.
+
+- Updated xsed editor to use new splitter control and added command line 
+  options to compiler options dialog box.
+
+v.2.0.1
+- Fixed minor compiler bugs
+- Fixed bug in XstGetCPUName
+- Updated template makefiles so they handle all xblite file extensions
+
+FAQ for  XBLite v2.0.1
+Q. Why is Spasm still part of the distribution? 
+A. Spasm is still used for building some parts of the instrinsic functions,
+   contained in the static library xblib.lib.  When those functions are all
+   converted (a painstakingly slow task) we can kiss Spasm goodbye completely.
+   The use of Spasm vs. GoAsm for that code has no effect whatsoever on the
+   compiler efficiency or code output - it is not used by the compiler.
+
+Q. Why are xcowlite.dll and xcowlite.x so much smaller? 
+A. The intrinsic functions were stripped out, and the compiler was
+   significantly simplified.
+
+Q. What is the xblib.lib library? 
+A. This is a static library that contains all the intrinsic functions.
+   It is linked at compile time, there is no xblib.dll.
+
+Q. Are there any new optimizations?  Are my programs going to be faster? 
+A. Yes, but nothing that really uses the power of GoAsm yet, like MMX code.
+   The goal of this release was more to build a stable compiler that emits
+   GoAsm code, and I hope we have accomplished that.
+
+Q. What is the most significant optimization? 
+A. The function prolog is more efficient.  To see the difference, compile
+   and run the benchmark.x program with the former build, and compare it
+   with the benchmark.x results of the current build.  On my P4 the time
+   to run was about 35% of the previous.  On my AMD the results are less
+   dramatic, but still significant.  The reason is that the AMD runs the
+   "unoptimized" code much better than the Pentium, so the opmization was
+   not as dramatic on the AMD.
+
+Q. Why are pelles' utilities polib, polink, & porc included  in the \bin folder?
+A. These tools can be used to build slightly smaller executables.
+   Use the template makefile pelles.xxx. In the future, we hope to migrate
+   to the full suite of GO tools.  
+
+v.2.0.0
+- Greg Heller has modified the xblite compiler so that it now emits
+    assembly for the 64-bit GoAsm assembler.
+- see http://www.jorgon.freeserve.co.uk/ for details on this 64-bit assembler
+- the previous xbasic assembler spasm has now been replaced by goasm
+- assembly files now use *.asm file extensions
+- added COMMENT/END COMMENT statement for commenting blocks of code
+- added XstCall, XstFileExists, XstStripChars and XstTranslateChars to the xsx library
+- the compiler has had numerous changes and optimizations made 
+- xsed has been modifed to accept *.asm files and tools menu added to toolbar
+- intrinsic functions are now statically linked using xblib.lib
+
+v.1.4.3
+- many improvements to XSED editor
+- added EXPLICIT statement
+    use EXPLICIT in PROLOG, all variables must be explicitly defined by type
+    within every function or an error occurs
+- added many demos by Michael McElligott, including glfw library demos
+    see alphagui.x, avi.x, consoletimer.x, hexviewer.x, keylog.x, quine.x
+    progbar.x, rainbow.x, popcharmap.x, and smtpmail.x
+- added new functions to image library Xil
+- fixed many compiler bugs related to LONGDOUBLE type
+- added code profiling utility to profile functions
+    see \tools\profiler, still a WIP
+- modified several DEC files to reflect win32 API type definitions
+    now use POINT, RECT, MSG, SIZEAPI instead of other variations
+- other bugs fixed in xcowlite.x
+
+v.1.4.2
+- new XSED programmers editor for XBLite
+- added several new command line switches:
+  -mak, -rc, -bat, -nowinmain, -nodllmain
+- Added compiler code to trap TYPE and constant errors in *.dec files, 
+  providing the DEC filename and linenumber. This will cause .dec errors
+  to stop the compiler and issue an error with the line no and dec filename.
+- updated HTML manual
+- added new demos lvprogbar.x, rcdata.x, thumbnail.x, benchmark.x,
+  piclassic.x, pidigits.x, formatcode.x, uncomment.x., nqueens.x., eval.x
+- added a custom wavefile library, Xwav, which creates and plays wav files
+- added XprRawTextToPrinter() to Xpr library
+
+
+v.1.4.1
+- corrected errors in make file for xbl.dll
+- corrected demos which had errors when running under Win2000 Pro
+- modified template files xapp.xxx and xdll.xxx so they work with win2k
+- added new demo programs like.x, finddirs.x, datetimeformat.x,
+  threadpool.x, and xbgridfill.x
+- modified several demo programs to ensure they work w/ w2k.
+
+v.1.4.0
+- extended language with new floating point data type LONGDOUBLE (12 bytes)
+- added rudimentary math support for LONGDOUBLE type
+- added LONGDOUBLE(), LONGDOUBLEAT() intrinsic functions
+- added FPU control word functions
+- added LONGDOUBLE support functions
+- error corrections made to many *.dec files
+- updated manual
+
+v.1.3.1
+- modified compiler emitted code
+
+v.1.3.0
+- runtime DLL is now named xbl.dll to avoid problems with XBasic xb.dll
+- updated manual
+- compiler now emits asm for most intrinsic functions directly into user program
+- Xst console functions have been moved to Xio console io library
+- Xst console function have been renamed with Xio prefix
+- Xio library functions have been rewritten
+- XBlite created DLLs should now be able to be called by C programs
+- start up code for executables is now emitted directly to program by compiler so xstart.o is no longer linked to your executables
+- runtime library xbl.dll is 25% smaller
+- fixed bug when using C functions with var number of params (...) and user defined types
+- all GUI demos have been modified to correct minor errors
+- the code for FORMAT$ intrinsic has been moved to an object file xformat.o and is statically linked to executable when FORMAT$ is used
+- many new demos including xbgrid, a XBLite 'babygrid' grid control.
+- xblite programs can now have .x, .xl, or .xbl file extensions
+
+v.1.2.0
+- added new Error Handling routines by Ken Minogue
+- updated manual/fixed errors
+- added man new demos (too numerous to list) 
+
+v.1.1.0
+- added keywords CONSOLE, MAKEFILE, PACKED
+- modified IMPORT statement
+- fixed shared variable error
+- updated manual with new keywords
+- added new demos: dragndrop.x, lorenz.x,
+  puzzle.x, geturl.x, threads.x, statbarprogbar.x.

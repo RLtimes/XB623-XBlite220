@@ -1,0 +1,1026 @@
+'
+'
+' #######################  Max Reason
+' #####  gdi32.dec  #####  copyright 1988-2000
+' #######################  Windows XBLite declarations for Windows "gdi32"
+'
+' subject to LGPL license - see COPYING_LIB
+' maxreason@maxreason.com
+'
+' for Windows XBLite
+' David Szafranski
+'
+'
+' VERSION  "0.0079"  ' Sep 2 2006
+'
+'
+' ###########################
+' #####  declare types  #####
+' ###########################
+'
+TYPE DOCINFO
+  ULONG     .size 
+  ULONG     .docName 
+  ULONG     .output
+  ULONG     .dataType 
+  ULONG     .type
+END TYPE
+'
+TYPE POINTAPI  ' use POINT
+  XLONG     .x 
+  XLONG     .y 
+END TYPE
+
+TYPE POINT
+	XLONG .x
+	XLONG .y
+END TYPE
+'
+TYPE RECT
+  XLONG     .left
+  XLONG     .top
+  XLONG     .right
+  XLONG     .bottom
+END TYPE
+'
+TYPE BITMAP                   ' 14 bytes
+  ULONG     .type
+  ULONG     .width           
+  ULONG     .height          
+  ULONG     .widthBytes  
+  USHORT    .planes
+  USHORT    .bitsPixel
+  ULONG     .bits           
+END TYPE
+'
+TYPE BITMAPINFOHEADER
+  XLONG     .biSize
+  XLONG     .biWidth
+  XLONG     .biHeight
+  USHORT    .biPlanes
+  USHORT    .biBitCount
+  ULONG     .biCompression
+  ULONG     .biSizeImage
+  ULONG     .biXPelsPerMeter
+  ULONG     .biYPelsPerMeter
+  ULONG     .biClrUsed
+  ULONG     .biClrImportant
+END TYPE
+'
+TYPE RGBQUAD           ' 4 bytes
+  UBYTE     .blue      '
+  UBYTE     .green     '
+  UBYTE     .red       '
+  UBYTE     .zero      '
+END TYPE
+'
+TYPE BITMAPINFO
+  BITMAPINFOHEADER  .bmiHeader
+  RGBQUAD           .bmiRGBQ
+END TYPE
+
+TYPE BITMAPINFOEX				' use this when setting biBitCount = 32 and biCompression = BI_BITFIELDS
+  BITMAPINFOHEADER  .bmiHeader	' header
+  ULONG             .bmiColors[2]	' 3 - 32bpp color masks
+END TYPE
+
+TYPE DIBSECTION
+    BITMAP              .dsBm 
+    BITMAPINFOHEADER    .dsBmih 
+    XLONG               .dsBitfields[2] 
+    XLONG               .dshSection 
+    XLONG               .dsOffset 
+END TYPE
+'
+TYPE LOGBRUSH
+  XLONG     .style
+  XLONG     .color
+  XLONG     .hatch
+END TYPE
+'
+TYPE LOGFONT               ' 64 bytes
+  XLONG     .height
+  XLONG     .width
+  XLONG     .escapement
+  XLONG     .orientation
+  XLONG     .weight
+  UBYTE     .italic
+  UBYTE     .underline
+  UBYTE     .strikeOut
+  UBYTE     .charSet
+  UBYTE     .outPrecision
+  UBYTE     .clipPrecision
+  UBYTE     .quality
+  UBYTE     .pitchAndFamily
+  STRING*32 .faceName
+  XLONG     .xbasicRes
+END TYPE
+
+TYPE NONCLIENTMETRICS
+  XLONG .cbSize
+  XLONG .iBorderWidth
+  XLONG .iScrollWidth
+  XLONG .iScrollHeight
+  XLONG .iCaptionWidth
+  XLONG .iCaptionHeight
+  LOGFONT .lfCaptionFont
+  XLONG .iSMCaptionWidth
+  XLONG .iSMCaptionHeight
+  LOGFONT .lfSMCaptionFont
+  XLONG .iMenuWidth
+  XLONG .iMenuHeight
+  LOGFONT .lfMenuFont
+  LOGFONT .lfStatusFont
+  LOGFONT .lfMessageFont
+END TYPE
+
+'
+TYPE LOGPEN
+  ULONG     .style
+  POINT     .width
+  ULONG     .color
+END TYPE
+'
+TYPE PAINTSTRUCT
+  XLONG     .hdc
+  XLONG     .fErase
+  XLONG     .left
+  XLONG     .top
+  XLONG     .right
+  XLONG     .bottom
+  XLONG     .fRestore
+  XLONG     .fIncUpdate
+  UBYTE     .rgbReserved[31]
+END TYPE
+'
+TYPE TEXTMETRIC
+  XLONG     .height
+  XLONG     .ascent
+  XLONG     .descent
+  XLONG     .internalLeading
+  XLONG     .externalLeading
+  XLONG     .avgCharWidth
+  XLONG     .maxCharWidth
+  XLONG     .weight
+  XLONG     .overhang
+  XLONG     .digitizedAspectX
+  XLONG     .digitizedAspectY
+  UBYTE     .firstChar
+  UBYTE     .lastChar
+  UBYTE     .defaultChar
+  UBYTE     .breakChar
+  UBYTE     .italic
+  UBYTE     .underlined
+  UBYTE     .struckOut
+  UBYTE     .pitchAndFamily
+  UBYTE     .charSet
+END TYPE
+'
+TYPE SIZEAPI
+  XLONG  .cx
+  XLONG  .cy
+END TYPE
+'
+TYPE PALETTEENTRY
+  UBYTE .peRed
+  UBYTE .peGreen
+  UBYTE .peBlue
+  UBYTE .peFlags
+END TYPE
+'
+TYPE COLORADJUSTMENT
+  XLONG  .caSize 
+  XLONG  .caFlags 
+  XLONG  .caIlluminantIndex 
+  XLONG  .caRedGamma 
+  XLONG  .caGreenGamma 
+  XLONG  .caBlueGamma 
+  XLONG  .caReferenceBlack 
+  XLONG  .caReferenceWhite 
+  USHORT  .caContrast 
+  USHORT  .caBrightness 
+  USHORT  .caColorfulness 
+  USHORT  .caRedGreenTint
+END TYPE 
+'
+TYPE LOGPALETTE
+  XLONG .palVersion
+  XLONG .palNumEntries
+  PALETTEENTRY .palPalEntry[0]
+END TYPE
+'
+'
+' ###############################
+' #####  declare functions  #####
+' ###############################
+'
+EXTERNAL FUNCTION  AbortPath                  (hdc)
+EXTERNAL FUNCTION  AddFontResourceA           (fileNameAddr) 
+EXTERNAL FUNCTION  AngleArc                   (hdc, x, y, radius, DOUBLE startAngle, DOUBLE sweepAngle)
+EXTERNAL FUNCTION  AnimatePalette             (hpal, startIndex, countEntries, addrPALETTEENTRY)
+EXTERNAL FUNCTION  Arc                        (hdc, left, top, right, bottom, x1, y1, x2, y2)
+EXTERNAL FUNCTION  ArcTo                      (hdc, left, top, right, bottom, xr1, yr1, xr2, yr2)
+EXTERNAL FUNCTION  BeginPath                  (hdc)
+EXTERNAL FUNCTION  BitBlt                     (hdc, x, y, w, h, hdcImage, xSrc, ySrc, mode)
+EXTERNAL FUNCTION  CancelDC                   (hdc)
+EXTERNAL FUNCTION  ChoosePixelFormat          (hdc, ppfd)
+EXTERNAL FUNCTION  Chord                      (hdc, left, top, right, bottom, xradial1, yradial1, xradial2, yradial2)
+EXTERNAL FUNCTION  CloseFigure                (hdc)
+EXTERNAL FUNCTION  CombineRgn                 (hrgnDest, hrgnSrc1, hrgnSrc2, fnCombineMode)
+EXTERNAL FUNCTION  CombineTransform           (xformResultAddr, xform1Addr, xform2Addr)
+EXTERNAL FUNCTION  CreateBitmap               (nWidth, nHeight, cPlanes, cBitsPerPel, lpvBits)  
+EXTERNAL FUNCTION  CreateBitmapIndirect       (lpbm)
+EXTERNAL FUNCTION  CreateBrushIndirect        (addrLOGBRUSH)
+EXTERNAL FUNCTION  CreateCompatibleBitmap     (hdc, width, height)
+EXTERNAL FUNCTION  CreateCompatibleDC         (hdc)
+EXTERNAL FUNCTION  CreateDIBitmap             (hdc, infoHeaderAddr, usage, addrInitBits, addrInitInfo, usage)
+EXTERNAL FUNCTION  CreateDIBPatternBrush      (hPackedDIB, fUsage)
+EXTERNAL FUNCTION  CreateDIBPatternBrushPt    (AddrpackedDIB, fUsage)
+EXTERNAL FUNCTION  CreateDIBSection           (hdc, pbmi, iUsage, ppvBits, hSection, dwOffset)
+EXTERNAL FUNCTION  CreateDiscardableBitmap    (hdc, width, height)
+EXTERNAL FUNCTION  CreateDCA                  (lpDriverName, lpPrinterName, lpOutput, lpInitData)
+EXTERNAL FUNCTION  CreateEllipticRgn          (left, top, right, bottom)
+EXTERNAL FUNCTION  CreateEllipticRgnIndirect  (rectAddr)
+EXTERNAL FUNCTION  CreateFontA                (fontHeight, fontWidth, escapement, fbOrientation, fnWeight, fbItalic, fbUnderline, fbStrikeOut, fbCharSet, fbOutputPrecision, fbClipPrecision, fbQuality, fbPitchAndFamily, lpFontName)
+EXTERNAL FUNCTION  CreateFontIndirectA        (addrLOGFONT)
+EXTERNAL FUNCTION  CreateHalftonePalette      (hdc)
+EXTERNAL FUNCTION  CreateHatchBrush           (style, color)
+EXTERNAL FUNCTION  CreatePalette              (AddrLOGPALETTE)
+EXTERNAL FUNCTION  CreatePatternBrush         (hBitmap)
+EXTERNAL FUNCTION  CreatePen                  (style, width, color)
+EXTERNAL FUNCTION  CreatePenIndirect          (AddrLOGPEN)
+EXTERNAL FUNCTION  CreatePolygonRgn           (ptAddr, cPoints, fnPolyFillMode)
+EXTERNAL FUNCTION  CreatePolyPolygonRgn       (ptAddr, polyCountsAddr, nCount, fnPolyFillMode)
+EXTERNAL FUNCTION  CreateRectRgn              (left, top, right, bottom)
+EXTERNAL FUNCTION  CreateRectRgnIndirect      (rectAddr)
+EXTERNAL FUNCTION  CreateRoundRectRgn         (left, top, right, bottom, widthEllipse, heightEllipse)
+EXTERNAL FUNCTION  CreateSolidBrush           (color)
+EXTERNAL FUNCTION  DeleteDC                   (hdc)
+EXTERNAL FUNCTION  DeleteObject               (object)
+EXTERNAL FUNCTION  DescribePixelFormat        (hdc, pixelFormat, bytes, ppfd)
+EXTERNAL FUNCTION  DPtoLP                     (hdc, pointsAddr, count)
+EXTERNAL FUNCTION  Ellipse                    (hdc, left, top, right, bottom)
+EXTERNAL FUNCTION  EndDoc                     (hdc) 
+EXTERNAL FUNCTION  EndPage                    (hdc)
+EXTERNAL FUNCTION  EndPath                    (hdc)
+EXTERNAL FUNCTION  EnumFontsA                 (hdc, faceNameAddr, callbackProc, lParam)
+EXTERNAL FUNCTION  EnumFontFamiliesA          (hdc, fontNameAddr, callbackProc, lParam)
+EXTERNAL FUNCTION  EqualRgn                   (hSrcRgn1, hSrcRgn2)
+EXTERNAL FUNCTION  Escape                     (hdc, nEscape, nCount, addrInData, addrOutData)
+EXTERNAL FUNCTION  ExcludeClipRect            (hdc, left, top, right, bottom)
+EXTERNAL FUNCTION  ExtCreatePen               (penStyle, width, addrLOGBRUSH, styleCount, style)
+EXTERNAL FUNCTION  ExtCreateRegion            (XformAddr, nCount, rgnDataAddr)
+EXTERNAL FUNCTION  ExtEscape                  (hdc, nEscape, cbInput, inDataAddr, cbOutput, outDataAddr
+EXTERNAL FUNCTION  ExtFloodFill               (hdc, xStart, yStart, color, fillType)
+EXTERNAL FUNCTION  ExtSelectClipRgn           (hdc, hrgn, fnMode)
+EXTERNAL FUNCTION  ExtTextOutA                (hdc, x, y, options, lpRect, lpString, count, lpDx)
+EXTERNAL FUNCTION  ExtTextOutW                (hdc, x, y, options, lpRect, lpStringWide, count, lpDx)
+EXTERNAL FUNCTION  FillPath                   (hdc)
+EXTERNAL FUNCTION  FillRgn                    (hdc, hrgn, hbrush)
+EXTERNAL FUNCTION  FlattenPath                (hdc)
+EXTERNAL FUNCTION  FloodFill                  (hdc, xStart, yStart, color)
+EXTERNAL FUNCTION  FrameRgn                   (hdc, hrgn, hbrush, width, height)
+EXTERNAL FUNCTION  GdiFlush                   ()
+EXTERNAL FUNCTION  GdiSetBatchLimit           (limit)
+EXTERNAL FUNCTION  GetArcDirection            (hdc)
+EXTERNAL FUNCTION  GetBkColor                 (hdc)
+EXTERNAL FUNCTION  GetBrushOrgEx              (hdc, ptAddr)
+EXTERNAL FUNCTION  GetColorAdjustment         (hdc, AddrCOLORADJUSTMENT)
+EXTERNAL FUNCTION  GetClipBox                 (hdc, rectAddr)
+EXTERNAL FUNCTION  GetCurrentObject           (hdc, objType)
+EXTERNAL FUNCTION  GetCurrentPositionEx       (hdc, pointAddr)
+EXTERNAL FUNCTION  GetDeviceCaps              (hdc, index)
+EXTERNAL FUNCTION  GetDIBits                  (hdc, hBitmap, startScan, scanLines, dataAddr, infoAddr, usage)
+EXTERNAL FUNCTION  GetGraphicsMode            (hdc)
+EXTERNAL FUNCTION  GetKerningPairsA           (hdc, numPairs, lpKrnPairArray)
+EXTERNAL FUNCTION  GetKerningPairsW           (hdc, numPairs, lpKrnPairArray)
+EXTERNAL FUNCTION  GetMapMode                 (hdc)
+EXTERNAL FUNCTION  GetMiterLimit              (hdc, limitAddr)
+EXTERNAL FUNCTION  GetNearestColor            (hdc, color)
+EXTERNAL FUNCTION  GetNearestPaletteIndex     (hpal, color)
+EXTERNAL FUNCTION  GetObjectA                 (hObject, nCount, ObjectAddr)
+EXTERNAL FUNCTION  GetObjectType              (hGdiObj)
+EXTERNAL FUNCTION  GetPaletteEntries          (hpal, startIndex, nEntries, addrPALETTEENTRY)
+EXTERNAL FUNCTION  GetPixel                   (hdc, x, y)
+EXTERNAL FUNCTION  GetPixelFormat             (hdc)
+EXTERNAL FUNCTION  GetPolyFillMode            (hdc)
+EXTERNAL FUNCTION  GetRegionData              (hRgn, size, rgnDataAddr)
+EXTERNAL FUNCTION  GetRgnBox                  (hrgn, rectAddr)
+EXTERNAL FUNCTION  GetROP2                    (hdc)
+EXTERNAL FUNCTION  GetStockObject             (object)
+EXTERNAL FUNCTION  GetStretchBltMode          (hdc)
+EXTERNAL FUNCTION  GetSystemPaletteEntries    (hdc, startIndex, nEntries, addrPALETTEENTRY)
+EXTERNAL FUNCTION  GetSystemPaletteUse        (hdc)
+EXTERNAL FUNCTION  GetTextCharacterExtra      (hdc)
+EXTERNAL FUNCTION  GetTextAlign               (hdc)
+EXTERNAL FUNCTION  GetTextColor               (hdc)
+EXTERNAL FUNCTION  GetTextExtentPointA        (hdc, addrText, lenText, addrSIZEAPI)
+EXTERNAL FUNCTION  GetTextExtentPointW        (hdc, addrText, lenText, addrSIZEAPI)
+EXTERNAL FUNCTION  GetTextExtentPoint32A      (hdc, addrText, lenText, addrSIZEAPI)
+EXTERNAL FUNCTION  GetTextFaceA               (hdc, nCount, lpFaceName)
+EXTERNAL FUNCTION  GetTextFaceW               (hdc, nCount, lpFaceNameWide)
+EXTERNAL FUNCTION  GetTextMetricsA            (hdc, textMetric)
+EXTERNAL FUNCTION  GetViewportExtEx           (hdc, buffAddr)
+EXTERNAL FUNCTION  GetViewportOrgEx           (hdc, buffAddr)
+EXTERNAL FUNCTION  GetWindowExtEx             (hdc, buffAddr)
+EXTERNAL FUNCTION  GetWorldTransform          (hdc, xformAddr)
+EXTERNAL FUNCTION  IntersectClipRect          (hdc, left, top, right, bottom)
+EXTERNAL FUNCTION  InvertRgn                  (hdc, hrgn)
+EXTERNAL FUNCTION  LineDDA                    (x1, y1, x2, y2, LineFuncAddr, dataAddr) 
+EXTERNAL FUNCTION  LineTo                     (hdc, x, y)
+EXTERNAL FUNCTION  LPtoDP                     (hdc, pointsAddr, count)
+EXTERNAL FUNCTION  MaskBlt                    (hdcDest, xDest, yDest, width, height, hdcSrc, xSrc, ySrc, hbmMask, xMask, yMask, rop)
+EXTERNAL FUNCTION  ModifyWorldTransform       (hdc, xformAddr, mode)
+EXTERNAL FUNCTION  MoveToEx                   (hdc, x, y, addrPOINT)
+EXTERNAL FUNCTION  OffsetClipRgn              (hdc, xOffset, yOffset)
+EXTERNAL FUNCTION  OffsetRgn                  (hrgn, xOffset, yOffset)
+EXTERNAL FUNCTION  OffsetViewportOrgEx        (hdc, xoffset, yoffset, pointAddr)
+EXTERNAL FUNCTION  OffsetWindowOrgEx          (hdc, xoffset, yoffset, pointAddr)
+EXTERNAL FUNCTION  PaintRgn                   (hdc, hrgn)
+EXTERNAL FUNCTION  PatBlt                     (hdc, x, y, w, h, rop)
+EXTERNAL FUNCTION  PathToRegion               (hdc)
+EXTERNAL FUNCTION  Pie                        (hdc, nLeftRect, nTopRect, nRightRect, nBottomRect, nXRadial1, nYRadial1, nXRadial2, nYRadial2)
+EXTERNAL FUNCTION  PolyBezier                 (hdc, ptsAddr, countPoints)
+EXTERNAL FUNCTION  PolyBezierTo               (hdc, ptsAddr, countPoints)
+EXTERNAL FUNCTION  PolyDraw                   (hdc, ptsAddr, typesAddr, countPoints)
+EXTERNAL FUNCTION  Polygon                    (hdc, lpPoints, nCount)
+EXTERNAL FUNCTION  Polyline                   (hdc, pointsAddr, numPoints)
+EXTERNAL FUNCTION  PolylineTo                 (hdc, pointsAddr, numPoints)
+EXTERNAL FUNCTION  PolyPolygon                (hdc, pointsAddr, polyCountsAddr, count)
+EXTERNAL FUNCTION  PolyPolyline               (hdc, pointsAddr, polyPointsAddr, numPoints)
+EXTERNAL FUNCTION  PolyTextOutA               (hdc, lpTxtArray, count)
+EXTERNAL FUNCTION  PolyTextOutW               (hdc, lpTxtWideArray, count)
+EXTERNAL FUNCTION  PtInRegion                 (hrgn, x, y)
+EXTERNAL FUNCTION  PtVisible                  (hdc, x, y)
+EXTERNAL FUNCTION  RealizePalette             (hdc)
+EXTERNAL FUNCTION  Rectangle                  (hdc, x, y, w, h)
+EXTERNAL FUNCTION  RectInRegion               (hrgn, rectAddr)
+EXTERNAL FUNCTION  RectVisible                (hdc, rectAddr)
+EXTERNAL FUNCTION  RemoveFontResourceA        (lpFileName)
+EXTERNAL FUNCTION  ResetDCA                   (hdc, initData)
+EXTERNAL FUNCTION  ResizePalette              (hpal, nEntries)
+EXTERNAL FUNCTION  RestoreDC                  (hdc, savedDC)
+EXTERNAL FUNCTION  RoundRect                  (hdc, left, top, right, bottom, width, height)
+EXTERNAL FUNCTION  SaveDC                     (hdc)
+EXTERNAL FUNCTION  ScaleViewportExtEx         (hdc, xnum, xdenom, ynum, ydenom, sizeAddr)
+EXTERNAL FUNCTION  ScaleWindowExtEx           (hdc, xnum, xdenom, ynum, ydenom, sizeAddr)
+EXTERNAL FUNCTION  SelectClipPath             (hdc, clipMode)
+EXTERNAL FUNCTION  SelectClipRgn              (hdc, hrgn)
+EXTERNAL FUNCTION  SelectObject               (hdc, object)
+EXTERNAL FUNCTION  SelectPalette              (hdc, hpal, forceBackground)
+EXTERNAL FUNCTION  SetArcDirection            (hdc, arcDirection)
+EXTERNAL FUNCTION  SetBkColor                 (hdc, color)
+EXTERNAL FUNCTION  SetBkMode                  (hdc, nMode)
+EXTERNAL FUNCTION  SetBrushOrgEx              (hdc, xorg, yorg, ptAddr)
+EXTERNAL FUNCTION  SetColorAdjustment         (hdc, addrCOLORADJUSTMENT)
+EXTERNAL FUNCTION  SetDIBits                  (hdc, hBitmap, startScan, scanLines, DIBdata, bitmapInfo, usage)
+EXTERNAL FUNCTION  SetDIBitsToDevice          (hdc, xDest, yDest, width, height, xSrc, ySrc, startScan, scanLines, DIBdata, bitmapInfo, usage)
+EXTERNAL FUNCTION  SetGraphicsMode            (hdc, mode)
+EXTERNAL FUNCTION  SetMapMode                 (hdc, mapMode)
+EXTERNAL FUNCTION  SetMiterLimit              (hdc, DOUBLE newLimit, oldLimitAddr)
+EXTERNAL FUNCTION  SetPaletteEntries          (hpal, indexStart, countEntries, addrPALETTEENTRY)
+EXTERNAL FUNCTION  SetPixel                   (hdc, x, y, color)
+EXTERNAL FUNCTION  SetPixelFormat             (hdc, iPixelFormat, ppfd)
+EXTERNAL FUNCTION  SetPixelV                  (hdc, x, y, color)
+EXTERNAL FUNCTION  SetPolyFillMode            (hdc, polyFillMode)
+EXTERNAL FUNCTION  SetROP2                    (hdc, nDrawMode)
+EXTERNAL FUNCTION  SetStretchBltMode          (hdc, mode)
+EXTERNAL FUNCTION  SetSystemPaletteUse        (hdc, usage)
+EXTERNAL FUNCTION  SetTextAlign               (hdc, wFlags)
+EXTERNAL FUNCTION  SetTextCharacterExtra      (hdc, charExtra)
+EXTERNAL FUNCTION  SetTextColor               (hdc, pixel)
+EXTERNAL FUNCTION  SetViewportExtEx           (hdc, xExt, yExt, addrBuffer)
+EXTERNAL FUNCTION  SetViewportOrgEx           (hdc, x, y, pointAddr)
+EXTERNAL FUNCTION  SetWindowExtEx             (hdc, xExt, yExt, addrBuffer)
+EXTERNAL FUNCTION  SetWindowOrgEx             (hdc, x, y, pointAddr)
+EXTERNAL FUNCTION  SetWorldTransform          (hdc, xformAddr)
+EXTERNAL FUNCTION  StartDocA                  (hdc, addrDOCINFO)
+EXTERNAL FUNCTION  StartPage                  (hdc)
+EXTERNAL FUNCTION  StretchBlt                 (hdc, x, y, w, h, hdcImage, xSrc, ySrc, wSrc, hSrc, mode)
+EXTERNAL FUNCTION  StretchDIBits              (hdc, xDest, yDest, destWidth, destHeight, xSrc, ySrc, srcWidth, srcHeight, lpBits, lpBitsInfo, usage, rop)
+EXTERNAL FUNCTION  StrokePath                 (hdc)
+EXTERNAL FUNCTION  StrokeAndFillPath          (hdc)
+EXTERNAL FUNCTION  TextOutA                   (hdc, x, y, textAddr, lenText)
+EXTERNAL FUNCTION  TextOutW                   (hdc, x, y, textWideAddr, lenText)
+EXTERNAL FUNCTION  UnrealizeObject            (hLogPal)
+EXTERNAL FUNCTION  UpdateColors               (hdc)
+EXTERNAL FUNCTION  WidenPath                  (hdc)
+'
+'
+' ##########################################
+' #####  declare and define constants  #####
+' ##########################################
+'
+'
+$$STARTDOCC                = 10
+$$ENDDOCC                  = 11
+'
+'
+' device parameters for GetDeviceCaps()
+'
+$$DRIVERVERSION            = 0     '  Device driver version
+$$TECHNOLOGY               = 2     '  Device classification
+$$HORZSIZE                 = 4     '  Horizontal size in millimeters
+$$VERTSIZE                 = 6     '  Vertical size in millimeters
+$$HORZRES                  = 8     '  Horizontal width in pixels
+$$VERTRES                  = 10    '  Vertical width in pixels
+$$BITSPIXEL                = 12    '  Number of bits per pixel
+$$PLANES                   = 14    '  Number of planes
+$$NUMBRUSHES               = 16    '  Number of brushes the device has
+$$NUMPENS                  = 18    '  Number of pens the device has
+$$NUMMARKERS               = 20    '  Number of markers the device has
+$$NUMFONTS                 = 22    '  Number of fonts the device has
+$$NUMCOLORS                = 24    '  Number of colors the device supports
+$$PDEVICESIZE              = 26    '  Size required for device descriptor
+$$CURVECAPS                = 28    '  Curve capabilities
+$$LINECAPS                 = 30    '  Line capabilities
+$$POLYGONALCAPS            = 32    '  Polygonal capabilities
+$$TEXTCAPS                 = 34    '  Text capabilities
+$$CLIPCAPS                 = 36    '  Clipping capabilities
+$$RASTERCAPS               = 38    '  Bitblt capabilities
+$$ASPECTX                  = 40    '  Length of the X leg
+$$ASPECTY                  = 42    '  Length of the Y leg
+$$ASPECTXY                 = 44    '  Length of the hypotenuse
+$$LOGPIXELSX               = 88    '  Logical pixels/inch in X
+$$LOGPIXELSY               = 90    '  Logical pixels/inch in Y
+$$SIZEPALETTE              = 104   '  Number of entries in physical palette
+$$NUMRESERVED              = 106   '  Number of reserved entries in palette
+$$COLORRES                 = 108   '  Actual color resolution
+'
+'  printing related DeviceCaps.  These replace the appropriate escapes
+'
+$$PHYSICALWIDTH            = 110   '  Physical Width in device units
+$$PHYSICALHEIGHT           = 111   '  Physical Height in device units
+$$PHYSICALOFFSETX          = 112   '  Physical Printable Area x margin
+$$PHYSICALOFFSETY          = 113   '  Physical Printable Area y margin
+$$SCALINGFACTORX           = 114   '  Scaling factor x
+$$SCALINGFACTORY           = 115   '  Scaling factor y
+'
+'
+'
+' *****  device capability masks  *****
+'
+'  device technologies
+'
+$$DT_PLOTTER               = 0     '  Vector plotter
+$$DT_RASDISPLAY            = 1     '  Raster display
+$$DT_RASPRINTER            = 2     '  Raster printer
+$$DT_RASCAMERA             = 3     '  Raster camera
+$$DT_CHARSTREAM            = 4     '  Character-stream, PLP
+$$DT_METAFILE              = 5     '  Metafile, VDM
+$$DT_DISPFILE              = 6     '  Display-file
+'
+'  curve capabilities
+'
+$$CC_NONE                  = 0     '  Curves not supported
+$$CC_CIRCLES               = 1     '  Can do circles
+$$CC_PIE                   = 2     '  Can do pie wedges
+$$CC_CHORD                 = 4     '  Can do chord arcs
+$$CC_ELLIPSES              = 8     '  Can do ellipese
+$$CC_WIDE                  = 16    '  Can do wide lines
+$$CC_STYLED                = 32    '  Can do styled lines
+$$CC_WIDESTYLED            = 64    '  Can do wide styled lines
+$$CC_INTERIORS             = 128   '  Can do interiors
+$$CC_ROUNDRECT             = 256   '
+'
+'  line capabilities
+'
+$$LC_NONE                  = 0     '  Lines not supported
+$$LC_POLYLINE              = 2     '  Can do polylines
+$$LC_MARKER                = 4     '  Can do markers
+$$LC_POLYMARKER            = 8     '  Can do polymarkers
+$$LC_WIDE                  = 16    '  Can do wide lines
+$$LC_STYLED                = 32    '  Can do styled lines
+$$LC_WIDESTYLED            = 64    '  Can do wide styled lines
+$$LC_INTERIORS             = 128   '  Can do interiors
+'
+'  polygonal capabilities
+'
+$$PC_NONE                  = 0     '  Polygonals not supported
+$$PC_POLYGON               = 1     '  Can do polygons
+$$PC_RECTANGLE             = 2     '  Can do rectangles
+$$PC_WINDPOLYGON           = 4     '  Can do winding polygons
+$$PC_TRAPEZOID             = 4     '  Can do trapezoids
+$$PC_SCANLINE              = 8     '  Can do scanlines
+$$PC_WIDE                  = 16    '  Can do wide borders
+$$PC_STYLED                = 32    '  Can do styled borders
+$$PC_WIDESTYLED            = 64    '  Can do wide styled borders
+$$PC_INTERIORS             = 128   '  Can do interiors
+'
+'  polygonal capabilities
+'
+$$CP_NONE                  = 0     '  No clipping of output
+$$CP_RECTANGLE             = 1     '  Output clipped to rects
+$$CP_REGION                = 2     '
+'
+'  text capabilities
+'
+$$TC_OP_CHARACTER          = 0x0000001  ' can do OutputPrecision   CHARACTER
+$$TC_OP_STROKE             = 0x0000002  ' can do OutputPrecision   STROKE
+$$TC_CP_STROKE             = 0x0000004  ' can do ClipPrecision     STROKE
+$$TC_CR_90                 = 0x0000008  ' can do CharRotAbility    90
+$$TC_CR_ANY                = 0x0000010  ' can do CharRotAbility    ANY
+$$TC_SF_X_YINDEP           = 0x0000020  ' can do ScaleFreedom      X_YINDEPENDENT
+$$TC_SA_DOUBLE             = 0x0000040  ' can do ScaleAbility      DOUBLE
+$$TC_SA_INTEGER            = 0x0000080  ' can do ScaleAbility      INTEGER
+$$TC_SA_CONTIN             = 0x0000100  ' can do ScaleAbility      CONTINUOUS
+$$TC_EA_DOUBLE             = 0x0000200  ' can do EmboldenAbility   DOUBLE
+$$TC_IA_ABLE               = 0x0000400  ' can do ItalisizeAbility  ABLE
+$$TC_UA_ABLE               = 0x0000800  ' can do UnderlineAbility  ABLE
+$$TC_SO_ABLE               = 0x0001000  ' can do StrikeOutAbility  ABLE
+$$TC_RA_ABLE               = 0x0002000  ' can do RasterFontAble    ABLE
+$$TC_VA_ABLE               = 0x0004000  ' can do VectorFontAble    ABLE
+$$TC_RESERVED              = 0x0008000  '
+$$TC_SCROLLBLT             = 0x0010000  ' do text scroll with blt
+'
+' raster capabilities
+'
+$$RC_NONE                  = 0x0000000
+$$RC_BITBLT                = 0x0000001  ' can do standard BLT.
+$$RC_BANDING               = 0x0000002  ' device requires banding support
+$$RC_SCALING               = 0x0000004  ' device requires scaling support
+$$RC_BITMAP64              = 0x0000008  ' device can support >64K bitmap
+$$RC_GDI20_OUTPUT          = 0x0000010  ' has 2.0 output calls
+$$RC_GDI20_STATE           = 0x0000020
+$$RC_SAVEBITMAP            = 0x0000040
+$$RC_DI_BITMAP             = 0x0000080  ' supports DIB to memory
+$$RC_PALETTE               = 0x0000100  ' supports a palette
+$$RC_DIBTODEV              = 0x0000200  ' supports DIBitsToDevice
+$$RC_BIGFONT               = 0x0000400  ' supports >64K fonts
+$$RC_STRETCHBLT            = 0x0000800  ' supports StretchBlt
+$$RC_FLOODFILL             = 0x0001000  ' supports FloodFill
+$$RC_STRETCHDIB            = 0x0002000  ' supports StretchDIBits
+$$RC_OP_DX_OUTPUT          = 0x0004000
+$$RC_DEVBITS               = 0x0008000
+'
+' DIB color table identifiers
+'
+$$DIB_RGB_COLORS           = 0          '  color table in RGBs
+$$DIB_PAL_COLORS           = 1          '  color table in palette indices
+$$DIB_PAL_INDICES          = 2          '  no color table indices into surf palette
+$$DIB_PAL_PHYSINDICES      = 2          '  no color table indices into surf palette
+$$DIB_PAL_LOGINDICES       = 4          '  no color table indices into DC palette
+'
+$$DIBbfType                = 0          ' SSHORT  See XgrGetImage() for discussion
+$$DIBbfSize                = 2          ' SLONG
+$$DIBres1                  = 6          ' SSHORT
+$$DIBres2                  = 8          ' SSHORT
+$$DIBbfOffBits             = 10         ' SLONG
+$$DIBbiSize                = 14         ' ULONG   BITMAPxxxxHEADER
+$$DIBbiWidth               = 18         ' SLONG   BITMAPINFOHEADER only
+$$DIBbiHeight              = 22         ' SLONG
+$$DIBbiPlanes              = 26         ' SSHORT
+$$DIBbiBitCount            = 28         ' SSHORT
+$$DIBbiCompression         = 30         ' SLONG
+$$DIBbiSizeImage           = 34         ' SLONG
+$$DIBbiXPelsPerMeter       = 38         ' SLONG
+$$DIBbiYPelsPerMeter       = 42         ' SLONG
+$$DIBbiClrUsed             = 46         ' SLONG
+$$DIBbiClrImportant        = 50         ' SLONG
+'
+'
+'
+$$MM_TEXT                  = 1
+$$MM_LOMETRIC              = 2
+$$MM_HIMETRIC              = 3
+$$MM_LOENGLISH             = 4
+$$MM_HIENGLISH             = 5
+$$MM_TWIPS                 = 6
+$$MM_ISOTROPIC             = 7
+$$MM_ANISOTROPIC           = 8
+'
+' Object Definitions for EnumObjects()
+$$OBJ_PEN                  = 1
+$$OBJ_BRUSH                = 2
+$$OBJ_DC                   = 3
+$$OBJ_METADC               = 4
+$$OBJ_PAL                  = 5
+$$OBJ_FONT                 = 6
+$$OBJ_BITMAP               = 7
+$$OBJ_REGION               = 8
+$$OBJ_METAFILE             = 9
+$$OBJ_MEMDC                = 10
+$$OBJ_EXTPEN               = 11
+$$OBJ_ENHMETADC            = 12
+$$OBJ_ENHMETAFILE          = 13
+'
+' pen styles
+'
+$$PS_SOLID                 = 0x00000000
+$$PS_DASH                  = 0x00000001     '  -------
+$$PS_DOT                   = 0x00000002     '  .......
+$$PS_DASHDOT               = 0x00000003     '  _._._._
+$$PS_DASHDOTDOT            = 0x00000004     '  _.._.._
+$$PS_NULL                  = 0x00000005
+$$PS_INSIDEFRAME           = 0x00000006
+$$PS_USERSTYLE             = 0x00000007
+$$PS_ALTERNATE             = 0x00000008
+$$PS_STYLE_MASK            = 0x0000000F
+'
+$$PS_ENDCAP_ROUND          = 0x00000000
+$$PS_ENDCAP_SQUARE         = 0x00000100
+$$PS_ENDCAP_FLAT           = 0x00000200
+$$PS_ENDCAP_MASK           = 0x00000F00
+'
+$$PS_JOIN_ROUND            = 0x00000000
+$$PS_JOIN_BEVEL            = 0x00001000
+$$PS_JOIN_MITER            = 0x00002000
+$$PS_JOIN_MASK             = 0x0000F000
+
+$$PS_COSMETIC              = 0x00000000
+$$PS_GEOMETRIC             = 0x00010000
+$$PS_TYPE_MASK             = 0x000F0000
+'
+' brush styles
+'
+$$BS_SOLID                 = 0
+$$BS_NULL                  = 1
+$$BS_HOLLOW                = $$BS_NULL
+$$BS_HATCHED               = 2
+$$BS_PATTERN               = 3
+$$BS_INDEXED               = 4
+$$BS_DIBPATTERN            = 5
+$$BS_DIBPATTERNPT          = 6
+$$BS_PATTERN8X8            = 7
+$$BS_DIBPATTERN8X8         = 8
+'
+' hatch styles
+'
+$$HS_HORIZONTAL            = 0          '  -----
+$$HS_VERTICAL              = 1          '  |||||
+$$HS_FDIAGONAL             = 2          '  \\\\\
+$$HS_BDIAGONAL             = 3          '  /////
+$$HS_CROSS                 = 4          '  +++++
+$$HS_DIAGCROSS             = 5          '  xxxxx
+$$HS_FDIAGONAL1            = 6
+$$HS_BDIAGONAL1            = 7
+$$HS_SOLID                 = 8
+$$HS_DENSE1                = 9
+$$HS_DENSE2                = 10
+$$HS_DENSE3                = 11
+$$HS_DENSE4                = 12
+$$HS_DENSE5                = 13
+$$HS_DENSE6                = 14
+$$HS_DENSE7                = 15
+$$HS_DENSE8                = 16
+$$HS_NOSHADE               = 17
+$$HS_HALFTONE              = 18
+$$HS_SOLIDCLR              = 19
+$$HS_DITHEREDCLR           = 20
+$$HS_SOLIDTEXTCLR          = 21
+$$HS_DITHEREDTEXTCLR       = 22
+$$HS_SOLIDBKCLR            = 23
+$$HS_DITHEREDBKCLR         = 24
+$$HS_API_MAX               = 25
+'
+' stock logical objects
+'
+$$WHITE_BRUSH              = 0
+$$LTGRAY_BRUSH             = 1
+$$GRAY_BRUSH               = 2
+$$DKGRAY_BRUSH             = 3
+$$BLACK_BRUSH              = 4
+$$NULL_BRUSH               = 5
+$$HOLLOW_BRUSH             = $$NULL_BRUSH
+$$WHITE_PEN                = 6
+$$BLACK_PEN                = 7
+$$NULL_PEN                 = 8
+$$OEM_FIXED_FONT           = 10
+$$ANSI_FIXED_FONT          = 11
+$$ANSI_VAR_FONT            = 12
+$$SYSTEM_FONT              = 13
+$$DEVICE_DEFAULT_FONT      = 14
+$$DEFAULT_PALETTE          = 15
+$$SYSTEM_FIXED_FONT        = 16
+$$STOCK_LAST               = 16
+
+$$UNSPECIFIED_FONT         = 15
+$$DEFAULT_GUI_FONT         = 17
+
+'
+$$DEVICE_FONTTYPE	  = 2
+$$RASTER_FONTTYPE	  = 1
+$$TRUETYPE_FONTTYPE = 4
+'
+' constants for Get/SetSystemPaletteUse()
+'
+$$SYSPAL_ERROR             = 0
+$$SYSPAL_STATIC            = 1
+$$SYSPAL_NOSTATIC          = 2
+'
+' constants for CreateDIBitmap
+'
+$$CBM_CREATEDIB            = 0x00000002  '  create DIB bitmap
+$$CBM_INIT                 = 0x00000004  '  initialize bitmap
+'
+' ternary raster operations
+'
+$$SRCCOPY                  = 0x00CC0020
+$$SRCPAINT                 = 0x00EE0086
+$$SRCAND                   = 0x008800C6
+$$SRCINVERT                = 0x00660046
+$$SRCERASE                 = 0x00440328
+$$NOTSRCCOPY               = 0x00330008
+$$NOTSRCERASE              = 0x001100A6
+$$MERGECOPY                = 0x00C000CA
+$$MERGEPAINT               = 0x00BB0226
+$$PATCOPY                  = 0x00F00021
+$$PATPAINT                 = 0x00FB0A09
+$$PATINVERT                = 0x005A0049
+$$DSTINVERT                = 0x00550009
+$$BLACKNESS                = 0x00000042
+$$WHITENESS                = 0x00FF0062
+'
+' font related constants
+'
+$$OUT_DEFAULT_PRECIS       = 0
+$$OUT_STRING_PRECIS        = 1
+$$OUT_CHARACTER_PRECIS     = 2
+$$OUT_STROKE_PRECIS        = 3
+$$OUT_TT_PRECIS            = 4
+$$OUT_DEVICE_PRECIS        = 5
+$$OUT_RASTER_PRECIS        = 6
+$$OUT_TT_ONLY_PRECIS       = 7
+$$OUT_OUTLINE_PRECIS       = 8
+'
+$$CLIP_DEFAULT_PRECIS      = 0
+$$CLIP_CHARACTER_PRECIS    = 1
+$$CLIP_STROKE_PRECIS       = 2
+$$CLIP_MASK                = 0x000F
+$$CLIP_LH_ANGLES           = 0x0010
+$$CLIP_TT_ALWAYS           = 0x0020
+$$CLIP_EMBEDDED            = 0x0080
+'
+$$DEFAULT_QUALITY          = 0
+$$DRAFT_QUALITY            = 1
+$$PROOF_QUALITY            = 2
+'
+$$DEFAULT_PITCH            = 0
+$$FIXED_PITCH              = 1
+$$VARIABLE_PITCH           = 2
+'
+$$ANSI_CHARSET             =   0
+$$DEFAULT_CHARSET          =   1
+$$SYMBOL_CHARSET           =   2
+$$MAC_CHARSET              =  77
+$$SHIFTJIS_CHARSET         = 128
+$$HANGEUL_CHARSET          = 129
+$$JOHAB_CHARSET            = 130
+$$HANGUL_CHARSET           = 129
+$$GB2312_CHARSET           = 134
+$$CHINESEBIG5_CHARSET      = 136
+$$GREEK_CHARSET            = 161
+$$TURKISH_CHARSET          = 162
+$$VIETNAMESE_CHARSET       = 163
+$$HEBREW_CHARSET           = 177
+$$ARABIC_CHARSET           = 178
+$$BALTIC_CHARSET           = 186
+$$RUSSIAN_CHARSET          = 204
+$$THAI_CHARSET             = 222
+$$EASTEUROPE_CHARSET       = 238
+$$OEM_CHARSET              = 255
+'
+'
+'
+$$FS_LATIN1                = 0x00000001
+$$FS_LATIN2                = 0x00000002
+$$FS_CYRILLIC              = 0x00000004
+$$FS_GREEK                 = 0x00000008
+$$FS_TURKISH               = 0x00000010
+$$FS_HEBREW                = 0x00000020
+$$FS_ARABIC                = 0x00000040
+$$FS_BALTIC                = 0x00000080
+$$FS_VIETNAMESE            = 0x00000100
+$$FS_THAI                  = 0x00001000
+$$FS_JISJAPAN              = 0x00002000
+$$FS_CHINESESIMP           = 0x00004000
+$$FS_WANSUNG               = 0x00008000
+$$FS_CHINESETRAD           = 0x00010000
+$$FS_JOHAB                 = 0x00020000
+$$FS_SYMBOL                = 0x80000000
+'
+' font families
+'
+$$FF_DONTCARE              = 0      ' don't care or don't know
+$$FF_ROMAN                 = 16     ' variable stroke width, serif
+'
+' times roman, century schoolbook, etc.
+'
+$$FF_SWISS                 = 32     ' variable stroke width, sans-serif
+'
+' Helvetica, Swiss, etc.
+'
+$$FF_MODERN                = 48     ' constant stroke width, serif or sans-serif
+'
+' pica, elite, courier, etc.
+'
+$$FF_SCRIPT                = 64     ' cursive, etc.
+$$FF_DECORATIVE            = 80     ' old english, etc.
+'
+' font weights
+'
+$$FW_DONTCARE              = 0
+$$FW_THIN                  = 100
+$$FW_EXTRALIGHT            = 200
+$$FW_LIGHT                 = 300
+$$FW_NORMAL                = 400
+$$FW_MEDIUM                = 500
+$$FW_SEMIBOLD              = 600
+$$FW_BOLD                  = 700
+$$FW_EXTRABOLD             = 800
+$$FW_HEAVY                 = 900
+'
+$$FW_ULTRALIGHT            = $$FW_EXTRALIGHT
+$$FW_REGULAR               = $$FW_NORMAL
+$$FW_DEMIBOLD              = $$FW_SEMIBOLD
+$$FW_ULTRABOLD             = $$FW_EXTRABOLD
+$$FW_BLACK                 = $$FW_HEAVY
+'
+' GDI escapes
+'
+$$NEWFRAME                 = 1
+$$AbortDocC                = 2
+$$NEXTBAND                 = 3
+$$SETCOLORTABLE            = 4
+$$GETCOLORTABLE            = 5
+$$FLUSHOUTPUT              = 6
+$$DRAFTMODE                = 7
+$$QUERYESCSUPPORT          = 8
+$$SETABORTPROC             = 9
+$$StartDocC                = 10
+$$EndDocC                  = 11
+$$GETPHYSPAGESIZE          = 12
+$$GETPRINTINGOFFSET        = 13
+$$GETSCALINGFACTOR         = 14
+$$MFCOMMENT                = 15
+$$GETPENWIDTH              = 16
+$$SETCOPYCOUNT             = 17
+$$SELECTPAPERSOURCE        = 18
+$$DEVICEDATA               = 19
+$$PASSTHROUGH              = 19
+$$GETTECHNOLGY             = 20
+$$GETTECHNOLOGY            = 20
+$$SETLINECAP               = 21
+$$SETLINEJOIN              = 22
+$$SetMiterLimitC           = 23
+$$BANDINFO                 = 24
+$$DRAWPATTERNRECT          = 25
+$$GETVECTORPENSIZE         = 26
+$$GETVECTORBRUSHSIZE       = 27
+$$ENABLEDUPLEX             = 28
+$$GETSETPAPERBINS          = 29
+$$GETSETPRINTORIENT        = 30
+$$ENUMPAPERBINS            = 31
+$$SETDIBSCALING            = 32
+$$EPSPRINTING              = 33
+$$ENUMPAPERMETRICS         = 34
+$$GETSETPAPERMETRICS       = 35
+$$POSTSCRIPT_DATA          = 37
+$$POSTSCRIPT_IGNORE        = 38
+$$MOUSETRAILS              = 39
+$$GETDEVICEUNITS           = 42
+'
+$$GETEXTENDEDTEXTMETRICS   = 256
+$$GETEXTENTTABLE           = 257
+$$GETPAIRKERNTABLE         = 258
+$$GETTRACKKERNTABLE        = 259
+$$ExtTextOutC              = 512
+$$GETFACENAME              = 513
+$$DOWNLOADFACE             = 514
+$$ENABLERELATIVEWIDTHS     = 768
+$$ENABLEPAIRKERNING        = 769
+$$SETKERNTRACK             = 770
+$$SETALLJUSTVALUES         = 771
+$$SETCHARSET               = 772
+'
+$$StretchBltC              = 2048
+$$GETSETSCREENPARAMS       = 3072
+$$BEGIN_PATH               = 4096
+$$CLIP_TO_PATH             = 4097
+$$END_PATH                 = 4098
+$$EXT_DEVICE_CAPS          = 4099
+$$RESTORE_CTM              = 4100
+$$SAVE_CTM                 = 4101
+$$SET_ARC_DIRECTION        = 4102
+$$SET_BACKGROUND_COLOR     = 4103
+$$SET_POLY_MODE            = 4104
+$$SET_SCREEN_ANGLE         = 4105
+$$SET_SPREAD               = 4106
+$$TRANSFORM_CTM            = 4107
+$$SET_CLIP_BOX             = 4108
+$$SET_BOUNDS               = 4109
+$$SET_MIRROR_MODE          = 4110
+$$OPENCHANNEL              = 4110
+$$DOWNLOADHEADER           = 4111
+$$CLOSECHANNEL             = 4112
+$$POSTSCRIPT_PASSTHROUGH   = 4115
+$$ENCAPSULATED_POSTSCRIPT  = 4116
+
+' Background Modes
+$$TRANSPARENT = 1
+$$OPAQUE 			= 2
+$$BKMODE_LAST = 2
+
+' Region Flags
+$$ERRORAPI      = 0
+$$NULLREGION    = 1
+$$SIMPLEREGION  = 2
+$$COMPLEXREGION = 3
+
+' CombineRgn() Styles
+$$RGN_AND   = 1
+$$RGN_OR    = 2
+$$RGN_XOR   = 3
+$$RGN_DIFF  = 4
+$$RGN_COPY  = 5
+$$RGN_MIN   = $$RGN_AND
+$$RGN_MAX   = $$RGN_COPY
+
+' StretchBlt() Modes
+$$BLACKONWHITE      = 1
+$$WHITEONBLACK      = 2
+$$COLORONCOLOR      = 3
+$$HALFTONE          = 4
+$$MAXSTRETCHBLTMODE = 4
+
+' PolyFill() Modes
+$$ALTERNATE     = 1
+$$WINDING       = 2
+$$POLYFILL_LAST = 2
+
+' Text Alignment Options
+$$TA_NOUPDATECP = 0
+$$TA_UPDATECP   = 1
+
+$$TA_LEFT   = 0
+$$TA_RIGHT  = 2
+$$TA_CENTER = 6
+
+$$TA_TOP      = 0
+$$TA_BOTTOM   = 8
+$$TA_BASELINE = 24
+$$TA_MASK     = 31					' (TA_BASELINE + TA_CENTER + TA_UPDATECP)
+
+$$VTA_BASELINE = $$TA_BASELINE
+$$VTA_LEFT     = $$TA_BOTTOM
+$$VTA_RIGHT    = $$TA_TOP
+$$VTA_CENTER   = $$TA_CENTER
+$$VTA_BOTTOM   = $$TA_RIGHT
+$$VTA_TOP      = $$TA_LEFT
+
+$$ETO_GRAYED = 1
+$$ETO_OPAQUE = 2
+$$ETO_CLIPPED = 4
+
+' Binary raster ops
+$$R2_BLACK = 1    
+$$R2_NOTMERGEPEN = 2
+$$R2_MASKNOTPEN = 3 
+$$R2_NOTCOPYPEN = 4 
+$$R2_MASKPENNOT = 5
+$$R2_NOT = 6
+$$R2_XORPEN = 7
+$$R2_NOTMASKPEN = 8
+$$R2_MASKPEN = 9
+$$R2_NOTXORPEN = 10
+$$R2_NOP = 11
+$$R2_MERGENOTPEN = 12
+$$R2_COPYPEN = 13
+$$R2_MERGEPENNOT = 14
+$$R2_MERGEPEN = 15
+$$R2_WHITE = 16
+$$R2_LAST = 16
+
+' ExtFloodFill style flags
+$$FLOODFILLBORDER = 0
+$$FLOODFILLSURFACE = 1
+
+' constants for the biCompression field
+$$BI_RGB = 0
+$$BI_RLE8 = 1
+$$BI_RLE4 = 2
+$$BI_BITFIELDS = 3
+
+$$CLR_INVALID = 0xFFFFFFFF
+
+$$GDI_ERROR	= 0xFFFFFFFF
+
+'  StretchBlt() Modes
+$$STRETCH_ANDSCANS = 1
+$$STRETCH_ORSCANS = 2
+$$STRETCH_DELETESCANS = 3
+$$STRETCH_HALFTONE = 4
+
+$$TMPF_FIXED_PITCH                            = 0x1
+$$TMPF_VECTOR                                 = 0x2
+$$TMPF_DEVICE                                 = 0x8
+$$TMPF_TRUETYPE                               = 0x4
+
+
+
+
+
+
+
+
+

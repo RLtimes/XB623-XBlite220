@@ -1,0 +1,3 @@
+PROGRAM  C:\xblite\demo\console\benchmark\benchmark
+VERSION  0.0000
+IMPORTS  xsx_s.XstGetSystemTime

@@ -1,0 +1,50 @@
+#include "winres.h"
+
+scrabble ICON scrabble.ico
+
+100 DIALOG 91, -1, 338, 211
+STYLE DS_SYSMODAL | DS_MODALFRAME | DS_CENTER | DS_3DLOOK | DS_SETFOREGROUND | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Operating System Information"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Operating System", -1, 19, 20, 66, 12
+    CONTROL         "Version", -1, "Static", SS_LEFTNOWORDWRAP | WS_GROUP, 122, 20, 46, 12
+    CONTROL         "Platform", -1, "Static", SS_LEFTNOWORDWRAP | WS_GROUP, 172, 20, 46, 12
+    PUSHBUTTON      "OK", IDOK, 141, 186, 49, 14
+    CONTROL         "", 201, "Static", SS_LEFTNOWORDWRAP | SS_SUNKEN | WS_GROUP, 19, 32, 90, 12
+    LTEXT           "", 202, 122, 32, 40, 12, SS_SUNKEN
+    LTEXT           "", 203, 172, 32, 54, 12, SS_SUNKEN
+    LTEXT           "Windows Directory", -1, 19, 49, 66, 12
+    LTEXT           "System Directory", -1, 122, 49, 66, 12
+    GROUPBOX        "Windows Information", -1, 12, 10, 233, 70, WS_GROUP
+    CONTROL         "", 204, "Static", SS_LEFTNOWORDWRAP | SS_SUNKEN | WS_GROUP, 19, 61, 90, 12
+    CONTROL         "", 205, "Static", SS_LEFTNOWORDWRAP | SS_SUNKEN | WS_GROUP, 122, 61, 104, 12
+    GROUPBOX        "Application Information", -1, 12, 85, 234, 96
+    LTEXT           "Internet Browser", -1, 20, 95, 71, 12
+    LTEXT           "Version", -1, 190, 93, 44, 12
+    LTEXT           "", 209, 97, 107, 89, 12, SS_SUNKEN
+    LTEXT           "", 212, 97, 135, 88, 12, SS_SUNKEN
+    LTEXT           "Description", -1, 98, 95, 55, 12
+    LTEXT           "Acrobat Reader", -1, 19, 123, 71, 12
+    CONTROL         "", 215, "Static", SS_LEFTNOWORDWRAP | SS_SUNKEN | WS_GROUP, 262, 108, 58, 12
+    CONTROL         "", 208, "Static", SS_LEFTNOWORDWRAP | SS_SUNKEN | WS_GROUP, 19, 107, 74, 12
+    CONTROL         "", 211, "Static", SS_LEFTNOWORDWRAP | SS_SUNKEN | WS_GROUP, 19, 135, 74, 12
+    LTEXT           "Version", 116, 190, 123, 44, 12
+    CONTROL         "", 210, "Static", SS_SIMPLE | SS_SUNKEN | WS_GROUP, 190, 107, 48, 12
+    LTEXT           "Version", -1, 190, 123, 44, 12
+    LTEXT           "", 213, 190, 135, 47, 12, SS_SUNKEN
+    GROUPBOX        "Network", -1, 251, 85, 77, 96
+    LTEXT           "Installed ?", -1, 263, 96, 42, 12
+    LTEXT           "TCP/IP ?", -1, 263, 124, 44, 12
+    CONTROL         "", 216, "Static", SS_LEFTNOWORDWRAP | SS_SUNKEN | WS_GROUP, 262, 137, 59, 12
+    LTEXT           "LocalHost", -1, 263, 152, 48, 12
+    CONTROL         "", 217, "Static", SS_LEFTNOWORDWRAP | SS_SUNKEN | WS_GROUP, 262, 164, 50, 12
+    GROUPBOX        "Computer Hardware", -1, 251, 10, 77, 70
+    LTEXT           "Processor Type", -1, 262, 21, 56, 12
+    LTEXT           "Installed RAM", -1, 262, 48, 58, 12
+    LTEXT           "", 207, 262, 59, 58, 12, SS_SUNKEN
+    LTEXT           "", 206, 262, 32, 58, 12, SS_SUNKEN
+    GROUPBOX        "Notes", -1, 17, 151, 221, 26
+    LTEXT           "", 214, 31, 161, 199, 12
+    LTEXT           "Description", -1, 97, 122, 55, 12
+END

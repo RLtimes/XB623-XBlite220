@@ -1,0 +1,5 @@
+scrabble ICON    scrabble.ico
+
+cut      BITMAP  cut2.bmp
+copy     BITMAP  copy2.bmp
+paste    BITMAP  paste2.bmp

@@ -1,0 +1,3 @@
+EXTERNAL FUNCTION  PrintSomething ()
+EXTERNAL FUNCTION  DoNothing ()
+

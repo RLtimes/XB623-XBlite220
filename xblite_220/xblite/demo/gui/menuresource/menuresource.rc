@@ -1,0 +1,72 @@
+scrabble ICON    scrabble.ico
+
+menubar MENU 
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "&New\tCtrl+N", 100
+		MENUITEM "&Open...\tCtrl+O", 101
+		MENUITEM "&Close\tCtrl+W", 102
+		MENUITEM "&Save\tCtrl+S", 103
+		MENUITEM "Save &As...", 104
+		MENUITEM SEPARATOR
+		MENUITEM "Recent File", 106, GRAYED
+		MENUITEM SEPARATOR
+		MENUITEM "E&xit", 105
+	END
+	POPUP "&Edit"
+	BEGIN
+		MENUITEM "&Undo\tCtrl+Z", 120
+		MENUITEM "&Redo\tCtrl+Y", 121
+		MENUITEM SEPARATOR
+		MENUITEM "Cu&t\tCtrl+X", 122
+		MENUITEM "&Copy\tCtrl+C", 123
+		MENUITEM "&Paste\tCtrl+V", 124
+		MENUITEM "&Clear\tDel", 125
+		MENUITEM "&Clear All\tDel", 126
+		MENUITEM "Select A&ll\tCtrl+A", 127
+		MENUITEM SEPARATOR
+		MENUITEM "&Find...\tCtrl+F", 128
+		MENUITEM "Find &Next\tF3", 129, GRAYED
+		MENUITEM "R&eplace...\tCtrl+H", 130
+
+	END
+	POPUP "&Help"
+	BEGIN
+		MENUITEM "&About", 200
+	END
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+	100,      "Create a new document"
+	101,      "Open an existing document"
+	102,      "Close the active document"
+	103,      "Save the active document"
+	104,      "Save the active document with a new name"
+	105,      "Quit the application; prompts to save documents"
+	106,      "Open this document"
+	107,      "Open this document"
+	108,      "Open this document"
+	109,      "Open this document"
+	110,      "Open this document"
+	111,      "Open this document"
+	112,      "Open this document"
+	113,      "Open this document"
+	114,      "Open this document"
+	115,      "Open this document"
+	120,      "Undo the last action"
+	121,      "Redo the previously undone action"
+	122,      "Cut the selection and put it on the Clipboard"
+	123,      "Copy the selection and put it on the Clipboard"
+	124,      "Insert Clipboard contents"
+	125,      "Erase the selection"
+	126,      "Erase everything"
+	127,      "Select the entire document"
+	128,      "Find the specified text"
+	129,      "Find the next occurrance of text"
+	130,      "Replace specific text with different text"
+	200,      "Display program information, version number and copyright"
+END
+
+

@@ -1,0 +1,1 @@
+NewChild ("button", "text", $$BS_CHECKBOX | $$WS_TABSTOP, x, y, w, h, hWnd, id, 0)

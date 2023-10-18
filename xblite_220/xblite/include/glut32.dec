@@ -1,0 +1,372 @@
+'
+'
+' ########################  XBLite
+' #####  glut32.dec  #####  
+' ########################  Windows XBLite declarations for "glut32"
+'
+' subject to LGPL license - see COPYING_LIB
+'
+' adapted from glut.h (Copyright (c) Mark J. Kilgard, 1994, 1995, 1996.)
+' Does not include some defines dealing with fonts and bitmaps, because I haven't
+' figured these out yet.
+' Ken Minogue, 21 Mar 2002
+'
+' VERSION  "0.0002"  ' 2004/07/11
+
+' Display mode bit masks. 
+$$GLUT_RGB          = 0
+$$GLUT_RGBA         = 0
+$$GLUT_INDEX        = 1
+$$GLUT_SINGLE       = 0
+$$GLUT_DOUBLE       = 2
+$$GLUT_ACCUM        = 4
+$$GLUT_ALPHA        = 8
+$$GLUT_DEPTH        = 16
+$$GLUT_STENCIL      = 32
+$$GLUT_MULTISAMPLE  = 128
+$$GLUT_STEREO       = 256
+$$GLUT_LUMINANCE    = 512
+
+' Mouse buttons. 
+$$GLUT_LEFT_BUTTON    = 0
+$$GLUT_MIDDLE_BUTTON  = 1
+$$GLUT_RIGHT_BUTTON   = 2
+
+' Mouse button  state. 
+$$GLUT_DOWN           = 0
+$$GLUT_UP             = 1
+
+' function keys 
+$$GLUT_KEY_F1         = 1
+$$GLUT_KEY_F2         = 2
+$$GLUT_KEY_F3         = 3
+$$GLUT_KEY_F4         = 4
+$$GLUT_KEY_F5         = 5
+$$GLUT_KEY_F6         = 6
+$$GLUT_KEY_F7         = 7
+$$GLUT_KEY_F8         = 8
+$$GLUT_KEY_F9         = 9
+$$GLUT_KEY_F10        = 10
+$$GLUT_KEY_F11        = 11
+$$GLUT_KEY_F12        = 12
+' directional keys 
+$$GLUT_KEY_LEFT       = 100
+$$GLUT_KEY_UP         = 101
+$$GLUT_KEY_RIGHT      = 102
+$$GLUT_KEY_DOWN       = 103
+$$GLUT_KEY_PAGE_UP    = 104
+$$GLUT_KEY_PAGE_DOWN  = 105
+$$GLUT_KEY_HOME       = 106
+$$GLUT_KEY_END        = 107
+$$GLUT_KEY_INSERT     = 108
+
+' Entry/exit  state. 
+$$GLUT_LEFT      =  0
+$$GLUT_ENTERED   =  1
+
+' Menu usage  state. 
+$$GLUT_MENU_NOT_IN_USE  = 0
+$$GLUT_MENU_IN_USE      = 1
+
+' Visibility  state. 
+$$GLUT_NOT_VISIBLE  = 0
+$$GLUT_VISIBLE      = 1
+
+' Window status  state. 
+$$GLUT_HIDDEN             = 0
+$$GLUT_FULLY_RETAINED     = 1
+$$GLUT_PARTIALLY_RETAINED = 2
+$$GLUT_FULLY_COVERED      = 3
+
+' Color index component selection values. 
+$$GLUT_RED    = 0
+$$GLUT_GREEN  = 1
+$$GLUT_BLUE   = 2
+
+' Layers for use. 
+$$GLUT_NORMAL   = 0
+$$GLUT_OVERLAY  = 1
+
+' glutGet parameters. 
+$$GLUT_WINDOW_X                 = 100
+$$GLUT_WINDOW_Y                 = 101
+$$GLUT_WINDOW_WIDTH             = 102
+$$GLUT_WINDOW_HEIGHT            = 103
+$$GLUT_WINDOW_BUFFER_SIZE       = 104
+$$GLUT_WINDOW_STENCIL_SIZE      = 105
+$$GLUT_WINDOW_DEPTH_SIZE        = 106
+$$GLUT_WINDOW_RED_SIZE          = 107
+$$GLUT_WINDOW_GREEN_SIZE        = 108
+$$GLUT_WINDOW_BLUE_SIZE         = 109
+$$GLUT_WINDOW_ALPHA_SIZE        = 110
+$$GLUT_WINDOW_ACCUM_RED_SIZE    = 111
+$$GLUT_WINDOW_ACCUM_GREEN_SIZE  = 112
+$$GLUT_WINDOW_ACCUM_BLUE_SIZE   = 113
+$$GLUT_WINDOW_ACCUM_ALPHA_SIZE  = 114
+$$GLUT_WINDOW_DOUBLEBUFFER      = 115
+$$GLUT_WINDOW_RGBA              = 116
+$$GLUT_WINDOW_PARENT            = 117
+$$GLUT_WINDOW_NUM_CHILDREN      = 118
+$$GLUT_WINDOW_COLORMAP_SIZE     = 119
+$$GLUT_WINDOW_NUM_SAMPLES       = 120
+$$GLUT_WINDOW_STEREO            = 121
+$$GLUT_WINDOW_CURSOR            = 122
+$$GLUT_SCREEN_WIDTH             = 200
+$$GLUT_SCREEN_HEIGHT            = 201
+$$GLUT_SCREEN_WIDTH_MM          = 202
+$$GLUT_SCREEN_HEIGHT_MM         = 203
+$$GLUT_MENU_NUM_ITEMS           = 300
+$$GLUT_DISPLAY_MODE_POSSIBLE    = 400
+$$GLUT_INIT_WINDOW_X            = 500
+$$GLUT_INIT_WINDOW_Y            = 501
+$$GLUT_INIT_WINDOW_WIDTH        = 502
+$$GLUT_INIT_WINDOW_HEIGHT       = 503
+$$GLUT_INIT_DISPLAY_MODE        = 504
+$$GLUT_ELAPSED_TIME             = 700
+
+
+'  glutDeviceGet parameters. 
+$$GLUT_HAS_KEYBOARD             = 600
+$$GLUT_HAS_MOUSE                = 601
+$$GLUT_HAS_SPACEBALL            = 602
+$$GLUT_HAS_DIAL_AND_BUTTON_BOX  = 603
+$$GLUT_HAS_TABLET               = 604
+$$GLUT_NUM_MOUSE_BUTTONS        = 605
+$$GLUT_NUM_SPACEBALL_BUTTONS    = 606
+$$GLUT_NUM_BUTTON_BOX_BUTTONS   = 607
+$$GLUT_NUM_DIALS                = 608
+$$GLUT_NUM_TABLET_BUTTONS       = 609
+
+' glutLayerGet parameters. 
+$$GLUT_OVERLAY_POSSIBLE   = 800
+$$GLUT_LAYER_IN_USE       = 801
+$$GLUT_HAS_OVERLAY        = 802
+$$GLUT_TRANSPARENT_INDEX  = 803
+$$GLUT_NORMAL_DAMAGED     = 804
+$$GLUT_OVERLAY_DAMAGED    = 805
+
+' glutVideoResizeGet parameters. 
+$$GLUT_VIDEO_RESIZE_POSSIBLE      = 900
+$$GLUT_VIDEO_RESIZE_IN_USE        = 901
+$$GLUT_VIDEO_RESIZE_X_DELTA       = 902
+$$GLUT_VIDEO_RESIZE_Y_DELTA       = 903
+$$GLUT_VIDEO_RESIZE_WIDTH_DELTA   = 904
+$$GLUT_VIDEO_RESIZE_HEIGHT_DELTA  = 905
+$$GLUT_VIDEO_RESIZE_X             = 906
+$$GLUT_VIDEO_RESIZE_Y             = 907
+$$GLUT_VIDEO_RESIZE_WIDTH         = 908
+$$GLUT_VIDEO_RESIZE_HEIGHT        = 909
+
+' glutGetModifiers return mask. 
+$$GLUT_ACTIVE_SHIFT  = 1
+$$GLUT_ACTIVE_CTRL   = 2
+$$GLUT_ACTIVE_ALT    = 4
+
+' glutSetCursor parameters. 
+' Basic arrows. 
+$$GLUT_CURSOR_RIGHT_ARROW         = 0
+$$GLUT_CURSOR_LEFT_ARROW          = 1
+' Symbolic cursor shapes. 
+$$GLUT_CURSOR_INFO                = 2
+$$GLUT_CURSOR_DESTROY             = 3
+$$GLUT_CURSOR_HELP                = 4
+$$GLUT_CURSOR_CYCLE               = 5
+$$GLUT_CURSOR_SPRAY               = 6
+$$GLUT_CURSOR_WAIT                = 7
+$$GLUT_CURSOR_TEXT                = 8
+$$GLUT_CURSOR_CROSSHAIR           = 9
+' Directional cursors. 
+$$GLUT_CURSOR_UP_DOWN             = 10
+$$GLUT_CURSOR_LEFT_RIGHT          = 11
+' Sizing cursors. 
+$$GLUT_CURSOR_TOP_SIDE            = 12
+$$GLUT_CURSOR_BOTTOM_SIDE         = 13
+$$GLUT_CURSOR_LEFT_SIDE           = 14
+$$GLUT_CURSOR_RIGHT_SIDE          = 15
+$$GLUT_CURSOR_TOP_LEFT_CORNER     = 16
+$$GLUT_CURSOR_TOP_RIGHT_CORNER    = 17
+$$GLUT_CURSOR_BOTTOM_RIGHT_CORNER = 18
+$$GLUT_CURSOR_BOTTOM_LEFT_CORNER  = 19
+' Inherit from parent window. 
+$$GLUT_CURSOR_INHERIT             = 100
+' Blank cursor. 
+$$GLUT_CURSOR_NONE                = 101
+' Fullscreen crosshair (if available). 
+$$GLUT_CURSOR_FULL_CROSSHAIR      = 102
+
+' GLUT initialization sub-API. 
+EXTERNAL FUNCTION glutInit (argcp, argv)
+EXTERNAL FUNCTION glutInitDisplayMode (ULONG mode)
+EXTERNAL FUNCTION glutInitDisplayString (string$)
+EXTERNAL FUNCTION glutInitWindowPosition (x, y)
+EXTERNAL FUNCTION glutInitWindowSize (width, height)
+EXTERNAL FUNCTION glutMainLoop ()
+
+' GLUT window sub-API. 
+EXTERNAL FUNCTION glutCreateWindow (title$)
+EXTERNAL FUNCTION glutCreateSubWindow (win, x, y, width, height)
+EXTERNAL FUNCTION glutDestroyWindow (win)
+EXTERNAL FUNCTION glutPostRedisplay ()
+EXTERNAL FUNCTION glutPostWindowRedisplay (win)
+EXTERNAL FUNCTION glutSwapBuffers ()
+EXTERNAL FUNCTION glutGetWindow ()
+EXTERNAL FUNCTION glutSetWindow (win)
+EXTERNAL FUNCTION glutSetWindowTitle (title$)
+EXTERNAL FUNCTION glutSetIconTitle (title$)
+EXTERNAL FUNCTION glutPositionWindow (x, y)
+EXTERNAL FUNCTION glutReshapeWindow (width, height)
+EXTERNAL FUNCTION glutPopWindow ()
+EXTERNAL FUNCTION glutPushWindow ()
+EXTERNAL FUNCTION glutIconifyWindow ()
+EXTERNAL FUNCTION glutShowWindow ()
+EXTERNAL FUNCTION glutHideWindow ()
+EXTERNAL FUNCTION glutFullScreen ()
+EXTERNAL FUNCTION glutSetCursor (cursor)
+EXTERNAL FUNCTION glutWarpPointer (x, y)
+
+' GLUT overlay sub-API. 
+EXTERNAL FUNCTION glutEstablishOverlay ()
+EXTERNAL FUNCTION glutRemoveOverlay ()
+EXTERNAL FUNCTION glutUseLayer (layer)
+EXTERNAL FUNCTION glutPostOverlayRedisplay ()
+EXTERNAL FUNCTION glutPostWindowOverlayRedisplay (win)
+EXTERNAL FUNCTION glutShowOverlay ()
+EXTERNAL FUNCTION glutHideOverlay ()
+
+' GLUT menu sub-API. 
+EXTERNAL FUNCTION glutCreateMenu (XLONG)
+EXTERNAL FUNCTION glutDestroyMenu (menu)
+EXTERNAL FUNCTION glutGetMenu ()
+EXTERNAL FUNCTION glutSetMenu (menu)
+EXTERNAL FUNCTION glutAddMenuEntry (label$, value)
+EXTERNAL FUNCTION glutAddSubMenu (label$, submenu)
+EXTERNAL FUNCTION glutChangeToMenuEntry (item, label$, value)
+EXTERNAL FUNCTION glutChangeToSubMenu (item, label$, submenu)
+EXTERNAL FUNCTION glutRemoveMenuItem (item)
+EXTERNAL FUNCTION glutAttachMenu (button)
+EXTERNAL FUNCTION glutDetachMenu (button)
+
+' GLUT window callback sub-API. 
+EXTERNAL FUNCTION glutDisplayFunc (funcAddr)
+EXTERNAL FUNCTION glutReshapeFunc (funcAddr)
+EXTERNAL FUNCTION glutKeyboardFunc (funcAddr)
+EXTERNAL FUNCTION glutMouseFunc (funcAddr)
+EXTERNAL FUNCTION glutMotionFunc (funcAddr)
+EXTERNAL FUNCTION glutPassiveMotionFunc (funcAddr)
+EXTERNAL FUNCTION glutEntryFunc (funcAddr)
+EXTERNAL FUNCTION glutVisibilityFunc (funcAddr)
+EXTERNAL FUNCTION glutIdleFunc (funcAddr)
+EXTERNAL FUNCTION glutTimerFunc (ULONG millis, funcAddr, value)
+EXTERNAL FUNCTION glutMenuStateFunc (funcAddr)
+EXTERNAL FUNCTION glutSpecialFunc (funcAddr)
+EXTERNAL FUNCTION glutSpaceballMotionFunc (funcAddr)
+EXTERNAL FUNCTION glutSpaceballRotateFunc (funcAddr)
+EXTERNAL FUNCTION glutSpaceballButtonFunc (funcAddr)
+EXTERNAL FUNCTION glutButtonBoxFunc (funcAddr)
+EXTERNAL FUNCTION glutDialsFunc (funcAddr)
+EXTERNAL FUNCTION glutTabletMotionFunc (funcAddr)
+EXTERNAL FUNCTION glutTabletButtonFunc (funcAddr)
+EXTERNAL FUNCTION glutMenuStatusFunc (funcAddr)
+EXTERNAL FUNCTION glutOverlayDisplayFunc (funcAddr)
+EXTERNAL FUNCTION glutWindowStatusFunc (funcAddr)
+EXTERNAL FUNCTION glutKeyboardUpFunc (funcAddr) 		' (*func)(unsigned char key, int x,int y)
+EXTERNAL FUNCTION glutSpecialUpFunc (funcAddr) 			' (*func)(int key, int x, int y)
+EXTERNAL FUNCTION glutJoystickFunc (funcAddr) 			' (*func)(unsigned int buttonMask, int x, int y, int z), int pollInterval)
+
+' GLUT color index sub-API. 
+EXTERNAL FUNCTION glutSetColor (int, SINGLE red, SINGLE green, SINGLE blue)
+EXTERNAL FUNCTION SINGLE glutGetColor (ndx, component)
+EXTERNAL FUNCTION glutCopyColormap (win)
+
+' GLUT state retrieval sub-API. 
+EXTERNAL FUNCTION glutGet (type)
+EXTERNAL FUNCTION glutDeviceGet (type)
+' GLUT extension support sub-API 
+EXTERNAL FUNCTION glutExtensionSupported (name$)
+EXTERNAL FUNCTION glutGetModifiers ()
+EXTERNAL FUNCTION glutLayerGet (type)
+
+' GLUT font sub-API 
+TYPE lpfont = XLONG
+EXTERNAL FUNCTION glutBitmapCharacter (lpfont, character)
+EXTERNAL FUNCTION glutBitmapWidth (lpfont, character)
+EXTERNAL FUNCTION glutStrokeCharacter (lpfont, character)
+EXTERNAL FUNCTION glutStrokeWidth (lpfont, character)
+EXTERNAL FUNCTION glutBitmapLength (lpfont, string$)
+EXTERNAL FUNCTION glutStrokeLength (lpfont, string$)
+
+' GLUT pre-built models sub-API 
+EXTERNAL FUNCTION glutWireSphere (DOUBLE radius, slices, stacks)
+EXTERNAL FUNCTION glutSolidSphere (DOUBLE radius, slices, stacks)
+EXTERNAL FUNCTION glutWireCone (DOUBLE base, DOUBLE height, slices, stacks)
+EXTERNAL FUNCTION glutSolidCone (DOUBLE base, DOUBLE height, slices, stacks)
+EXTERNAL FUNCTION glutWireCube (DOUBLE size)
+EXTERNAL FUNCTION glutSolidCube (DOUBLE size)
+EXTERNAL FUNCTION glutWireTorus (DOUBLE innerRadius, DOUBLE outerRadius, sides, rings)
+EXTERNAL FUNCTION glutSolidTorus (DOUBLE innerRadius, DOUBLE outerRadius, sides, rings)
+EXTERNAL FUNCTION glutWireDodecahedron ()
+EXTERNAL FUNCTION glutSolidDodecahedron ()
+EXTERNAL FUNCTION glutWireTeapot (DOUBLE size)
+EXTERNAL FUNCTION glutSolidTeapot (DOUBLE size)
+EXTERNAL FUNCTION glutWireOctahedron ()
+EXTERNAL FUNCTION glutSolidOctahedron ()
+EXTERNAL FUNCTION glutWireTetrahedron ()
+EXTERNAL FUNCTION glutSolidTetrahedron ()
+EXTERNAL FUNCTION glutWireIcosahedron ()
+EXTERNAL FUNCTION glutSolidIcosahedron ()
+
+' GLUT video resize sub-API. 
+EXTERNAL FUNCTION glutVideoResizeGet (param)
+EXTERNAL FUNCTION glutSetupVideoResizing ()
+EXTERNAL FUNCTION glutStopVideoResizing ()
+EXTERNAL FUNCTION glutVideoResize (x, y, width, height)
+EXTERNAL FUNCTION glutVideoPan (x, y, width, height)
+
+' GLUT debugging sub-API. 
+EXTERNAL FUNCTION glutReportErrors ()
+
+' GLUT device control sub-API.
+' glutSetKeyRepeat modes. 
+$$GLUT_KEY_REPEAT_OFF     = 0
+$$GLUT_KEY_REPEAT_ON      = 1
+$$GLUT_KEY_REPEAT_DEFAULT = 2
+
+' Joystick button masks. 
+$$GLUT_JOYSTICK_BUTTON_A  = 1
+$$GLUT_JOYSTICK_BUTTON_B  = 2
+$$GLUT_JOYSTICK_BUTTON_C  = 4
+$$GLUT_JOYSTICK_BUTTON_D  = 8
+
+EXTERNAL FUNCTION glutIgnoreKeyRepeat (ignore)
+EXTERNAL FUNCTION glutSetKeyRepeat (repeatMode)
+EXTERNAL FUNCTION glutForceJoystickFunc ()
+
+' GLUT game mode sub-API. 
+' glutGameModeGet. 
+$$GLUT_GAME_MODE_ACTIVE           = 0
+$$GLUT_GAME_MODE_POSSIBLE         = 1
+$$GLUT_GAME_MODE_WIDTH            = 2
+$$GLUT_GAME_MODE_HEIGHT           = 3
+$$GLUT_GAME_MODE_PIXEL_DEPTH      = 4
+$$GLUT_GAME_MODE_REFRESH_RATE     = 5
+$$GLUT_GAME_MODE_DISPLAY_CHANGED  = 6
+
+EXTERNAL FUNCTION glutGameModeString (string$)
+EXTERNAL FUNCTION glutEnterGameMode ()
+EXTERNAL FUNCTION glutLeaveGameMode ()
+EXTERNAL FUNCTION glutGameModeGet (mode)
+
+'The release of GLUT, 3.7 beta, has a mode called game-mode.
+
+'You call it something like this:
+
+' glutGameModeString ("HORIZONTAL_RESOLUTIONxVERTICAL_RESOLUTION:BITS_PER_PIXEL@REFRESH_RATE);
+' glutEnterGameMode ();
+'    ...
+'    ...
+' glutLeaveGameMode ();
+
+'Example for glutGameModeString:
+
+' glutGameModeString ("800x600:16@60");
+

@@ -1,0 +1,3 @@
+EXTERNAL FUNCTION  ValidFormat (format$, validPtr)
+EXTERNAL FUNCTION  XxxFormat$ (format$, argType, arg$$)
+

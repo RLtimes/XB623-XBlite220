@@ -1,0 +1,8 @@
+EXTERNAL FUNCTION Canvas ()
+EXTERNAL FUNCTION CanvasProc (hWnd, msg, wParam, lParam)
+' canvas control class name
+$$CANVASCLASSNAME = "canvasctrl"
+' define custom window messages
+$$WM_SET_CANVAS_IMAGE		= 1025' set image handle to display - lParam = hMemBmpImage
+$$WM_CLEAR_CANVAS_IMAGE	= 1026' clear canvas
+$$WM_TOGGLE_SCROLLBARS  = 1027' hide/show scrollbars (default is scrollbars displayed)

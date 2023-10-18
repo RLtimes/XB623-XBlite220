@@ -1,0 +1,1 @@
+NewChild ("edit", "text", $$ES_LEFT | $$ES_AUTOHSCROLL | $$WS_TABSTOP, x, y, w, h, hWnd, id, $$WS_EX_CLIENTEDGE	)

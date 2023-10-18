@@ -1,0 +1,28 @@
+a        {color: rgb(153,0,0); text-decoration: none;}
+a img    {border: none;}
+a:hover  {text-decoration: underline;}
+a:active {text-decoration: underline;}
+
+
+body {background-color: rgb(255,255,255);font-family: "Times New Roman, Times, serif";}
+p, h1, h2, li {color: rgb(0,0,51);}
+p  {margin-top: 0.25em; margin-bottom: 0.25em;}
+h1 {margin-top: 0; margin-bottom: 0;}
+h2 {text-align: center; font-size: 210%; margin-top: 2em; background-color: rgb(235,225,220); width:100%;
+    padding-top: 0.5em; padding-bottom: 1.5em; padding-left: 1em; padding-right: 1em;}
+h3 {font-size: 150%; font-weight: bold; font-variant: small-caps; font-family: "Verdana, Arial, Helvetica, sans-serif";
+    margin-top: 1.6em;}
+li {list-style-position: outside; list-style-type: square;}
+ul {margin-top: 0; margin-bottom: 0;}
+
+.topper   {border-style: none none solid none; border-width: 0 0 medium 0;
+           border-color: rgb(153,102,102);
+           padding: 0 0 0.2em 0; margin: 0 0 0.1em 0;}           
+.intro    {margin-top: 0.5em; margin-bottom: 1em;}
+.area     {background-color: rgb(204,204,204);}
+.category {margin: 1em 0 0 0;}
+.detail   {margin: 0.25em 2em 0 2em;}
+.addr     {font-style: italic;}
+.logo     {margin: 0 0 0 0.2em;}
+
+.modified {font-family: "Arial, Helv, Helvetica, sans-serif"; font-size: xx-small; margin-top: 3em;text-align: right;}

@@ -1,0 +1,310 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="KEYWORDS" content="Game Programming, Games, Program, Open Source, Linux, C++, SDL, VB, Visual Basic, DirectX, C:GLFW Basics,What is OpenGL,GLFW" />
+<meta name="robots" content="index,follow" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link title="Creative Commons" type="application/rdf+xml" href="/index.php?title=C:GLFW_Basics&amp;action=creativecommons" rel="meta" />
+<link rel="copyright" href="http://www.gnu.org/copyleft/fdl.html" />
+
+    <title>C:GLFW Basics</title>
+    <style type="text/css" media="screen,projection">/*<![CDATA[*/ @import "/stylesheets/monobook/main.css"; /*]]>*/</style>
+    <link rel="stylesheet" type="text/css" media="print" href="/stylesheets/commonPrint.css"/>
+    <!--[if IE]><style type="text/css" media="all">@import "/stylesheets/monobook/IEFixes.css";</style>
+    <script type="text/javascript" src="/stylesheets/IEFixes.js"></script>
+    <meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+    <script src="/index.php?title=-&amp;action=raw&amp;gen=js" type="text/javascript"></script>
+    <script type="text/javascript" src="/stylesheets/wikibits.js"></script>
+    <style type="text/css">/*<![CDATA[*/ @import "/index.php?title=-&action=raw&gen=css";
+ /*]]>*/</style>
+    
+  </head>
+  <body class="ns-0">
+    <div id="globalWrapper">
+      <div id="column-content">
+	<div id="content">
+	  <a name="top" id="contentTop"></a>
+	  <h1 class="firstHeading">C:GLFW Basics</h1>
+	  <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="5"><tr><td width="100%" align="left" valign="top">
+	  <div id="bodyContent">
+	    <h3 id="siteSub">From GPWiki</h3>
+	    <div id="contentSub"></div>
+	    
+	    
+	    
+	    <!-- start content -->
+	    <p>The programming interface to <a href="/index.php/GLFW" title ="GLFW">GLFW</a> is mercifully small, and setting up a little program with it is a piece of cake. I'll show the basics here. For a more complete description of the library go to <a href="http://glfw.sf.net" class='external' title="http://glfw.sf.net">http://glfw.sf.net</a>
+</p>
+<h2 >Installing GLFW</h2 >
+<p>First, you get the source code <a href='http://glfw.sourceforge.net/download.html' class='external' title="http://glfw.sourceforge.net/download.html">here</a><span class='urlexpansion'> (<i>http://glfw.sourceforge.net/download.html</i>)</span> and extract it somewhere. Basically you just follow the instructions in readme.html that apply to the compiler you are using, I'm not going to duplicate that information here. If you link your program statically with GLFW (the licence allows this, even for commercial programs), you will not have to distribute any extra DLL's with your program.
+</p>
+<h2 >Conventions</h2 >
+<p>All library functions have 'glfw' (lower-case) prefixed to their name. To use the functions you'll have to include the GLFW header file, usually with <tt >#include &lt;GL/glfw.h&gt;</tt >, this takes care of including <tt >&lt;GL/gl.h&gt;</tt > for you, and on windows it will also remove the need to include <tt >&lt;windows.h&gt;</tt > before including <tt >gl.h</tt >.
+</p><p>GLFW functions that return a status value will use <tt >GL_TRUE</tt > (a constant from the <tt >gl.h header</tt > file) for success and <tt >GL_FALSE</tt > for failure.
+</p>
+<h2 >Initialization</h2 >
+<p>At the start of your program, you'll have to call <tt >glfwInit()</tt > to initialize the library. This does not open any windows or do anything, it just does some preparation to allow you to start using GLFW functions. You should check the return value of this function, if it GL_FALSE the initialization failed for some reason.
+</p><p>Likewise, when your program terminates, you'll have to call the <tt >glfwTerminate()</tt >, which will free any resources claimed by GLFW and close any open windows created by GLFW.
+</p><p>Next, you'll want to open a window. Unsurprisingly, the function to do this is <tt >glfwOpenWindow</tt >:
+</p>
+<pre>
+glfwOpenWindow(int width, int height, int redbits, int greenbits, int bluebits,
+               int alphabits, int depthbits, int stencilbits, int mode)
+</pre>
+<p>That is an awful lot of parameters. Fortunately, you can set a lot of them to zero. The first two give the resolution for the window, you'll usually want to specify something here (0, 0 gives 640 x 480). Next come the number of bits per color. If you leave these at 0 the color depth of your desktop will be used, if you specify them GLFW will use the color depth that comes closest to what you specified (for example 5, 6, 5 will give you 16 bit color if your OpenGL implementation supports it). Alphabits, depthbits and stencilbits specify will be set to 0, 8, 0 in this example, leave them at that if the words mean nothing to you. The last parameter, mode, is used to incdicate whether the window will be full-screen or not. Pass <tt >GLFW_FULLSCREEN</tt > for a full screen window, and <tt >GLFW_WINDOW</tt > for a normal one.
+</p>
+<pre>
+if (glfwOpenWindow(800, 600, 5, 6, 5, 0, 8, 0, GLFW_FULLSCREEN)&nbsp;!= GL_TRUE)
+  Shut_Down(1); // calls glfwTerminate() and exits
+glfwSetWindowTitle(&quot;The GLFW Window&quot;);
+</pre>
+<p>This initializes an 800x600, 16-bit color, full screen window, or kills the program if it's initialization failed. It also sets the window title. We're ready to start drawing. Do make sure you only use <a href="/index.php/What_is_OpenGL" title ="What is OpenGL">OpenGL</a> functions when there is an open window (that also goes for creating and destroying texture objects and such things), when there is no window there is no OpenGL context, and you can not use OpenGL.
+</p><p>You can close your window at any time with <tt >glfwCloseWindow()</tt >, but you can also just let <tt >gflwTerminate()</tt > handle that when your program closes.
+</p>
+<h2 >Graphics</h2 >
+<p>GLFW does not do much drawing itself, you'll have to use <a href="/index.php/What_is_OpenGL" title ="What is OpenGL">OpenGL</a> library functions. This tutorial does not concern itself with those. One thing GLFW <i >does</i > help you with is loading textures from TGA files, but usage of that function is so interwoven with OpenGL that you'll have to look it up yourself.
+</p>
+<h2 >Input</h2 >
+<p>There are two ways of reading input in GLFW, polling for it and registering callback functions. I'll only discuss keyboard input here, but mouse input goes much the same way. One important thing to notice is that GLFW only checks for new input whenever <tt >glfwSwapBuffer()</tt > or <tt >glfwPollEvents()</tt > is called, thus if you are not swapping buffers or explicitly polling, no new events will arrive.
+</p>
+<pre>
+if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
+  quit_the_program = 1;
+if (glfwGetKey('A') == GLFW_PRESS)
+  printf(&quot;A is pressed&quot;);
+</pre>
+<p>This uses the polling method to check for key input. The return value of <tt >glfwGetKey</tt > is <tt >GLFW_PRESS</tt > if the key is currently held down, and <tt >GLFW_RELEASE</tt > if it is not. Keys that have a character associated with them can be indicated by using that character as argument, other keys have their own constants (see the documentation at <a href="http://glfw.sf.net" class='external' title="http://glfw.sf.net">http://glfw.sf.net</a> or <tt >glfw.h</tt > for all the constants).
+</p><p>Using callbacks to get key events goes like this:
+</p>
+<pre>
+void GLFWCALL My_Key_Callback(int key, int action)
+{
+  if (key == GLFW_KEY_ESC &amp;&amp; action == GLFW_PRESS)
+    quit_the_program = 1;
+  else if (key == 'A' and action == GLFW_PRESS)
+    printf(&quot;A was pressed&quot;);
+}
+
+// And somewhere in the init code
+glfwSetKeyCallback(My_Key_Callback);
+</pre>
+<p>Now every time a key is pressed or released, <tt >My_Key_Callback</tt > is called with information about the event. This allows for more flexible input handling that the other method, but is a bit more work.
+</p>
+<h2 >Timing</h2 >
+<p>The function <tt >glfwGetTime()</tt > returns a 'double' (double-precision floating poing number) containing the number of seconds that elapsed since <tt >glfwInit()</tt > was called. It uses the highest-precision timer available on the system, so precision might vary on different platforms.
+</p>
+<h2 >An Example</h2 >
+<p>The following code will open a window and display a cute animation until escape is pressed. The code should be very easy to read (if it is not, you'll have to study C and OpenGL some more). To compile it on your system, make sure you link with the OpenGL and GLFW libraries, and on Unix systems you'll also need to link with the X libraries and threading libraries (X11, Xxf86vm and c_r on FreeBSD, X11, pthread and maybe some others on Linux). (For example it can be compiled under GNU/Linux with <em>gcc myprog.c -o myprog -lglfw -lGL -lpthread</em>)
+</p>
+<pre>
+#include &lt;cstdlib&gt;
+#include &lt;GL/glfw.h&gt;
+
+void Init();
+void Shut_Down(int return_code);
+void Main_Loop();
+void Draw();
+
+float rotate_y = 0,
+      rotate_z = 0;
+const float rotations_per_second = .2;
+
+int main()
+{
+  Init();
+  Main_Loop();
+  Shut_Down(0);
+}
+
+void Init()
+{
+  const int window_width = 800,
+            window_height = 600;
+  
+  if (glfwInit()&nbsp;!= GL_TRUE)
+    Shut_Down(1);
+  // 800 x 600, 16 bit color, no depth, alpha or stencil buffers, windowed
+  if (glfwOpenWindow(window_width, window_height, 5, 6, 5,
+                     0, 0, 0, GLFW_WINDOW)&nbsp;!= GL_TRUE)
+    Shut_Down(1);
+  glfwSetWindowTitle(&quot;The GLFW Window&quot;);
+
+  // set the projection matrix to a normal frustum with a max depth of 50
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  float aspect_ratio = ((float)window_height) / window_width;
+  glFrustum(.5, -.5, -.5 * aspect_ratio, .5 * aspect_ratio, 1, 50);
+  glMatrixMode(GL_MODELVIEW);
+}
+
+void Shut_Down(int return_code)
+{
+  glfwTerminate();
+  exit(return_code);
+}
+
+void Main_Loop()
+{
+  // the time of the previous frame
+  double old_time = glfwGetTime();
+  // this just loops as long as the program runs
+  while(1)
+  {
+    // calculate time elapsed, and the amount by which stuff rotates
+    double current_time = glfwGetTime(),
+           delta_rotate = (current_time - old_time) * rotations_per_second * 360;
+    old_time = current_time;
+    // escape to quit, arrow keys to rotate view
+    if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
+      break;
+    if (glfwGetKey(GLFW_KEY_LEFT) == GLFW_PRESS)
+      rotate_y += delta_rotate;
+    if (glfwGetKey(GLFW_KEY_RIGHT) == GLFW_PRESS)
+      rotate_y -= delta_rotate;
+    // z axis always rotates
+    rotate_z += delta_rotate;
+
+    // clear the buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // draw the figure
+    Draw();
+    // swap back and front buffers
+    glfwSwapBuffers();
+  }
+}
+
+void Draw_Square(float red, float green, float blue)
+{
+  // Draws a square with a gradient color at coordinates 0, 10
+  glBegin(GL_QUADS);
+  {
+    glColor3f(red, green, blue);
+    glVertex2i(1, 11);
+    glColor3f(red * .8, green * .8, blue * .8);
+    glVertex2i(-1, 11);
+    glColor3f(red * .5, green * .5, blue * .5);
+    glVertex2i(-1, 9);
+    glColor3f(red * .8, green * .8, blue * .8);
+    glVertex2i(1, 9);
+  }
+  glEnd();
+}
+
+void Draw()
+{
+  // reset view matrix
+  glLoadIdentity();
+  // move view back a bit
+  glTranslatef(0, 0, -30);
+  // apply the current rotation
+  glRotatef(rotate_y, 0, 1, 0);
+  glRotatef(rotate_z, 0, 0, 1);
+  // by repeatedly rotating the view matrix during drawing, the
+  // squares end up in a circle
+  int i = 0, squares = 15;
+  float red = 0, blue = 1;
+  for (; i &lt; squares; ++i){
+    glRotatef(360.0/squares, 0, 0, 1);
+    // colors change for each square
+    red += 1.0/12;
+    blue -= 1.0/12;
+    Draw_Square(red, .6, blue);
+  }
+}
+</pre>
+<p><br />  
+</p>
+	    <div id="catlinks"><p class='catlinks'><a href="/index.php?title=Special:Categories&amp;article=C%3AGLFW_Basics" title ="Special:Categories">Categories</a>: <a href="/index.php/Category:Tutorial" title ="Category:Tutorial">Tutorial</a> | <a href="/index.php/Category:C" title ="Category:C">C</a> | <a href="/index.php/Category:GLFW" title ="Category:GLFW">GLFW</a></p></div>
+	    <!-- end content -->
+	    <div class="visualClear"></div>
+	  </div>
+	  </td></tr></table>
+	</div>
+      </div>
+      <div id="column-one">
+	<div id="p-cactions" class="portlet">
+	  <h5>Views</h5>
+	  <ul>
+	    <li id="ca-nstab-main" class="selected"><a href="/index.php/C:GLFW_Basics">Article</a></li><li id="ca-talk"><a href="/index.php/Talk:C:GLFW_Basics">Discussion</a></li><li id="ca-edit" class=""><a href="/index.php?title=C:GLFW_Basics&amp;action=edit">Edit</a></li><li id="ca-history"><a href="/index.php?title=C:GLFW_Basics&amp;action=history">History</a></li>
+	  </ul>
+	</div>
+	<div class="portlet" id="p-personal">
+	  <h5>Personal tools</h5>
+	  <div class="pBody">
+	    <ul>
+	      <li id="pt-login"><a href="/index.php?title=Special:Userlogin&amp;returnto=C:GLFW_Basics">Log in</a></li>
+	    </ul>
+	  </div>
+	</div>
+	<div class="portlet" id="p-logo">
+	  <a title="Game Programming Wiki" style="background-image: url(/stylesheets/images/wiki.png);" href="/index.php/Game_Programming_Wiki"></a>
+	</div>
+	<div class="portlet" id="p-nav">
+	  <h5>Navigation</h5>
+	  <div class="pBody">
+	    <ul>
+	      <li><a href="/">Main Page</a></li>
+	      <li><a href="/forums/">Message Board</a></li>
+	      <li id="n-currentevents"><a href="/index.php/Current_events">Current events</a></li>
+	      <li id="n-recentchanges"><a href="/index.php/Special:Recentchanges">Recent changes</a></li>
+	      <li id="n-randompage"><a href="/index.php/Special:Randompage">Random page</a></li>
+	      <li id="n-help"><a href="/index.php/Help:Contents">Help</a></li>
+	      
+	    </ul>
+	  </div>
+	</div>
+	<div id="p-search" class="portlet">
+	  <h5>Search</h5>
+	  <div class="pBody">
+<!-- SiteSearch Google -->
+<FORM method="GET" action="http://www.google.com/search">
+<input type="hidden" name="ie" value="UTF-8"/>
+<input type="hidden" name="oe" value="UTF-8"/>
+<A HREF="http://www.google.com/"><IMG SRC="/images/google.gif" border="0" ALT="Google"/></A><br/>
+<INPUT TYPE="text" name="q" size="16" maxlength="255" value=""/>
+<input type="hidden" name="domains" value="http://gpwiki.org"/><br/>
+<input type="radio" name="sitesearch" value=""/> web 
+<input type="radio" name="sitesearch" value="http://gpwiki.org" checked/> gpwiki <br/>
+<INPUT type="submit" name="btnG" VALUE="search"/>
+</FORM>
+<!-- SiteSearch Google -->	  </div>
+	</div>
+	<div class="portlet" id="p-tb">
+	  <h5>Toolbox</h5>
+	  <div class="pBody">
+	    <ul>
+	      <li id="t-whatlinkshere"><a href="/index.php?title=Special:Whatlinkshere&amp;target=C%3AGLFW_Basics">What links here</a></li>
+	      <li id="t-recentchangeslinked"><a href="/index.php?title=Special:Recentchangeslinked&amp;target=C%3AGLFW_Basics">Related changes</a></li>
+	      
+	      
+	      
+	      
+	      <li id="t-specialpages"><a href="/index.php/Special:Specialpages">Special pages</a></li>
+	    </ul>
+	  </div>
+	  <div align="center">
+	    <br/><a href="http://grubbygames.com"><img src="/images/grubbygames.gif" border="0" width="142" height="80"/></a><br/>
+	    Hosting donated by <a href="http://grubbygames.com">Grubby Games</a>
+	  </div>
+	</div>
+	
+      </div><!-- end of the left (by default at least) column -->
+      <div class="visualClear"></div>
+      <div id="footer">
+	<div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="/stylesheets/images/poweredby_mediawiki_88x31.png" alt="MediaWiki" /></a></div>
+	<div id="f-copyrightico"><a href="http://www.gnu.org/copyleft/fdl.html"><img src="/stylesheets/images/gnu-fdl.png" alt='GNU Free Documentation License 1.2' /></a></div>
+	<ul id="f-list">
+	  <li id="f-lastmod"> This page was last modified 17:38, 24 May 2005.</li>
+	  
+	  
+	  <li id="f-copyright">Content is available under <a href="http://www.gnu.org/copyleft/fdl.html" class='external' title="http://www.gnu.org/copyleft/fdl.html">GNU Free Documentation License 1.2</a>.</li>
+	  <li id="f-about"><a href="/index.php/GPWiki:About">About the Game 
+Programming Wiki</a></li>
+	  <li id="f-disclaimer"><a href="/index.php/GPWiki:General_disclaimer" title ="GPWiki:General disclaimer">Disclaimers</a></li>
+	</ul>
+      </div>
+    </div>
+    <!-- Served by server1.gpwiki.org in 0.18 secs. -->
+  </body>
+</html>

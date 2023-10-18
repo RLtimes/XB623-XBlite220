@@ -1,0 +1,245 @@
+' **********************************************
+' *****  Standard Library COMPOSITE TYPES  *****
+' **********************************************
+'
+TYPE FILEINFO
+  XLONG        .attributes
+  XLONG        .createTimeLow
+  XLONG        .createTimeHigh
+  XLONG        .accessTimeLow
+  XLONG        .accessTimeHigh
+  XLONG        .modifyTimeLow
+  XLONG        .modifyTimeHigh
+  XLONG        .sizeHigh
+  XLONG        .sizeLow
+  XLONG        .res0
+  XLONG        .res1
+  STRING*260   .name
+  STRING*14    .alternateName
+END TYPE
+'
+TYPE TIMER
+  XLONG        .timer
+  XLONG        .count
+  XLONG        .func
+  XLONG        .msec
+  XLONG        .who
+  XLONG        .x5
+  XLONG        .x6
+  XLONG        .x7
+END TYPE
+'
+'
+' ****************************************
+' *****  Standard Library Functions  *****
+' ****************************************
+'
+' system functions
+'
+EXTERNAL FUNCTION  Xsx                            ()
+EXTERNAL FUNCTION  XsxVersion$                    ()
+EXTERNAL FUNCTION  XstCall                        (funcName$, dllName$, @args[])
+EXTERNAL FUNCTION  XstDateAndTimeToFileTime       (year, month, day, hour, minute, second, nanos, @filetime$$)
+EXTERNAL FUNCTION  XstFileTimeToDateAndTime       (fileTime$$, @year, @month, @day, @hour, @minute, @second, @nanos)
+EXTERNAL FUNCTION  XstGetCommandLine              (@commandline$)
+EXTERNAL FUNCTION  XstGetCommandLineArguments     (@argc, @argv$[])
+EXTERNAL FUNCTION  XstGetCPUName                  (@id$, @cpuFamily, @model, @intelBrandID)
+EXTERNAL FUNCTION  XstGetDateAndTime              (@year, @month, @day, @weekDay, @hour, @minute, @second, @nanos)
+EXTERNAL FUNCTION  XstGetDateAndTimeFormatted     (language, dateFormat, @date$, timeFormat, @time$)
+EXTERNAL FUNCTION  XstGetLocalDateAndTime         (@year, @month, @day, @weekDay, @hour, @minute, @second, @nanos)
+EXTERNAL FUNCTION  XstGetEndian                   (@endian$$)
+EXTERNAL FUNCTION  XstGetEndianName               (@endian$)
+EXTERNAL FUNCTION  XstGetEnvironmentVariables     (@count, @envp$[])
+EXTERNAL FUNCTION  XstGetOSName                   (@name$)
+EXTERNAL FUNCTION  XstGetOSVersion                (@major, @minor, @platformId, @version$, @platform$)
+EXTERNAL FUNCTION  XstGetProgramFileName$         ()
+EXTERNAL FUNCTION  XstGetSystemTime               (@msec)
+EXTERNAL FUNCTION  XstLog                         (message$, style, fileName$)
+EXTERNAL FUNCTION  XstSetCommandLineArguments     (argc, @argv$[])
+EXTERNAL FUNCTION  XstSetDateAndTime              (year, month, day, weekDay, hour, minute, second, nanos)
+EXTERNAL FUNCTION  XstSetEnvironmentVariable      (name$, value$)
+EXTERNAL FUNCTION  XstSleep                       (milliSec)
+'
+' file functions
+'
+EXTERNAL FUNCTION  XstBinRead                     (ifile, bufferAddr, maxBytes)
+EXTERNAL FUNCTION  XstBinWrite                    (ofile, bufferAddr, numBytes)
+EXTERNAL FUNCTION  XstChangeDirectory             (directory$)
+EXTERNAL FUNCTION  XstCopyDirectory               (source$, dest$)
+EXTERNAL FUNCTION  XstCopyFile                    (source$, dest$)
+EXTERNAL FUNCTION  XstDecomposePathname           (pathname$, @path$, @parent$, @filename$, @file$, @extent$)
+EXTERNAL FUNCTION  XstDeleteFile                  (file$)
+EXTERNAL FUNCTION  XstFileExists                  (file$)
+EXTERNAL FUNCTION  XstFindFile                    (file$, @path$[], @path$, @attr)
+EXTERNAL FUNCTION  XstFindFiles                   (basepath$, filter$, recurse, @file$[])
+EXTERNAL FUNCTION  XstGetCurrentDirectory         (@directory$)
+EXTERNAL FUNCTION  XstGetDrives                   (@count, @drive$[], @driveType[], @driveType$[])
+EXTERNAL FUNCTION  XstGetExecutionPathArray       (@path$[])
+EXTERNAL FUNCTION  XstGetFileAttributes           (file$, @attributes)
+EXTERNAL FUNCTION  XstGetFiles                    (filter$, @files$[])
+EXTERNAL FUNCTION  XstGetFilesAndAttributes       (filter$, attributeFilter, @files$[], FILEINFO @fileInfo[])
+EXTERNAL FUNCTION  XstGetPathComponents           (file$, @path$, @drive$, @dir$, @filename$, @attributes)
+EXTERNAL FUNCTION  XstGuessFilename               (old$, new$, @guess$, @attributes)
+EXTERNAL FUNCTION  XstIsAbsolutePath              (file$)
+EXTERNAL FUNCTION  XstLoadString                  (file$, @text$)
+EXTERNAL FUNCTION  XstLoadStringArray             (file$, @text$[])
+EXTERNAL FUNCTION  XstMakeDirectory               (directory$)
+EXTERNAL FUNCTION  XstPathToAbsolutePath          (ipath$, @opath$)
+EXTERNAL FUNCTION  XstReadString                  (ifile, @string$)
+EXTERNAL FUNCTION  XstRenameFile                  (old$, new$)
+EXTERNAL FUNCTION  XstSaveString                  (file$, text$)
+EXTERNAL FUNCTION  XstSaveStringArray             (file$, text$[])
+EXTERNAL FUNCTION  XstSaveStringArrayCRLF         (file$, text$[])
+EXTERNAL FUNCTION  XstSetCurrentDirectory         (directory$)
+EXTERNAL FUNCTION  XstWriteString                 (ofile, @string$)
+'
+' string, string array, and array functions
+'
+EXTERNAL FUNCTION  XstBackArrayToBinArray         (backArray$[], @binArray$[])
+EXTERNAL FUNCTION  XstBackStringToBinString$      (backString$)
+EXTERNAL FUNCTION  XstBinArrayToBackArray         (binArray$[], @backArray$[])
+EXTERNAL FUNCTION  XstBinStringToBackString$      (binString$)
+EXTERNAL FUNCTION  XstBinStringToBackStringNL$    (binString$)
+EXTERNAL FUNCTION  XstBinStringToBackStringThese$ (binString$, these[])
+EXTERNAL FUNCTION  XstCopyArray                   (ANY[], ANY[])
+EXTERNAL FUNCTION  XstCopyMemory                  (sourceAddr, destAddr, bytes)
+EXTERNAL FUNCTION  XstCreateDoubleImage$          (DOUBLE x)
+EXTERNAL FUNCTION  XstDeleteLines                 (array$[], start, count)
+EXTERNAL FUNCTION  XstFindArray                   (mode, text$[], find$, @line, @pos, @match)
+EXTERNAL FUNCTION  XstTypeSize										 (type)
+EXTERNAL FUNCTION  XstBytesToBound                (type, bytes)
+EXTERNAL FUNCTION  XstGetTypedArray               (type, bytes, @ANY array[])
+EXTERNAL FUNCTION  XstIsDataDimension             (ANY[])
+EXTERNAL FUNCTION  XstMergeStrings$               (string$, add$, start, replace)
+EXTERNAL FUNCTION  XstMultiStringToStringArray    (s$, @s$[])
+EXTERNAL FUNCTION  XstNextCField$                 (sourceAddr, @index, @done)
+EXTERNAL FUNCTION  XstNextCLine$                  (sourceAddr, index, done)
+EXTERNAL FUNCTION  XstNextField$                  (source$, @index, @done)
+EXTERNAL FUNCTION  XstNextItem$                   (source$, @index, @term, @done)
+EXTERNAL FUNCTION  XstNextLine$                   (source$, @index, @done)
+EXTERNAL FUNCTION  XstParse$                      (source$, delimiter$, n)
+EXTERNAL FUNCTION  XstParseStringToStringArray    (source$, delimiter$, @s$[])
+EXTERNAL FUNCTION  XstReplace                     (@source$, find$, replace$, n)
+EXTERNAL FUNCTION  XstReplaceArray                (mode, text$[], find$, replace$, line, pos, match)
+EXTERNAL FUNCTION  XstReplaceLines                (d$[], s$[], firstD, countD, firstS, countS)
+EXTERNAL FUNCTION  XstStringArraySectionToString  (text$[], @copy$, x1, y1, x2, y2, term)
+EXTERNAL FUNCTION  XstStringArraySectionToStringArray (text$[], @copy$[], x1, y1, x2, y2)
+EXTERNAL FUNCTION  XstStringArrayToString         (s$[], @s$)
+EXTERNAL FUNCTION  XstStringArrayToStringCRLF     (s$[], @s$)
+EXTERNAL FUNCTION  XstStringToStringArray         (s$, @s$[])
+EXTERNAL FUNCTION  XstStripChars                  (@source$, testchar$)
+EXTERNAL FUNCTION  XstTally                       (source$, find$)
+EXTERNAL FUNCTION  XstTranslateChars              (@string$, from$, to$)
+EXTERNAL FUNCTION  XstLTRIM                       (@string$, array[])
+EXTERNAL FUNCTION  XstRTRIM                       (@string$, array[])
+EXTERNAL FUNCTION  XstTRIM                        (@string$, array[])
+'
+' sorting functions
+'
+EXTERNAL FUNCTION  XstCompareStrings              (addrString1, op, addrString2, flags)
+EXTERNAL FUNCTION  XstQuickSort                   (ANY x[], n[], low, high, flags)
+'
+' clipboard functions
+'
+EXTERNAL FUNCTION  XstGetClipboard                (clipType, @text$, UBYTE image[])
+EXTERNAL FUNCTION  XstSetClipboard                (clipType, text$, UBYTE image[])
+'
+' message functions
+'
+EXTERNAL FUNCTION  XstAbend                       (errorMessage$)
+EXTERNAL FUNCTION  XstAlert                       (message$)
+'
+' timer functions
+'
+EXTERNAL FUNCTION  XstStartTimer                  (timer, count, msec, func)
+EXTERNAL FUNCTION  XstKillTimer                   (timer)
+'
+' random number functions
+'
+EXTERNAL FUNCTION  ULONG  XstRandom               ()
+EXTERNAL FUNCTION         XstRandomARGB           (UBYTE alpha)
+EXTERNAL FUNCTION  ULONG  XstRandomCreateSeed     ()
+EXTERNAL FUNCTION         XstRandomRange          (n1, n2)
+EXTERNAL FUNCTION DOUBLE  XstRandomRangeF         (DOUBLE n1, DOUBLE n2)
+EXTERNAL FUNCTION         XstRandomRGB            ()
+EXTERNAL FUNCTION         XstRandomSeed           (ULONG seed)
+EXTERNAL FUNCTION  DOUBLE XstRandomUniform        ()
+'
+' unicode string functions
+EXTERNAL FUNCTION  XstUnicodeToAnsi$              (lpTextWide)
+EXTERNAL FUNCTION  XstAnsiToUnicode$              (ansi$)
+'
+' csv data functions
+EXTERNAL FUNCTION  XstLoadCompositeDataArray      (ANY a[], input$, template$, @errornum)
+EXTERNAL FUNCTION  XstLoadData                    (ANY a[], data$, type)
+EXTERNAL FUNCTION  XstBuildDataArray              (ANY a[], string$, type)
+EXTERNAL FUNCTION  XstSaveCompositeDataArray      (ANY a[], @output$, template$, crlf, braces, @errornum)
+EXTERNAL FUNCTION  XstSaveDataArray               (ANY a[], output$, formatted)
+'
+'
+' ****************************************
+' *****  Standard Library Constants  *****
+' ****************************************
+'
+  $$Newline$            =  "\n"
+'
+' Line Separator argument in XstStringArraySectionToString()
+'
+  $$NOTERM              =  0' no line terminator
+  $$LF                  =  1' \n
+  $$NL                  =  1' \n
+  $$CRLF                =  2' \r\n
+'
+' Drive types returned by XstGetDrives (@count, @drive$[], @driveType[], @driveType$[])
+'
+  $$DriveTypeUnknown    =  0' "Unknown"
+  $$DriveTypeDamaged    =  1' "Damaged"
+  $$DriveTypeRemovable  =  2' "Removable"
+  $$DriveTypeFixed      =  3' "Fixed"
+  $$DriveTypeRemote     =  4' "Remote"
+  $$DriveTypeCDROM      =  5' "CDROM"
+  $$DriveTypeRamDisk    =  6' "RamDisk"
+'
+'  File Attributes returned by XstGetFileAttributes (filename$, @attributes)
+'
+  $$FileNonexistent     = 0x0000
+  $$FileNotFound        = 0x0000
+  $$FileReadOnly        = 0x0001
+  $$FileHidden          = 0x0002
+  $$FileSystem          = 0x0004
+  $$FileDirectory       = 0x0010
+  $$FileArchive         = 0x0020
+  $$FileNormal          = 0x0080' no other bits should be set
+  $$FileTemporary       = 0x0100
+  $$FileAtomicWrite     = 0x0200
+  $$FileExecutable      = 0x1000
+'
+' mode in XstFindArray()
+'
+  $$FindForward         = 0x00
+  $$FindReverse         = 0x01
+  $$FindDirection       = 0x01
+  $$FindCaseSensitive   = 0x00
+  $$FindCaseInsensitive = 0x02
+  $$FindCaseSensitivity = 0x02
+'
+' ****************************
+' *****  Sort Constants  *****  OR sort flags together
+' ****************************
+'
+  $$SortIncreasing      = 0x00' "a to z"
+  $$SortDecreasing      = 0x01' "z to a"
+  $$SortCaseSensitive   = 0x00' "A" < "a"
+  $$SortCaseInsensitive = 0x02' "A" = "a"
+  $$SortAlphabetic      = 0x00' "a3b" > "a11c"
+  $$SortAlphaNumeric    = 0x04' "a3b" < "a11c"
+'
+' for XstCompareStrings()
+'
+  $$EQ                  = 0x02
+  $$NE                  = 0x03
+  $$LT                  = 0x04
+  $$LE                  = 0x05
+  $$GE                  = 0x06
+  $$GT                  = 0x07
+'

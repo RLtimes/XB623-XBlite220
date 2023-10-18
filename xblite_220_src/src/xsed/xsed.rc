@@ -1,0 +1,155 @@
+#include "winres.h"
+
+xsed              ICON              xsed.ico
+about.html        23   DISCARDABLE  about.html
+xsed256.gif       23   DISCARDABLE  xsed256.gif
+paypal.gif        23   DISCARDABLE  paypal.gif
+
+//=============================================================================
+// Application Icons.
+//=============================================================================
+
+101 ICON   SED_EDIT.ICO
+102 ICON   SED_PROJ.ICO
+103 ICON   SED_FOLD.ICO
+104 ICON   SED_BAS.ICO
+105 ICON   SED_INC.ICO
+106 ICON   SED_RC.ICO
+107 ICON   SED_PRFIL.ICO
+108 ICON   xsed.ico
+
+
+//=============================================================================
+// Application Bitmap Strips.
+//=============================================================================
+
+TBNOR  BITMAP SED_ILNOR.BMP
+TBDIS  BITMAP SED_ILDIS.BMP
+TT     BITMAP TT.BMP
+
+200 DIALOG 0, 0, 180, 70
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Command Line"
+FONT 9, "MS Sans Serif"
+BEGIN
+    LTEXT           "Enter command line arguments:", 201, 14, 6, 160, 12, NOT WS_GROUP
+    EDITTEXT        202, 14, 20, 153, 12, ES_AUTOHSCROLL
+    PUSHBUTTON      "&Ok",     1,  56, 44, 50, 14
+    PUSHBUTTON      "&Cancel", 2, 117, 44, 50, 14
+END
+
+300 DIALOG 0, 0, 180, 80
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "New Function"
+FONT 9, "MS Sans Serif"
+BEGIN
+    LTEXT           "Enter name of new function:", 301, 14, 6, 160, 12, NOT WS_GROUP
+    EDITTEXT        302, 14, 20, 153, 12, ES_AUTOHSCROLL
+    AUTOCHECKBOX    "Include function name header", 303, 14, 36, 110, 14
+    PUSHBUTTON      "&Ok",     1,  56, 58, 50, 14
+    PUSHBUTTON      "&Cancel", 2, 117, 58, 50, 14
+END
+
+400 DIALOG 0, 0, 180, 80
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Clone Function"
+FONT 9, "MS Sans Serif"
+BEGIN
+    LTEXT           "Enter new name of function:", 401, 14, 6, 160, 12, NOT WS_GROUP
+    EDITTEXT        402, 14, 20, 153, 12, ES_AUTOHSCROLL
+    AUTOCHECKBOX    "Include function name header", 403, 14, 36, 110, 14
+    PUSHBUTTON      "&Ok",     1,  56, 58, 50, 14
+    PUSHBUTTON      "&Cancel", 2, 117, 58, 50, 14
+END
+
+500 DIALOG 0, 0, 202, 110
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Import Function"
+FONT 9, "MS Sans Serif"
+BEGIN
+    LTEXT           "Enter name of function to import:", 501, 14, 6, 160, 12, NOT WS_GROUP
+    EDITTEXT        502, 14, 20, 153, 12, ES_AUTOHSCROLL
+    LTEXT           "Enter full path and filename:", 504, 14, 38, 160, 12, NOT WS_GROUP
+    EDITTEXT        505, 14, 52, 153, 12, ES_AUTOHSCROLL
+    PUSHBUTTON      "...", 506, 174, 52, 18, 12
+    AUTOCHECKBOX    "Include function name header", 503, 14, 68, 110, 14
+    PUSHBUTTON      "&Ok",     1,  56, 88, 50, 14
+    PUSHBUTTON      "&Cancel", 2, 117, 88, 50, 14
+END
+
+600 DIALOG 0, 0, 250, 165
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Printing Options"
+FONT 9, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Printing Color Mode", 601, 11, 7, 227, 89
+    CONTROL         "Normal printing using current screen colours", 602, 
+                    "Button", BS_AUTORADIOBUTTON, 18, 22, 210, 10
+    CONTROL         "Invert all light colors (including background)", 603, 
+                    "Button", BS_AUTORADIOBUTTON, 18, 38, 214, 10
+    CONTROL         "Print black text on white background", 604, "Button", 
+                    BS_AUTORADIOBUTTON, 18, 54, 214, 10
+    CONTROL         "Print color text on white background", 605, "Button", 
+                    BS_AUTORADIOBUTTON, 18, 70, 214, 10
+		LTEXT           "Set printing magnification (+/- pixels)", 606, 18, 110, 130, 8
+    COMBOBOX        607, 184, 110, 48, 70, CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Ok", 1, 133, 139, 48, 14
+    PUSHBUTTON      "Cancel", 2, 191, 139, 48, 14
+END
+
+
+custfind DIALOG LOADONCALL MOVEABLE DISCARDABLE
+30, 73, 236, 94
+CAPTION "Find"
+STYLE WS_BORDER | WS_CAPTION | DS_MODALFRAME | WS_POPUP | WS_SYSMENU
+FONT 8, "Helv"
+BEGIN
+    CONTROL "Fi&nd what:", -1, "static", SS_LEFT | WS_CHILD, 4, 8, 42, 8
+//    CONTROL "", edt1, "edit", ES_LEFT | ES_AUTOHSCROLL | WS_BORDER | WS_GROUP | WS_CHILD | WS_BORDER, 47, 7, 128, 12
+
+    CONTROL "", 0x0480, "combobox", CBS_DROPDOWN | CBS_SORT | CBS_HASSTRINGS | CBS_AUTOHSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP | WS_CHILD | WS_BORDER, 47, 7, 128, 72
+
+    CONTROL "Match &whole word only", 0x0410, "button", BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_GROUP, 4, 26, 100, 12
+    CONTROL "Match &case", 0x0411, "button", BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD, 4, 42, 64, 12
+
+    CONTROL "Direction", 0x0430, "button", BS_GROUPBOX | WS_CHILD, 107, 26, 68, 28
+    CONTROL "&Up", 0x0420, "button", BS_AUTORADIOBUTTON | WS_TABSTOP | WS_CHILD | WS_GROUP, 111, 38, 25, 12
+    CONTROL "&Down", 0x0421, "button", BS_AUTORADIOBUTTON | WS_TABSTOP | WS_CHILD, 138, 38, 31, 12
+
+    CONTROL "&Find Next", IDOK, "button", BS_DEFPUSHBUTTON | WS_CHILD | WS_TABSTOP | WS_GROUP, 182, 5, 50, 14
+    CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_CHILD | WS_TABSTOP | WS_GROUP, 182, 23, 50, 14
+    CONTROL "&Help", 0x040e, "button", BS_PUSHBUTTON | WS_CHILD | WS_TABSTOP | WS_GROUP, 182, 45, 50, 14
+
+    CONTROL "Origin", 0x0402, "button", BS_GROUPBOX | WS_CHILD, 4, 58, 171, 28
+    CONTROL "From &cursor", 0x0403, "button", BS_AUTORADIOBUTTON | WS_TABSTOP | WS_CHILD | WS_GROUP, 8, 70, 55, 12
+    CONTROL "From the &top", 0x0404, "button", BS_AUTORADIOBUTTON | WS_TABSTOP | WS_CHILD, 74, 70, 60, 12
+END
+
+
+custreplace DIALOG LOADONCALL MOVEABLE DISCARDABLE
+36, 44, 230, 112
+CAPTION "Replace"
+STYLE WS_BORDER | WS_CAPTION | WS_SYSMENU | DS_MODALFRAME | WS_POPUP
+FONT 8, "Helv"
+BEGIN
+    CONTROL "Fi&nd what:", -1, "static", SS_LEFT | WS_CHILD, 4, 9, 48, 8
+//    CONTROL "", edt1, "edit", ES_LEFT | ES_AUTOHSCROLL | WS_BORDER | WS_TABSTOP | WS_CHILD | WS_GROUP, 54, 7, 114, 12
+    CONTROL "", 0x0480, "combobox", CBS_DROPDOWN | CBS_SORT | CBS_HASSTRINGS | CBS_AUTOHSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP | WS_CHILD | WS_BORDER, 54, 7, 114, 72
+    CONTROL "Re&place with:", -1, "static", SS_LEFT | WS_CHILD, 4, 26, 48, 8
+//    CONTROL "", edt2, "edit", ES_LEFT | ES_AUTOHSCROLL | WS_BORDER | WS_TABSTOP | WS_CHILD | WS_GROUP, 54, 24, 114, 12
+    CONTROL "", 0x0481, "combobox", CBS_DROPDOWN | CBS_SORT | CBS_HASSTRINGS | CBS_AUTOHSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP | WS_CHILD | WS_BORDER, 54, 24, 114, 72
+    CONTROL "Match &whole word only", 0x0410, "button", BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_GROUP, 5, 46, 104, 12
+    CONTROL "Match &case", 0x0411, "button", BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD, 5, 62, 59, 12
+
+    CONTROL "&Find Next", IDOK, "button", BS_DEFPUSHBUTTON | WS_CHILD | WS_TABSTOP | WS_GROUP, 174, 4, 50, 14
+    CONTROL "&Replace", 0x0400, "button", BS_PUSHBUTTON | WS_CHILD | WS_TABSTOP | WS_GROUP, 174, 21, 50, 14
+    CONTROL "Replace &All", 0x0401, "button", BS_PUSHBUTTON | WS_CHILD | WS_TABSTOP | WS_GROUP, 174, 38, 50, 14
+    CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_CHILD | WS_TABSTOP | WS_GROUP, 174, 55, 50, 14
+    CONTROL "&Help", 0x040e, "button", BS_PUSHBUTTON | WS_CHILD | WS_TABSTOP | WS_GROUP, 174, 75, 50, 14
+
+    CONTROL "Origin", 0x0402, "button", BS_GROUPBOX | WS_CHILD, 4, 78, 164, 28
+    CONTROL "From &cursor", 0x0403, "button", BS_AUTORADIOBUTTON | WS_TABSTOP | WS_CHILD | WS_GROUP, 8, 90, 55, 12
+    CONTROL "From the &top", 0x0404, "button", BS_AUTORADIOBUTTON | WS_TABSTOP | WS_CHILD, 74, 90, 60, 12
+
+END

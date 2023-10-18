@@ -1,0 +1,12 @@
+EXTERNAL	FUNCTION  Xfi ()
+EXTERNAL FUNCTION  XfiConvert (fif, UBYTE rawData[], UBYTE image[])
+EXTERNAL FUNCTION  XfiLoadFile (fif, file$, UBYTE image[])
+EXTERNAL FUNCTION  XfiLoadImage (file$, UBYTE image[])
+EXTERNAL FUNCTION  XfiLoadResource (fif, name$, type$, module$, UBYTE image[])
+EXTERNAL FUNCTION  XfiOutputMessage$ ()
+EXTERNAL FUNCTION  XfiRescale (UBYTE imageIn[], UBYTE imageOut[], width, height, filter)
+EXTERNAL FUNCTION  XfiSaveFile (fif, file$, UBYTE image[], flag)
+EXTERNAL FUNCTION  XfiSetDebug (debug)
+EXTERNAL FUNCTION  XfiVersion (xfiVersion$, fiVersion$, copyright$)
+EXTERNAL FUNCTION  Blowback ()
+

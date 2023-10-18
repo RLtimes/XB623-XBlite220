@@ -1,0 +1,2163 @@
+
+'
+'
+' ######################  Max Reason
+' #####  kernel32  #####  copyright 1988-2000
+' ######################  Windows XBasic declaration file for Windows "kernel32"
+'
+' subject to GPLL license - see gpll.txt
+' maxreason@maxreason.com
+' for Windows XBasic/XBLite
+'
+' VERSION  "0.0094"  ' 9/7/2006
+'
+' ###########################
+' #####  declare types  #####
+' ###########################
+'
+
+TYPE SMALL_RECT
+	USHORT  .Left 
+	USHORT  .Top  
+	USHORT  .Right 
+	USHORT  .Bottom 
+END TYPE
+
+TYPE COMMPROP
+  USHORT  .wPacketLength
+  USHORT  .wPacketVersion
+  ULONG  .dwServiceMask
+  ULONG  .dwReserved1
+  ULONG  .dwMaxTxQueue
+  ULONG  .dwMaxRxQueue
+  ULONG  .dwMaxBaud
+  ULONG  .dwProvSubType
+  ULONG  .dwProvCapabilities
+  ULONG  .dwSettableParams
+  ULONG  .dwSettableBaud
+  USHORT  .wSettableData
+  USHORT  .wSettableStopParity
+  ULONG  .dwCurrentTxQueue
+  ULONG  .dwCurrentRxQueue
+  ULONG  .dwProvSpec1
+  ULONG  .dwProvSpec2
+  USHORT  .wcProvChar[0]   					' array size may vary  
+END TYPE
+
+TYPE COMSTAT
+  ULONG  .fbits   ' fCtsHold,  fDsrHold,  fRlsdHold,  fXoffHold,  fXoffSent,  fEof,  fTxim  
+  ULONG  .cbInQue
+  ULONG  .cbOutQue
+END TYPE
+
+TYPE DCB		     ' 28 bytes
+  ULONG  .DCBlength    ' SIZE (DCB)
+  ULONG  .BaudRate
+  ULONG  .fModes       ' all following fxxx fields are bit fields, use bitfield constants to retrieve
+'  ULONG  .fBinary
+'  ULONG  .fParity
+'  ULONG  .fOutxCtsFlow
+'  ULONG  .fOutxDsrFlow
+'  ULONG  .fDtrControl
+'  ULONG  .fDsrSensitivity
+'  ULONG  .fTXContinueOnXoff
+'  ULONG  .fOutX
+'  ULONG  .fInX
+'  ULONG  .fErrorChar
+'  ULONG  .fNull
+'  ULONG  .fRtsControl
+'  ULONG  .fAbortOnError
+'  ULONG  .fDummy2
+  USHORT  .wReserved
+  USHORT  .XonLim
+  USHORT  .XoffLim
+  UBYTE   .ByteSize
+  UBYTE   .Parity
+  UBYTE   .StopBits
+  UBYTE   .XonChar
+  UBYTE   .XoffChar
+  UBYTE   .ErrorChar
+  UBYTE   .EofChar
+  UBYTE   .EvtChar
+  USHORT  .wReserved1
+END TYPE
+
+' DCB Struct bitfield constants
+$$DCB_fBinary = 			BITFIELD(1,0)
+$$DCB_fParity = 			BITFIELD(1,1)
+$$DCB_fOutxCtsFlow = 		BITFIELD(1,2)
+$$DCB_fOutxDsrFlow = 		BITFIELD(1,3)
+$$DCB_fDtrControl= 		BITFIELD(2,4)
+$$DCB_fDsrSensitivity = 	BITFIELD(1,6)
+$$DCB_fTXContinueOnXoff = 	BITFIELD(1,7)
+$$DCB_fOutX = 			BITFIELD(1,8)
+$$DCB_fInX = 			BITFIELD(1,9)
+$$DCB_fErrorChar = 		BITFIELD(1,10)
+$$DCB_fNull= 			BITFIELD(1,11)
+$$DCB_fRtsControl= 		BITFIELD(2,12)
+$$DCB_fAbortOnError= 		BITFIELD(1,14)
+
+TYPE COMMTIMEOUTS
+  ULONG  .ReadIntervalTimeout
+  ULONG  .ReadTotalTimeoutMultiplier
+  ULONG  .ReadTotalTimeoutConstant
+  ULONG  .WriteTotalTimeoutMultiplier
+  ULONG  .WriteTotalTimeoutConstant
+END TYPE
+
+'TYPE GUIDAPI			' use GUID
+'  ULONG    .Data1
+'  USHORT   .Data2
+'  USHORT   .Data3
+'  STRING*8  .Data4
+'END TYPE
+
+TYPE GUIDAPI
+	ULONG			.Data1
+	USHORT		.Data2
+	USHORT		.Data3
+	UNION
+		UBYTE		.Data4[7]
+		GIANT		.Data4G		'simplifies setting the value
+	END UNION
+END TYPE
+
+TYPE COMMCONFIG
+  ULONG   .dwSize
+  USHORT  .wVersion
+  USHORT  .wReserved
+  DCB     .dcb
+  ULONG   .dwProviderSubType
+  ULONG   .dwProviderOffset
+  ULONG   .dwProviderSize
+  ULONG   .wcProviderData
+END TYPE
+
+TYPE OVERLAPPED
+  ULONG  .Internal
+  ULONG  .InternalHigh
+  ULONG  .offset
+  ULONG  .OffsetHigh
+  ULONG  .hEvent
+END TYPE
+
+TYPE SECURITYATTRIBUTES
+  ULONG  .nLength
+  ULONG  .lpSecurityDescriptor
+  ULONG  .bInheritHandle
+END TYPE
+
+TYPE SECURITY_ATTRIBUTES
+  XLONG        .length
+  XLONG        .securityDescriptor
+  XLONG        .inherit
+END TYPE
+
+TYPE STARTUPINFO                ' CreateProcess() in XxxShell()
+  XLONG        .cb
+  XLONG        .lpReserved
+  XLONG        .lpDesktop
+  XLONG        .lpTitle
+  XLONG        .dwX
+  XLONG        .dwY
+  XLONG        .dwXSize
+  XLONG        .dwYSize
+  XLONG        .dwXCountChars
+  XLONG        .dwYCountChars
+  XLONG        .dwFillAttribUte
+  XLONG        .dwFlags
+  USHORT       .wShowWindow
+  USHORT       .cbReserved2
+  XLONG        .lpReserved2
+  XLONG        .hStdInput
+  XLONG        .hStdOutput
+  XLONG        .hStdError
+END TYPE
+
+TYPE PROCESS_INFORMATION        ' CreateProcess() in XxxShell()
+  XLONG        .hProcess
+  XLONG        .hThread
+  XLONG        .dwProcessId
+  XLONG        .dwThreadId
+END TYPE
+
+'TYPE CRITICAL_SECTION
+'  STRING*24  .dummy
+'END TYPE
+
+TYPE CRITICAL_SECTION
+  XLONG	.DebugInfo
+  XLONG	.LockCount
+  XLONG	.RecursionCount
+  XLONG	.OwningThread
+  XLONG	.LockSemaphore
+  XLONG	.Reserved
+END TYPE
+
+TYPE FILETIME
+  ULONG  .dwLowDateTime
+  ULONG  .dwHighDateTime
+END TYPE
+
+TYPE WIN32_FIND_DATA
+  ULONG  .dwFileAttributes
+  FILETIME  .ftCreationTime
+  FILETIME  .ftLastAccessTime
+  FILETIME  .ftLastWriteTime
+  ULONG  .nFileSizeHigh
+  ULONG  .nFileSizeLow
+  ULONG  .dwReserved0
+  ULONG  .dwReserved1
+  STRING*260  .cFileName
+  STRING*14  .cAlternate
+END TYPE
+
+TYPE CPINFO
+  ULONG  .MaxCharSize   					'max length [bytes] of a char  
+	UBYTE  .DefaultChar[1]					
+	UBYTE  .LeadByte[11]					
+END TYPE
+
+TYPE CHAR_INFO
+	UNION
+  		USHORT  	.UnicodeChar
+		UBYTE		.AsciiChar
+	END UNION
+  USHORT  .Attributes
+END TYPE
+
+TYPE COORD
+  USHORT  .x
+  USHORT  .y
+END TYPE
+
+PACKED CONSOLE_SCREEN_BUFFER_INFO
+  COORD       .dwSize
+  COORD       .dwCursorPosition
+  USHORT      .wAttributes
+  SMALL_RECT  .srWindow
+  COORD       .dwMaximumWindowSize
+END TYPE
+
+TYPE CONSOLE_CURSOR_INFO
+  XLONG  .dwSize
+  XLONG  .bVisible
+END TYPE
+
+TYPE SYSTEM_INFO
+  ULONG  .dwOemID
+  ULONG  .dwPageSize
+  ULONG  .lpMinimumApplicationAddress
+  ULONG  .lpMaximumApplicationAddress
+  ULONG  .dwActiveProcessorMask
+  ULONG  .dwNumberOfProcessors
+  ULONG  .dwProcessorType
+  ULONG  .dwAllocationGranularity
+  USHORT  .wProcessorLevel
+  USHORT  .wProcessorRevision
+END TYPE
+
+TYPE HW_PROFILE_INFO
+  ULONG        .dwDockInfo   
+  STRING*39  .szHwProfileGuid
+  STRING*80  .szHwProfileName
+END TYPE
+
+TYPE NUMBERFMT
+  ULONG       .NumDigits   'number of decimal digits  
+  ULONG       .LeadingZero   'if leading zero in decimal fields  
+  ULONG       .Grouping   'group size left of decimal  
+  ULONG       .lpDecimalSep   'ptr to decimal separator string  
+  ULONG       .lpThousandSep   'ptr to thousand separator string  
+  ULONG       .NegativeOrder   'negative number ordering  
+END TYPE
+
+TYPE CURRENCYFMT
+  ULONG       .NumDigits   'number of decimal digits  
+  ULONG       .LeadingZero   'if leading zero in decimal fields  
+  ULONG       .Grouping   'group size left of decimal  
+  ULONG       .lpDecimalSep   'ptr to decimal separator string  
+  ULONG       .lpThousandSep   'ptr to thousand separator string  
+  ULONG       .NegativeOrder   'negative currency ordering  
+  ULONG       .PositiveOrder   'positive currency ordering  
+  ULONG       .lpCurrencySymbol   'ptr to currency symbol string  
+END TYPE
+
+TYPE SYSTEM_POWER_STATUS
+  UBYTE  .ACLineStatus
+  UBYTE  .BatteryFlag
+  UBYTE  .BatteryLifePercent
+  UBYTE  .Reserved1
+  ULONG  .BatteryLifeTime
+  ULONG  .BatteryFullLifeTime
+END TYPE
+
+TYPE SYSTEMTIME
+  USHORT  .year
+  USHORT  .month
+  USHORT  .weekDay
+  USHORT  .day
+  USHORT  .hour
+  USHORT  .minute
+  USHORT  .second
+  USHORT  .msec
+END TYPE
+
+TYPE LARGE_INTEGER
+	ULONG	.low
+	XLONG .high
+END TYPE
+
+TYPE TIME_ZONE_INFORMATION
+  XLONG  		.Bias
+  USHORT  	.StandardName[31]
+  SYSTEMTIME  	.StandardDate
+  XLONG  		.StandardBias
+  USHORT  	.DaylightName[31]
+  SYSTEMTIME  	.DaylightDate
+  XLONG  		.DaylightBias
+END TYPE
+
+TYPE LDT_ENTRY
+  USHORT  .LimitLow
+  USHORT  .BaseLow
+  ULONG   .HighWord   'Can use LDT_UBYTES Type  
+END TYPE
+
+TYPE OSVERSIONINFO
+  ULONG  .dwOSVersionInfoSize
+  ULONG  .dwMajorVersion
+  ULONG  .dwMinorVersion
+  ULONG  .dwBuildNumber
+  ULONG  .dwPlatformId
+  STRING*128     .szCSDVersion   'Maintenance string for PSS usage  
+END TYPE
+
+TYPE MEMORYSTATUS
+  ULONG  .dwLength
+  ULONG  .dwMemoryLoad
+  ULONG  .dwTotalPhys
+  ULONG  .dwAvailPhys
+  ULONG  .dwTotalPageFile
+  ULONG  .dwAvailPageFile
+  ULONG  .dwTotalVirtual
+  ULONG  .dwAvailVirtual
+END TYPE
+
+TYPE MEMORYSTATUSEX
+  ULONG  .dwLength
+  ULONG  .dwMemoryLoad
+  GIANT  .ullTotalPhys
+  GIANT  .ullAvailPhys
+  GIANT  .ullTotalPageFile
+  GIANT  .ullAvailPageFile
+  GIANT  .ullTotalVirtual
+  GIANT  .ullAvailVirtual
+  GIANT  .ullAvailExtendedVirtual
+END TYPE
+
+TYPE OFSTRUCT
+  UBYTE   .cBytes
+  UBYTE   .fFixedDisk
+  USHORT  .nErrCode
+  USHORT  .Reserved1
+  USHORT  .Reserved2
+  STRING*128  .szPathName
+END TYPE
+
+TYPE KEY_EVENT_RECORD
+	XLONG		.bKeyDown
+	USHORT	.wRepeatCount
+	USHORT	.wVirtualKeyCode
+	USHORT	.wVirtualScanCode
+	UNION
+		USHORT	.UnicodeChar
+		UBYTE		.AsciiChar
+	END UNION
+	XLONG	.dwControlKeyState
+END TYPE
+
+TYPE MOUSE_EVENT_RECORD
+	COORD	.dwMousePosition 
+	XLONG	.dwButtonState 
+	XLONG	.dwControlKeyState 
+	XLONG	.dwEventFlags 
+END TYPE 
+
+TYPE WINDOW_BUFFER_SIZE_RECORD
+	COORD	.dwSize
+END TYPE
+
+TYPE MENU_EVENT_RECORD
+	ULONG	.dwCommandId
+END TYPE  
+
+TYPE FOCUS_EVENT_RECORD
+	XLONG	.bSetFocus
+END TYPE
+
+TYPE INPUT_RECORD
+	USHORT	.EventType
+	UNION
+		KEY_EVENT_RECORD			.KeyEvent 
+		MOUSE_EVENT_RECORD		.MouseEvent 
+		WINDOW_BUFFER_SIZE_RECORD	.WindowBufferSizeEvent 
+		MENU_EVENT_RECORD			.MenuEvent 
+		FOCUS_EVENT_RECORD		.FocusEvent 
+	END UNION
+END TYPE
+
+TYPE MEMORY_BASIC_INFORMATION
+  XLONG .BaseAddress  
+  XLONG .AllocationBase 
+  XLONG .AllocationProtect 
+  XLONG .RegionSize
+  XLONG .State
+  XLONG .Protect
+  XLONG .Type
+END TYPE
+
+
+
+' ###############################
+' #####  declare functions  #####
+' ###############################
+'
+EXTERNAL FUNCTION Kernel32 ()
+
+EXTERNAL FUNCTION AddAtomA (lpString)
+EXTERNAL FUNCTION AllocConsole ()
+EXTERNAL FUNCTION BackupRead (hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, bAbort, bProcessSecurity, lpContext)
+EXTERNAL FUNCTION BackupSeek (hFile, dwLowBytesToSeek, dwHighBytesToSeek, lpdwLowByteSeeked, lpdwHighByteSeeked, lpContext)
+EXTERNAL FUNCTION BackupWrite (hFile, lpBuffer, nNumberOfBytesToWrite, lpNumberOfBytesWritten, bAbort, bProcessSecurity, lpContext)
+EXTERNAL FUNCTION Beep (dwFreq, dwDuration)
+EXTERNAL FUNCTION BeginUpdateResourceA (pFileName, bDeleteExistingResources)
+EXTERNAL FUNCTION BuildCommDCBA (lpDef, lpDCB)
+EXTERNAL FUNCTION BuildCommDCBAndTimeoutsA (lpDef, lpDCB, lpCommTimeouts)
+EXTERNAL FUNCTION CallNamedPipeA (lpNamedPipeName, lpInBuffer, nInBufferSize, lpOutBuffer, nOutBufferSize, lpBytesRead, nTimeOut)
+EXTERNAL FUNCTION ClearCommBreak (nCid)
+EXTERNAL FUNCTION ClearCommError (hFile, lpErrors, lpStat)
+EXTERNAL FUNCTION CloseHandle (hObject)
+EXTERNAL FUNCTION CommConfigDialogA (lpszName, hwnd, lpCC)
+EXTERNAL FUNCTION CompareFileTime (lpFileTime1, lpFileTime2)
+EXTERNAL FUNCTION CompareStringA (Locale, dwCmpFlags, lpString1, cchCount1, lpString2, cchCount2)
+EXTERNAL FUNCTION ConnectNamedPipe (hNamedPipe, lpOverlapped)
+EXTERNAL FUNCTION ContinueDebugEvent (dwProcessId, dwThreadId, dwContinueStatus)
+EXTERNAL FUNCTION ConvertDefaultLocale (Locale)
+EXTERNAL FUNCTION CopyFileA (lpExistingFileName, lpNewFileName, bFailIfExists)
+EXTERNAL FUNCTION CreateConsoleScreenBuffer (dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwFlags, lpScreenBufferData)
+EXTERNAL FUNCTION CreateDirectoryA (lpPathName, lpSecurityAttributes)
+EXTERNAL FUNCTION CreateDirectoryExA (lpTemplateDirectory, lpNewDirectory, lpSecurityAttributes)
+EXTERNAL FUNCTION CreateEventA (lpEventAttributes, bManualReset, bInitialState, lpName)
+EXTERNAL FUNCTION CreateFileA (lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile)
+EXTERNAL FUNCTION CreateFileMappingA (hFile, lpFileMappigAttributes, flProtect, dwMaximumSizeHigh, dwMaximumSizeLow, lpName)
+EXTERNAL FUNCTION CreateIoCompletionPort (FileHandle, ExistingCompletionPort, CompletionKey, NumberOfConcurrentThreads)
+EXTERNAL FUNCTION CreateMailslotA (lpName, nMaxMessageSize, lReadTimeout, lpSecurityAttributes)
+EXTERNAL FUNCTION CreateMutexA (lpMutexAttributes, bInitialOwner, lpName)
+EXTERNAL FUNCTION CreateNamedPipeA (lpName, dwOpenMode, dwPipeMode, nMaxInstances, nOutBufferSize, nInBufferSize, nDefaultTimeOut, lpSecurityAttributes)
+EXTERNAL FUNCTION CreatePipe (phReadPipe, phWritePipe, lpPipeAttributes, nSize)
+EXTERNAL FUNCTION CreateProcessA (lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDriectory, lpStartupInfo, lpProcessInformation)
+EXTERNAL FUNCTION CreateProcessAsUserA (hToken, lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation)
+EXTERNAL FUNCTION CreateRemoteThread (hProcess, lpThreadAttributes, dwStackSize, lpStartess, lpParameter, dwCreationFlags, lpThreadId)
+EXTERNAL FUNCTION CreateSemaphoreA (lpSemaphoreAttributes, lInitialCount, lMaximumCount, lpName)
+EXTERNAL FUNCTION CreateTapePartition (hDevice, dwPartitionMethod, dwCount, dwSize)
+EXTERNAL FUNCTION CreateThread (lpThreadAttributes, dwStackSize, Startess, lpParameter, dwCreationFlags, lpThreadId)
+EXTERNAL FUNCTION DebugActiveProcess (dwProcessId)
+EXTERNAL FUNCTION DebugBreak ()
+EXTERNAL FUNCTION DefineDosDeviceA (dwFlags, lpDeviceName, lpTargetPath)
+EXTERNAL FUNCTION DeleteAtom (nAtom)
+EXTERNAL FUNCTION DeleteCriticalSection (lpCriticalSection)
+EXTERNAL FUNCTION DeleteFileA (lpFileName)
+EXTERNAL FUNCTION DeviceIoControl (hDevice, dwIoControlCode, lpInBuffer, nInBufferSize, lpOutBuffer, nOutBufferSize, lpBytesReturned, lpOverlapped)
+EXTERNAL FUNCTION DisableThreadLibraryCalls (hLibModule)
+EXTERNAL FUNCTION DisconnectNamedPipe (hNamedPipe)
+EXTERNAL FUNCTION DosDateTimeToFileTime (wFatDate, wFatTime, lpFileTime)
+EXTERNAL FUNCTION DuplicateHandle (hSourceProcessHandle, hSourceHandle, hTargetProcessHandle, lpTargetHandle, dwDesiredAccess, bInheritHandle, dwOptions)
+EXTERNAL FUNCTION EndUpdateResourceA (hUpdate, fDiscard)
+EXTERNAL FUNCTION EnterCriticalSection (lpCriticalSection)
+EXTERNAL FUNCTION EnumCalendarInfoA (lpCalInfoEnumProc, Locale, Calendar, CalType)
+EXTERNAL FUNCTION EnumDateFormats (lpDateFmtEnumProc, Locale, dwFlags)
+EXTERNAL FUNCTION EnumResourceLanguagesA (hModule, lpType, lpName, lpEnumFunc, lParam)
+EXTERNAL FUNCTION EnumResourceNamesA (hModule, lpType, lpEnumFunc, lParam)
+EXTERNAL FUNCTION EnumResourceTypesA (hModule, lpEnumFunc, lParam)
+EXTERNAL FUNCTION EnumSystemCodePages (lpCodePageEnumProc, dwFlags)
+EXTERNAL FUNCTION EnumSystemLocalesA (lpLocaleEnumProc, dwFlags)
+EXTERNAL FUNCTION EnumTimeFormats (lpTimeFmtEnumProc, Locale, dwFlags)
+EXTERNAL FUNCTION EraseTape (hDevice, dwEraseType, bimmediate)
+EXTERNAL FUNCTION EscapeCommFunction (nCid, nFunc)
+EXTERNAL FUNCTION ExitProcess (uExitCode)
+EXTERNAL FUNCTION ExitThread (dwExitCode)
+EXTERNAL FUNCTION ExpandEnvironmentStringsA (lpSrc, lpDst, nSize)
+EXTERNAL FUNCTION FatalAppExitA (uAction, lpMessageText)
+EXTERNAL FUNCTION FatalExit (code)
+EXTERNAL FUNCTION FileTimeToDosDateTime (lpFileTime, lpFatDate, lpFatTime)
+EXTERNAL FUNCTION FileTimeToLocalFileTime (lpFileTime, lpLocalFileTime)
+EXTERNAL FUNCTION FileTimeToSystemTime (lpFileTime, lpSystemTime)
+EXTERNAL FUNCTION FillConsoleOutputAttribute (hConsoleOutput, dwAttribute, nLength, dwWriteCoord, lpNumberOfAttrsWritten)
+EXTERNAL FUNCTION FillConsoleOutputCharacterA (hConsoleOutput, szCharacter, nLength, dwWriteCoord, lpNumberOfCharsWritten)
+EXTERNAL FUNCTION FindAtomA (lpString)
+EXTERNAL FUNCTION FindClose (hFindFile)
+EXTERNAL FUNCTION FindCloseChangeNotification (hChangeHandle)
+EXTERNAL FUNCTION FindFirstChangeNotificationA (lpPathName, bWatchSubtree, dwNotifyFilter)
+EXTERNAL FUNCTION FindFirstFileA (lpFileName, lpFindFileData)
+EXTERNAL FUNCTION FindNextChangeNotification (hChangeHandle)
+EXTERNAL FUNCTION FindNextFileA (hFindFile, lpFindFileData)
+EXTERNAL FUNCTION FindResourceA (hInstance, lpName, lpType)
+EXTERNAL FUNCTION FindResourceExA (hModule, lpType, lpName, wLanguage)
+EXTERNAL FUNCTION FlushConsoleInputBuffer (hConsoleInput)
+EXTERNAL FUNCTION FlushFileBuffers (hFile)
+EXTERNAL FUNCTION FlushInstructionCache (hProcess, lpBaseess, dwSize)
+EXTERNAL FUNCTION FlushViewOfFile (lpBaseess, dwNumberOfBytesToFlush)
+EXTERNAL FUNCTION FoldStringA (dwMapFlags, lpSrcStr, cchSrc, lpDestStr, cchDest)
+EXTERNAL FUNCTION FoldStringW (dwMapFlags, lpSrcStr, cchSrc, lpDestStr, cchDest)
+EXTERNAL FUNCTION FormatMessageA (dwFlags, lpSource, dwMessageId, dwLanguageId, lpBuffer, nSize, Arguments)
+EXTERNAL FUNCTION FormatMessageW (dwFlags, lpSource, dwMessageId, dwLanguageId, lpBuffer, nSize, Arguments)
+EXTERNAL FUNCTION FreeConsole ()
+EXTERNAL FUNCTION FreeEnvironmentStringsA (lpsz)
+EXTERNAL FUNCTION FreeLibrary (hLibModule)
+EXTERNAL FUNCTION FreeLibraryAndExitThread (hLibModule, dwExitCode)
+EXTERNAL FUNCTION FreeResource (hResData)
+EXTERNAL FUNCTION GenerateConsoleCtrlEvent (dwCtrlEvent, dwProcessGroupId)
+EXTERNAL FUNCTION GetACP ()
+EXTERNAL FUNCTION GetAtomNameA (nAtom, lpBuffer, nSize)
+EXTERNAL FUNCTION GetBinaryTypeA (lpApplicationName, lpBinaryType)
+EXTERNAL FUNCTION GetCPInfo (CodePage, lpCPInfo)
+EXTERNAL FUNCTION GetCommConfig (hCommDev, lpCC, lpdwSize)
+EXTERNAL FUNCTION GetCommMask (hFile, lpEvtMask)
+EXTERNAL FUNCTION GetCommModemStatus (hFile, lpModemStat)
+EXTERNAL FUNCTION GetCommProperties (hFile, lpCommProp)
+EXTERNAL FUNCTION GetCommState (nCid, lpDCB)
+EXTERNAL FUNCTION GetCommTimeouts (hFile, lpCommTimeouts)
+EXTERNAL FUNCTION GetCommandLineA ()
+EXTERNAL FUNCTION GetCommandLineW ()
+EXTERNAL FUNCTION GetCompressedFileSizeA (lpFileName, lpFileSizeHigh)
+EXTERNAL FUNCTION GetComputerNameA (lpBuffer, nSize)
+EXTERNAL FUNCTION GetConsoleCP ()
+EXTERNAL FUNCTION GetConsoleCursorInfo (hConsoleOutput, lpConsoleCursorInfo)
+EXTERNAL FUNCTION GetConsoleMode (hConsoleHandle, lpMode)
+EXTERNAL FUNCTION GetConsoleOutputCP ()
+EXTERNAL FUNCTION GetConsoleScreenBufferInfo (hConsoleOutput, lpConsoleScreenBufferInfo)
+EXTERNAL FUNCTION GetConsoleTitleA (lpConsoleTitle, nSize)
+EXTERNAL FUNCTION GetConsoleTitleW (lpConsoleTitle, nSize)
+EXTERNAL FUNCTION GetCurrencyFormatA (Locale, dwFlags, lpValue, lpFormat, lpCurrencyStr, cchCurrency)
+EXTERNAL FUNCTION GetCurrentDirectoryA (nBufferLength, lpBuffer)
+EXTERNAL FUNCTION GetCurrentDirectoryW (nBufferLength, lpBuffer)
+EXTERNAL FUNCTION GetCurrentHwProfileA (lpHwProfileInfo)
+EXTERNAL FUNCTION GetCurrentProcess ()
+EXTERNAL FUNCTION GetCurrentProcessId ()
+EXTERNAL FUNCTION GetCurrentThread ()
+EXTERNAL FUNCTION GetCurrentThreadId ()
+EXTERNAL FUNCTION GetDateFormatA (Locale, dwFlags, lpDate, lpFormat, lpDateStr, cchDate)
+EXTERNAL FUNCTION GetDefaultCommConfigA (lpszName, lpCC, lpdwSize)
+EXTERNAL FUNCTION GetDiskFreeSpaceA (lpRootPathName, lpSectorsPerCluster, lpBytesPerSector, lpNumberOfFreeClusters, lpTotalNumberOfClusters)
+EXTERNAL FUNCTION GetDiskFreeSpaceExA (lpPathName, lpFreeBytesAvailableToCaller, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes)
+EXTERNAL FUNCTION GetDriveTypeA (nDrive)
+EXTERNAL FUNCTION GetEnvironmentStrings ()
+EXTERNAL FUNCTION GetEnvironmentVariableA (lpName, lpBuffer, nSize)
+EXTERNAL FUNCTION GetExitCodeProcess (hProcess, lpExitCode)
+EXTERNAL FUNCTION GetExitCodeThread (hThread, lpExitCode)
+EXTERNAL FUNCTION GetFileAttributesA (lpFileName)
+EXTERNAL FUNCTION GetFileInformationByHandle (hFile, lpFileInformation)
+EXTERNAL FUNCTION GetFileSize (hFile, lpFileSizeHigh)
+EXTERNAL FUNCTION GetFileTime (hFile, lpCreationTime, lpLastAccessTime, lpLastWriteTime)
+EXTERNAL FUNCTION GetFileType (hFile)
+EXTERNAL FUNCTION GetFullPathNameA (lpFileName, nBufferLength, lpBuffer, lpFilePart)
+EXTERNAL FUNCTION GetHandleInformation (hObject, lpdwFlags)
+EXTERNAL FUNCTION GetLargestConsoleWindowSize (hConsoleOutput)
+EXTERNAL FUNCTION GetLastError ()
+EXTERNAL FUNCTION GetLocalTime (lpSystemTime)
+EXTERNAL FUNCTION GetLocaleInfoA (Locale, LCType, lpLCData, cchData)
+EXTERNAL FUNCTION GetLogicalDriveStringsA (nBufferLength, lpBuffer)
+EXTERNAL FUNCTION GetLogicalDrives ()
+EXTERNAL FUNCTION GetMailslotInfo (hMailslot, lpMaxMessageSize, lpNextSize, lpMessageCount, lpReadTimeout)
+EXTERNAL FUNCTION GetModuleFileNameA (hModule, lpFileName, nSize)
+EXTERNAL FUNCTION GetModuleHandleA (lpModuleName)
+EXTERNAL FUNCTION GetNamedPipeHandleStateA (hNamedPipe, lpState, lpCurInstances, lpMaxCollectionCount, lpCollectDataTimeout, lpUserName, nMaxUserNameSize)
+EXTERNAL FUNCTION GetNamedPipeInfo (hNamedPipe, lpFlags, lpOutBufferSize, lpInBufferSize, lpMaxInstances)
+EXTERNAL FUNCTION GetNumberFormatA (Locale, dwFlags, lpValue, lpFormat, lpNumberStr, cchNumber)
+EXTERNAL FUNCTION GetNumberOfConsoleInputEvents (hConsoleInput, lpNumberOfEvents)
+EXTERNAL FUNCTION GetNumberOfConsoleMouseButtons (lpNumberOfMouseButtons)
+EXTERNAL FUNCTION GetOEMCP ()
+EXTERNAL FUNCTION GetOverlappedResult (hFile, lpOverlapped, lpNumberOfBytesTransferred, bWait)
+EXTERNAL FUNCTION GetPriorityClass (hProcess)
+EXTERNAL FUNCTION GetPrivateProfileIntA (lpApplicationName, lpKeyName, nDefault, lpFileName)
+EXTERNAL FUNCTION GetPrivateProfileSectionA (lpAppName, lpReturnedString, nSize, lpFileName)
+EXTERNAL FUNCTION GetPrivateProfileSectionNamesA (lpszReturnBuffer, nSize, lpFileName)
+EXTERNAL FUNCTION GetPrivateProfileStringA (lpApplicationName, lpKeyName, lpDefault, lpReturnedString, nSize, lpFileName)
+EXTERNAL FUNCTION GetProcAddress (hModule, lpProcName)
+EXTERNAL FUNCTION GetProcessAffinityMask (hProcess, lpProcessAffinityMask, SystemAffinityMask)
+EXTERNAL FUNCTION GetProcessHeap ()
+EXTERNAL FUNCTION GetProcessHeaps (NumberOfHeaps, ProcessHeaps)
+EXTERNAL FUNCTION GetProcessShutdownParameters (lpdwLevel, lpdwFlags)
+EXTERNAL FUNCTION GetProcessTimes (hProcess, lpCreationTime, lpExitTime, lpKernelTime, lpUserTime)
+EXTERNAL FUNCTION GetProcessWorkingSetSize (hProcess, lpMinimumWorkingSetSize, lpMaximumWorkingSetSize)
+EXTERNAL FUNCTION GetProfileIntA (lpAppName, lpKeyName, nDefault)
+EXTERNAL FUNCTION GetProfileSectionA (lpAppName, lpReturnedString, nSize)
+EXTERNAL FUNCTION GetProfileStringA (lpAppName, lpKeyName, lpDefault, lpReturnedString, nSize)
+EXTERNAL FUNCTION GetQueuedCompletionStatus (CompletionPort, lpNumberOfBytesTransferred, lpCompletionKey, lpOverlapped, dwMilliseconds)
+EXTERNAL FUNCTION GetShortPathNameA (lpszLongPath, lpszShortPath, cchBuffer)
+EXTERNAL FUNCTION GetStartupInfoA (lpStartupInfo)
+EXTERNAL FUNCTION GetStdHandle (nStdHandle)
+EXTERNAL FUNCTION GetStringTypeA (lcid, dwInfoType, lpSrcStr, cchSrc, lpCharType)
+EXTERNAL FUNCTION GetStringTypeExA (Locale, dwInfoType, lpSrcStr, cchSrc, lpCharType)
+EXTERNAL FUNCTION GetStringTypeW (dwInfoType, lpSrcStr, cchSrc, lpCharType)
+EXTERNAL FUNCTION GetSystemDefaultLCID ()
+EXTERNAL FUNCTION GetSystemDefaultLangID ()
+EXTERNAL FUNCTION GetSystemDirectoryA (lpBuffer, nSize)
+EXTERNAL FUNCTION GetSystemInfo (lpSystemInfo)
+EXTERNAL FUNCTION GetSystemPowerStatus (lpSystemPowerStatus)
+EXTERNAL FUNCTION GetSystemTime (lpSystemTime)
+EXTERNAL FUNCTION GetSystemTimeAdjustment (lpTimeAdjustment, lpTimeIncrement, lpTimeAdjustmentDisabled)
+EXTERNAL FUNCTION GetSystemTimeAsFileTime (lpFileTime)
+EXTERNAL FUNCTION GetTapeParameters (hDevice, dwOperation, lpdwSize, lpTapeInformation)
+EXTERNAL FUNCTION GetTapePosition (hDevice, dwPositionType, lpdwPartition, lpdwOffsetLow, lpdwOffsetHigh)
+EXTERNAL FUNCTION GetTapeStatus (hDevice)
+EXTERNAL FUNCTION GetTempFileNameA (lpszPath, lpPrefixString, wUnique, lpTempFileName)
+EXTERNAL FUNCTION GetTempPathA (nBufferLength, lpBuffer)
+EXTERNAL FUNCTION GetThreadContext (hThread, lpContext)
+EXTERNAL FUNCTION GetThreadLocale ()
+EXTERNAL FUNCTION GetThreadPriority (hThread)
+EXTERNAL FUNCTION GetThreadSelectorEntry (hThread, dwSelector, lpSelectorEntry)
+EXTERNAL FUNCTION GetThreadTimes (hThread, lpCreationTime, lpExitTime, lpKernelTime, lpUserTime)
+EXTERNAL FUNCTION GetTickCount ()
+EXTERNAL FUNCTION GetTimeFormatA (Locale, dwFlags, lpTime, lpFormat, lpTimeStr, cchTime)
+EXTERNAL FUNCTION GetTimeZoneInformation (lpTimeZoneInformation)
+EXTERNAL FUNCTION GetUserDefaultLCID ()
+EXTERNAL FUNCTION GetUserDefaultLangID ()
+EXTERNAL FUNCTION GetVersion ()
+EXTERNAL FUNCTION GetVersionExA (lpVersionInformation)
+EXTERNAL FUNCTION GetVolumeInformationA (lpRootPathName, lpVolumeNameBuffer, nVolumeNameSize, lpVolumeSerialNumber, lpMaximumComponentLength, lpFileSystemFlags, lpFileSystemNameBuffer, nFileSystemNameSize)
+EXTERNAL FUNCTION GetWindowsDirectoryA (lpBuffer, nSize)
+EXTERNAL FUNCTION GlobalAddAtomA (lpString)
+EXTERNAL FUNCTION GlobalAlloc (wFlags, dwBytes)
+EXTERNAL FUNCTION GlobalCompact (dwMinFree)
+EXTERNAL FUNCTION GlobalDeleteAtom (nAtom)
+EXTERNAL FUNCTION GlobalFindAtomA (lpString)
+EXTERNAL FUNCTION GlobalFix (hMem)
+EXTERNAL FUNCTION GlobalFlags (hMem)
+EXTERNAL FUNCTION GlobalFree (hMem)
+EXTERNAL FUNCTION GlobalGetAtomNameA (nAtom, lpBuffer, nSize)
+EXTERNAL FUNCTION GlobalHandle (wMem)
+EXTERNAL FUNCTION GlobalLock (hMem)
+EXTERNAL FUNCTION GlobalMemoryStatus (lpBuffer)
+EXTERNAL FUNCTION GlobalMemoryStatusEx (lpBuffer)
+EXTERNAL FUNCTION GlobalReAlloc (hMem, dwBytes, wFlags)
+EXTERNAL FUNCTION GlobalSize (hMem)
+EXTERNAL FUNCTION GlobalUnWire (hMem)
+EXTERNAL FUNCTION GlobalUnfix (hMem)
+EXTERNAL FUNCTION GlobalUnlock (hMem)
+EXTERNAL FUNCTION GlobalWire (hMem)
+EXTERNAL FUNCTION HeapAlloc (hHeap, dwFlags, dwBytes)
+EXTERNAL FUNCTION HeapCompact (hHeap, dwFlags)
+EXTERNAL FUNCTION HeapCreate (flOptions, dwInitialSize, dwMaximumSize)
+EXTERNAL FUNCTION HeapDestroy (hHeap)
+EXTERNAL FUNCTION HeapFree (hHeap, dwFlags, lpMem)
+EXTERNAL FUNCTION HeapLock (hHeap)
+EXTERNAL FUNCTION HeapReAlloc (hHeap, dwFlags, lpMem, dwBytes)
+EXTERNAL FUNCTION HeapSize (hHeap, dwFlags, lpMem)
+EXTERNAL FUNCTION HeapUnlock (hHeap)
+EXTERNAL FUNCTION HeapValidate (hHeap, dwFlags, lpMem)
+EXTERNAL FUNCTION ImpersonateLoggedOnUser (hToken)
+EXTERNAL FUNCTION InitAtomTable (nSize)
+EXTERNAL FUNCTION InitializeCriticalSection (lpCriticalSection)
+EXTERNAL FUNCTION InitializeCriticalSectionAndSpinCount (lpCriticalSection, dwSpinCount)
+EXTERNAL FUNCTION InterlockedDecrement (lpAddend)
+EXTERNAL FUNCTION InterlockedExchange (xTarget, xValue)
+EXTERNAL FUNCTION InterlockedIncrement (lpAddend)
+EXTERNAL FUNCTION IsBadCodePtr (lpfn)
+EXTERNAL FUNCTION IsBadHugeReadPtr (lp, ucb)
+EXTERNAL FUNCTION IsBadHugeWritePtr (lp, ucb)
+EXTERNAL FUNCTION IsBadReadPtr (lp, ucb)
+EXTERNAL FUNCTION IsBadStringPtrA (lpsz, ucchMax)
+EXTERNAL FUNCTION IsBadWritePtr (lp, ucb)
+EXTERNAL FUNCTION IsDBCSLeadByte (bTestChar)
+EXTERNAL FUNCTION IsValidCodePage (CodePage)
+EXTERNAL FUNCTION IsValidLocale (Locale, dwFlags)
+EXTERNAL FUNCTION LCMapStringA (Locale, dwMapFlags, lpSrcStr, cchSrc, lpDestStr, cchDest)
+EXTERNAL FUNCTION LCMapStringW (Locale, dwMapFlags, lpSrcStr, cchSrc, lpDestStr, cchDest)
+EXTERNAL FUNCTION LeaveCriticalSection (lpCriticalSection)
+EXTERNAL FUNCTION LoadLibraryA (lpLibFileName)
+EXTERNAL FUNCTION LoadLibraryExA (lpLibFileName, hFile, dwFlags)
+EXTERNAL FUNCTION LoadModule (lpModuleName, lpParameterBlock)
+EXTERNAL FUNCTION LoadResource (hInstance, hResInfo)
+EXTERNAL FUNCTION LocalAlloc (wFlags, wBytes)
+EXTERNAL FUNCTION LocalCompact (uMinFree)
+EXTERNAL FUNCTION LocalFileTimeToFileTime (lpLocalFileTime, lpFileTime)
+EXTERNAL FUNCTION LocalFlags (hMem)
+EXTERNAL FUNCTION LocalFree (hMem)
+EXTERNAL FUNCTION LocalHandle (wMem)
+EXTERNAL FUNCTION LocalLock (hMem)
+EXTERNAL FUNCTION LocalReAlloc (hMem, wBytes, wFlags)
+EXTERNAL FUNCTION LocalShrink (hMem, cbNewSize)
+EXTERNAL FUNCTION LocalSize (hMem)
+EXTERNAL FUNCTION LocalUnlock (hMem)
+EXTERNAL FUNCTION LockFile (hFile, dwFileOffsetLow, dwFileOffsetHigh, nNumberOfBytesToLockLow, nNumberOfBytesToLockHigh)
+EXTERNAL FUNCTION LockFileEx (hFile, dwFlags, dwReserved, nNumberOfBytesToLockLow, nNumberOfBytesToLockHigh, lpOverlapped)
+EXTERNAL FUNCTION LockResource (hResData)
+EXTERNAL FUNCTION LogonUserA (lpszUsername, lpszDomain, lpszPassword, dwLogonType, dwLogonProvider, phToken)
+EXTERNAL FUNCTION MapViewOfFile (hFileMappingObject, dwDesiredAccess, dwFileOffsetHigh, dwFileOffsetLow, dwNumberOfBytesToMap)
+EXTERNAL FUNCTION MapViewOfFileEx (hFileMappingObject, dwDesiredAccess, dwFileOffsetHigh, dwFileOffsetLow, dwNumberOfBytesToMap, lpBaseess)
+EXTERNAL FUNCTION MoveFileA (lpExistingFileName, lpNewFileName)
+EXTERNAL FUNCTION MoveFileExA (lpExistingFileName, lpNewFileName, dwFlags)
+EXTERNAL FUNCTION MulDiv (nNumber, nNumerator, nDenominator)
+EXTERNAL FUNCTION MultiByteToWideChar (CodePage, dwFlags, lpMultiByteStr, cchMultiByte, lpWideCharStr, cchWideChar)
+EXTERNAL FUNCTION ObjectOpenAuditAlarmA (SubsystemName, HandleId, ObjectTypeName, ObjectName, pSecurityDescriptor, ClientToken, DesiredAccess, GrantedAccess, Privileges, ObjectCreation, AccessGranted, GenerateOnClose)
+EXTERNAL FUNCTION OpenEventA (dwDesiredAccess, bInheritHandle, lpName)
+EXTERNAL FUNCTION OpenFile (lpFileName, lpReOpenBuff, wStyle)
+EXTERNAL FUNCTION OpenFileMappingA (dwDesiredAccess, bInheritHandle, lpName)
+EXTERNAL FUNCTION OpenMutexA (dwDesiredAccess, bInheritHandle, lpName)
+EXTERNAL FUNCTION OpenProcess (dwDesiredAccess, bInheritHandle, dwProcessId)
+EXTERNAL FUNCTION OpenSemaphoreA (dwDesiredAccess, bInheritHandle, lpName)
+EXTERNAL FUNCTION OutputDebugStringA (lpOutputString)
+EXTERNAL FUNCTION PeekConsoleInputA (hConsoleInput, bufferAddr, length, numOfEventsReadAddr)
+EXTERNAL FUNCTION PeekNamedPipe (hNamedPipe, lpBuffer, nBufferSize, lpBytesRead, lpTotalBytesAvail, lpBytesLeftThisMessage)
+EXTERNAL FUNCTION PrepareTape (hDevice, dwOperation, bimmediate)
+EXTERNAL FUNCTION PulseEvent (hEvent)
+EXTERNAL FUNCTION PurgeComm (hFile, dwFlags)
+EXTERNAL FUNCTION QueryDosDeviceA (lpDeviceName, lpTargetPath, ucchMax)
+EXTERNAL FUNCTION QueryPerformanceCounter (lpPerformanceCount)
+EXTERNAL FUNCTION QueryPerformanceFrequency (lpFrequency)
+EXTERNAL FUNCTION RaiseException (dwExceptionCode, dwExceptionFlags, nNumberOfArguments, lpArguments)
+EXTERNAL FUNCTION ReadConsoleA (hConsoleInput, lpBuffer, nNumberOfCharsToRead, lpNumberOfCharsRead, lpReserved)
+EXTERNAL FUNCTION ReadConsoleInputA (hConsoleInput, lpBuffer, nNumberOfCharsToRead, lpNumberOfCharsRead)
+EXTERNAL FUNCTION ReadConsoleOutputA (hConsoleOutput, lpBuffer, dwBufferSize, dwBufferCoord, lpReadRegion)
+EXTERNAL FUNCTION ReadConsoleOutputAttribute (hConsoleOutput, lpdwAttribute, nLength, dwReadCoord, lpNumberOfAttrsRead)
+EXTERNAL FUNCTION ReadConsoleOutputCharacterA (hConsoleOutput, szCharacter, nLength, dwReadCoord, lpNumberOfCharsRead)
+EXTERNAL FUNCTION ReadFile (hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, lpOverlapped)
+EXTERNAL FUNCTION ReadFileEx (hFile, lpBuffer, nNumberOfBytesToRead, lpOverlapped, lpCompletionRoutine)
+EXTERNAL FUNCTION ReadProcessMemory (hProcess, lpBaseess, lpBuffer, nSize, lpNumberOfBytesWritten)
+EXTERNAL FUNCTION ReleaseMutex (hMutex)
+EXTERNAL FUNCTION ReleaseSemaphore (hSemaphore, lReleaseCount, lpPreviousCount)
+EXTERNAL FUNCTION RemoveDirectoryA (lpPathName)
+EXTERNAL FUNCTION ResetEvent (hEvent)
+EXTERNAL FUNCTION ResumeThread (hThread)
+EXTERNAL FUNCTION RtlFillMemory (pDestination, length, fill)
+EXTERNAL FUNCTION RtlMoveMemory (pDestination, pSource, cbLength)
+EXTERNAL FUNCTION RtlZeroMemory (pDestination, length)
+EXTERNAL FUNCTION ScrollConsoleScreenBufferA (hConsoleOutput, lpScrollRectangle, lpClipRectangle, dwDestinationOrigin, lpFill)
+EXTERNAL FUNCTION SearchPathA (lpPath, lpFileName, lpExtension, nBufferLength, lpBuffer, lpFilePart)
+EXTERNAL FUNCTION SetCommBreak (nCid)
+EXTERNAL FUNCTION SetCommConfig (hCommDev, lpCC, dwSize)
+EXTERNAL FUNCTION SetCommMask (hFile, dwEvtMask)
+EXTERNAL FUNCTION SetCommState (hCommDev, lpDCB)
+EXTERNAL FUNCTION SetCommTimeouts (hFile, lpCommTimeouts)
+EXTERNAL FUNCTION SetComputerNameA (lpComputerName)
+EXTERNAL FUNCTION SetConsoleActiveScreenBuffer (hConsoleOutput)
+EXTERNAL FUNCTION SetConsoleCP (wCodePageID)
+EXTERNAL FUNCTION SetConsoleCtrlHandler (HandlerRoutine, nAdd)
+EXTERNAL FUNCTION SetConsoleCursorInfo (hConsoleOutput, lpConsoleCursorInfo)
+EXTERNAL FUNCTION SetConsoleCursorPosition (hConsoleOutput, dwCursorPosition)
+EXTERNAL FUNCTION SetConsoleMode (hConsoleHandle, dwMode)
+EXTERNAL FUNCTION SetConsoleOutputCP (wCodePageID)
+EXTERNAL FUNCTION SetConsoleScreenBufferSize (hConsoleOutput, dwSize)
+EXTERNAL FUNCTION SetConsoleTextAttribute (hConsoleOutput, dwAttributes)
+EXTERNAL FUNCTION SetConsoleTitleA (lpConsoleTitle)
+EXTERNAL FUNCTION SetConsoleTitleW (lpConsoleTitle)
+EXTERNAL FUNCTION SetConsoleWindowInfo (hConsoleOutput, bAbsolute, lpConsoleWindow)
+EXTERNAL FUNCTION SetCriticalSectionSpinCount (lpCriticalSection, dwSpinCount)
+EXTERNAL FUNCTION SetCurrentDirectoryA (lpPathName)
+EXTERNAL FUNCTION SetCurrentDirectoryW (lpPathName)
+EXTERNAL FUNCTION SetDefaultCommConfigA (lpszName, lpCC, dwSize)
+EXTERNAL FUNCTION SetEndOfFile (hFile)
+EXTERNAL FUNCTION SetEnvironmentVariableA (lpName, lpValue)
+EXTERNAL FUNCTION SetErrorMode (wMode)
+EXTERNAL FUNCTION SetEvent (hEvent)
+EXTERNAL FUNCTION SetFileApisToANSI ()
+EXTERNAL FUNCTION SetFileApisToOEM ()
+EXTERNAL FUNCTION SetFileAttributesA (lpFileName, dwFileAttributes)
+EXTERNAL FUNCTION SetFileAttributesW (lpFileName, dwFileAttributes)
+EXTERNAL FUNCTION SetFilePointer (hFile, lDistanceToMove, lpDistanceToMoveHigh, dwMoveMethod)
+EXTERNAL FUNCTION SetFileTime (hFile, lpCreationTime, lpLastAccessTime, lpLastWriteTime)
+EXTERNAL FUNCTION SetHandleCount (wNumber)
+EXTERNAL FUNCTION SetHandleInformation (hObject, dwMask, dwFlags)
+EXTERNAL FUNCTION SetLastError (dwErrCode)
+EXTERNAL FUNCTION SetLocalTime (lpSystemTime)
+EXTERNAL FUNCTION SetLocaleInfoA (Locale, LCType, lpLCData)
+EXTERNAL FUNCTION SetMailslotInfo (hMailslot, lReadTimeout)
+EXTERNAL FUNCTION SetNamedPipeHandleState (hNamedPipe, lpMode, lpMaxCollectionCount, lpCollectDataTimeout)
+EXTERNAL FUNCTION SetPriorityClass (hProcess, dwPriorityClass)
+EXTERNAL FUNCTION SetProcessShutdownParameters (dwLevel, dwFlags)
+EXTERNAL FUNCTION SetProcessWorkingSetSize (hProcess, dwMinimumWorkingSetSize, dwMaximumWorkingSetSize)
+EXTERNAL FUNCTION SetStdHandle (nStdHandle, nHandle)
+EXTERNAL FUNCTION SetSystemPowerState (fSuspend, fForce)
+EXTERNAL FUNCTION SetSystemTime (lpSystemTime)
+EXTERNAL FUNCTION SetSystemTimeAdjustment (dwTimeAdjustment, bTimeAdjustmentDisabled)
+EXTERNAL FUNCTION SetTapeParameters (hDevice, dwOperation, lpTapeInformation)
+EXTERNAL FUNCTION SetTapePosition (hDevice, dwPositionMethod, dwPartition, dwOffsetLow, dwOffsetHigh, bimmediate)
+EXTERNAL FUNCTION SetThreadAffinityMask (hThread, dwThreadAffinityMask)
+EXTERNAL FUNCTION SetThreadContext (hThread, lpContext)
+EXTERNAL FUNCTION SetThreadLocale (Locale)
+EXTERNAL FUNCTION SetThreadPriority (hThread, nPriority)
+EXTERNAL FUNCTION SetTimeZoneInformation (lpTimeZoneInformation)
+EXTERNAL FUNCTION SetUnhandledExceptionFilter (lpTopLevelExceptionFilter)
+EXTERNAL FUNCTION SetVolumeLabelA (lpRootPathName, lpVolumeName)
+EXTERNAL FUNCTION SetupComm (hFile, dwInQueue, dwOutQueue)
+EXTERNAL FUNCTION SizeofResource (hInstance, hResInfo)
+EXTERNAL FUNCTION Sleep (dwMilliseconds)
+EXTERNAL FUNCTION SleepEx (dwMilliseconds, bAlertable)
+EXTERNAL FUNCTION SuspendThread (hThread)
+EXTERNAL FUNCTION SystemTimeToFileTime (lpSystemTime, lpFileTime)
+EXTERNAL FUNCTION SystemTimeToTzSpecificLocalTime (lpTimeZoneInformation, lpUniversalTime, lpLocalTime)
+EXTERNAL FUNCTION TerminateProcess (hProcess, uExitCode)
+EXTERNAL FUNCTION TerminateThread (hThread, dwExitCode)
+EXTERNAL FUNCTION TlsAlloc ()
+EXTERNAL FUNCTION TlsFree (dwTlsIndex)
+EXTERNAL FUNCTION TlsGetValue (dwTlsIndex)
+EXTERNAL FUNCTION TlsSetValue (dwTlsIndex, lpTlsValue)
+EXTERNAL FUNCTION TransactNamedPipe (hNamedPipe, lpInBuffer, nInBufferSize, lpOutBuffer, nOutBufferSize, lpBytesRead, lpOverlapped)
+EXTERNAL FUNCTION TransmitCommChar (nCid, cChar)
+EXTERNAL FUNCTION UnhandledExceptionFilter (ExceptionInfo)
+EXTERNAL FUNCTION UnlockFile (hFile, dwFileOffsetLow, dwFileOffsetHigh, nNumberOfBytesToUnlockLow, nNumberOfBytesToUnlockHigh)
+EXTERNAL FUNCTION UnlockFileEx (hFile, dwReserved, nNumberOfBytesToUnlockLow, nNumberOfBytesToUnlockHigh, lpOverlapped)
+EXTERNAL FUNCTION UnmapViewOfFile (lpBaseess)
+EXTERNAL FUNCTION UpdateResourceA (hUpdate, lpType, lpName, wLanguage, lpData, cbData)
+EXTERNAL FUNCTION VerLanguageNameA (wLang, szLang, nSize)
+EXTERNAL FUNCTION VirtualAlloc (lpess, dwSize, flAllocationType, flProtect)
+EXTERNAL FUNCTION VirtualAllocEx (hProcess, lpess, dwSize, flAllocationType, flProtect)
+EXTERNAL FUNCTION VirtualFree (lpess, dwSize, dwFreeType)
+EXTERNAL FUNCTION VirtualFreeEx (hProcess, lpess, dwSize, dwFreeType)
+EXTERNAL FUNCTION VirtualLock (lpess, dwSize)
+EXTERNAL FUNCTION VirtualProtect (lpess, dwSize, flNewProtect, lpflOldProtect)
+EXTERNAL FUNCTION VirtualProtectEx (hProcess, lpess, dwSize, flNewProtect, lpflOldProtect)
+EXTERNAL FUNCTION VirtualQuery (lpess, lpBuffer, dwLength)
+EXTERNAL FUNCTION VirtualQueryEx (hProcess, lpess, lpBuffer, dwLength)
+EXTERNAL FUNCTION VirtualUnlock (lpess, dwSize)
+EXTERNAL FUNCTION WaitCommEvent (hFile, lpEvtMask, lpOverlapped)
+EXTERNAL FUNCTION WaitForDebugEvent (lpde, dwTimeOut)
+EXTERNAL FUNCTION WaitForMultipleObjects (nCount, lpHandles, bWaitAll, dwMilliseconds)
+EXTERNAL FUNCTION WaitForMultipleObjectsEx (nCount, lpHandles, bWaitAll, dwMilliseconds, bAlertable)
+EXTERNAL FUNCTION WaitForSingleObject (hHandle, dwMilliseconds)
+EXTERNAL FUNCTION WaitForSingleObjectEx (hHandle, dwMilliseconds, bAlertable)
+EXTERNAL FUNCTION WaitNamedPipeA (lpNamedPipeName, nTimeOut)
+EXTERNAL FUNCTION WideCharToMultiByte (CodePage, dwFlags, lpWideCharStr, cchWideChar, lpMultiByteStr, cchMultiByte, lpDefaultChar, lpUsedDefaultChar)
+EXTERNAL FUNCTION WinExec (lpCmdLine, nCmdShow)
+EXTERNAL FUNCTION WriteConsoleA (hConsoleOutput, lpBuffer, nNumberOfCharsToWrite, lpNumberOfCharsWritten, lpReserved)
+EXTERNAL FUNCTION WriteConsoleInputA (hConsoleInput, lpBuffer, nLength, lpNumberOfEventsWritten)
+EXTERNAL FUNCTION WriteConsoleOutputA (hConsoleOutput, lpBuffer, dwBufferSize, dwBufferCoord, lpWriteRegion)
+EXTERNAL FUNCTION WriteConsoleOutputAttribute (hConsoleOutput, lpdwAttribute, nLength, dwWriteCoord, lpNumberOfAttrsWritten)
+EXTERNAL FUNCTION WriteConsoleOutputCharacterA (hConsoleOutput, szCharacter, nLength, dwWriteCoord, lpNumberOfCharsWritten)
+EXTERNAL FUNCTION WriteFile (hFile, lpBuffer, nNumberOfBytesToWrite, lpNumberOfBytesWritten, lpOverlapped)
+EXTERNAL FUNCTION WriteFileEx (hFile, lpBuffer, nNumberOfBytesToWrite, lpOverlapped, lpCompletionRoutine)
+EXTERNAL FUNCTION WritePrivateProfileSectionA (lpAppName, lpString, lpFileName)
+EXTERNAL FUNCTION WritePrivateProfileStringA (lpApplicationName, lpKeyName, lpString, lpFileName)
+EXTERNAL FUNCTION WriteProcessMemory (hProcess, lpBaseess, lpBuffer, nSize, lpNumberOfBytesWritten)
+EXTERNAL FUNCTION WriteProfileSectionA (lpAppName, lpString)
+EXTERNAL FUNCTION WriteProfileStringA (lpszSection, lpszKeyName, lpszString)
+EXTERNAL FUNCTION WriteTapemark (hDevice, dwTapemarkType, dwTapemarkCount, bimmediate)
+EXTERNAL FUNCTION _hread (hFile, lpBuffer, lBytes)
+EXTERNAL FUNCTION _hwrite (hFile, lpBuffer, lBytes)
+EXTERNAL FUNCTION _lclose (hFile)
+EXTERNAL FUNCTION _lcreat (lpPathName, iAttribute)
+EXTERNAL FUNCTION _llseek (hFile, lOffset, iOrigin)
+EXTERNAL FUNCTION _lopen (lpPathName, iReadWrite)
+EXTERNAL FUNCTION _lread (hFile, lpBuffer, wBytes)
+EXTERNAL FUNCTION _lwrite (hFile, lpBuffer, wBytes)
+EXTERNAL FUNCTION lstrcatA (lpString1, lpString2)
+EXTERNAL FUNCTION lstrcatW (lpStringWide1, lpStringWide2)
+EXTERNAL FUNCTION lstrcmpA (lpString1, lpString2)
+EXTERNAL FUNCTION lstrcmpiA (lpString1, lpString2)
+EXTERNAL FUNCTION lstrcpyA (lpString1, lpString2)
+EXTERNAL FUNCTION lstrcpyW (lpStringWide1, lpStringWide2)
+EXTERNAL FUNCTION lstrcpynA (lpString1, lpString2, iMaxLength)
+EXTERNAL FUNCTION lstrlenA (lpString)
+EXTERNAL FUNCTION lstrlenW (lpString)
+
+' *************************
+' ***** Constants *********
+' *************************
+
+$$DELETE       = 0x10000
+$$READ_CONTROL = 0x20000
+$$WRITE_DAC    = 0x40000
+$$WRITE_OWNER  = 0x80000
+$$SYNCHRONIZE  = 0x100000
+
+$$STANDARD_RIGHTS_READ     = 0x20000
+$$STANDARD_RIGHTS_WRITE    = 0x20000
+$$STANDARD_RIGHTS_EXECUTE  = 0x20000
+$$STANDARD_RIGHTS_REQUIRED = 0xF0000
+$$STANDARD_RIGHTS_ALL      = 0x1F0000
+
+$$SPECIFIC_RIGHTS_ALL      = 0xFFFF
+
+'  FILE_READ_DATA and FILE_WRITE_DATA constants 
+
+$$FILE_READ_DATA      = 0x1                '  file pipe
+$$FILE_LIST_DIRECTORY = 0x1                '  directory
+
+$$FILE_WRITE_DATA = 0x2                    '  file pipe
+$$FILE_ADD_FILE   = 0x2                    '  directory
+
+$$FILE_APPEND_DATA          = 0x4          '  file
+$$FILE_ADD_SUBDIRECTORY     = 0x4          '  directory
+$$FILE_CREATE_PIPE_INSTANCE = 0x4          '  named pipe
+
+$$FILE_READ_EA         = 0x8               '  file directory
+$$FILE_READ_PROPERTIES = 0x8
+
+$$FILE_WRITE_EA         = 0x10             '  file directory
+$$FILE_WRITE_PROPERTIES = 0x10
+
+$$FILE_EXECUTE  = 0x20                     '  file
+$$FILE_TRAVERSE = 0x20                     '  directory
+
+$$FILE_DELETE_CHILD = 0x40                 '  directory
+
+$$FILE_READ_ATTRIBUTES  = 0x80             '  all
+$$FILE_WRITE_ATTRIBUTES = 0x100            '  all
+
+$$FILE_ALL_ACCESS      = 0x1F01FF	         ' (STANDARD_RIGHTS_REQUIRED Or SYNCHRONIZE Or 0x1FF)
+$$FILE_GENERIC_READ    = 0x120089          ' (STANDARD_RIGHTS_READ Or FILE_READ_DATA Or FILE_READ_ATTRIBUTES Or FILE_READ_EA Or SYNCHRONIZE)
+$$FILE_GENERIC_WRITE   = 0x120116          ' (STANDARD_RIGHTS_WRITE Or FILE_WRITE_DATA Or FILE_WRITE_ATTRIBUTES Or FILE_WRITE_EA Or FILE_APPEND_DATA Or SYNCHRONIZE)
+$$FILE_GENERIC_EXECUTE = 0x1200A0          ' (STANDARD_RIGHTS_EXECUTE Or FILE_READ_ATTRIBUTES Or FILE_EXECUTE Or SYNCHRONIZE)
+
+$$FILE_SHARE_NONE               = 0x0
+$$FILE_SHARE_READ               = 0x1
+$$FILE_SHARE_WRITE              = 0x2
+$$FILE_SHARE_DELETE             = 0x4 
+
+$$FILE_ATTRIBUTE_READONLY       = 0x1
+$$FILE_ATTRIBUTE_HIDDEN         = 0x2
+$$FILE_ATTRIBUTE_SYSTEM         = 0x4
+$$FILE_ATTRIBUTE_DIRECTORY      = 0x10
+$$FILE_ATTRIBUTE_ARCHIVE        = 0x20
+$$FILE_ATTRIBUTE_NORMAL         = 0x80
+$$FILE_ATTRIBUTE_TEMPORARY      = 0x100
+$$FILE_ATTRIBUTE_ATOMIC_WRITE   = 0x200
+$$FILE_ATTRIBUTE_XACTION_WRITE  = 0x400
+$$FILE_ATTRIBUTE_COMPRESSED     = 0x800
+
+$$FILE_NOTIFY_CHANGE_FILE_NAME  = 0x1
+$$FILE_NOTIFY_CHANGE_DIR_NAME   = 0x2
+$$FILE_NOTIFY_CHANGE_ATTRIBUTES = 0x4
+$$FILE_NOTIFY_CHANGE_SIZE       = 0x8
+$$FILE_NOTIFY_CHANGE_LAST_WRITE = 0x10
+$$FILE_NOTIFY_CHANGE_LAST_ACCESS= 0x20  
+$$FILE_NOTIFY_CHANGE_CREATION   = 0x40  
+$$FILE_NOTIFY_CHANGE_SECURITY   = 0x100
+
+$$FILE_ACTION_ADDED               = 0x00000001  
+$$FILE_ACTION_REMOVED             = 0x00000002  
+$$FILE_ACTION_MODIFIED            = 0x00000003  
+$$FILE_ACTION_RENAMED_OLD_NAME    = 0x00000004  
+$$FILE_ACTION_RENAMED_NEW_NAME    = 0x00000005 
+
+$$MAILSLOT_NO_MESSAGE           = -1
+$$MAILSLOT_WAIT_FOREVER         = -1
+
+$$FILE_CASE_SENSITIVE_SEARCH    = 0x1
+$$FILE_CASE_PRESERVED_NAMES     = 0x2
+$$FILE_UNICODE_ON_DISK          = 0x4
+$$FILE_PERSISTENT_ACLS          = 0x8
+$$FILE_FILE_COMPRESSION         = 0x10
+$$FILE_VOLUME_IS_COMPRESSED     = 0x8000
+
+$$IO_COMPLETION_MODIFY_STATE    = 0x2
+$$IO_COMPLETION_ALL_ACCESS      = 0x1F0003                ' (STANDARD_RIGHTS_REQUIRED Or SYNCHRONIZE Or 0x3)
+
+$$DUPLICATE_CLOSE_SOURCE        = 0x1
+$$DUPLICATE_SAME_ACCESS         = 0x2
+
+' Access Rights
+' AccessSystemAcl access type
+$$ACCESS_SYSTEM_SECURITY = 0x1000000
+
+'  MaximumAllowed access type
+$$MAXIMUM_ALLOWED = 0x2000000
+
+'   These are the generic rights.
+$$GENERIC_READ    = 0x80000000
+$$GENERIC_WRITE   = 0x40000000
+$$GENERIC_EXECUTE = 0x20000000
+$$GENERIC_ALL     = 0x10000000
+
+$$FILE_BEGIN   = 0
+$$FILE_CURRENT = 1
+$$FILE_END     = 2
+
+$$FILE_FLAG_WRITE_THROUGH    = 0x80000000
+$$FILE_FLAG_OVERLAPPED       = 0x40000000
+$$FILE_FLAG_NO_BUFFERING     = 0x20000000
+$$FILE_FLAG_RANDOM_ACCESS    = 0x10000000
+$$FILE_FLAG_SEQUENTIAL_SCAN  = 0x8000000
+$$FILE_FLAG_DELETE_ON_CLOSE  = 0x4000000
+$$FILE_FLAG_BACKUP_SEMANTICS = 0x2000000
+$$FILE_FLAG_POSIX_SEMANTICS  = 0x1000000
+
+$$CREATE_NEW        = 1
+$$CREATE_ALWAYS     = 2
+$$OPEN_EXISTING     = 3
+$$OPEN_ALWAYS       = 4
+$$TRUNCATE_EXISTING = 5
+
+' Define the dwOpenMode values for CreateNamedPipe
+$$PIPE_ACCESS_INBOUND  = 0x1
+$$PIPE_ACCESS_OUTBOUND = 0x2
+$$PIPE_ACCESS_DUPLEX   = 0x3
+
+' Define the Named Pipe End flags for GetNamedPipeInfo
+$$PIPE_CLIENT_END = 0x0
+$$PIPE_SERVER_END = 0x1
+
+' Define the dwPipeMode values for CreateNamedPipe
+$$PIPE_WAIT             = 0x0
+$$PIPE_NOWAIT           = 0x1
+$$PIPE_READMODE_BYTE    = 0x0
+$$PIPE_READMODE_MESSAGE = 0x2
+$$PIPE_TYPE_BYTE        = 0x0
+$$PIPE_TYPE_MESSAGE     = 0x4
+
+' Define the well known values for CreateNamedPipe nMaxInstances
+$$PIPE_UNLIMITED_INSTANCES = 255
+
+' Define the Security Quality of Service bits to be passed
+'  into CreateFile
+$$SECURITY_ANONYMOUS             = 0x00000000
+$$SECURITY_IDENTIFICATION        = 0x00010000
+$$SECURITY_IMPERSONATION         = 0x00020000
+$$SECURITY_DELEGATION            = 0x00030000
+$$SECURITY_CONTEXT_TRACKING      = 0x00040000
+$$SECURITY_EFFECTIVE             = 0x00080000
+$$SECURITY_EFFECTIVE_ONLY        = 0x00080000
+
+$$SECURITY_SQOS_PRESENT          = 0x00100000
+$$SECURITY_VALID_SQOS_FLAGS      = 0x001F0000
+
+' Code Page Default Values.
+$$CP_ACP        = 0           ' default to ANSI code page
+$$CP_OEMCP      = 1           ' default to OEM  code page
+$$CP_MACCP      = 2           ' default to MAC  code page
+$$CP_THREAD_ACP = 3           ' current thread's ANSI code page
+$$CP_SYMBOL     = 42          ' SYMBOL translations
+
+$$CP_UTF7       = 65000       ' UTF-7 translation
+$$CP_UTF8       = 65001       ' UTF-8 translation
+
+$$DRIVE_REMOVABLE	  = 2
+$$DRIVE_FIXED	  = 3
+$$DRIVE_REMOTE	  = 4
+$$DRIVE_CDROM	  = 5
+$$DRIVE_RAMDISK	  = 6
+$$DRIVE_UNKNOWN	  = 0
+$$DRIVE_NO_ROOT_DIR = 1
+
+
+' Global Memory Flags
+
+$$GMEM_FIXED                                  = 0x0
+$$GMEM_MOVEABLE                               = 0x2
+$$GMEM_NOCOMPACT                              = 0x10
+$$GMEM_NODISCARD                              = 0x20
+$$GMEM_ZEROINIT                               = 0x40
+$$GMEM_MODIFY                                 = 0x80
+$$GMEM_DISCARDABLE                            = 0x100
+$$GMEM_NOT_BANKED                             = 0x1000
+$$GMEM_SHARE                                  = 0x2000
+$$GMEM_DDESHARE                               = 0x2000
+$$GMEM_NOTIFY                                 = 0x4000
+$$GMEM_LOWER                                  = 0x1000
+$$GMEM_VALID_FLAGS                            = 0x7F72
+$$GMEM_INVALID_HANDLE                         = 0x8000
+
+$$GHND = 0x42		' (GMEM_MOVEABLE Or GMEM_ZEROINIT)
+$$GPTR = 0x40		' (GMEM_FIXED Or GMEM_ZEROINIT)
+
+' Flags returned by GlobalFlags (in addition to GMEM_DISCARDABLE)
+$$GMEM_DISCARDED = 0x4000
+$$GMEM_LOCKCOUNT = 0xFF
+
+' Local Memory Flags
+$$LMEM_FIXED          = 0x0
+$$LMEM_MOVEABLE       = 0x2
+$$LMEM_NOCOMPACT      = 0x10
+$$LMEM_NODISCARD      = 0x20
+$$LMEM_ZEROINIT       = 0x40
+$$LMEM_MODIFY         = 0x80
+$$LMEM_DISCARDABLE    = 0xF00
+$$LMEM_VALID_FLAGS    = 0xF72
+$$LMEM_INVALID_HANDLE = 0x8000
+
+$$LHND = 66                      ' (LMEM_MOVEABLE + LMEM_ZEROINIT)
+$$LPTR = 64											 ' (LMEM_FIXED + LMEM_ZEROINIT)
+
+$$NONZEROLHND = $$LMEM_MOVEABLE
+$$NONZEROLPTR = $$LMEM_FIXED
+
+' Flags returned by LocalFlags (in addition to LMEM_DISCARDABLE)
+$$LMEM_DISCARDED = 0x4000
+$$LMEM_LOCKCOUNT = 0xFF
+
+'  dwCreationFlag values
+
+$$DEBUG_PROCESS = 0x1
+$$DEBUG_ONLY_THIS_PROCESS = 0x2
+
+$$CREATE_SUSPENDED = 0x4
+$$DETACHED_PROCESS = 0x8
+$$CREATE_NEW_CONSOLE = 0x10
+
+$$NORMAL_PRIORITY_CLASS = 0x20
+$$IDLE_PRIORITY_CLASS = 0x40
+$$HIGH_PRIORITY_CLASS = 0x80
+$$REALTIME_PRIORITY_CLASS = 0x100
+
+$$CREATE_NEW_PROCESS_GROUP = 0x200
+$$CREATE_NO_WINDOW = 0x8000000
+
+$$STARTF_USESHOWWINDOW = 0x1
+$$STARTF_USESIZE = 0x2
+$$STARTF_USEPOSITION = 0x4
+$$STARTF_USECOUNTCHARS = 0x8
+$$STARTF_USEFILLATTRIBUTE = 0x10
+$$STARTF_RUNFULLSCREEN = 0x20        '  ignored for non-x86 platforms
+$$STARTF_FORCEONFEEDBACK = 0x40
+$$STARTF_FORCEOFFFEEDBACK = 0x80
+$$STARTF_USESTDHANDLES = 0x100
+
+$$PROFILE_USER = 0x10000000
+$$PROFILE_KERNEL = 0x20000000
+$$PROFILE_SERVER = 0x40000000
+
+$$MAXLONG = 0x7FFFFFFF
+$$THREAD_BASE_PRIORITY_MIN = -2
+$$THREAD_BASE_PRIORITY_MAX = 2
+$$THREAD_BASE_PRIORITY_LOWRT = 15
+$$THREAD_BASE_PRIORITY_IDLE = -15
+$$THREAD_PRIORITY_LOWEST = -2
+$$THREAD_PRIORITY_BELOW_NORMAL = -1
+$$THREAD_PRIORITY_NORMAL = 0
+$$THREAD_PRIORITY_HIGHEST = 2
+$$THREAD_PRIORITY_ABOVE_NORMAL = 1
+$$THREAD_PRIORITY_ERROR_RETURN = $$MAXLONG
+
+$$THREAD_PRIORITY_TIME_CRITICAL = 15
+$$THREAD_PRIORITY_IDLE = -15
+
+' DllMain reason flags
+$$DLL_PROCESS_DETACH  = 0
+$$DLL_PROCESS_ATTACH  = 1
+$$DLL_THREAD_ATTACH   = 2
+$$DLL_THREAD_DETACH   = 3
+
+
+' standard io handles
+$$STD_ERR_HANDLE    = -12
+$$STD_ERROR_HANDLE  = -12
+$$STD_OUTPUT_HANDLE = -11
+$$STD_INPUT_HANDLE  = -10
+
+$$INVALID_HANDLE_VALUE = -1
+
+$$FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x100
+$$FORMAT_MESSAGE_IGNORE_INSERTS  = 0x200
+$$FORMAT_MESSAGE_FROM_STRING     = 0x400
+$$FORMAT_MESSAGE_FROM_HMODULE    = 0x800
+$$FORMAT_MESSAGE_FROM_SYSTEM     = 0x1000
+$$FORMAT_MESSAGE_ARGUMENT_ARRAY  = 0x2000
+$$FORMAT_MESSAGE_MAX_WIDTH_MASK  = 0xFF
+
+'  dwPlatformId defines
+
+$$VER_PLATFORM_WIN32s 				= 0
+$$VER_PLATFORM_WIN32_WINDOWS 	= 1
+$$VER_PLATFORM_WIN32_NT 			= 2
+
+'  Serial provider type.
+$$SP_SERIALCOMM = 0x1
+
+'  Provider SubTypes
+$$PST_UNSPECIFIED = 0x0
+$$PST_RS232 = 0x1
+$$PST_PARALLELPORT = 0x2
+$$PST_RS422 = 0x3
+$$PST_RS423 = 0x4
+$$PST_RS449 = 0x5
+$$PST_FAX = 0x21
+$$PST_SCANNER = 0x22
+$$PST_NETWORK_BRIDGE = 0x100
+$$PST_LAT = 0x101
+$$PST_TCPIP_TELNET = 0x102
+$$PST_X25 = 0x103
+
+'  Provider capabilities flags.
+$$PCF_DTRDSR = 0x1
+$$PCF_RTSCTS = 0x2
+$$PCF_RLSD = 0x4
+$$PCF_PARITY_CHECK = 0x8
+$$PCF_XONXOFF = 0x10
+$$PCF_SETXCHAR = 0x20
+$$PCF_TOTALTIMEOUTS = 0x40
+$$PCF_INTTIMEOUTS = 0x80
+$$PCF_SPECIALCHARS = 0x100
+$$PCF_16BITMODE = 0x200
+
+'  Comm provider settable parameters.
+$$SP_PARITY = 0x1
+$$SP_BAUD = 0x2
+$$SP_DATABITS = 0x4
+$$SP_STOPBITS = 0x8
+$$SP_HANDSHAKING = 0x10
+$$SP_PARITY_CHECK = 0x20
+$$SP_RLSD = 0x40
+
+'  Settable baud rates in the provider.
+$$BAUD_075 = 0x1
+$$BAUD_110 = 0x2
+$$BAUD_134_5 = 0x4
+$$BAUD_150 = 0x8
+$$BAUD_300 = 0x10
+$$BAUD_600 = 0x20
+$$BAUD_1200 = 0x40
+$$BAUD_1800 = 0x80
+$$BAUD_2400 = 0x100
+$$BAUD_4800 = 0x200
+$$BAUD_7200 = 0x400
+$$BAUD_9600 = 0x800
+$$BAUD_14400 = 0x1000
+$$BAUD_19200 = 0x2000
+$$BAUD_38400 = 0x4000
+$$BAUD_56K = 0x8000
+$$BAUD_128K = 0x10000
+$$BAUD_115200 = 0x20000
+$$BAUD_57600 = 0x40000
+$$BAUD_USER = 0x10000000
+
+'  Settable Data Bits
+$$DATABITS_5 = 0x1
+$$DATABITS_6 = 0x2
+$$DATABITS_7 = 0x4
+$$DATABITS_8 = 0x8
+$$DATABITS_16 = 0x10
+$$DATABITS_16X = 0x20
+
+'  Settable Stop and Parity bits.
+$$STOPBITS_10 = 0x1
+$$STOPBITS_15 = 0x2
+$$STOPBITS_20 = 0x4
+$$PARITY_NONE = 0x100
+$$PARITY_ODD = 0x200
+$$PARITY_EVEN = 0x400
+$$PARITY_MARK = 0x800
+$$PARITY_SPACE = 0x1000
+
+$$NOPARITY = 0
+$$ODDPARITY = 1
+$$EVENPARITY = 2
+$$MARKPARITY = 3
+$$SPACEPARITY = 4
+
+$$ONESTOPBIT = 0
+$$ONE5STOPBITS = 1
+$$TWOSTOPBITS = 2
+
+$$IGNORE = 0 			' Ignore signal
+$$INFINITE = 0xFFFFFFFF  	' Infinite timeout
+
+' Comm Baud Rate indices
+$$CBR_110 = 110
+$$CBR_300 = 300
+$$CBR_600 = 600
+$$CBR_1200 = 1200
+$$CBR_2400 = 2400
+$$CBR_4800 = 4800
+$$CBR_9600 = 9600
+$$CBR_14400 = 14400
+$$CBR_19200 = 19200
+$$CBR_38400 = 38400
+$$CBR_56000 = 56000
+$$CBR_57600 = 57600
+$$CBR_115200 = 115200
+$$CBR_128000 = 128000
+$$CBR_256000 = 256000
+
+'  DTR Control Flow Values.
+$$DTR_CONTROL_DISABLE = 0x0
+$$DTR_CONTROL_ENABLE = 0x1
+$$DTR_CONTROL_HANDSHAKE = 0x2
+
+'  RTS Control Flow Values
+$$RTS_CONTROL_DISABLE = 0x0
+$$RTS_CONTROL_ENABLE = 0x1
+$$RTS_CONTROL_HANDSHAKE = 0x2
+$$RTS_CONTROL_TOGGLE = 0x3
+
+' Escape Functions
+$$SETXOFF = 1  		'  Simulate XOFF received
+$$SETXON = 2 		'  Simulate XON received
+$$SETRTS = 3 		'  Set RTS high
+$$CLRRTS = 4 		'  Set RTS low
+$$SETDTR = 5 		'  Set DTR high
+$$CLRDTR = 6 		'  Set DTR low
+$$RESETDEV = 7       	'  Reset device if possible
+$$SETBREAK = 8  		'  Set the device break line
+$$CLRBREAK = 9 		'  Clear the device break line
+
+'  PURGE function flags.
+$$PURGE_TXABORT = 0x1     '  Kill the pending/current writes to the comm port.
+$$PURGE_RXABORT = 0x2     '  Kill the pending/current reads to the comm port.
+$$PURGE_TXCLEAR = 0x4     '  Kill the transmit queue if there.
+$$PURGE_RXCLEAR = 0x8     '  Kill the typeahead buffer if there.
+
+' Locale Types.
+' These types are used for the GetLocaleInfoW NLS API routine.
+
+$$LOCALE_SYSTEM_DEFAULT = 0x800
+$$LOCALE_USER_DEFAULT = 0x400
+
+' LOCALE_NOUSEROVERRIDE is also used in GetTimeFormatW and GetDateFormatW.
+$$LOCALE_NOUSEROVERRIDE = 0x80000000  '  do not use user overrides
+
+$$LOCALE_ILANGUAGE = 0x1         '  language id
+$$LOCALE_SLANGUAGE = 0x2         '  localized name of language
+$$LOCALE_SENGLANGUAGE = 0x1001      '  English name of language
+$$LOCALE_SABBREVLANGNAME = 0x3         '  abbreviated language name
+$$LOCALE_SNATIVELANGNAME = 0x4         '  native name of language
+$$LOCALE_ICOUNTRY = 0x5         '  country code
+$$LOCALE_SCOUNTRY = 0x6         '  localized name of country
+$$LOCALE_SENGCOUNTRY = 0x1002      '  English name of country
+$$LOCALE_SABBREVCTRYNAME = 0x7         '  abbreviated country name
+$$LOCALE_SNATIVECTRYNAME = 0x8         '  native name of country
+$$LOCALE_IDEFAULTLANGUAGE = 0x9         '  default language id
+$$LOCALE_IDEFAULTCOUNTRY = 0xA         '  default country code
+$$LOCALE_IDEFAULTCODEPAGE = 0xB         '  default code page
+
+$$LOCALE_SLIST = 0xC         '  list item separator
+$$LOCALE_IMEASURE = 0xD         '  0 = metric, 1 = US
+
+$$LOCALE_SDECIMAL = 0xE         '  decimal separator
+$$LOCALE_STHOUSAND = 0xF         '  thousand separator
+$$LOCALE_SGROUPING = 0x10        '  digit grouping
+$$LOCALE_IDIGITS = 0x11        '  number of fractional digits
+$$LOCALE_ILZERO = 0x12        '  leading zeros for decimal
+$$LOCALE_SNATIVEDIGITS = 0x13        '  native ascii 0-9
+
+$$LOCALE_SCURRENCY = 0x14        '  local monetary symbol
+$$LOCALE_SINTLSYMBOL = 0x15        '  intl monetary symbol
+$$LOCALE_SMONDECIMALSEP = 0x16        '  monetary decimal separator
+$$LOCALE_SMONTHOUSANDSEP = 0x17        '  monetary thousand separator
+$$LOCALE_SMONGROUPING = 0x18        '  monetary grouping
+$$LOCALE_ICURRDIGITS = 0x19        '  # local monetary digits
+$$LOCALE_IINTLCURRDIGITS = 0x1A        '  # intl monetary digits
+$$LOCALE_ICURRENCY = 0x1B        '  positive currency mode
+$$LOCALE_INEGCURR = 0x1C        '  negative currency mode
+
+$$LOCALE_SDATE = 0x1D        '  date separator
+$$LOCALE_STIME = 0x1E        '  time separator
+$$LOCALE_SSHORTDATE = 0x1F        '  short date format string
+$$LOCALE_SLONGDATE = 0x20        '  long date format string
+$$LOCALE_STIMEFORMAT = 0x1003      '  time format string
+$$LOCALE_IDATE = 0x21        '  short date format ordering
+$$LOCALE_ILDATE = 0x22        '  long date format ordering
+$$LOCALE_ITIME = 0x23        '  time format specifier
+$$LOCALE_ICENTURY = 0x24        '  century format specifier
+$$LOCALE_ITLZERO = 0x25        '  leading zeros in time field
+$$LOCALE_IDAYLZERO = 0x26        '  leading zeros in day field
+$$LOCALE_IMONLZERO = 0x27        '  leading zeros in month field
+$$LOCALE_S1159 = 0x28        '  AM designator
+$$LOCALE_S2359 = 0x29        '  PM designator
+
+$$LOCALE_SDAYNAME1 = 0x2A        '  long name for Monday
+$$LOCALE_SDAYNAME2 = 0x2B        '  long name for Tuesday
+$$LOCALE_SDAYNAME3 = 0x2C        '  long name for Wednesday
+$$LOCALE_SDAYNAME4 = 0x2D        '  long name for Thursday
+$$LOCALE_SDAYNAME5 = 0x2E        '  long name for Friday
+$$LOCALE_SDAYNAME6 = 0x2F        '  long name for Saturday
+$$LOCALE_SDAYNAME7 = 0x30        '  long name for Sunday
+$$LOCALE_SABBREVDAYNAME1 = 0x31        '  abbreviated name for Monday
+$$LOCALE_SABBREVDAYNAME2 = 0x32        '  abbreviated name for Tuesday
+$$LOCALE_SABBREVDAYNAME3 = 0x33        '  abbreviated name for Wednesday
+$$LOCALE_SABBREVDAYNAME4 = 0x34        '  abbreviated name for Thursday
+$$LOCALE_SABBREVDAYNAME5 = 0x35        '  abbreviated name for Friday
+$$LOCALE_SABBREVDAYNAME6 = 0x36        '  abbreviated name for Saturday
+$$LOCALE_SABBREVDAYNAME7 = 0x37        '  abbreviated name for Sunday
+$$LOCALE_SMONTHNAME1 = 0x38        '  long name for January
+$$LOCALE_SMONTHNAME2 = 0x39        '  long name for February
+$$LOCALE_SMONTHNAME3 = 0x3A        '  long name for March
+$$LOCALE_SMONTHNAME4 = 0x3B        '  long name for April
+$$LOCALE_SMONTHNAME5 = 0x3C        '  long name for May
+$$LOCALE_SMONTHNAME6 = 0x3D        '  long name for June
+$$LOCALE_SMONTHNAME7 = 0x3E        '  long name for July
+$$LOCALE_SMONTHNAME8 = 0x3F        '  long name for August
+$$LOCALE_SMONTHNAME9 = 0x40        '  long name for September
+$$LOCALE_SMONTHNAME10 = 0x41        '  long name for October
+$$LOCALE_SMONTHNAME11 = 0x42        '  long name for November
+$$LOCALE_SMONTHNAME12 = 0x43        '  long name for December
+$$LOCALE_SABBREVMONTHNAME1 = 0x44        '  abbreviated name for January
+$$LOCALE_SABBREVMONTHNAME2 = 0x45        '  abbreviated name for February
+$$LOCALE_SABBREVMONTHNAME3 = 0x46        '  abbreviated name for March
+$$LOCALE_SABBREVMONTHNAME4 = 0x47        '  abbreviated name for April
+$$LOCALE_SABBREVMONTHNAME5 = 0x48        '  abbreviated name for May
+$$LOCALE_SABBREVMONTHNAME6 = 0x49        '  abbreviated name for June
+$$LOCALE_SABBREVMONTHNAME7 = 0x4A        '  abbreviated name for July
+$$LOCALE_SABBREVMONTHNAME8 = 0x4B        '  abbreviated name for August
+$$LOCALE_SABBREVMONTHNAME9 = 0x4C        '  abbreviated name for September
+$$LOCALE_SABBREVMONTHNAME10 = 0x4D        '  abbreviated name for October
+$$LOCALE_SABBREVMONTHNAME11 = 0x4E        '  abbreviated name for November
+$$LOCALE_SABBREVMONTHNAME12 = 0x4F        '  abbreviated name for December
+$$LOCALE_SABBREVMONTHNAME13 = 0x100F
+
+$$LOCALE_SPOSITIVESIGN = 0x50        '  positive sign
+$$LOCALE_SNEGATIVESIGN = 0x51        '  negative sign
+$$LOCALE_IPOSSIGNPOSN = 0x52        '  positive sign position
+$$LOCALE_INEGSIGNPOSN = 0x53        '  negative sign position
+$$LOCALE_IPOSSYMPRECEDES = 0x54        '  mon sym precedes pos amt
+$$LOCALE_IPOSSEPBYSPACE = 0x55        '  mon sym sep by space from pos amt
+$$LOCALE_INEGSYMPRECEDES = 0x56        '  mon sym precedes neg amt
+$$LOCALE_INEGSEPBYSPACE = 0x57        '  mon sym sep by space from neg amt
+
+
+' Time Flags for GetTimeFormatW.
+$$TIME_NOMINUTESORSECONDS = 0x1         '  do not use minutes or seconds
+$$TIME_NOSECONDS = 0x2         '  do not use seconds
+$$TIME_NOTIMEMARKER = 0x4         '  do not use time marker
+$$TIME_FORCE24HOURFORMAT = 0x8         '  always use 24 hour format
+
+' Date Flags for GetDateFormatW.
+$$DATE_SHORTDATE = 0x1         '  use short date picture
+$$DATE_LONGDATE = 0x2         '  use long date picture
+
+$$TIME_ZONE_ID_INVALID         = 0xFFFFFFFF
+$$TIME_ZONE_ID_UNKNOWN         = 0
+$$TIME_ZONE_ID_STANDARD        = 1
+$$TIME_ZONE_ID_DAYLIGHT        = 2
+
+$$HEAP_NO_SERIALIZE            = 0x1
+$$HEAP_GROWABLE                = 0x2
+$$HEAP_GENERATE_EXCEPTIONS     = 0x4
+$$HEAP_ZERO_MEMORY             = 0x8
+
+'  ControlKeyState flags
+$$RIGHT_ALT_PRESSED = 0x1     '  the right alt key is pressed.
+$$LEFT_ALT_PRESSED = 0x2     '  the left alt key is pressed.
+$$RIGHT_CTRL_PRESSED = 0x4     '  the right ctrl key is pressed.
+$$LEFT_CTRL_PRESSED = 0x8     '  the left ctrl key is pressed.
+$$SHIFT_PRESSED = 0x10    '  the shift key is pressed.
+$$NUMLOCK_ON = 0x20    '  the numlock light is on.
+$$SCROLLLOCK_ON = 0x40    '  the scrolllock light is on.
+$$CAPSLOCK_ON = 0x80    '  the capslock light is on.
+$$ENHANCED_KEY = 0x100   '  the key is enhanced.
+
+'  ButtonState flags
+$$FROM_LEFT_1ST_BUTTON_PRESSED = 0x1
+$$RIGHTMOST_BUTTON_PRESSED = 0x2
+$$FROM_LEFT_2ND_BUTTON_PRESSED = 0x4
+$$FROM_LEFT_3RD_BUTTON_PRESSED = 0x8
+$$FROM_LEFT_4TH_BUTTON_PRESSED = 0x10
+
+'  EventFlags
+$$MOUSE_MOVED = 0x1
+$$DOUBLE_CLICK = 0x2
+
+'   EventType flags
+$$KEY_EVENT                = 0x1     '  Event contains key event record
+$$MOUSE_EVENT              = 0x2     '  Event contains mouse event record
+$$WINDOW_BUFFER_SIZE_EVENT = 0x4     '  Event contains window change event record
+$$MENU_EVENT               = 0x8     '  Event contains menu event record
+$$FOCUS_EVENT              = 0x10    '  event contains focus change
+
+'  Attributes flags
+$$FOREGROUND_BLUE      = 0x1     '  text color contains blue.
+$$FOREGROUND_GREEN     = 0x2     '  text color contains green.
+$$FOREGROUND_RED       = 0x4     '  text color contains red.
+$$FOREGROUND_INTENSITY = 0x8     '  text color is intensified.
+$$BACKGROUND_BLUE      = 0x10    '  background color contains blue.
+$$BACKGROUND_GREEN     = 0x20    '  background color contains green.
+$$BACKGROUND_RED       = 0x40    '  background color contains red.
+$$BACKGROUND_INTENSITY = 0x80    '  background color is intensified.
+$$CONSOLE_BLACKONWHITE = 0xF0    '  black text on white background
+$$CONSOLE_WHITEONBLACK = 0x7     '  white text on black background
+
+$$CTRL_C_EVENT = 0
+$$CTRL_BREAK_EVENT = 1
+$$CTRL_CLOSE_EVENT = 2
+'  3 is reserved!
+'  4 is reserved!
+$$CTRL_LOGOFF_EVENT = 5
+$$CTRL_SHUTDOWN_EVENT = 6
+
+' Input Mode flags
+$$ENABLE_PROCESSED_INPUT = 0x1
+$$ENABLE_LINE_INPUT = 0x2
+$$ENABLE_ECHO_INPUT = 0x4
+$$ENABLE_WINDOW_INPUT = 0x8
+$$ENABLE_MOUSE_INPUT = 0x10
+
+' Output Mode flags
+$$ENABLE_PROCESSED_OUTPUT = 0x1
+$$ENABLE_WRAP_AT_EOL_OUTPUT = 0x2
+
+$$CONSOLE_TEXTMODE_BUFFER = 1
+
+' Predefined Resource Types
+$$RT_CURSOR = 1
+$$RT_BITMAP = 2
+$$RT_ICON = 3
+$$RT_MENU = 4
+$$RT_DIALOG = 5
+$$RT_STRING = 6
+$$RT_FONTDIR = 7
+$$RT_FONT = 8
+$$RT_ACCELERATOR = 9
+$$RT_RCDATA = 10
+
+$$WAIT_FAILED        = 0xFFFFFFFF
+$$WAIT_OBJECT_0      = 0x0
+$$WAIT_ABANDONED     = 0x00000080
+$$WAIT_ABANDONED_0   = 0x00000080
+$$WAIT_IO_COMPLETION = 0x000000C0
+
+$$STILL_ACTIVE       = 0x00000103
+
+$$HINSTANCE_ERROR	= 32
+
+$$NORM_CURSOR_SIZE = 10
+$$SOLID_CURSOR_SIZE = 99
+$$NOCURSOR = 0
+$$SOLIDCURSOR = 1
+$$NORMALCURSOR = 2
+
+' for EnumSystemLocales()
+$$LCID_INSTALLED = 1  ' Enumerate only installed locale identifiers
+$$LCID_SUPPORTED = 2  ' Enumerate all supported locale identifiers
+
+' MBCS and Unicode Translation Flags.
+
+$$MB_PRECOMPOSED = 0x1           '  use precomposed chars
+$$MB_COMPOSITE = 0x2             '  use composite chars
+$$MB_USEGLYPHCHARS = 0x4         '  use glyph chars, not ctrl chars
+
+$$WC_DEFAULTCHECK = 0x100        '  check for default char
+$$WC_COMPOSITECHECK = 0x200      '  convert composite to precomposed
+$$WC_DISCARDNS = 0x10            '  discard non-spacing chars
+$$WC_SEPCHARS = 0x20             '  generate separate chars
+$$WC_DEFAULTCHAR = 0x40          '  replace w/ default char
+
+$$PROCESS_TERMINATE         = 0x0001
+$$PROCESS_CREATE_THREAD     = 0x0002
+$$PROCESS_VM_OPERATION      = 0x0008
+$$PROCESS_VM_READ           = 0x0010
+$$PROCESS_VM_WRITE          = 0x0020
+$$PROCESS_DUP_HANDLE        = 0x0040
+$$PROCESS_CREATE_PROCESS    = 0x0080
+$$PROCESS_SET_QUOTA         = 0x0100
+$$PROCESS_SET_INFORMATION   = 0x0200
+$$PROCESS_QUERY_INFORMATION = 0x0400
+$$PROCESS_ALL_ACCESS        = 0x1F0FFF ' $$STANDARD_RIGHTS_REQUIRED OR $$SYNCHRONIZE OR 0xFFF???
+
+
+' *****  Win32 Exception Constants  *****
+' ***************************************
+' Added some constants to the original list
+'
+' Most or all of the following are sometimes referred to as STATUS_
+' codes rather than EXCEPTION_ codes - eg., STATUS_ACCESS_VIOLATION, etc.
+'
+$$EXCEPTION_ACCESS_VIOLATION          = 0xC0000005
+$$EXCEPTION_ARRAY_BOUNDS_EXCEEDED     = 0xC000008C
+$$EXCEPTION_BREAKPOINT                = 0x80000003
+$$EXCEPTION_CONTROL_C_EXIT            = 0xC000013A
+$$EXCEPTION_DATATYPE_MISALIGNMENT     = 0x80000002
+$$EXCEPTION_FLOAT_DENORMAL_OPERAND    = 0xC000008D
+$$EXCEPTION_FLOAT_DIVIDE_BY_ZERO      = 0xC000008E
+$$EXCEPTION_FLOAT_INEXACT_RESULT      = 0xC000008F
+$$EXCEPTION_FLOAT_INVALID_OPERATION   = 0xC0000090
+$$EXCEPTION_FLOAT_OVERFLOW            = 0xC0000091
+$$EXCEPTION_FLOAT_STACK_CHECK         = 0xC0000092
+$$EXCEPTION_FLOAT_UNDERFLOW           = 0xC0000093
+$$EXCEPTION_GUARD_PAGE                = 0x80000001
+$$EXCEPTION_ILLEGAL_INSTRUCTION       = 0xC000001D
+$$EXCEPTION_IN_PAGE_ERROR             = 0xC0000006
+$$EXCEPTION_INT_DIVIDE_BY_ZERO        = 0xC0000094
+$$EXCEPTION_INT_OVERFLOW              = 0xC0000095
+$$EXCEPTION_INVALID_DISPOSITION       = 0xC0000026
+$$EXCEPTION_NONCONTINUABLE_EXCEPTION  = 0xC0000025
+$$EXCEPTION_PRIV_INSTRUCTION          = 0xC0000096
+$$EXCEPTION_SINGLE_STEP               = 0x80000004
+$$EXCEPTION_STACK_OVERFLOW            = 0xC00000FD
+
+$$EXCEPTION_FLT_DENORMAL_OPERAND      = $$EXCEPTION_FLOAT_DENORMAL_OPERAND
+$$EXCEPTION_FLT_DIVIDE_BY_ZERO        = $$EXCEPTION_FLOAT_DIVIDE_BY_ZERO
+$$EXCEPTION_FLT_INEXACT_RESULT        = $$EXCEPTION_FLOAT_INEXACT_RESULT
+$$EXCEPTION_FLT_INVALID_OPERATION     = $$EXCEPTION_FLOAT_INVALID_OPERATION
+$$EXCEPTION_FLT_OVERFLOW              = $$EXCEPTION_FLOAT_OVERFLOW
+$$EXCEPTION_FLT_STACK_CHECK           = $$EXCEPTION_FLOAT_STACK_CHECK
+$$EXCEPTION_FLT_UNDERFLOW             = $$EXCEPTION_FLOAT_UNDERFLOW
+
+'CONTEXT record .ContextFlags member
+$$CONTEXT_CONTROL         = 0x10001
+$$CONTEXT_INTEGER         = 0x10002
+$$CONTEXT_SEGMENTS        = 0x10004
+$$CONTEXT_FLOATING_POINT  = 0x10008
+$$CONTEXT_DEBUG_REGISTERS = 0x10010
+$$CONTEXT_FULL            = 0x10007
+
+$$SIZE_OF_80387_REGISTERS = 80
+$$CONTEXT_i386 = 0x10000
+$$CONTEXT_i486 = 0x10000
+
+$$EXCEPTION_MAXIMUM_PARAMETERS = 15 'maximum number of elements in .ExceptionInformation[]
+
+TYPE EXCEPTION_RECORD
+	XLONG	.ExceptionCode		'code for exception (see Win32 Exception Constants in this DEC)
+	XLONG	.ExceptionFlags	
+	XLONG	.pExceptionRecord
+	XLONG	.ExceptionAddress 'value of instruction pointer when exception occurred
+	XLONG	.NumberParameters
+'	XLONG	.ExceptionInformation[14] 
+END TYPE
+'.NumberParameters = number of elements in .ExceptionInformation[]. Under some (all?) 
+'   conditions, the .ExceptionInformation[] array is just big enough to contain the 
+'   required parameters, and does not exist if .NumberParameters = 0
+'Size of .ExceptionInformation[] varies; .NumberParameters = number of elements
+' (maximum $$EXCEPTION_MAXIMUM_PARAMETERS)
+
+
+'EXCEPTION_RECORD .ExceptionFlags
+$$EXCEPTION_CONTINUABLE								= 0
+$$EXCEPTION_NONCONTINUABLE						= 1
+
+TYPE EXCEPTION_POINTERS
+  XLONG .lpExceptionRecord
+  XLONG .lpContextRecord
+END TYPE
+
+TYPE FLOATING_SAVE_AREA '112 bytes, saves the state of the FPU
+  XLONG .ControlWord
+  XLONG .StatusWord
+  XLONG .TagWord
+  XLONG .ErrorOffset
+  XLONG .ErrorSelector
+  XLONG .DataOffset
+  XLONG .DataSelector
+  UBYTE .RegisterArea[79]
+  XLONG .Cr0NpxState
+END TYPE
+
+TYPE CONTEXT  '204 bytes							 dec	hex offsets from beginning of structure
+	XLONG	.ContextFlags									'000, 0x00
+	XLONG	.Dr0													'004, 0x04	
+	XLONG	.Dr1													'008, 0x08
+	XLONG	.Dr2													'012, 0x0C
+	XLONG	.Dr3													'016, 0x10
+	XLONG	.Dr6													'020, 0x14
+	XLONG	.Dr7													'024, 0x18
+	FLOATING_SAVE_AREA .FloatSave				'028, 0x1C
+	XLONG	.SegGs												'140, 0x8C
+	XLONG	.SegFs												'144, 0x90
+	XLONG	.SegEs												'148, 0x94
+	XLONG	.SegDs												'152, 0x98
+	XLONG	.Edi													'156, 0x9C
+	XLONG	.Esi													'160, 0xA0
+	XLONG	.Ebx													'164, 0xA4
+	XLONG	.Edx													'168, 0xA8
+	XLONG	.Ecx													'172, 0xAC
+	XLONG	.Eax													'176, 0xB0
+	XLONG	.Ebp													'180, 0xB4
+	XLONG	.Eip													'184, 0xB8
+	XLONG	.SegCs												'188, 0xBC
+	XLONG	.EFlags												'192, 0xC0
+	XLONG	.Esp													'196, 0xC4
+	XLONG	.SegSs												'200, 0xC8
+END TYPE
+'
+$$EXCEPTION_CONTINUE_SEARCH           =  0
+$$EXCEPTION_EXECUTE_HANDLER           =  1
+$$EXCEPTION_CONTINUE_EXECUTION        = -1
+
+' **********************************************  from \mstools\h\winerror.h
+' *****  Operating System Error Constants  *****  XstGetSystemError() : XstSetSystemError()
+' **********************************************  XstSystemErrorNumberToName (@systemError$)
+'
+  $$ERROR_SUCCESS                           =    0
+  $$ERROR_INVALID_FUNCTION                  =    1
+  $$ERROR_FILE_NOT_FOUND                    =    2
+  $$ERROR_PATH_NOT_FOUND                    =    3
+  $$ERROR_TOO_MANY_OPEN_FILES               =    4
+  $$ERROR_ACCESS_DENIED                     =    5
+  $$ERROR_INVALID_HANDLE                    =    6
+  $$ERROR_ARENA_TRASHED                     =    7
+  $$ERROR_NOT_ENOUGH_MEMORY                 =    8
+  $$ERROR_INVALID_BLOCK                     =    9
+  $$ERROR_BAD_ENVIRONMENT                   =   10
+  $$ERROR_BAD_FORMAT                        =   11
+  $$ERROR_INVALID_ACCESS                    =   12
+  $$ERROR_INVALID_DATA                      =   13
+  $$ERROR_OUTOFMEMORY                       =   14
+  $$ERROR_INVALID_DRIVE                     =   15
+  $$ERROR_CURRENT_DIRECTORY                 =   16
+  $$ERROR_NOT_SAME_DEVICE                   =   17
+  $$ERROR_NO_MORE_FILES                     =   18
+  $$ERROR_WRITE_PROTECT                     =   19
+  $$ERROR_BAD_UNIT                          =   20
+  $$ERROR_NOT_READY                         =   21
+  $$ERROR_BAD_COMMAND                       =   22
+  $$ERROR_CRC                               =   23
+  $$ERROR_BAD_LENGTH                        =   24
+  $$ERROR_SEEK                              =   25
+  $$ERROR_NOT_DOS_DISK                      =   26
+  $$ERROR_SECTOR_NOT_FOUND                  =   27
+  $$ERROR_OUT_OF_PAPER                      =   28
+  $$ERROR_WRITE_FAULT                       =   29
+  $$ERROR_READ_FAULT                        =   30
+  $$ERROR_GEN_FAILURE                       =   31
+  $$ERROR_SHARING_VIOLATION                 =   32
+  $$ERROR_LOCK_VIOLATION                    =   33
+  $$ERROR_WRONG_DISK                        =   34
+  $$ERROR_SHARING_BUFFER_EXCEEDED           =   36
+  $$ERROR_HANDLE_EOF                        =   38
+  $$ERROR_HANDLE_DISK_FULL                  =   39
+  $$ERROR_NOT_SUPPORTED                     =   50
+  $$ERROR_REM_NOT_LIST                      =   51
+  $$ERROR_DUP_NAME                          =   52
+  $$ERROR_BAD_NETPATH                       =   53
+  $$ERROR_NETWORK_BUSY                      =   54
+  $$ERROR_DEV_NOT_EXIST                     =   55
+  $$ERROR_TOO_MANY_CMDS                     =   56
+  $$ERROR_ADAP_HDW_ERR                      =   57
+  $$ERROR_BAD_NET_RESP                      =   58
+  $$ERROR_UNEXP_NET_ERR                     =   59
+  $$ERROR_BAD_REM_ADAP                      =   60
+  $$ERROR_PRINTQ_FULL                       =   61
+  $$ERROR_NO_SPOOL_SPACE                    =   62
+  $$ERROR_PRINT_CANCELLED                   =   63
+  $$ERROR_NETNAME_DELETED                   =   64
+  $$ERROR_NETWORK_ACCESS_DENIED             =   65
+  $$ERROR_BAD_DEV_TYPE                      =   66
+  $$ERROR_BAD_NET_NAME                      =   67
+  $$ERROR_TOO_MANY_NAMES                    =   68
+  $$ERROR_TOO_MANY_SESS                     =   69
+  $$ERROR_SHARING_PAUSED                    =   70
+  $$ERROR_REQ_NOT_ACCEP                     =   71
+  $$ERROR_REDIR_PAUSED                      =   72
+  $$ERROR_FILE_EXISTS                       =   80
+  $$ERROR_CANNOT_MAKE                       =   82
+  $$ERROR_FAIL_I24                          =   83
+  $$ERROR_OUT_OF_STRUCTURES                 =   84
+  $$ERROR_ALREADY_ASSIGNED                  =   85
+  $$ERROR_INVALID_PASSWORD                  =   86
+  $$ERROR_INVALID_PARAMETER                 =   87
+  $$ERROR_NET_WRITE_FAULT                   =   88
+  $$ERROR_NO_PROC_SLOTS                     =   89
+  $$ERROR_TOO_MANY_SEMAPHORES               =  100
+  $$ERROR_EXCL_SEM_ALREADY_OWNED            =  101
+  $$ERROR_SEM_IS_SET                        =  102
+  $$ERROR_TOO_MANY_SEM_REQUESTS             =  103
+  $$ERROR_INVALID_AT_INTERRUPT_TIME         =  104
+  $$ERROR_SEM_OWNER_DIED                    =  105
+  $$ERROR_SEM_USER_LIMIT                    =  106
+  $$ERROR_DISK_CHANGE                       =  107
+  $$ERROR_DRIVE_LOCKED                      =  108
+  $$ERROR_BROKEN_PIPE                       =  109
+  $$ERROR_OPEN_FAILED                       =  110
+  $$ERROR_BUFFER_OVERFLOW                   =  111
+  $$ERROR_DISK_FULL                         =  112
+  $$ERROR_NO_MORE_SEARCH_HANDLES            =  113
+  $$ERROR_INVALID_TARGET_HANDLE             =  114
+  $$ERROR_INVALID_CATEGORY                  =  117
+  $$ERROR_INVALID_VERIFY_SWITCH             =  118
+  $$ERROR_BAD_DRIVER_LEVEL                  =  119
+  $$ERROR_CALL_NOT_IMPLEMENTED              =  120
+  $$ERROR_SEM_TIMEOUT                       =  121
+  $$ERROR_INSUFFICIENT_BUFFER               =  122
+  $$ERROR_INVALID_NAME                      =  123
+  $$ERROR_INVALID_LEVEL                     =  124
+  $$ERROR_NO_VOLUME_LABEL                   =  125
+  $$ERROR_MOD_NOT_FOUND                     =  126
+  $$ERROR_PROC_NOT_FOUND                    =  127
+  $$ERROR_WAIT_NO_CHILDREN                  =  128
+  $$ERROR_CHILD_NOT_COMPLETE                =  129
+  $$ERROR_DIRECT_ACCESS_HANDLE              =  130
+  $$ERROR_NEGATIVE_SEEK                     =  131
+  $$ERROR_SEEK_ON_DEVICE                    =  132
+  $$ERROR_IS_JOIN_TARGET                    =  133
+  $$ERROR_IS_JOINED                         =  134
+  $$ERROR_IS_SUBSTED                        =  135
+  $$ERROR_NOT_JOINED                        =  136
+  $$ERROR_NOT_SUBSTED                       =  137
+  $$ERROR_JOIN_TO_JOIN                      =  138
+  $$ERROR_SUBST_TO_SUBST                    =  139
+  $$ERROR_JOIN_TO_SUBST                     =  140
+  $$ERROR_SUBST_TO_JOIN                     =  141
+  $$ERROR_BUSY_DRIVE                        =  142
+  $$ERROR_SAME_DRIVE                        =  143
+  $$ERROR_DIR_NOT_ROOT                      =  144
+  $$ERROR_DIR_NOT_EMPTY                     =  145
+  $$ERROR_IS_SUBST_PATH                     =  146
+  $$ERROR_IS_JOIN_PATH                      =  147
+  $$ERROR_PATH_BUSY                         =  148
+  $$ERROR_IS_SUBST_TARGET                   =  149
+  $$ERROR_SYSTEM_TRACE                      =  150
+  $$ERROR_INVALID_EVENT_COUNT               =  151
+  $$ERROR_TOO_MANY_MUXWAITERS               =  152
+  $$ERROR_INVALID_LIST_FORMAT               =  153
+  $$ERROR_LABEL_TOO_LONG                    =  154
+  $$ERROR_TOO_MANY_TCBS                     =  155
+  $$ERROR_SIGNAL_REFUSED                    =  156
+  $$ERROR_DISCARDED                         =  157
+  $$ERROR_NOT_LOCKED                        =  158
+  $$ERROR_BAD_THREADID_ADDR                 =  159
+  $$ERROR_BAD_ARGUMENTS                     =  160
+  $$ERROR_BAD_PATHNAME                      =  161
+  $$ERROR_SIGNAL_PENDING                    =  162
+  $$ERROR_MAX_THRDS_REACHED                 =  164
+  $$ERROR_LOCK_FAILED                       =  167
+  $$ERROR_BUSY                              =  170
+  $$ERROR_CANCEL_VIOLATION                  =  173
+  $$ERROR_ATOMIC_LOCKS_NOT_SUPPORTED        =  174
+  $$ERROR_INVALID_SEGMENT_NUMBER            =  180
+  $$ERROR_INVALID_ORDINAL                   =  182
+  $$ERROR_ALREADY_EXISTS                    =  183
+  $$ERROR_INVALID_FLAG_NUMBER               =  186
+  $$ERROR_SEM_NOT_FOUND                     =  187
+  $$ERROR_INVALID_STARTING_CODESEG          =  188
+  $$ERROR_INVALID_STACKSEG                  =  189
+  $$ERROR_INVALID_MODULETYPE                =  190
+  $$ERROR_INVALID_EXE_SIGNATURE             =  191
+  $$ERROR_EXE_MARKED_INVALID                =  192
+  $$ERROR_BAD_EXE_FORMAT                    =  193
+  $$ERROR_ITERATED_DATA_EXCEEDS_64k         =  194
+  $$ERROR_INVALID_MINALLOCSIZE              =  195
+  $$ERROR_DYNLINK_FROM_INVALID_RING         =  196
+  $$ERROR_IOPL_NOT_ENABLED                  =  197
+  $$ERROR_INVALID_SEGDPL                    =  198
+  $$ERROR_AUTODATASEG_EXCEEDS_64k           =  199
+  $$ERROR_RING2SEG_MUST_BE_MOVABLE          =  200
+  $$ERROR_RELOC_CHAIN_XEEDS_SEGLIM          =  201
+  $$ERROR_INFLOOP_IN_RELOC_CHAIN            =  202
+  $$ERROR_ENVVAR_NOT_FOUND                  =  203
+  $$ERROR_NO_SIGNAL_SENT                    =  205
+  $$ERROR_FILENAME_EXCED_RANGE              =  206
+  $$ERROR_RING2_STACK_IN_USE                =  207
+  $$ERROR_META_EXPANSION_TOO_LONG           =  208
+  $$ERROR_INVALID_SIGNAL_NUMBER             =  209
+  $$ERROR_THREAD_1_INACTIVE                 =  210
+  $$ERROR_LOCKED                            =  212
+  $$ERROR_TOO_MANY_MODULES                  =  214
+  $$ERROR_NESTING_NOT_ALLOWED               =  215
+  $$ERROR_BAD_PIPE                          =  230
+  $$ERROR_PIPE_BUSY                         =  231
+  $$ERROR_NO_DATA                           =  232
+  $$ERROR_PIPE_NOT_CONNECTED                =  233
+  $$ERROR_MORE_DATA                         =  234
+  $$ERROR_VC_DISCONNECTED                   =  240
+  $$ERROR_INVALID_EA_NAME                   =  254
+  $$ERROR_EA_LIST_INCONSISTENT              =  255
+  $$WAIT_TIMEOUT                            =  258
+  $$ERROR_NO_MORE_ITEMS                     =  259
+  $$ERROR_CANNOT_COPY                       =  266
+  $$ERROR_DIRECTORY                         =  267
+  $$ERROR_EAS_DIDNT_FIT                     =  275
+  $$ERROR_EA_FILE_CORRUPT                   =  276
+  $$ERROR_EA_TABLE_FULL                     =  277
+  $$ERROR_INVALID_EA_HANDLE                 =  278
+  $$ERROR_EAS_NOT_SUPPORTED                 =  282
+  $$ERROR_NOT_OWNER                         =  288
+  $$ERROR_TOO_MANY_POSTS                    =  298
+  $$ERROR_MR_MID_NOT_FOUND                  =  317
+  $$ERROR_INVALID_ADDRESS                   =  487
+  $$ERROR_ARITHMETIC_OVERFLOW               =  534
+  $$ERROR_PIPE_CONNECTED                    =  535
+  $$ERROR_PIPE_LISTENING                    =  536
+  $$ERROR_EA_ACCESS_DENIED                  =  994
+  $$ERROR_OPERATION_ABORTED                 =  995
+  $$ERROR_IO_INCOMPLETE                     =  996
+  $$ERROR_IO_PENDING                        =  997
+  $$ERROR_NOACCESS                          =  998
+  $$ERROR_SWAPERROR                         =  999
+  $$ERROR_STACK_OVERFLOW                    = 1001
+  $$ERROR_INVALID_MESSAGE                   = 1002
+  $$ERROR_CAN_NOT_COMPLETE                  = 1003
+  $$ERROR_INVALID_FLAGS                     = 1004
+  $$ERROR_UNRECOGNIZED_VOLUME               = 1005
+  $$ERROR_FILE_INVALID                      = 1006
+  $$ERROR_FULLSCREEN_MODE                   = 1007
+  $$ERROR_NO_TOKEN                          = 1008
+  $$ERROR_BADDB                             = 1009
+  $$ERROR_BADKEY                            = 1010
+  $$ERROR_CANTOPEN                          = 1011
+  $$ERROR_CANTREAD                          = 1012
+  $$ERROR_CANTWRITE                         = 1013
+  $$ERROR_REGISTRY_RECOVERED                = 1014
+  $$ERROR_REGISTRY_CORRUPT                  = 1015
+  $$ERROR_REGISTRY_IO_FAILED                = 1016
+  $$ERROR_NOT_REGISTRY_FILE                 = 1017
+  $$ERROR_KEY_DELETED                       = 1018
+  $$ERROR_NO_LOG_SPACE                      = 1019
+  $$ERROR_KEY_HAS_CHILDREN                  = 1020
+  $$ERROR_CHILD_MUST_BE_VOLATILE            = 1021
+  $$ERROR_NOTIFY_ENUM_DIR                   = 1022
+  $$ERROR_DEPENDENT_SERVICES_RUNNING        = 1051
+  $$ERROR_INVALID_SERVICE_CONTROL           = 1052
+  $$ERROR_SERVICE_REQUEST_TIMEOUT           = 1053
+  $$ERROR_SERVICE_NO_THREAD                 = 1054
+  $$ERROR_SERVICE_DATABASE_LOCKED           = 1055
+  $$ERROR_SERVICE_ALREADY_RUNNING           = 1056
+  $$ERROR_INVALID_SERVICE_ACCOUNT           = 1057
+  $$ERROR_SERVICE_DISABLED                  = 1058
+  $$ERROR_CIRCULAR_DEPENDENCY               = 1059
+  $$ERROR_SERVICE_DOES_NOT_EXIST            = 1060
+  $$ERROR_SERVICE_CANNOT_ACCEPT_CTRL        = 1061
+  $$ERROR_SERVICE_NOT_ACTIVE                = 1062
+  $$ERROR_FAILED_SERVICE_CONTROLLER_CONNECT = 1063
+  $$ERROR_EXCEPTION_IN_SERVICE              = 1064
+  $$ERROR_DATABASE_DOES_NOT_EXIST           = 1065
+  $$ERROR_SERVICE_SPECIFIC_ERROR            = 1066
+  $$ERROR_PROCESS_ABORTED                   = 1067
+  $$ERROR_SERVICE_DEPENDENCY_FAIL           = 1068
+  $$ERROR_SERVICE_LOGON_FAILED              = 1069
+  $$ERROR_SERVICE_START_HANG                = 1070
+  $$ERROR_INVALID_SERVICE_LOCK              = 1071
+  $$ERROR_SERVICE_MARKED_FOR_DELETE         = 1072
+  $$ERROR_SERVICE_EXISTS                    = 1073
+  $$ERROR_ALREADY_RUNNING_LKG               = 1074
+  $$ERROR_SERVICE_DEPENDENCY_DELETED        = 1075
+  $$ERROR_BOOT_ALREADY_ACCEPTED             = 1076
+  $$ERROR_SERVICE_NEVER_STARTED             = 1077
+  $$ERROR_DUPLICATE_SERVICE_NAME            = 1078
+  $$ERROR_END_OF_MEDIA                      = 1100
+  $$ERROR_FILEMARK_DETECTED                 = 1101
+  $$ERROR_BEGINNING_OF_MEDIA                = 1102
+  $$ERROR_SETMARK_DETECTED                  = 1103
+  $$ERROR_NO_DATA_DETECTED                  = 1104
+  $$ERROR_PARTITION_FAILURE                 = 1105
+  $$ERROR_INVALID_BLOCK_LENGTH              = 1106
+  $$ERROR_DEVICE_NOT_PARTITIONED            = 1107
+  $$ERROR_UNABLE_TO_LOCK_MEDIA              = 1108
+  $$ERROR_UNABLE_TO_UNLOAD_MEDIA            = 1109
+  $$ERROR_MEDIA_CHANGED                     = 1110
+  $$ERROR_BUS_RESET                         = 1111
+  $$ERROR_NO_MEDIA_IN_DRIVE                 = 1112
+  $$ERROR_NO_UNICODE_TRANSLATION            = 1113
+  $$ERROR_DLL_INIT_FAILED                   = 1114
+  $$ERROR_SHUTDOWN_IN_PROGRESS              = 1115
+  $$ERROR_NO_SHUTDOWN_IN_PROGRESS           = 1116
+  $$ERROR_IO_DEVICE                         = 1117
+  $$ERROR_SERIAL_NO_DEVICE                  = 1118
+  $$ERROR_IRQ_BUSY                          = 1119
+  $$ERROR_MORE_WRITES                       = 1120
+  $$ERROR_COUNTER_TIMEOUT                   = 1121
+  $$ERROR_FLOPPY_ID_MARK_NOT_FOUND          = 1122
+  $$ERROR_FLOPPY_WRONG_CYLINDER             = 1123
+  $$ERROR_FLOPPY_UNKNOWN_ERROR              = 1124
+  $$ERROR_FLOPPY_BAD_REGISTERS              = 1125
+  $$ERROR_DISK_RECALIBRATE_FAILED           = 1126
+  $$ERROR_DISK_OPERATION_FAILED             = 1127
+  $$ERROR_DISK_RESET_FAILED                 = 1128
+  $$ERROR_EOM_OVERFLOW                      = 1129
+  $$ERROR_NOT_ENOUGH_SERVER_MEMORY          = 1130
+  $$ERROR_POSSIBLE_DEADLOCK                 = 1131
+  $$ERROR_MAPPED_ALIGNMENT                  = 1132
+  $$ERROR_BAD_USERNAME                      = 2202
+  $$ERROR_NOT_CONNECTED                     = 2250
+  $$ERROR_OPEN_FILES                        = 2401
+  $$ERROR_DEVICE_IN_USE                     = 2404
+  $$ERROR_BAD_DEVICE                        = 1200
+  $$ERROR_CONNECTION_UNAVAIL                = 1201
+  $$ERROR_DEVICE_ALREADY_REMEMBERED         = 1202
+  $$ERROR_NO_NET_OR_BAD_PATH                = 1203
+  $$ERROR_BAD_PROVIDER                      = 1204
+  $$ERROR_CANNOT_OPEN_PROFILE               = 1205
+  $$ERROR_BAD_PROFILE                       = 1206
+  $$ERROR_NOT_CONTAINER                     = 1207
+  $$ERROR_EXTENDED_ERROR                    = 1208
+  $$ERROR_INVALID_GROUPNAME                 = 1209
+  $$ERROR_INVALID_COMPUTERNAME              = 1210
+  $$ERROR_INVALID_EVENTNAME                 = 1211
+  $$ERROR_INVALID_DOMAINNAME                = 1212
+  $$ERROR_INVALID_SERVICENAME               = 1213
+  $$ERROR_INVALID_NETNAME                   = 1214
+  $$ERROR_INVALID_SHARENAME                 = 1215
+  $$ERROR_INVALID_PASSWORDNAME              = 1216
+  $$ERROR_INVALID_MESSAGENAME               = 1217
+  $$ERROR_INVALID_MESSAGEDEST               = 1218
+  $$ERROR_SESSION_CREDENTIAL_CONFLICT       = 1219
+  $$ERROR_REMOTE_SESSION_LIMIT_EXCEEDED     = 1220
+  $$ERROR_DUP_DOMAINNAME                    = 1221
+  $$ERROR_NO_NETWORK                        = 1222
+  $$ERROR_NOT_ALL_ASSIGNED                  = 1300
+  $$ERROR_SOME_NOT_MAPPED                   = 1301
+  $$ERROR_NO_QUOTAS_FOR_ACCOUNT             = 1302
+  $$ERROR_LOCAL_USER_SESSION_KEY            = 1303
+  $$ERROR_NULL_LM_PASSWORD                  = 1304
+  $$ERROR_UNKNOWN_REVISION                  = 1305
+  $$ERROR_REVISION_MISMATCH                 = 1306
+  $$ERROR_INVALID_OWNER                     = 1307
+  $$ERROR_INVALID_PRIMARY_GROUP             = 1308
+  $$ERROR_NO_IMPERSONATION_TOKEN            = 1309
+  $$ERROR_CANT_DISABLE_MANDATORY            = 1310
+  $$ERROR_NO_LOGON_SERVERS                  = 1311
+  $$ERROR_NO_SUCH_LOGON_SESSION             = 1312
+  $$ERROR_NO_SUCH_PRIVILEGE                 = 1313
+  $$ERROR_PRIVILEGE_NOT_HELD                = 1314
+  $$ERROR_INVALID_ACCOUNT_NAME              = 1315
+  $$ERROR_USER_EXISTS                       = 1316
+  $$ERROR_NO_SUCH_USER                      = 1317
+  $$ERROR_GROUP_EXISTS                      = 1318
+  $$ERROR_NO_SUCH_GROUP                     = 1319
+  $$ERROR_MEMBER_IN_GROUP                   = 1320
+  $$ERROR_MEMBER_NOT_IN_GROUP               = 1321
+  $$ERROR_LAST_ADMIN                        = 1322
+  $$ERROR_WRONG_PASSWORD                    = 1323
+  $$ERROR_ILL_FORMED_PASSWORD               = 1324
+  $$ERROR_PASSWORD_RESTRICTION              = 1325
+  $$ERROR_LOGON_FAILURE                     = 1326
+  $$ERROR_ACCOUNT_RESTRICTION               = 1327
+  $$ERROR_INVALID_LOGON_HOURS               = 1328
+  $$ERROR_INVALID_WORKSTATION               = 1329
+  $$ERROR_PASSWORD_EXPIRED                  = 1330
+  $$ERROR_ACCOUNT_DISABLED                  = 1331
+  $$ERROR_NONE_MAPPED                       = 1332
+  $$ERROR_TOO_MANY_LUIDS_REQUESTED          = 1333
+  $$ERROR_LUIDS_EXHAUSTED                   = 1334
+  $$ERROR_INVALID_SUB_AUTHORITY             = 1335
+  $$ERROR_INVALID_ACL                       = 1336
+  $$ERROR_INVALID_SID                       = 1337
+  $$ERROR_INVALID_SECURITY_DESCR            = 1338
+  $$ERROR_BAD_INHERITANCE_ACL               = 1340
+  $$ERROR_SERVER_DISABLED                   = 1341
+  $$ERROR_SERVER_NOT_DISABLED               = 1342
+  $$ERROR_INVALID_ID_AUTHORITY              = 1343
+  $$ERROR_ALLOTTED_SPACE_EXCEEDED           = 1344
+  $$ERROR_INVALID_GROUP_ATTRIBUTES          = 1345
+  $$ERROR_BAD_IMPERSONATION_LEVEL           = 1346
+  $$ERROR_CANT_OPEN_ANONYMOUS               = 1347
+  $$ERROR_BAD_VALIDATION_CLASS              = 1348
+  $$ERROR_BAD_TOKEN_TYPE                    = 1349
+  $$ERROR_NO_SECURITY_ON_OBJECT             = 1350
+  $$ERROR_CANT_ACCESS_DOMAIN_INFO           = 1351
+  $$ERROR_INVALID_SERVER_STATE              = 1352
+  $$ERROR_INVALID_DOMAIN_STATE              = 1353
+  $$ERROR_INVALID_DOMAIN_ROLE               = 1354
+  $$ERROR_NO_SUCH_DOMAIN                    = 1355
+  $$ERROR_DOMAIN_EXISTS                     = 1356
+  $$ERROR_DOMAIN_LIMIT_EXCEEDED             = 1357
+  $$ERROR_INTERNAL_DB_CORRUPTION            = 1358
+  $$ERROR_INTERNAL_ERROR                    = 1359
+  $$ERROR_GENERIC_NOT_MAPPED                = 1360
+  $$ERROR_BAD_DESCRIPTOR_FORMAT             = 1361
+  $$ERROR_NOT_LOGON_PROCESS                 = 1362
+  $$ERROR_LOGON_SESSION_EXISTS              = 1363
+  $$ERROR_NO_SUCH_PACKAGE                   = 1364
+  $$ERROR_BAD_LOGON_SESSION_STATE           = 1365
+  $$ERROR_LOGON_SESSION_COLLISION           = 1366
+  $$ERROR_INVALID_LOGON_TYPE                = 1367
+  $$ERROR_CANNOT_IMPERSONATE                = 1368
+  $$ERROR_RXACT_INVALID_STATE               = 1369
+  $$ERROR_RXACT_COMMIT_FAILURE              = 1370
+  $$ERROR_SPECIAL_ACCOUNT                   = 1371
+  $$ERROR_SPECIAL_GROUP                     = 1372
+  $$ERROR_SPECIAL_USER                      = 1373
+  $$ERROR_MEMBERS_PRIMARY_GROUP             = 1374
+  $$ERROR_TOKEN_ALREADY_IN_USE              = 1375
+  $$ERROR_NO_SUCH_ALIAS                     = 1376
+  $$ERROR_MEMBER_NOT_IN_ALIAS               = 1377
+  $$ERROR_MEMBER_IN_ALIAS                   = 1378
+  $$ERROR_ALIAS_EXISTS                      = 1379
+  $$ERROR_LOGON_NOT_GRANTED                 = 1380
+  $$ERROR_TOO_MANY_SECRETS                  = 1381
+  $$ERROR_SECRET_TOO_LONG                   = 1382
+  $$ERROR_INTERNAL_DB_ERROR                 = 1383
+  $$ERROR_TOO_MANY_CONTEXT_IDS              = 1384
+  $$ERROR_LOGON_TYPE_NOT_GRANTED            = 1385
+  $$ERROR_NT_CROSS_ENCRYPTION_REQUIRED      = 1386
+  $$ERROR_NO_SUCH_MEMBER                    = 1387
+  $$ERROR_INVALID_MEMBER                    = 1388
+  $$ERROR_TOO_MANY_SIDS                     = 1389
+  $$ERROR_LM_CROSS_ENCRYPTION_REQUIRED      = 1390
+  $$ERROR_NO_INHERITANCE                    = 1391
+  $$ERROR_FILE_CORRUPT                      = 1392
+  $$ERROR_DISK_CORRUPT                      = 1393
+  $$ERROR_NO_USER_SESSION_KEY               = 1394
+  $$ERROR_INVALID_WINDOW_HANDLE             = 1400
+  $$ERROR_INVALID_MENU_HANDLE               = 1401
+  $$ERROR_INVALID_CURSOR_HANDLE             = 1402
+  $$ERROR_INVALID_ACCEL_HANDLE              = 1403
+  $$ERROR_INVALID_HOOK_HANDLE               = 1404
+  $$ERROR_INVALID_DWP_HANDLE                = 1405
+  $$ERROR_TLW_WITH_WSCHILD                  = 1406
+  $$ERROR_CANNOT_FIND_WND_CLASS             = 1407
+  $$ERROR_WINDOW_OF_OTHER_THREAD            = 1408
+  $$ERROR_HOTKEY_ALREADY_REGISTERED         = 1409
+  $$ERROR_CLASS_ALREADY_EXISTS              = 1410
+  $$ERROR_CLASS_DOES_NOT_EXIST              = 1411
+  $$ERROR_CLASS_HAS_WINDOWS                 = 1412
+  $$ERROR_INVALID_INDEX                     = 1413
+  $$ERROR_INVALID_ICON_HANDLE               = 1414
+  $$ERROR_PRIVATE_DIALOG_INDEX              = 1415
+  $$ERROR_LISTBOX_ID_NOT_FOUND              = 1416
+  $$ERROR_NO_WILDCARD_CHARACTERS            = 1417
+  $$ERROR_CLIPBOARD_NOT_OPEN                = 1418
+  $$ERROR_HOTKEY_NOT_REGISTERED             = 1419
+  $$ERROR_WINDOW_NOT_DIALOG                 = 1420
+  $$ERROR_CONTROL_ID_NOT_FOUND              = 1421
+  $$ERROR_INVALID_COMBOBOX_MESSAGE          = 1422
+  $$ERROR_WINDOW_NOT_COMBOBOX               = 1423
+  $$ERROR_INVALID_EDIT_HEIGHT               = 1424
+  $$ERROR_DC_NOT_FOUND                      = 1425
+  $$ERROR_INVALID_HOOK_FILTER               = 1426
+  $$ERROR_INVALID_FILTER_PROC               = 1427
+  $$ERROR_HOOK_NEEDS_HMOD                   = 1428
+  $$ERROR_GLOBAL_ONLY_HOOK                  = 1429
+  $$ERROR_JOURNAL_HOOK_SET                  = 1430
+  $$ERROR_HOOK_NOT_INSTALLED                = 1431
+  $$ERROR_INVALID_LB_MESSAGE                = 1432
+  $$ERROR_SETCOUNT_ON_BAD_LB                = 1433
+  $$ERROR_LB_WITHOUT_TABSTOPS               = 1434
+  $$ERROR_DESTROY_OBJECT_OF_OTHER_THREAD    = 1435
+  $$ERROR_CHILD_WINDOW_MENU                 = 1436
+  $$ERROR_NO_SYSTEM_MENU                    = 1437
+  $$ERROR_INVALID_MSGBOX_STYLE              = 1438
+  $$ERROR_INVALID_SPI_VALUE                 = 1439
+  $$ERROR_SCREEN_ALREADY_LOCKED             = 1440
+  $$ERROR_HWNDS_HAVE_DIFF_PARENT            = 1441
+  $$ERROR_NOT_CHILD_WINDOW                  = 1442
+  $$ERROR_INVALID_GW_COMMAND                = 1443
+  $$ERROR_INVALID_THREAD_ID                 = 1444
+  $$ERROR_NON_MDICHILD_WINDOW               = 1445
+  $$ERROR_POPUP_ALREADY_ACTIVE              = 1446
+  $$ERROR_NO_SCROLLBARS                     = 1447
+  $$ERROR_INVALID_SCROLLBAR_RANGE           = 1448
+  $$ERROR_INVALID_SHOWWIN_COMMAND           = 1449
+  $$ERROR_EVENTLOG_FILE_CORRUPT             = 1500
+  $$ERROR_EVENTLOG_CANT_START               = 1501
+  $$ERROR_LOG_FILE_FULL                     = 1502
+  $$ERROR_EVENTLOG_FILE_CHANGED             = 1503
+  $$ERROR_INVALID_USER_BUFFER               = 1784
+  $$ERROR_UNRECOGNIZED_MEDIA                = 1785
+  $$ERROR_NO_TRUST_LSA_SECRET               = 1786
+  $$ERROR_NO_TRUST_SAM_ACCOUNT              = 1787
+  $$ERROR_TRUSTED_DOMAIN_FAILURE            = 1788
+  $$ERROR_TRUSTED_RELATIONSHIP_FAILURE      = 1789
+  $$ERROR_TRUST_FAILURE                     = 1790
+  $$ERROR_NETLOGON_NOT_STARTED              = 1792
+  $$ERROR_ACCOUNT_EXPIRED                   = 1793
+  $$ERROR_REDIRECTOR_HAS_OPEN_HANDLES       = 1794
+  $$ERROR_PRINTER_DRIVER_ALREADY_INSTALLED  = 1795
+  $$ERROR_UNKNOWN_PORT                      = 1796
+  $$ERROR_UNKNOWN_PRINTER_DRIVER            = 1797
+  $$ERROR_UNKNOWN_PRINTPROCESSOR            = 1798
+  $$ERROR_INVALID_SEPARATOR_FILE            = 1799
+  $$ERROR_INVALID_PRIORITY                  = 1800
+  $$ERROR_INVALID_PRINTER_NAME              = 1801
+  $$ERROR_PRINTER_ALREADY_EXISTS            = 1802
+  $$ERROR_INVALID_PRINTER_COMMAND           = 1803
+  $$ERROR_INVALID_DATATYPE                  = 1804
+  $$ERROR_INVALID_ENVIRONMENT               = 1805
+  $$ERROR_NOLOGON_INTERDOMAIN_TRUST_ACCOUNT = 1807
+  $$ERROR_NOLOGON_WORKSTATION_TRUST_ACCOUNT = 1808
+  $$ERROR_NOLOGON_SERVER_TRUST_ACCOUNT      = 1809
+  $$ERROR_DOMAIN_TRUST_INCONSISTENT         = 1810
+  $$ERROR_SERVER_HAS_OPEN_HANDLES           = 1811
+  $$ERROR_RESOURCE_DATA_NOT_FOUND           = 1812
+  $$ERROR_RESOURCE_TYPE_NOT_FOUND           = 1813
+  $$ERROR_RESOURCE_NAME_NOT_FOUND           = 1814
+  $$ERROR_RESOURCE_LANG_NOT_FOUND           = 1815
+  $$ERROR_NOT_ENOUGH_QUOTA                  = 1816
+  $$ERROR_INVALID_TIME                      = 1901
+  $$ERROR_INVALID_FORM_NAME                 = 1902
+  $$ERROR_INVALID_FORM_SIZE                 = 1903
+  $$ERROR_ALREADY_WAITING                   = 1904
+  $$ERROR_PRINTER_DELETED                   = 1905
+  $$ERROR_INVALID_PRINTER_STATE             = 1906
+  $$ERROR_NO_BROWSER_SERVERS_FOUND          = 6118
+  $$ERROR_LAST_OS_ERROR                     = 8191

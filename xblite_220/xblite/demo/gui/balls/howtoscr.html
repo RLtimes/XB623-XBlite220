@@ -1,0 +1,1614 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>How to write a 32bit screen saver</title>
+  <meta name="description"
+ content="How to write a screen saver for Windows: comprehensive technical information with example code">
+  <meta name="keywords"
+ content="How to, how, windows, screensaver, screen, saver, C++, program, programming, design, development, PwdChangePassword, VerifyPassword, dialog, DirectDraw, DirectX, full-screen, SPI_SCREENSAVERRUNNING, Plus, NT, 95, 98, portability, SaverWindowProc, technical, source, code, example, tutorial">
+  <link rel="stylesheet" type="text/css" href="article.css"
+ title="Article">
+  <style type="text/css">
+pre {margin-left: 3em; 
+     font-family: "Courier New, Courier, monospace"; font-size: smaller;
+     background-color: rgb(228,240,240); }
+  </style>
+</head>
+<body>
+<div class="topper">
+<table width="100%" cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr valign="top">
+      <td width="32"><a href="http://www.wischik.com/scr/index.html"><img
+ border="0" class="logo" src="wbird.gif" alt="home" width="32"
+ height="32"></a></td>
+      <td align="center">
+      <h1>How to write a 32bit screen saver</h1>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p class="intro">&copy; 1997-1999 Lucian Wischik. <b>Stop! You should
+not be reading this!</b> This document describes all the system
+requirements expected of a screen saver, and all of the internal
+undocumented Windows API for accomplishing this. It would be far better
+for you simply to ignore the whole mess and go straight to using my <a
+ href="http://www.wischik.com/scr/scrbcb.html">Scrplus/<i>BCB</i></a> or <a
+ href="http://www.wischik.com/scr/scrapi.html">ScrPlus/<i>API</i></a>
+libraries, which do everything for you a lot more simply. However, if
+you wish to perservere and write complete savers from scratch, then you
+should download the source code (<a
+ href="http://www.wischik.com/scr/download/minimal.zip">minimal.zip</a>)
+which accompanies this article: it is C++ code for a minimal saver, but
+which ignores hot corners and multiple monitors. If you don't like C++,
+you might look at Ron Thomas' <a
+ href="http://www.rbthomas.freeserve.co.uk/">assembly-language screen
+savers</a>. If anyone has minimal example code in other languages that
+I could list here, please <a href="mailto:lu@wischik.com">email me</a>.</p>
+<p></p>
+<ul>
+  <li><a href="#Overview"><b>Overview</b></a><br>
+-&nbsp;<a href="#Purpose">Purpose</a> -&nbsp;<a href="#WhatASaverIs">What&nbsp;a&nbsp;saver&nbsp;is</a>
+-&nbsp;<a href="#Filenames">Filenames</a> -&nbsp;<a
+ href="#Win4Executable">Win4&nbsp;executable</a> -&nbsp;<a
+ href="#VersionDifferences">Version&nbsp;differences&nbsp;between&nbsp;'95,&nbsp;Plus!&nbsp;and&nbsp;NT</a> </li>
+  <li><a href="#CreatingASaver"><b>Creating a saver</b></a><br>
+-&nbsp;<a href="#CompleteSourceCode">Complete&nbsp;source&nbsp;code</a>
+-&nbsp;<a href="#HowAndWhenSaverIsExecuted">How&nbsp;and&nbsp;when&nbsp;saver&nbsp;is&nbsp;executed</a>
+-&nbsp;<a href="#CommandLineArguments">Command&nbsp;line&nbsp;arguments</a>&nbsp;<a
+ href="#WinMainCode"><i>[WinMain]</i></a>&nbsp;<a href="#ScrPrevCode"><i>[ScrPrev]</i></a>&nbsp;<a
+ href="#TSaverSettingsCode"><i>[TSaverSettings]</i></a> -&nbsp;<a
+ href="#ConfigurationDialog">Configuration&nbsp;dialog</a>&nbsp;<a
+ href="#ConfigurationDialogResources"><i>[Resources]</i></a>&nbsp;<a
+ href="#ConfigDialogProcCode"><i>[ConfigDialogProc]</i></a> -&nbsp;<a
+ href="#WhenAndWhereToSaveConfiguration">When&nbsp;and&nbsp;where&nbsp;to&nbsp;save&nbsp;configuration</a>&nbsp;<a
+ href="#ConfigRegCode"><i>[ConfigReg]</i></a> -&nbsp;<a
+ href="#PlusConfiguration">Plus!&nbsp;configuration</a>&nbsp;<a
+ href="#GeneralRegCode"><i>[GeneralReg]</i></a>&nbsp;<a
+ href="#PlusConfigurationResources"><i>[Resources]</i></a> -&nbsp;<a
+ href="#ChangePasswordDialog">Change&nbsp;password&nbsp;dialog</a>&nbsp;<a
+ href="#ChangePasswordCode"><i>[ChangePassword]</i></a> -&nbsp;<a
+ href="#RunningFullScreenAndPreview">Running&nbsp;full&nbsp;screen&nbsp;and&nbsp;preview</a>&nbsp;<a
+ href="#UsefulFunsCode"><i>[UsefulFuns]</i></a>&nbsp;<a
+ href="#DoSaverCode"><i>[DoSaver]</i></a>&nbsp;<a
+ href="#SaverWindowProcCode"><i>[SaverWindowProc]</i></a> -&nbsp;<a
+ href="#VerifyPasswordDialog">VerifyPasswordDialog</a>&nbsp;<a
+ href="#VerifyPasswordDialogCode"><i>[VerifyPassword]</i></a> -&nbsp;<a
+ href="#StringResource">String&nbsp;resource</a>&nbsp;<a
+ href="#StringResourceResources"><i>[Resources]</i></a> -&nbsp;<a
+ href="#FinalTouches">Final&nbsp;touches</a>&nbsp;<a href="#DebugCode"><i>[Debug]</i></a> </li>
+  <li><a href="#InteractionBetweenSaverAndSystem"><b>Interaction
+between saver and system</b></a><br>
+-&nbsp;<a href="#HowToTellWhetherASaverIsRunning">To tell whether a
+saver is running</a>&nbsp;<a href="#IsSaverRunningCode"><i>[IsSaverRunning]</i></a>
+-&nbsp;<a href="#LaunchCurrentSaver">To launch the current saver</a>&nbsp;<a
+ href="#LaunchCurrentSaverCode"><i>[LaunchCurrentSaver]</i></a> -&nbsp;<a
+ href="#PreventingCtrlAltDelete">Preventing&nbsp;ctrl&nbsp;alt&nbsp;delete</a>
+-&nbsp;<a href="#DifferentScreenModes">Different&nbsp;screen&nbsp;modes</a>
+-&nbsp;<a href="#Explorer">Explorer</a> -&nbsp;<a href="#HotCorners">Hot&nbsp;corners</a>&nbsp;<a
+ href="#HotCornersCode"><i>[HotCorners]</i></a> -&nbsp;<a
+ href="#CurrentSelectedSaver">Currently&nbsp;selected&nbsp;saver</a>&nbsp;<a
+ href="#CurSaveCode"><i>[CurSav]</i></a> -&nbsp;<a
+ href="#InstallationOfSaver">Installation&nbsp;of&nbsp;saver</a>&nbsp;<a
+ href="#ExecutePreviewDialogCode"><i>[ExecutePreviewDialog]</i></a> </li>
+  <li><a href="#KnowledgeBase"><b>Knowledge base</b></a><br>
+-&nbsp;<a href="#HowToDebugASaver">How&nbsp;to&nbsp;debug&nbsp;a&nbsp;saver</a>&nbsp;<a
+ href="#DebugMessageCode"><i>[DebugMessage]</i></a> -&nbsp;<a
+ href="#DebuggingPreviewMode">Debugging&nbsp;preview&nbsp;mode</a>
+-&nbsp;<a href="#DebuggingFullScreenMode">Debugging&nbsp;full&nbsp;screen&nbsp;mode</a>
+-&nbsp;<a href="#InteractiveSaver">An&nbsp;interactive&nbsp;saver</a>
+-&nbsp;<a href="#PortabilityBetween95AndNT">Portability&nbsp;between&nbsp;95&nbsp;and&nbsp;NT</a>
+-&nbsp;<a href="#AnimationStopsWhenDialogAppears">Animation&nbsp;stops&nbsp;when&nbsp;dialog&nbsp;appears</a>
+-&nbsp;<a href="#ProgramLocksUpWhenDialogAppears">Program&nbsp;locks&nbsp;up&nbsp;when&nbsp;dialog&nbsp;appears</a>
+-&nbsp;<a href="#PerformanceDegradesSometimes">Performance&nbsp;degrades&nbsp;sometimes</a>
+-&nbsp;<a href="#AccessViolationWhenInstallingSaver">Access&nbsp;violation&nbsp;when&nbsp;installing&nbsp;saver</a>
+-&nbsp;<a href="#SaverAbortsWhenChangingScreenMode">Saver&nbsp;aborts&nbsp;when&nbsp;changing&nbsp;screen&nbsp;mode</a> </li>
+  <li><a href="#Reference"><b>Reference</b></a><br>
+-&nbsp;<a href="#PwdChangePassword">PwdChangePassword</a>&nbsp;<a
+ href="#PwdChangePasswordCode"><i>[Example]</i></a> -&nbsp;<a
+ href="#VerifyScreenSavePwd">VerifyScreenSavePwd</a>&nbsp;<a
+ href="#VerifyScreenSavePwdCode"><i>[Example]</i></a> -&nbsp;<a
+ href="#SpiScreenSaverRunning">SPI_SCREENSAVERRUNNING</a>&nbsp;<a
+ href="#SpiScreenSaverRunningCode"><i>[Example]</i></a> -&nbsp;<a
+ href="#SystemAgentDetect">System_Agent_Detect</a>&nbsp;<a
+ href="#SystemAgentDetectCode"><i>[Example]</i></a> -&nbsp;<a
+ href="#ScreenSaverChanged">Screen_Saver_Changed</a>&nbsp;<a
+ href="#ScreenSaverChangedCode"><i>[Example]</i></a> </li>
+</ul>
+<p></p>
+<h2><a name="Overview">Overview</a></h2>
+<p></p>
+<p>Screen savers start when the mouse and keyboard have been left idle
+for some time. They have five main <a name="Purpose">purposes:</a> </p>
+<ul>
+  <li>To avoid phosphor burn caused by static images left on the
+screen. (No longer   relevant with today's monitors, but this point
+remains a matter of tradition and honour!) </li>
+  <li>To protect sensitive information left on the screen </li>
+  <li>To present a uniform professional corporate logo on unattended
+office-place computers </li>
+  <li>To advertise </li>
+  <li>To have fun.</li>
+</ul>
+Microsoft documentation on the technical programming of savers is
+inadequate. This guide was written to make up for the lack of official
+documentation. It tells you how to write a saver from scratch, using
+only the plain Windows API  without any additional libraries.
+<p></p>
+<p></p>
+<h3><a name="WhatASaverIs">What a saver is</a></h3>
+A saver is a straightforward executable that has been <a
+ name="Filenames">renamed</a> with the extension <tt>.scr</tt>, and
+which responds to particular command-line arguments in particular ways
+as detailed in the rest of this document. <a name="Win4Executable">It
+must be marked as a win4 executable</a>, otherwise some features such
+as the preview will be disabled. All modern compilers do this
+automatically through an option labelled 'target subsystem' or similar.
+Older compilers such as BC++4.5 do not and you will have to use some
+external utility such as <a href="download/w40.zip">w40</a> to mark it
+yourself.
+<p></p>
+<h3><a name="VersionDifferences">Version differences between '95, Plus!
+and NT</a></h3>
+Windows NT does all saver password management itself, and closes savers
+automatically in response to keyboard or mouse events. Interactive
+savers need special precautions to prevent NT from doing this. Under
+'95 and Plus! the saver must do all the password management itself.
+Plus! introduced some new saver features: less sensitivity to mouse
+movement while the saver is running; and <i>hot corners</i> which can
+start the saver immediately or prevent it from running at all. Special
+code is needed to handle these features; and you can use these features
+under '95 and NT as well as Plus! See also <a href="#PlusConfiguration">Plus!
+configuration</a>, <a href="#PortabilityBetween95AndNT">Portability
+between '95 and NT</a>.
+<p></p>
+<p></p>
+<h2><a name="CreatingASaver">Creating a saver</a></h2>
+<a name="CompleteSourceCode">This chapter</a> describes the behaviour
+expected of a saver. The first section describes the various times at
+which a saver can be executed. Subsequent sections give more details of
+the expected behaviour, illustrated with code extracts from a minimal
+saver. This saver has a single button in its configuration dialog for
+whether or not to flash the screen. If the button is checked then the
+saver runs by flashing the screen through the different colours of the
+user's colour scheme. If the button is unchecked, then the screen stays
+black. You may prefer to download separately the file <a
+ href="download/minimal.zip">minimal.zip</a>, which contains the source
+code.
+<p></p>
+<p></p>
+<h3><a name="HowAndWhenSaverIsExecuted">How and when saver is executed</a></h3>
+The following list gives all the situations in which a saver will be
+launched.
+<ul>
+  <li>System idle behaviour:<br>
+When the computer has been idle for a time, and as long as no
+computer-based-training (CBT)   windows are present, the system sends a <tt>WM_SYSCOMMAND</tt>
+message to the current foreground window with   argument <tt>SC_SCREENSAVE</tt>.
+If the active window is not a windows application, or if it   gobbles
+up the message, then nothing further happens. But if the message gets
+passed on to <tt>DefWindowProc</tt> then the saver gets executed
+full-screen.<br>
+    <tt>DefWindowProc(WM_SYSCOMMAND,SC_SCREENSAVE)</tt> behaves as
+follows: If there is no currently selected saver   in <tt>system.ini</tt>
+under the section [boot] with key SCRNSAVE.EXE=, then the message is
+ignored.   If there is a saver listed there, then it is executed
+full-screen.<br>
+If running NT, a separate saver desktop is first created with no
+windows on it. This desktop   still has the user's background. The
+saver runs on this isolated desktop. This means that effects   such as
+corrupting the currently visible windows will not work under NT. With
+Windows '95 and Plus!,   the saver simply executes on the main desktop.
+In both cases, the saver is started with the argument <tt>/s</tt> at
+the <tt>IDLE_PRIORITY_CLASS</tt>. </li>
+  <li>Display Properties preview:<br>
+Whenever the Display Properties control panel is displaying the screen
+saver tab, and the dialog   gains focus, it runs the currently selected
+saver with argument <tt>/p ####</tt>, where ####   is the decimal
+representation of the HWND of a parent window. This parent window is
+the colour of the   desktop and it fills the little preview monitor on
+that dialog page. Your saver should create   a child window of it, of
+the same size, and display itself in this child window.<br>
+Under Windows '95, if the Display Properties control panel regains
+focus at any time,   then the preview window is first destroyed before
+the current saver is started in preview   mode all over again. If it
+was your saver that was running as the preview, it should respond   to
+the destruction of its window by terminating. Under NT, this does not
+happen.<br>
+Also, obviously, when a different saver is selected in the control
+panel, then the previous   one that was running in the little preview
+monitor will be destroyed. </li>
+  <li>Configuration dialog:<br>
+If the user clicks on the Settings button, then the preview window is
+destroyed (and so the   instance of your saver that was running in
+preview mode should terminate yourself). Next, the   current saver is
+executed with the argument <tt>/c</tt>. It should respond to this by
+executing   its dialog as a child of the current foreground window.
+Once this dialog is finished, the   preview inside the monitor will be
+set running all over again. (This is so that it has the   opportunity
+to re-load any options that might have been changed). If you click on
+the   Configure button, and drag the configuration dialog away, you'll
+see that the little monitor   with preview in the Display Properties
+control panel is empty. </li>
+  <li>Change-password dialog:<br>
+Under '95 and Plus!, if the user clicks on the 'Change Password' button
+in the Display Properties   control panel, the preview window is first
+destroyed. Then the current saver is executed with   argument <tt>/a
+####</tt> where the #### is a decimal representation of the the HWND of
+the   Display Properties dialog. The saver should respond to this by
+displaying the standard system   Change-Password dialog, or by
+displaying its own, as a child of ####. Once the dialog has finished,  
+the preview inside the monitor will be set running again.<br>
+Under NT, passwords are managed by the system and the saver is not
+expected to handle this   argument. </li>
+  <li>Full-screen preview:<br>
+When the user clicks on the Preview button in the Display Properties
+dialog, the preview window   is destroyed. Then the current saver is
+executed with argument <tt>/s</tt> on the current   desktop. The saver
+should respond to this as before by running in full-screen mode. Note
+that,   even under NT, in this case the saver is run on the normal
+desktop. </li>
+  <li>Test:<br>
+When the user double-clicks on your saver's icon it gets executed in
+Test mode. This is exactly   the same as the full-screen preview
+described immediately above, except that nothing   is done to the
+preview in the Display Properties control panel if it should happen to
+be active. </li>
+  <li>Config:<br>
+When the user right-clicks on your saver's icon it gets executed with
+no arguments. It should   respond by displaying its configuration
+dialog with NULL as its parent window. (This is different   from the
+Config button mentioned above, where the saver was started with
+argument <tt>/c</tt> and   was expected to use GetForegroundWindow() as
+its parent). </li>
+  <li>Third party applications:<br>
+There are several third party applications that launch the saver in
+preview mode with <tt>/p ####</tt>,   or which launch the saver's
+configuration dialog with <tt>/c</tt>. Other applications start the  
+saver running as a saver with the command <tt>SendMessage(GetForegroundWindow(),WM_SYSCOMMAND,SC_SCREENSAVE,0);</tt>.
+No special coding is needed to handle these situations. </li>
+</ul>
+Observe how, especially in the Display Properties control panel under
+Windows '95, the preview running inside the little preview monitor gets
+terminated and then restarted every single time the control panel
+regains focus. If you saver takes a long time to start up this will
+look ugly, and you should look for ways to speed up the execution of
+your saver. One important thing is to check that you saver does not
+require any DLLs to be rebased. (Read about rebasing in WIN32.HLP). If
+your saver has a slow animation of some sort, you might consider saving
+its current state in the registry so that, next time it is started, it
+can resume from where it left off.
+<p></p>
+<p>Be especially careful about any activities which might change the
+focus. If your saver pops up a top-level window on startup, this will
+mess up the focus: the control panel will regain focus, and your saver
+will be started again, and it will pop up another top-level window, and
+so on. This makes it very difficult for you to debug your preview mode.
+For debugging of the preview window you can use a utility called
+ScrPrev which runs its own preview window and is a little less
+temperamental.</p>
+<p></p>
+<h3><a name="CommandLineArguments">Command-line arguments</a></h3>
+The behaviour expected of the saver depends on the command-line
+arguments it is given. The code snippet below shows how you might parse
+the command line. If the command line arguments are invalid, then the
+saver should terminate immediately without doing anything.
+<ul>
+  <li><tt>/c</tt>, <tt>/c ####</tt>, or no arguments at all - in
+response to any of these the saver should   pop up its configuration
+dialog. If there are no arguments then NULL should be used as the  
+parent: this will end up happening if the user clicks on the saver in
+the Explorer. With <tt>/c</tt> as an argument, the dialog should use
+GetForegroundWindow() as its parent. With <tt>/c ####</tt> the saver
+should treat #### as the decimal representation of an HWND, and use
+this as its parent. </li>
+  <li><tt>/s</tt> - this indicates that the saver should run itself as a
+full-screen saver. </li>
+  <li><tt>/p ####</tt>, or <tt>/l ####</tt> - here the saver should
+treat the #### as the decimal representation   of an HWND, should pop
+up a child window of this HWND, and should run in preview mode inside  
+that window. </li>
+  <li><tt>/a ####</tt> - this command-line argument is only ever used in
+'95 and Plus! The saver   should pop up a password-configuration dialog
+as a child of ####.</li>
+</ul>
+When parsing command-line options, note that the letters may appear as
+lower-case or upper-case, and that there might be either a forward
+slash or a hyphen prefixing the letter, and that there may be either a
+space or a colon after the letter. Thus, you should respond to <tt>/p
+####</tt> and <tt>-P:####</tt> and all options in between.
+<p></p>
+<p></p>
+<h4><a name="WinMainCode">WinMain code to parse command line</a></h4>
+<pre><i>// First we define some global variables and types.<br>// TScrMode is a global variable storing the mode the saver should be running in.<br>// TSaverSettings is a class with settings of various sorts.<br>// ss is a global variable with these settings.</i>
+enum TScrMode {smNone,smConfig,smPassword,smPreview,smSaver};
+TScrMode ScrMode=smNone;
+HINSTANCE hInstance=NULL;
+class TSaverSettings; TSaverSettings *ss=NULL;
+
+int WINAPI WinMain(HINSTANCE h,HINSTANCE,LPSTR,int)
+{ hInstance=h;
+  char *c=GetCommandLine();
+  if (*c=='\"') {c++; while (*c!=0 &amp;&amp; *c!='\"') c++;}
+  else {while( *c!=0 &amp;&amp; *c!=' ') c++;}
+  if (*c!=0) c++;
+  while (*c==' ') c++;
+  HWND hwnd=NULL;
+  if (*c==0) {ScrMode=smConfig; hwnd=NULL;}
+  else
+  { if (*c=='-' || *c=='/') c++;
+    if (*c=='p' || *c=='P' || *c=='l' || *c=='L')
+    { c++; while (*c==' ' || *c==':') c++;
+      if ((strcmp(c,"scrprev")==0) || (strcmp(c,"ScrPrev")==0) ||
+          (strcmp(c,"SCRPREV")==0)) hwnd=CheckForScrprev();
+      else hwnd=(HWND)atoi(c);
+      ScrMode=smPreview;
+    }
+    else if (*c=='s' || *c=='S')
+    { ScrMode=smSaver;
+    }
+    else if (*c=='c' || *c=='C')
+    { c++; while (*c==' ' || *c==':') c++;
+      if (*c==0) hwnd=GetForegroundWindow(); else hwnd=(HWND)atoi(c); ScrMode=smConfig;
+    }
+    else if (*c=='a' || *c=='A')
+    { c++; while (*c==' ' || *c==':') c++;
+      hwnd=(HWND)atoi(c); ScrMode=smPassword;}
+    }
+  }
+  // We create a global TSaverSettings here, for convenience.
+  // It will get used by the config dialog and by the saver as it runs
+  ss=new TSaverSettings(); ss-&gt;ReadGeneralRegistry(); ss-&gt;ReadConfigRegistry();
+  if (ScrMode==smPassword) ChangePassword(hwnd);
+  if (ScrMode==smConfig) DialogBox(hInstance,MAKEINTRESOURCE(DLG_CONFIG),
+                                   hwnd,ConfigDialogProc);
+  if (ScrMode==smSaver || ScrMode==smPreview) DoSaver(hwnd);
+  delete ss;
+  return 0;
+}</pre>
+<p></p>
+<p></p>
+<h4><a name="ScrPrevCode">Code to find ScrPrev window</a></h4>
+<pre><i>// ScrPrev is a freely available utility to make it easier to debug<br>// savers. Start the saver with argument /p scrprev and it will run its preview<br>// inside a ScrPrev window.</i>
+HWND CheckForScrprev()
+{ HWND hwnd=FindWindow("Scrprev",NULL); // looks for the Scrprev class
+  if (hwnd==NULL) // try to load it
+  { STARTUPINFO si; PROCESS_INFORMATION pi;
+    ZeroMemory(&amp;si,sizeof(si)); ZeroMemory(&amp;pi,sizeof(pi));
+    si.cb=sizeof(si);
+    si.lpReserved=NULL; si.lpTitle=NULL;
+    si.dwFlags=0; si.cbReserved2=0; si.lpReserved2=0; si.lpDesktop=0;
+    BOOL cres=CreateProcess(NULL,"Scrprev",0,0,FALSE,
+                    CREATE_NEW_PROCESS_GROUP|CREATE_DEFAULT_ERROR_MODE,0,0,&amp;si,&amp;pi);
+    if (!cres) {Debug("Error creating scrprev process"); return NULL;}
+    DWORD wres=WaitForInputIdle(pi.hProcess,2000);
+    if (wres==WAIT_TIMEOUT)
+    { Debug("Scrprev never becomes idle"); return NULL; 
+    }
+    if (wres==0xFFFFFFFF)
+    { Debug("ScrPrev, misc error after ScrPrev execution");return NULL;
+    }
+    hwnd=FindWindow("Scrprev",NULL);
+  }
+  if (hwnd==NULL) {Debug("Unable to find Scrprev window"); return NULL;}
+  ::SetForegroundWindow(hwnd);
+  hwnd=GetWindow(hwnd,GW_CHILD);
+  if (hwnd==NULL) {Debug("Couldn't find Scrprev child"); return NULL;}
+  return hwnd;
+}</pre>
+<p></p>
+<p></p>
+<h4><a name="TSaverSettingsCode">Definition of TSaverSettings class</a></h4>
+<pre>class TSaverSettings<br>{ public:<br>  <i>// Following are the general saver registry settings which we will read in</i>
+  DWORD PasswordDelay;   <i>// in seconds</i>
+  DWORD MouseThreshold;  <i>// in pixels</i>
+  BOOL  MuteSound;
+  <i>// Following are the configuration options particular to this saver</i>
+  BOOL  FlashScreen;
+  <i>// Following are variables which the saver uses while it runs</i>
+  HWND hwnd;             <i>// Handle of the currently running saver window</i>
+  POINT InitCursorPos;   <i>// Where the mouse started off</i>
+  DWORD InitTime;        <i>// Time at which we started, in ms</i>
+  UINT  idTimer;         <i>// a timer id, because this particular saver uses a timer</i>
+  BOOL  IsDialogActive;  <i>// If dialog is active, we ignore certain messages</i>
+  BOOL  ReallyClose;     <i>// for NT, so we know if a WM_CLOSE came from us or it.</i>
+  TSaverSettings();
+  void ReadGeneralRegistry(); <i>// General settings that apply to all savers</i>
+  void ReadConfigRegistry();  <i>// Settings particular to this saver</i>
+  void WriteConfigRegistry();
+  void CloseSaverWindow();    <i>// A convenient way of closing the saver, if appropriate</i>
+  void StartDialog();         <i>// We need special protection against dialogs when the</i>
+  void EndDialog();           <i>// saver is running</i>
+};
+TSaverSettings::TSaverSettings() {hwnd=NULL; ReallyClose=FALSE; idTimer=0;}</pre>
+<p></p>
+<p>See also <a href="#ConfigRegCode">ReadConfigRegistry code</a>, <a
+ href="#GeneralRegCode">ReadGeneralRegistryCode</a>.</p>
+<p></p>
+<h3><a name="ConfigurationDialog">Configuration dialog</a></h3>
+The configuration dialog is just a dialog, like any other. Before it
+appears it sets up any user-configuration controls. If the user clicks
+OK, then it saves them. This particular example has only a single
+configuration option: a boolean value FlashScreen. In the code below we
+take advantage of the global variable <tt>ss</tt>, which points to an
+instance of the TSaverSettings class and which stores the
+configuration.
+<p></p>
+<h4><a name="ConfigurationDialogResources">Resources for config dialog</a></h4>
+<pre>DLG_CONFIG DIALOG DISCARDABLE  0, 0, 186, 95<br>STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU<br>CAPTION "Config dialog"<br>FONT 8, "MS Sans Serif"<br>BEGIN<br>    DEFPUSHBUTTON   "OK",IDOK,129,7,50,14<br>    PUSHBUTTON      "Cancel",IDCANCEL,129,24,50,14<br>    CONTROL         "Flash screen",IDC_FLASH,"Button",BS_AUTOCHECKBOX | <br>                    WS_TABSTOP,23,13,56,10<br>END</pre>
+<p></p>
+<p></p>
+<h4><a name="ConfigDialogProcCode">ConfigDialogProc</a></h4>
+<pre>BOOL CALLBACK ConfigDialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)<br>{ switch (msg)<br>  { case WM_INITDIALOG:<br>    { CheckDlgButton(hwnd,IDC_FLASH,ss-&gt;FlashScreen); return TRUE;<br>    }<br>    `:<br>    { int id=LOWORD(wParam);<br>      if (id==IDOK)<br>      { ss-&gt;FlashScreen=(IsDlgButtonChecked(hwnd,IDC_FLASH)==BST_CHECKED);<br>        ss-&gt;WriteConfigRegistry();<br>      }<br>      if (id==IDOK || id==IDCANCEL) EndDialog(hwnd,id);<br>    } break;<br>  }<br>  return FALSE;<br>}</pre>
+<p></p>
+<p>See also <a href="#TSaverSettingsCode">TSaverSettings code</a>, <a
+ href="#ConfigRegCode">Configuration registry code</a>.</p>
+<p></p>
+<h3><a name="WhenAndWhereToSaveConfiguration">When and where to save
+configuration</a></h3>
+The saver's configuration should be saved when the user clicks on OK in
+the configuration dialog. It should be saved in the registry in the
+standard location: <tt>HKEY_CURRENT_USER\Software\MyCompany\MyProduct\</tt>.
+<p></p>
+<p></p>
+<h4><a name="ConfigRegCode">Code to read and write registry
+configuration</a></h4>
+<pre>#include &lt;regstr.h&gt;<br><br>#define REGSTR_PATH_CONFIG  ("Software\\Lu\\Minimal Saver")<br><br><i>// This saver has a single user configuration option: FlashScreen</i>
+void TSaverSettings::ReadConfigRegistry()
+{ FlashScreen=TRUE;
+  LONG res; HKEY skey; DWORD valtype, valsize, val;
+  res=RegOpenKeyEx(HKEY_CURRENT_USER,REGSTR_PATH_CONFIG,0,KEY_ALL_ACCESS,&amp;skey);
+  if (res!=ERROR_SUCCESS) return;
+  valsize=sizeof(val);
+    res=RegQueryValueEx(skey,"Flash Screen",0,&amp;valtype,(LPBYTE)&amp;val,&amp;valsize);
+    if (res==ERROR_SUCCESS) FlashScreen=val;
+  RegCloseKey(skey);
+}  
+void TSaverSettings::WriteConfigRegistry()
+{ LONG res; HKEY skey; DWORD val, disp;
+  res=RegCreateKeyEx(HKEY_CURRENT_USER,REGSTR_PATH_CONFIG,0,NULL,
+                     REG_OPTION_NON_VOLATILE,KEY_ALL_ACCESS,NULL,&amp;skey,&amp;disp);
+  if (res!=ERROR_SUCCESS) return;
+  val=FlashScreen;
+  RegSetValueEx(skey,"Flash Screen",0,REG_DWORD,(CONST BYTE*)&amp;val,sizeof(val));
+  RegCloseKey(skey);
+}</pre>
+<p></p>
+<p>Whenever a user brings up the configuration dialog for a particular
+saver and clicks OK, then the changes to the configuration for that
+particular saver are written to the registry immediately. But the
+current choice of screen saver appears in the control panel itself and
+changes to it do not actually take effect, or get written to the
+registry, until the user clicks OK or Apply on the Desktop control
+panel itself! Likewise the password option.</p>
+<p>So someone might select a saver and spend ages configuring it but
+then fail to close the control panel: and when they use hot corners to
+see the effect immediately Windows will not launch the saver they had
+so painstakingly configured, but instead will launch the previous
+saver! And then they go to the control panel and turn on password
+checking and click Preview and it doesn't ask for your password, but
+when you click Apply and then Preview it does! And then you turn off
+password checking and you click Preview but it still (under '95) asks
+you for a password, only you don't know what to do because you think
+that passwords are turned off and anyway you've forgotten it!</p>
+<p>This might seem odd at first, but you might as well get used to it.</p>
+<p></p>
+<h3><a name="PlusConfiguration">Plus! configuration</a></h3>
+Windows Plus! introduced a couple of useful saver settings. They are
+stored in a single, central place in the registry, given by the path <tt>HKEY_CURRENT_USER\REGSTR_PATH_SETUP\Screen
+Savers</tt>. (<tt>REGSTR_PATH_SETUP</tt> is defined in <tt>regstr.h</tt>
+to be <tt>Software\Microsoft\Windows\CurrentVersion</tt>). This means
+that changes to any one saver will affect all savers. You don't have to
+implement any of these, but it would look better if you did.
+<ul>
+  <li>Password Delay - if the saver is closed within this many seconds
+after it started, then   we might as well not bother checking for a
+password. You should pay attention to this   value in you own code
+under Windows '95 and Plus!, when you figure out whether or not   you
+should display a password dialog. You cannot do anything with this
+value under NT.   Password Delay is a DWORD. </li>
+  <li>Mouse Threshold - if the saver moves this many pixels away from
+its starting location,   then this is probably just a small 'mouse
+shudder' and it should not make the saver close   itself. You should
+check it in your WM_MOUSEMOVE code under '95, Plus! and NT. It is up to
+ you whether to treat it as a circle, a square or a diamond. The code
+below treats it as a   diamond. Mouse Threshold is a DWORD. </li>
+  <li>Mute Sound - whether or not the saver should produce sounds. Mute
+Sound is a BOOL. </li>
+</ul>
+<p></p>
+<p></p>
+<h4><a name="GeneralRegCode">Code to read general registry settings</a></h4>
+<pre>#include &lt;regstr.h&gt;<br><br>#define REGSTR_PATH_PLUSSCR (REGSTR_PATH_SETUP "\\Screen Savers")<br><br>void TSaverSettings::ReadGeneralRegistry()<br>{ PasswordDelay=15; MouseThreshold=50; IsDialogActive=FALSE;<br>  <i>// default values in case they're not in registry</i>
+  LONG res; HKEY skey; DWORD valtype, valsize, val;
+  res=RegOpenKeyEx(HKEY_CURRENT_USER,REGSTR_PATH_PLUSSCR,0,KEY_ALL_ACCESS,&amp;skey);
+  if (res!=ERROR_SUCCESS) return;
+  valsize=sizeof(val);
+    res=RegQueryValueEx(skey,"Password Delay",0,&amp;valtype,(LPBYTE)&amp;val,&amp;valsize);
+    if (res==ERROR_SUCCESS) PasswordDelay=val;
+  valsize=sizeof(val);
+    res=RegQueryValueEx(skey,"Mouse Threshold",0,&amp;valtype,(LPBYTE)&amp;val,&amp;valsize);
+    if (res==ERROR_SUCCESS) MouseThreshold=val;
+  valsize=sizeof(val);
+    res=RegQueryValueEx(skey,"Mute Sound",0,&amp;valtype,(LPBYTE)&amp;val,&amp;valsize);
+    if (res==ERROR_SUCCESS) MuteSound=val;
+  RegCloseKey(skey);
+}</pre>
+<p></p>
+<p>If all you want to do is read the values, then the above information
+is adequate. If additionally you want to write your configuration
+dialog to be able to change these values, or if you want to write a
+utility which can change them, then you need to worry about three extra
+configuration values. It is a real drag writing your own general
+configuration dialog. The author strongly advises you to use his
+ScrPlus library, which does it all automatically. </p>
+<ul>
+  <li>Mouse Threshold Index - 0, 1, 2 or 3 for   "High,0", "Normal,
+200", "Low,400" or "Ignore mouse movement,999999"   (The text is what
+should appear in your configuration dialog; the number is what should  
+appear in the Mouse Threshold registry value). It is up to you how to
+behave if some   fool stored an incorrect value in this key. </li>
+  <li>Password Delay Index: 0 or 1 for whether the configuration dialog
+should be displaying   a value in "seconds" or "minutes". Note that,
+irrespective of the value of this field,   the Password Delay registry
+value always stores its delay in seconds. </li>
+  <li>Mouse Corners - a four-character string corresponding to the four
+courners of the screen   (top left, top right, bottom right, bottom
+left). Each character is one of '-': don't do   anything fancy in this
+corner, 'Y': activate the saver immediately if the mouse is left in  
+this corner, or 'N': don't let the saver run if the mouse is in this
+corner. These things   only work if some Hot Corner Services are
+running. Hot corners are generally   configured with a monitor, as in
+the dialog below. It is considered good form to grey out the  
+hot-corner dialog if the services are not currently running. More
+details on hot corners   can be found <a href="#HotCorners">below</a>,
+along with a <a href="#HotCornersCode">code sample</a>.</li>
+</ul>
+<p></p>
+<p>If you do offer a configuration dialog with the ability to change
+these settings, it is conventional to use a dialog box with two or more
+tabs. The first tab would have general settings, and subsequent tabs
+would have the settings for this particular saver. When the dialog is
+shown it would typically be started on its second page. An example
+resource file for the dialog is given below. (You'll have to implement
+it all, including the MonitorClass, yourself.) If you wish to provide
+context-help for the controls in the General tab, in response to
+WM_HELP and WM_CONTEXTHELP, then you can either use the help topics
+provided in the <tt>Plus!.hlp</tt> file (which comes with Windows Plus!
+only) or you can use the help file <tt>SCRPLUS.HLP</tt> which is
+available in the file <a href="download/minimal.zip">minimal.zip</a>
+along with source code for a minimal saver, and which is freely
+distributable. Or you can of course write your own help file. </p>
+<p></p>
+<h4><a name="PlusConfigurationResources">Resource file for typical
+general config dialog</a></h4>
+<pre><i>// Identifiers for the various controls</i>
+#define ID_DISMISSGROUP  3630
+#define ID_THRESHOLDDESC 3631
+#define ID_THRESHOLD     3632
+#define ID_WAITDESC      3633
+#define ID_WAITTEXT      3634
+#define ID_WAITBUDDY     3635
+#define ID_WAITBOX       3636
+#define ID_WAITMOREDESC  3637
+#define ID_SAGEOK        3638
+#define ID_SAGEBAD       3639
+#define ID_MONITOR       3640
+#define ID_MUTE          3641
+#define ID_MONITORSCREEN 3642
+#define ID_ACTIVECONFIG  3643
+#define ID_ABOUT         3650
+
+<i>// Help topics in Plus!.hlp and SCRPLUS.HLP</i>
+#define PLUSHELP_CORNERS       3100
+#define PLUSHELP_THRESHOLD     3101
+#define PLUSHELP_PASSWORDDELAY 3102
+#define PLUSHELP_COPYRIGHT     3103 
+#define PLUSHELP_PREVIEW       3104
+#define PLUSHELP_MUTE          3105
+
+<i>// Relation between controls in dialog, and help topic</i>
+static DWORD GeneralHelpIds[] = {
+  ID_DISMISSGROUP,   PLUSHELP_THRESHOLD,
+  ID_THRESHOLDDESC,  PLUSHELP_THRESHOLD,
+  ID_THRESHOLD,      PLUSHELP_THRESHOLD,
+  ID_WAITDESC,       PLUSHELP_PASSWORDDELAY,
+  ID_WAITTEXT,       PLUSHELP_PASSWORDDELAY,
+  ID_WAITBUDDY,      PLUSHELP_PASSWORDDELAY,
+  ID_WAITBOX,        PLUSHELP_PASSWORDDELAY,
+  ID_WAITMOREDESC,   PLUSHELP_PASSWORDDELAY,
+  ID_SAGEOK,         PLUSHELP_CORNERS,
+  ID_SAGEBAD,        PLUSHELP_CORNERS,
+  ID_MONITOR,        PLUSHELP_CORNERS,
+  ID_MUTE,           PLUSHELP_MUTE,  0,0};
+
+
+DLG_GENERAL DIALOG 0,0,237,220
+STYLE DS_MODALFRAME|WS_POPUP|WS_VISIBLE|WS_CAPTION|WS_SYSMENU
+CAPTION "General"
+FONT 8,"MS Sans Serif"
+{
+ CONTROL "You can display the screen saver immediately or prevent it from\n"
+         "appearing at all,by moving the mouse pointer to a corner on \n"
+         "the screen. Click the corners you want to use.",
+         ID_SAGEOK,"STATIC",SS_LEFT|WS_CHILD|WS_VISIBLE|WS_GROUP,13,8,282,43
+ CONTROL "The system agent must be active in order for you to display \n"
+         "the screen saver immediately by moving the mouse \n"
+         "pointer to a corner on the screen.",
+         ID_SAGEBAD,"STATIC",SS_LEFT|WS_CHILD|WS_VISIBLE|WS_GROUP,13,13,282,43
+ CONTROL "Options for dismissing the screen saver",
+         ID_DISMISSGROUP,"BUTTON",BS_GROUPBOX|WS_CHILD|WS_VISIBLE,7,154,223,47
+ CONTROL "&amp;Mouse sensitivity",
+         ID_THRESHOLDDESC,"STATIC",SS_LEFT|WS_CHILD|WS_VISIBLE|WS_GROUP,13,169,58,12
+ CONTROL "",ID_THRESHOLD,"COMBOBOX",
+         CBS_DROPDOWNLIST|WS_CHILD|WS_VISIBLE|WS_VSCROLL|WS_TABSTOP,74,167,148,72
+ CONTROL "&amp;Wait",
+         ID_WAITDESC,"STATIC",SS_RIGHT|WS_CHILD|WS_VISIBLE|WS_GROUP,13,184,16,12
+ CONTROL "",ID_WAITTEXT,"EDIT",
+         ES_LEFT|WS_CHILD|WS_VISIBLE|WS_BORDER|WS_TABSTOP,32,184,25,12
+ CONTROL "Generic1",ID_WAITBUDDY,
+         "msctls_updown32",54|WS_CHILD|WS_VISIBLE,57,184,11,36
+ CONTROL "",ID_WAITBOX,"COMBOBOX",
+         CBS_DROPDOWNLIST|WS_CHILD|WS_VISIBLE|WS_VSCROLL|WS_TABSTOP,74,184,50,36
+ CONTROL "before requiring a password",ID_WAITMOREDESC,"STATIC",
+          SS_LEFT|WS_CHILD|WS_VISIBLE|WS_GROUP,130,185,95,11
+ CONTROL "Always require password",ID_WAITSUMMARY,"STATIC",
+          SS_LEFT|WS_CHILD|WS_VISIBLE,13,184,282,11
+ CONTROL "Control corners",ID_MONITOR,MonitorClassName,
+          MS_CORNERS|WS_CHILD|WS_VISIBLE,108,82,20,20
+ CONTROL "Mute Sound",ID_MUTE,"button",
+          BS_AUTOCHECKBOX|WS_CHILD|WS_VISIBLE|WS_TABSTOP,11,202,65,15
+}
+LANGUAGE LANG_NEUTRAL,SUBLANG_NEUTRAL</pre>
+<p></p>
+<p><img src="config1.gif" width="382" height="452"
+ alt="Dialog for configuring the general settings"> <img
+ src="config2.gif" width="382" height="452"
+ alt="Dialog for configuring saver settings"> </p>
+<p></p>
+<h3><a name="ChangePasswordDialog">Change-password dialog</a></h3>
+This dialog gets called when the saver was started with the <tt>/a ####</tt>
+command line argument. This happens in Windows '95 and Plus! when the
+user clicks on the Change Password button in the Display Properties
+control panel. Under NT, the system manages all passwords itself and
+this argument will never be given.
+<p></p>
+<p></p>
+<h4><a name="ChangePasswordCode">ChangePassword code</a></h4>
+<pre>void ChangePassword(HWND hwnd)<br>{ <i>// This only ever gets called under '95, when started with the /a option.</i>
+  HINSTANCE hmpr=::LoadLibrary("MPR.DLL");
+  if (hmpr==NULL) {Debug("MPR.DLL not found: cannot change password.");return;}
+  typedef VOID (WINAPI *PWDCHANGEPASSWORD)
+      (LPCSTR lpcRegkeyname,HWND hwnd,UINT uiReserved1,UINT uiReserved2);
+  PWDCHANGEPASSWORD PwdChangePassword=
+      (PWDCHANGEPASSWORD)::GetProcAddress(hmpr,"PwdChangePasswordA");
+  if (PwdChangePassword==NULL)
+  { FreeLibrary(hmpr);
+    Debug("PwdChangeProc not found: cannot change password");return;
+  }
+  PwdChangePassword("SCRSAVE",hwnd,0,0); FreeLibrary(hmpr);
+}</pre>
+<p></p>
+<p>This function makes use of the <a href="#PwdChangePassword"><tt>PwdChangePassword</tt></a>
+function in <tt>MPR.DLL</tt>. If you wanted to use your own password
+configuration system under '95 or Plus!, you could simply write your
+own ChangePassword routine and your own password verification routine.
+The situation is more difficult under NT.</p>
+<p></p>
+<h3><a name="RunningFullScreenAndPreview">Running full-screen and
+preview</a></h3>
+A preview window is invoked with the argument <tt>/p ####</tt>.
+<ul>
+  <li>It should create a window as a child of ####, and of the same
+size, and it should   run in this window. </li>
+  <li>Whenever this window is destroyed, the saver should terminate
+itself. </li>
+  <li>When the mouse cursor is inside the window, it should be a
+standard arrow cursor.</li>
+</ul>
+<p></p>
+<p>The behaviour of a full-screen window <tt>/s</tt> is more complex: </p>
+<ul>
+  <li>The saver might be started with argument <tt>/s</tt> as a preview
+(from clicking   the Preview button in the Display Properties control
+panel, or by double-clicking on the   saver icon in the Explorer). Or
+it may be started with this argument when it is expected   to run as a
+proper saver. </li>
+  <li>Before the saver starts running it should call <tt>SystemParametersInfo(SPI_SETSCREENSAVERRUNNING,TRUE,..);</tt>.
+After it has finished it should call <tt>SystemParametersInfo(SPI_SETSCREENSAVERRUNNING,FALSE,..);</tt>.
+This disables such system keys   as ctrl-alt-delete and alt-tab. </li>
+  <li>The saver should create a window that is WS_POPUP and
+WS_EX_TOPMOST, and is the size   of the entire screen. While the saver
+is running, and as long as no dialogs are active,   there should be no
+cursor. (When debugging you should run without WS_EX_TOPMOST, and you  
+should make the window a little smaller. This will make it easier to
+debug.) </li>
+  <li>The saver should keep running until it receives messages that
+would imply termination.   These are mouse movement (in response to
+which the saver should check if the mouse has moved   beyond a certain
+threshold), mouse and key presses, and WM_ACTIVATEAPP and WM_ACTIVATE
+messages   indicating that the saver window is being deactivated. The
+response to all of these should be   for the saver to close itself.
+(Unless it is an interactive saver, in which case it will respond   to
+mouse and keyboard messages as it sees fit). </li>
+  <li>Under '95 and Plus, it is the responsibility of the saver itself
+to pop up a password-verification   dialog in response to any of the
+above. This dialog should be a child of the current saver window.  
+Source code to execute the normal system verify-password dialog is
+given below; you can also   use your own password verification
+technology. If the user failed the password check then the   saver
+should continue as before. </li>
+  <li>Under NT, the system itself monitors for all the above messages.
+If it receives any then it   sends a WM_CLOSE message to the saver.
+This is normally fine. But if you are writing an   interactive saver,
+or if you want your saver to handle mouse-movement threshold itself,
+then you   need a way to ignore all those WM_CLOSE messages sent by the
+system and to pay attention only   to those ones which you generated
+yourself. This is typically done with a flag <tt>BOOL reallyclose</tt>
+which you set to <tt>TRUE</tt> just before you send a close message. </li>
+  <li>Under NT, if the saver gets a close message for whatever reason
+(either because of your   own checks or because of a WM_CLOSE   from
+the system), then the saver should terminate immediately without doing
+any password verification.   If the saver had been running just as a
+preview then the user can get back to their work.   If the saver had
+been running as a proper full-screen saver then the screen will go
+blank and   the system itself will put up a password dialog. If the
+user enters the password correctly then   the regular desktop is
+restored. If the user fails to enter the correct password and the
+password   dialog is left idle for some minutes, then the saver gets
+executed with argument <tt>/s</tt> all   over again. </li>
+</ul>
+<p></p>
+<p>In the code below we use the same window procedure for both the
+full-screen and preview modes of the saver. The global variable <tt>ScrMode</tt>,
+set in <tt>WinMain</tt>, determines whether it should respond to
+things like mouse clicks.</p>
+<p></p>
+<h4><a name="UsefulFunsCode">Useful functions while running saver</a></h4>
+<pre><i>// The function CloseSaverWindow uses ReallyClose, as part of a workaround to deal<br>// with the WM_CLOSE messages that get sent automatically under NT.</i>
+void TSaverSettings::CloseSaverWindow()
+{ ReallyClose=TRUE; PostMessage(hwnd,WM_CLOSE,0,0);
+}
+
+<i>// When a dialog is up, the IsDialogActive flag prevents things like<br>// mouse-movement and key presses from terminating the saver. When a dialog<br>// closes, the mouse origin is re-read for threshold-detection purposes.</i>
+void TSaverSettings::StartDialog()
+{ IsDialogActive=TRUE; SendMessage(hwnd,WM_SETCURSOR,0,0);
+}
+void TSaverSettings::EndDialog()
+{ IsDialogActive=FALSE; SendMessage(hwnd,WM_SETCURSOR,0,0);
+  GetCursorPos(&amp;InitCursorPos);
+}
+</pre>
+<p></p>
+<p></p>
+<h4><a name="DoSaverCode">DoSaver code</a></h4>
+<pre><i>// We refer to a global value DEBUG which has have been #defined to<br>// either TRUE or FALSE. If TRUE then we run the saver in only a quarter of<br>// the screen without the WS_EX_TOPMOST flag: this makes it easier to switch<br>// back and forth between the debugger and the saver.</i>
+
+void DoSaver(HWND hparwnd)
+{ WNDCLASS wc;
+  wc.style=CS_HREDRAW | CS_VREDRAW;
+  wc.lpfnWndProc=SaverWindowProc;
+  wc.cbClsExtra=0;
+  wc.cbWndExtra=0;
+  wc.hInstance=hInstance;
+  wc.hIcon=NULL;
+  wc.hCursor=NULL;
+  wc.hbrBackground=(HBRUSH)GetStockObject(BLACK_BRUSH);
+  wc.lpszMenuName=NULL;
+  wc.lpszClassName="ScrClass";
+  RegisterClass(&amp;wc);
+  if (ScrMode==smPreview)
+  { RECT rc; GetWindowRect(hparwnd,&amp;rc);
+    int cx=rc.right-rc.left, cy=rc.bottom-rc.top;  
+    hScrWindow=CreateWindowEx(0,"ScrClass","SaverPreview",WS_CHILD|WS_VISIBLE,
+                              0,0,cx,cy,hparwnd,NULL,hInstance,NULL);
+  }
+  else
+  { int cx=GetSystemMetrics(SM_CXSCREEN), cy=GetSystemMetrics(SM_CYSCREEN);
+    DWORD exstyle, style;
+    if (DEBUG) { cx=cx/3; cy=cy/3; exstyle=0; style=WS_OVERLAPPEDWINDOW|WS_VISIBLE;}
+    else {exstyle=WS_EX_TOPMOST; style=WS_POPUP|WS_VISIBLE;}
+    hScrWindow=CreateWindowEx(exstyle,"ScrClass","SaverWindow",style,
+                              0,0,cx,cy,NULL,NULL,hInstance,NULL);
+  }
+  if (hScrWindow==NULL) return;
+  UINT oldval;
+  if (ScrMode==smSaver) SystemParametersInfo(SPI_SETSCREENSAVERRUNNING,1,&amp;oldval,0);
+  MSG msg;
+  while (GetMessage(&amp;msg,NULL,0,0))
+  { TranslateMessage(&amp;msg);
+    DispatchMessage(&amp;msg);
+  }
+  if (ScrMode==smSaver) SystemParametersInfo(SPI_SETSCREENSAVERRUNNING,0,&amp;oldval,0);
+  return;
+}</pre>
+<p></p>
+<p></p>
+<h4><a name="SaverWindowProcCode">SaverWindowProc</a></h4>
+<pre>LRESULT CALLBACK SaverWindowProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)<br>{ switch (msg)<br>  { case WM_CREATE:<br>    { <i>Debug("WM_CREATE... reading initial position and time, and starting timer");</i>
+      ss-&gt;hwnd=hwnd;
+      GetCursorPos(&amp;(ss-&gt;InitCursorPos)); ss-&gt;InitTime=GetTickCount();
+      ss-&gt;idTimer=SetTimer(hwnd,0,100,NULL);
+    } break;
+    case WM_TIMER:
+    { if (ss-&gt;FlashScreen)
+      { HDC hdc=GetDC(hwnd); RECT rc; GetClientRect(hwnd, &amp;rc); 
+        FillRect(hdc,&amp;rc,GetSysColorBrush((GetTickCount()&gt;&gt;8)%25));
+        ReleaseDC(hwnd,hdc);
+      }
+    } break;
+    case WM_ACTIVATE: case WM_ACTIVATEAPP: case WM_NCACTIVATE:
+    { if (ScrMode==smSaver &amp;&amp; !ss-&gt;IsDialogActive &amp;&amp;
+          LOWORD(wParam)==WA_INACTIVE &amp;&amp; !DEBUG)
+      { <i>Debug("WM_ACTIVATE: about to inactive window, so sending close");</i>
+        ss-&gt;CloseSaverWindow();
+      }
+    } break;
+    case WM_SETCURSOR:
+    { if (ScrMode==smSaver &amp;&amp; !ss-&gt;IsDialogActive &amp;&amp; !DEBUG)
+      { <i>Debug("WM_SETCURSOR: Saver is running at the moment: so no cursor");</i>
+        SetCursor(NULL);
+      }
+      else
+      { <i>Debug("WM_SETCURSOR: dialog up, or Preview or Debug mode: normal cursor");</i>
+        SetCursor(LoadCursor(NULL,IDC_ARROW));
+      }
+    } break;
+    case WM_LBUTTONDOWN: case WM_MBUTTONDOWN: case WM_RBUTTONDOWN: case WM_KEYDOWN:
+    { if (ScrMode==smSaver &amp;&amp; !ss-&gt;IsDialogActive)
+      { <i>Debug("WM_BUTTONDOWN: sending close");</i>
+        ss-&gt;CloseSaverWindow();
+      }
+    } break;
+    case WM_MOUSEMOVE:
+    { if (ScrMode==smSaver &amp;&amp; !ss-&gt;IsDialogActive &amp;&amp; !DEBUG)
+      { POINT pt; GetCursorPos(&amp;pt);
+        int dx=pt.x-ss-&gt;InitCursorPos.x; if (dx&lt;0) dx=-dx;
+        int dy=pt.y-ss-&gt;InitCursorPos.y; if (dy&lt;0) dy=-dy;
+        if (dx&gt;(int)ss-&gt;MouseThreshold || dy&gt;(int)ss-&gt;MouseThreshold)
+        { <i>Debug("WM_MOUSEMOVE: moved beyond threshold, sending close");</i>
+          ss-&gt;CloseSaverWindow();
+        }
+      }
+    } break;
+    case WM_SYSCOMMAND:
+    { if (ScrMode==smSaver)
+      { if (wParam==SC_SCREENSAVE)
+        { <i>Debug("WM_SYSCOMMAND: gobbling up SC_SCREENSAVE to stop new saver running.");</i>
+          return FALSE;
+        }
+        if (wParam==SC_CLOSE &amp;&amp; !DEBUG)
+        { <i>Debug("WM_SYSCOMMAND: gobbling up SC_CLOSE");</i>
+          return FALSE;
+        }
+      }
+    } break;
+    case (WM_CLOSE):
+    { if (ScrMode==smSaver &amp;&amp; ss-&gt;ReallyClose &amp;&amp; !ss-&gt;IsDialogActive)
+      { <i>Debug("WM_CLOSE: maybe we need a password");</i>
+        BOOL CanClose=TRUE;
+        if (GetTickCount()-ss-&gt;InitTime &gt; 1000*ss-&gt;PasswordDelay)
+        { ss-&gt;StartDialog(); CanClose=VerifyPassword(hwnd); ss-&gt;EndDialog();
+        }
+        if (CanClose) {Debug("WM_CLOSE: doing a DestroyWindow"); DestroyWindow(hwnd);}
+        else {Debug("WM_CLOSE: but failed password, so doing nothing");}
+      }
+      if (ScrMode==smSaver) return FALSE;
+      <i>// return FALSE here so that DefWindowProc doesn't get called,<br>      // because it would just DestroyWindow itself</i>
+    } break;
+    case WM_DESTROY:
+    { if (ss-&gt;idTimer!=0) KillTimer(hwnd,ss-&gt;idTimer); ss-&gt;idTimer=0;
+      <i>Debug("POSTQUITMESSAGE from WM_DESTROY!!");</i>
+      PostQuitMessage(0);
+    } break;
+  }
+  return DefWindowProc(hwnd,msg,wParam,lParam);
+}</pre>
+<p></p>
+<p></p>
+<h3><a name="VerifyPasswordDialog">Verify Password dialog</a></h3>
+Under NT, you do not have to worry about password verification. Under
+'95 and Plus! you must do password detection yourself. The routine <tt>VerifyPassword</tt>
+below is called in response to <tt>WM_CLOSE</tt>, after first checking
+that more than PasswordDelay seconds have elapsed. Before making the
+call to <tt>VerifyPassword</tt> we first did <a href="#UsefulFunsCode"><tt>ss-&gt;StartDialog()</tt></a>
+and after we did <a href="#UsefulFunsCode"><tt>ss-&gt;EndDialog()</tt></a>.
+<p></p>
+<h4><a name="VerifyPasswordDialogCode">VerifyPassword</a></h4>
+<pre>BOOL VerifyPassword(HWND hwnd)<br>{ <i>// Under NT, we return TRUE immediately. This lets the saver quit,<br>  // and the system manages passwords. Under '95, we call <a
+ href="#VerifyScreenSavePwd">VerifyScreenSavePwd</a>.<br>  // This checks the appropriate registry key and, if necessary,<br>  // pops up a verify dialog</i>
+  OSVERSIONINFO osv; osv.dwOSVersionInfoSize=sizeof(osv); GetVersionEx(&amp;osv);
+  if (osv.dwPlatformId==VER_PLATFORM_WIN32_NT) return TRUE;
+  HINSTANCE hpwdcpl=::LoadLibrary("PASSWORD.CPL");
+  if (hpwdcpl==NULL) {<i>Debug("Unable to load PASSWORD.CPL. Aborting");</i>return TRUE;}<br>  typedef BOOL (WINAPI *VERIFYSCREENSAVEPWD)(HWND hwnd);<br>  VERIFYSCREENSAVEPWD VerifyScreenSavePwd;<br>  VerifyScreenSavePwd=<br>      (VERIFYSCREENSAVEPWD)GetProcAddress(hpwdcpl,"VerifyScreenSavePwd");<br>  if (VerifyScreenSavePwd==NULL)<br>  { <i>Debug("Unable to get VerifyPwProc address. Aborting");</i>
+    FreeLibrary(hpwdcpl);return TRUE;
+  }
+  <i>Debug("About to call VerifyPwProc");</i>
+  BOOL bres=VerifyScreenSavePwd(hwnd); FreeLibrary(hpwdcpl);
+  return bres;
+}</pre>
+<p></p>
+<p></p>
+<h3><a name="StringResource">String resource</a></h3>
+Under NT, if the saver has a string resource with ID 1, then this
+string is used as the description line for the saver in the control
+panel. If it does not have this string, or of the saver is running
+under '95 or Plus!, then the long filename of the saver is used to
+describe it. The name should have25 characters or fewer.
+<p></p>
+<p></p>
+<h4><a name="StringResourceResources">String resources</a></h4>
+<pre>STRINGTABLE DISCARDABLE <br>BEGIN<br>    1 "Minimal screen saver"<br>END<br></pre>
+<p></p>
+<p></p>
+<h3><a name="FinalTouches">Final touches</a></h3>
+The above code samples referred to a global constant <tt>DEBUG</tt> and
+to a function <tt>Debug("...")</tt>. I can guarantee that you will
+encounter strange bugs in your program, and that the only way you solve
+them is by liberal use of a <tt>Debug</tt> function. It is especially
+useful to record which windows-messages get sent to the saver window.
+<p></p>
+<p></p>
+<h4><a name="DebugCode">Debug code</a></h4>
+<pre>#define DEBUG FALSE<br><br>#if DEBUG<br>void Debug(char *c) {OutputDebugString(c); OutputDebugString("\n");}<br>#else<br>void Debug(char *) {}<br>#endif<br></pre>
+<p></p>
+<p>Explorer uses the first icon resource in the saver as its icon.
+Either create your own icon from scratch, or base it upon one of the
+standard saver icons: </p>
+<ul>
+  <li><img src="scricon1.gif" width="32" height="32"
+ alt="standard icon #1"> <img src="scricsm1.gif" width="16" height="16"
+ alt="small standard icon #1"> - Hippy age: strange visions of the
+future </li>
+  <li><img src="scricon2.gif" width="32" height="32"
+ alt="standard icon #2"> <img src="scricsm2.gif" width="16" height="16"
+ alt="small standard icon #2"> - Industrial age: blocky machinery </li>
+  <li><img src="scricon3.gif" width="32" height="32"
+ alt="standard icon #3"> <img src="scricsm3.gif" width="16" height="16"
+ alt="small standard icon #3"> - Information age: clean, simple and
+elegant </li>
+</ul>
+<p></p>
+<p>Next, compile the saver and rename it with the suffix <tt>.scr</tt>.
+Copy it into the windows directory: then it will appear in the Display
+Properties control panel. See also <a href="#InstallationOfASaver">Installation
+of a saver</a>.</p>
+<p></p>
+<h2><a name="InteractionBetweenSaverAndSystem">Interaction between
+saver and system</a></h2>
+<p></p>
+This chapter has notes on preventing ctrl-alt-delete, on savers that
+change mode, on hot corners and on installing a saver. It includes
+complete source code for a self-extracting saver installer.
+<p></p>
+<h3><a name="HowToTellWhetherASaverIsRunning">How to tell whether a
+saver is currently running</a></h3>
+Under '95, '98 and NT5 it is easy to tell whether a saver is currently
+running: use SPI_GETSCREENSAVERRUNNING and check the returned value.
+Under NT4 it doesn't work so we employ a workaround. See also <a
+ href="http://support.microsoft.com/support/kb/articles/Q150/7/85.asp">MS
+KB article Q150785</a>.
+<p></p>
+<p></p>
+<h4><a name="IsSaverRunningCode">IsSaverRunning</a></h4>
+<pre>BOOL IsSaverRunning()<br>{ BOOL srunning=FALSE;<br>  BOOL res=SystemParametersInfo(SPI_GETSCREENSAVERRUNNING,0,&amp;srunning,0);<br>  if (res) {if (srunning==0) return FALSE; else return TRUE;}<br>  <i>// That works fine under '95, '98 and NT5. But not older versions of NT.<br>  // Hence we need some magic.</i>
+  HDESK hDesk=OpenDesktop(TEXT("screen-saver"), 0, FALSE, MAXIMUM_ALLOWED);
+  if (hDesk!=NULL) {CloseDesktop(hDesk); return TRUE;}
+  if (GetLastError()==ERROR_ACCESS_DENIED) return TRUE;
+  else return FALSE;
+}</pre>
+<p></p>
+<p></p>
+<h3><a name="LaunchCurrentSaver">To launch the current saver</a></h3>
+Use the following code should you wish to launch the currently selected
+saver.
+<p></p>
+<p></p>
+<h4><a name="LaunchCurrentSaverCode">Code to launch current saver</a></h4>
+<pre><i>// Code to launch saver full-screen</i>
+if (IsScreensaverRunning()) return;
+<i>// We don't want to try and set it running again.</i>
+HWND hfw=GetForegroundWindow();
+if (hfw==NULL) DefWindowProc(hwnd,WM_SYSCOMMAND,SC_SCREENSAVE,0);
+else PostMessage(hfw,WM_SYSCOMMAND,SC_SCREENSAVE,0);
+
+<i>// Code to launch configuration dialog</i>
+char scr[MAX_PATH];
+DWORD res=GetPrivateProfileString("boot","SCRNSAVE.EXE","",scr,MAX_PATH,"system.ini");
+STARTUPINFO si; PROCESS_INFORMATION pi;
+ZeroMemory(&amp;si,sizeof(si)); ZeroMemory(&amp;pi,sizeof(pi));
+si.cb=sizeof(si);
+char c[MAX_PATH]; wsprintf(c,"\"%s\" /c",scr);
+BOOL res=CreateProcess(scr,c,NULL,NULL,FALSE,0,NULL,NULL,&amp;si,&amp;pi);
+if (res) return IDOK; else return IDCANCEL;</pre>
+<p></p>
+<p></p>
+<h3><a name="PreventingCtrlAltDelete">Preventing ctrl-alt-delete</a></h3>
+One of the jobs of a saver is to protect the computer from unauthorized
+access, in case it has been left alone for a time. It is obviously
+necessary to disable such system keys as ctrl-alt-delete and alt-tab
+and the Windows key.
+<p></p>
+<p>Under Windows '95 and Plus!, you must disable these keys by calling <a
+ href="#SpiScreenSaverRunning"><tt>SystemParametersInfo(SPI_SETSCREENSAVERRUNNING,TRUE,..)</tt></a>.
+After the saver has finished you re-enable them by calling <tt>SystemParametersInfo(SPI_SETSCREENSAVERRUNNING,FALSE,..);</tt>.
+Under NT the system keys get disabled automatically, but it's a good
+idea to call <tt>SystemParametersInfo</tt> just in case it has other
+undocumented side-effects.</p>
+<p>The <a href="#DifferentScreenModes">following section</a> points out
+a problem that may occur with ctrl-alt-delete if using DirectDraw, and
+gives a solution.</p>
+<p></p>
+<h3><a name="DifferentScreenModes">Savers running in different screen
+modes</a></h3>
+Changing mode is a jolly useful thing to have in a saver. After all, we
+know that the saver is going to be running full-screen anyway and hence
+that we're not going to mess up appearance of the rest of the display.
+And if the saver runs at a lower screen resolution then animations can
+often be performed far quicker.
+<p></p>
+<p>If you use <tt>ChangeDisplaySettings</tt> or <tt>pDirectDraw-&gt;SetDisplayMode</tt>
+then a couple of spurious WM_MOUSEMOVE messages get generated as the
+mouse settles into its new position. To complicate matters, these
+messages do not get sent during the mode-change call but after. There
+are a few possible solutions, all unpleasant: you could count down and
+ignore the first five <tt>WM_MOUSEMOVE</tt> messages; or you could
+ignore all such messages that occur within the five seconds after
+changing mode. It will help greatly if you use some <tt>Debug</tt>
+function to display a record of every single window message that gets
+sent to your window during the change-mode.</p>
+<p>Under '95, dialogs such as the password dialog must be shown by the
+saver itself. If you are running at 320x200 or 320x240 then the GDI
+cannot draw dialogs onto the screen. Just before showing the dialog you
+will have to change into a more respectable screen mode, and just after
+you will have to restore the screen to what it was before. This often
+looks ugly. You might try to copy the screen contents as they were in
+the full-screen low-resolution mode and then use them as a bitmap
+background in the respectable mode.</p>
+<p>If you use DirectDraw to change modes, the act of changing out of
+full-screen mode will re-enable the system keys. You will have to call <a
+ href="#SpiScreenSaverRunning"><tt>SystemParametersInfo(SPI_SETSCREENSAVERRUNNING,TRUE,...)</tt></a>
+to disable them again.</p>
+<p></p>
+<h3><a name="Explorer">Properties of savers in the Explorer</a></h3>
+When you right-click on a saver in the Explorer, three options appear
+in the context menu.
+<ul>
+  <li>Test - the default, executes the saver with the <tt>/s</tt>
+argument. Under NT,   because the saver gets executed directly rather
+than through <tt>DefWindowProc(WM_SYSCOMMAND,SC_SCREENSAVE,...)</tt>,
+it runs on the normal desktop   with no security features. </li>
+  <li>Configure - runs the saver with no arguments, in response to
+which it is expected   to pop up its configuration dialog with NULL
+parent. </li>
+  <li>Install - Contrary to expectation, this command does <b>not</b>
+copy the saver into the   system directory or anywhere useful. All it
+does is open up the Display Properties   control panel with this saver
+selected. This is the command you would expect to use   in your
+installation programs. However, if your users have installed the Win'98
+preview   on top of Windows '95, then this command gets broken and will
+no longer work. The damage   persists even if they try to uninstall the
+Win'98 preview. Therefore you have to use   a different strategy for
+your installation programs: see <a href="#InstallationOfSaver">Installation</a>
+below.</li>
+</ul>
+<p></p>
+<h3><a name="HotCorners">Hot corners</a></h3>
+Windows Plus! introduced hot corners: if you move your mouse into some
+corners then the currently selected saver will start immediately; in
+other corners, the saver is prevented from running. To get hot corners
+you need some external program running which provides Hot Corner
+Services. One such program comes with Plus!, in the file <tt>SAGE.DLL</tt>.
+If you want to distribute a saver to be used by people with Windows '95
+and NT as well, and you want them to have hot corners, you will have to
+give them a third-party hot corner program. The author has written one
+such program, ScrHots, which works on all Win32 platforms and may be
+freely distributed by anyone. A copy of ScrHots is included in the file <a
+ href="download/install.zip">install.zip</a>, which also includes
+source code for a self-extracting screen saver installer.
+<p></p>
+<p>The best use for hot corners is in interactive savers, such as a
+puzzle saver or an arcade-game saver. The user might be bored for a few
+minutes waiting for a download to finish, or might be fiddling with the
+computer while making a telephone call. Imagine how easy it is for the
+user simply to move their mouse to the top left corner of the screen
+and have your program run immediately!</p>
+<p>The section on installation below includes sample code for
+installing ScrHots. Here in this section we give code which works both
+for ScrHots and for SAGE.DLL to interact with the hot corner services.</p>
+<p></p>
+<h4><a name="HotCornersCode">Hot corner code</a></h4>
+<pre><i>// CheckHots: this routine checks for Hot Corner services.<br>// It first tries with SAGE.DLL, which comes with Windows Plus!<br>// Failint this it tries with ScrHots, a third-party hot-corner<br>// service program written by the author that is freely<br>// distributable and works with NT and '95.</i>
+BOOL CheckHots()
+{ typedef BOOL (WINAPI *SYSTEMAGENTDETECT)();
+  HINSTANCE sagedll=LoadLibrary("Sage.dll");
+  if (sagedll!=NULL)
+  { SYSTEMAGENTDETECT detectproc=(SYSTEMAGENTDETECT)
+        GetProcAddress(sagedll,"<a
+ href="#SystemAgentDetect">System_Agent_Detect</a>");<br>    BOOL res=FALSE;<br>    if (detectproc!=NULL) res=detectproc();<br>    FreeLibrary(sagedll);<br>    if (res) return TRUE;<br>  }<br>  HINSTANCE hotsdll=LoadLibrary("ScrHots.dll");<br>  if (hotsdll!=NULL)<br>  { SYSTEMAGENTDETECT detectproc=(SYSTEMAGENTDETECT)<br>        GetProcAddress(hotsdll,"<a
+ href="#SystemAgentDetect">System_Agent_Detect</a>");<br>    BOOL res=FALSE;<br>    if (detectproc!=NULL) res=detectproc();<br>    FreeLibrary(hotsdll);<br>    if (res) return TRUE;<br>  }<br>  return FALSE;<br>}<br><br><i>// NotifyHots: if you make any changes to the hot corner<br>// information in the registry, you must call NotifyHots<br>// to inform the hot corner services of your change.</i>
+void __fastcall NotifyHots()
+{ typedef VOID (WINAPI *SCREENSAVERCHANGED)();
+  HINSTANCE sagedll=LoadLibrary("Sage.DLL");
+  if (sagedll!=NULL)
+  { SCREENSAVERCHANGED changedproc=(SCREENSAVERCHANGED)
+        GetProcAddress(sagedll,"<a
+ href="#ScreenSaverChanged">Screen_Saver_Changed</a>");<br>    if (changedproc!=NULL) changedproc();<br>    FreeLibrary(sagedll);<br>  }<br>  HINSTANCE hotsdll=LoadLibrary("ScrHots.dll");<br>  if (hotsdll!=NULL)<br>  { SCREENSAVERCHANGED changedproc=(SCREENSAVERCHANGED)<br>        GetProcAddress(hotsdll,"<a
+ href="#ScreenSaverChanged">Screen_Saver_Changed</a>");<br>    if (changedproc!=NULL) changedproc();<br>    FreeLibrary(hotsdll);<br>  }<br>}</pre>
+<p></p>
+<p></p>
+<h3><a name="CurrentSelectedSaver">Currently selected saver</a></h3>
+The currently selected saver is stored in <tt>SYSTEM.INI</tt> in the
+[boot] section.
+<pre>[boot]<br>...<br>SCRNSAVE.EXE=C:\WINDOWS\FLAME.SCR</pre>
+Under '95 and Plus!, this corresponds to an actual file in the Windows
+directory called <tt>SYSTEM.INI</tt>. Under NT the values are actually
+stored in the registry but you should still use
+Get/WritePrivateProfileString as these calls are automatically mapped
+to the registry. The filename <b>must</b> be a short filename.
+<p></p>
+<p>To change the currently selected saver you must not only change the
+value mentioned above; but also cause a WM_WININICHANGED message to be
+sent. This will inform the rest of the setting that the value has
+changed. In particular, it means that the next time the Display
+Properties dialog appears, it will be correct.</p>
+<p></p>
+<h4><a name="CurSaveCode">Code for the currently selected saver</a></h4>
+<pre><i>// To get the currently selected saver:</i>
+char CurSav[MAX_PATH];
+DWORD res=GetPrivateProfileString("boot","SCRNSAVE.EXE","",
+                                  CurSav,MAX_PATH,"system.ini");
+if (res==0 || strcmp(scrt,"")==0) {..} <i>// Currently selected saver is 'none'</i>
+
+<i>// To change the currently selected saver:</i>
+char ShortName[MAX_PATH];
+GetShortPathName(CurSav,ShortName,MAX_PATH);
+WritePrivateProfileString("boot","SCRNSAVE.EXE",ShortName,"system.ini");
+SystemParametersInfo(SPI_SETSCREENSAVEACTIVE,TRUE,NULL,TRUE);
+<i>// that sends a WM_WININICHANGE so that DisplayProperties dialog knows we've changed.<br>// It also enables screensaving.</i></pre>
+<p></p>
+<p></p>
+<h3><a name="InstallationOfSaver">Installation of a saver</a></h3>
+It used to be that the correct way to install a saver was to copy it
+into the Windows directory and use the command <tt>ShellExecute(hwnd,"install","c:\windows\mysaver",NULL,NULL,SW_SHOWNORMAL);</tt>
+This would bring up the Display Properties dialog on the screen saver
+page, with your saver currently selected. But the Win'98 preview and
+IE4 for Win'95 introduced a faulty version of <tt>DESK.CPL</tt> which
+causes an address exception if you try to execute the above command.
+Source code for a function <a href="#ExecutePreviewDialogCode"><tt>ExecutePreviewDialog</tt></a>
+is given below as a workaround.
+<p></p>
+<p>Note that the windows directory is the corret place to install a
+saver. This is because GetWindowsDirectory() will always return a
+directory to which you have write-access. You should not install a
+saver into the system directory because on many installations (such as
+shared network installations) it is read-only.</p>
+<p>It is possible to install a saver into a different directory. The
+Display Properties dialog actually creates its list of possible savers
+from three locations: the directory of the currently selected saver;
+the Windows directory; and the System directory. You might choose to
+install a couple of theme savers in a theme directory so that they are
+only visible when the user selects your theme.</p>
+<p>The essence of a saver is that it should be easy and fun to use, and
+easy and fun to install. If at all possible you should have a single <tt>.scr</tt>
+file with no additional files. Even if you want to have additional
+bitmaps or JPEGs with your saver, these might as well be deployed as
+resources in the <tt>.scr</tt> file. It also makes it much easier for
+the user if you deploy your saver as a single self-extracting <tt>.exe</tt>
+file which copies the appropriate files into the appropriate places and
+installs the saver.</p>
+<p>You can download the file <a href="download/install.zip">install.zip</a>.
+This contains complete source code for a self-extracting saver
+installer, and you are free to modify and distribute it as you wish. It
+installs both ScrHots and your saver into the system, and pops up a
+preview dialog when installation is complete. The code is generic and
+can be used to install any saver merely by making a few changes to the
+resource file. You may use the code however you wish.</p>
+<p>If you simply want an alternative to <tt>ShellExecute("install",..)</tt>
+rather than a full-blown self-extracting installer, you might use the
+following workaround. Rather than popping up the Display Properties
+proper, this code pops up its own dialog with a preview of the saver.
+This code is part of the above-mentioned installer.</p>
+<p></p>
+<h4><a name="ExecutePreviewDialogCode">Code for ExecutePreviewDialog</a></h4>
+<pre><i>// Call the following two procedures in your installation routine.</i>
+SelectAsDefault(savpath);
+ExecutePreviewDialog(hwnd,savpath);
+
+
+<i>// SelectAsDefault: makes scr the currently selected saver</i>
+
+oid SelectAsDefault(char *scr)
+{ char sscr[MAX_PATH];
+  GetShortPathName(scr,sscr,MAX_PATH);
+  WritePrivateProfileString("boot","SCRNSAVE.EXE",sscr,"system.ini");
+  SystemParametersInfo(SPI_SETSCREENSAVEACTIVE,TRUE,NULL,TRUE);
+  <i>// that sends a WM_WININICHANGE so that DisplayProperties<br>  // dialog knows we've changed</i>
+}
+
+<i>// ExecutePreviewDialog: displays a dialog with a preview running inside it.</i>
+int ExecutePreviewDialog(HWND hwnd,char *scr)
+{ typedef struct {DLGITEMTEMPLATE dli; WORD ch; WORD c; WORD t; WORD dummy;
+                  WORD cd;} TDlgItem;
+
+  typedef struct {DLGTEMPLATE dlt; WORD m; WORD c; WCHAR t[8]; WORD pt; WCHAR f[14];
+                  TDlgItem ia; TDlgItem ib; TDlgItem ic;} TDlgData;
+  TDlgData dtp={{DS_MODALFRAME|DS_3DLOOK|DS_SETFONT|DS_CENTER|WS_POPUP|
+     WS_CAPTION|WS_SYSMENU|WS_VISIBLE,0,3,0,0,278,196},
+     0,0,L"Preview",8,L"MS Sans Serif",
+     {{BS_DEFPUSHBUTTON|WS_CHILD|WS_VISIBLE,0,113,175,50,14,IDOK},0xFFFF,0x0080,0,0,0},
+     {{SS_BLACKRECT|WS_CHILD|WS_VISIBLE,0,7,7,264,152,3},0xFFFF,0x0082,0,0,0},
+     {{SS_CENTER|WS_CHILD|WS_VISIBLE,0,7,162,264,8,2},0xFFFF,0x0082,0,0,0}};
+  return DialogBoxIndirectParam(hInstance,(DLGTEMPLATE*)&amp;dtp,hwnd,
+                                ExecutePreviewDialogProc,(LONG)scr);
+}
+LRESULT CALLBACK BlackWindowProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
+{ LONG oldproc=GetWindowLong(hwnd,GWL_USERDATA);
+  if (msg==WM_DESTROY) SetWindowLong(hwnd,GWL_WNDPROC,oldproc);
+  if (msg==WM_PAINT)
+  { PAINTSTRUCT ps; BeginPaint(hwnd,&amp;ps);
+    FillRect(ps.hdc,&amp;ps.rcPaint,(HBRUSH)GetStockObject(BLACK_BRUSH));
+    EndPaint(hwnd,&amp;ps);return 0;
+  }
+  return CallWindowProc((WNDPROC)oldproc,hwnd,msg,wParam,lParam);
+}
+BOOL CALLBACK ExecutePreviewDialogProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
+{ switch (msg)
+  { case WM_INITDIALOG:
+    { SetDlgItemText(hwnd,IDOK,"OK");
+      SetDlgItemText(hwnd,2,"Screen saver succesfully installed!");
+      HWND hPrev=GetDlgItem(hwnd,3);
+      LONG oldproc=GetWindowLong(hPrev,GWL_WNDPROC);
+      SetWindowLong(hPrev,GWL_USERDATA,oldproc);
+      SetWindowLong(hPrev,GWL_WNDPROC,(LONG)BlackWindowProc);
+      STARTUPINFO si; PROCESS_INFORMATION pi;
+      ZeroMemory(&amp;si,sizeof(si)); ZeroMemory(&amp;pi,sizeof(pi));
+      si.cb=sizeof(si); char *scr=(char *)lParam;
+      char c[MAX_PATH]; wsprintf(c,"\"%s\" /p %i",scr,(int)hPrev);
+      CreateProcess(scr,c,NULL,NULL,TRUE,IDLE_PRIORITY_CLASS,NULL,NULL,&amp;si,&amp;pi);
+      return TRUE;
+    }
+    case WM_COMMAND:
+    { int id=LOWORD(wParam); switch (id)
+      { case IDOK: case IDCANCEL:
+        { HWND hPrev=GetDlgItem(hwnd,3); HWND hChild=GetWindow(hPrev,GW_CHILD);
+          if (hChild!=NULL) SendMessage(hChild,WM_CLOSE,0,0);
+          hChild=GetWindow(hPrev,GW_CHILD); if (hChild!=NULL) DestroyWindow(hChild);
+          EndDialog(hwnd,id); return TRUE;
+        }
+      }
+    }
+  }
+  return FALSE;
+}</pre>
+<p></p>
+<p></p>
+<h2><a name="KnowledgeBase">Knowledge base</a></h2>
+<p></p>
+This chapter lists a few common problems and suggests the typical
+solution.
+<p></p>
+<h3><a name="HowToDebugASaver">How to debug a saver</a></h3>
+Ninety percent of saver errors can be solved by keeping a log of every
+single message that gets sent to your saver window procedure.
+<p></p>
+<p></p>
+<h4><a name="DebugMessageCode">DebugMessage code</a></h4>
+<pre>#define DEBUG TRUE<br><br>#if DEBUG<br>void Debug(char *c) {OutputDebugString(c); OutputDebugString("\n");}<br>void DebugMessage(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)<br>{ char c[100];<br>  wsprintf(c,"%04lx: %s (msg=%lx,wParam=%lx,lParam=%lx)",<br>           (DWORD)hwnd,MessageName(msg),(DWORD)msg,(DWORD)wParam,(DWORD)lParam);<br>  Debug(c);<br>}<br>#else<br>void Debug(char *) {}<br>void DebugMessage(HWND,UINT,WPARAM,LPARAM) {}<br>#endif<br><br><i>// MessageName: this function returns the text name of the message.<br>// Full source code of the function can be found inside <a
+ href="download/minimal.zip">minimal.zip</a>
+// in the file 'minimal.cpp'.</i>
+char *MessageName(UINT msg)
+{ switch (msg)
+  { case 0x0001: return "WM_CREATE";
+    case 0x0002: return "WM_DESTROY";
+    case 0x0003: return "WM_MOVE";
+      ...
+    default: return "WM_????";
+  }
+}
+
+LRESULT CALLBACK SaverWindowProc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam)
+{ DebugMessage(hwnd,msg,wParam,lParam);
+  ...
+}</pre>
+<p></p>
+<p></p>
+<h3><a name="DebuggingPreviewMode">How to debug the saver in preview
+mode</a></h3>
+To run your preview program with the debugging facilities of your
+development environment, have the debugger run the command <tt>rundll32.exe
+desk.cpl,InstallScreenSaver c:\sav\debug\mysaver.scr</tt>. This opens
+up the Display Properties control panel with your saver selected.
+<p></p>
+<p>If you installed the preview of Win'98 on top of Win'95 then this
+command no longer works. You will have to use instead <tt>rundll32
+shell32.dll,Control_RunDLL desk.cpl</tt>. This runs the Display
+Properties control panel without changing tabs or selecting your saver.</p>
+<p>It can be very difficult working with this command under Windows
+'95, because whenever the control panel regains focus it terminates
+the current preview and starts a new one. To avoid this problem you can
+instead display previews with the ScrPrev utility, which is freely
+available in the file <a href="download/minimal.zip">minimal.zip</a>.
+ScrPrev is a simple application which contains a preview window. The
+following code will be very useful. It lets you launch ScrPrev and have
+the preview display inside it simply by starting your saver with the
+argument <tt>/p scrprev</tt>. The source code given above for parsing
+a command-line handles scrprev correctly.</p>
+<p></p>
+<h3><a name="DebuggingFullScreenMode">How to debug the saver in
+full-screen mode</a></h3>
+The first problem with debugging a saver in full-screen mode is that it
+typically runs as a full-screen WS_EX_TOPMOST window. Thus, when the
+window is present, you are unable to get to your debugger. The second
+problem is that it has disabled the system keys such as ctrl-alt-delete
+and alt-tab. This means that, if the debugger froze on a breakpoint, you
+have to reboot the machine. (The situation is less severe under NT,
+where ctrl-alt-delete still does something useful). The source code
+given above for <tt>DoSaver</tt> checked whether the <tt>DEBUG</tt>
+flag was set: if so, then it created the saver window only a quarter of
+its size and without the WS_EX_TOPMOST style.
+<p>Also, normally a full-screen saver is expected to respond to
+keyboard, mouse and focus events by terminating itself. This makes it
+impossible to debug. The source code given above for <tt>SaverWindowProc</tt>
+specifically disabled the normal response to mouse and focus messages if
+the <tt>DEBUG</tt> flag was set.</p>
+<p></p>
+<h3><a name="InteractiveSaver">An interactive saver</a></h3>
+Writing an interactive saver is relatively straightforward. Under '95,
+the saver should respond to mouse and keyboard events as it sees fit.
+Note that NT will send <tt>WM_CLOSE</tt> messages to the saver when it
+thinks the saver should close. You will therefore have to protect
+against NT closing your saver with a <tt>ReallyClose</tt> flag: set
+this flag to <tt>TRUE</tt> if you want the saver to close, and <tt>FALSE</tt>
+otherwise, and ignore all <tt>WM_CLOSE</tt> messages unless <tt>ReallyClose</tt>
+is <tt>TRUE</tt>. This is done by <a href="#SaverWindowProcCode">SaverWindowProc</a>
+example code above.
+<p></p>
+<p>With an interactive saver such as a puzzle or an arcade game, you
+might wish to distribute ScrHots with your saver to support hot
+corners. Then the user can easily start playing your game simply by
+moving the mouse to a corner of the screen. See the section on <a
+ href="#HotCorners">Hot Corners</a> for more details.</p>
+<p></p>
+<h3><a name="PortabilityBetween95AndNT">Portability between '95 and NT</a></h3>
+Most normal savers, if coded according to the code samples above, will
+work fine under both Windows '95 and NT. If however you use more
+complicated features such as changing mode or DirectDraw then you will
+definitely have to test your saver on both platforms. Here is a list of
+differences.
+<ul>
+  <li>Under NT, the saver is run on a desktop of its own. This means  
+that all the user's windows will be absent and the saver will be  
+running directly on top of the background. If you wanted to   perform
+some animation effect on top of the user's workspace   then it won't
+look very impressive on NT. </li>
+  <li>Under '95, the preview in the Display Properties dialog gets  
+terminated and restarted every time the dialog regains focus.   Under
+NT it only gets restarted in response to the Settings   button. If you
+have developed under NT, be aware that a '95   saver should be able to
+start itself a lot more quickly, and that   it <b>must</b> not affect
+the current focus. </li>
+  <li>Under NT, command-line arguments are sometimes given in the  
+form <tt>-p:####</tt> rather than <tt>/p ####</tt>. If you use   the
+code given above for parsing the command line then this   difference
+will not matter. </li>
+  <li>Under '95, the saver is expected to handle passwords itself.  
+You must respond to the <tt>/a ####</tt> command line, and you must  
+pop up a password-verification box yourself. Under NT, the saver   is
+expected to terminate itself in response to any events   that would
+require a password. If you want to implement your   own password
+routines you will have to run it under '95. </li>
+  <li>Under '95, you should pop up the password dialog box while   the
+saver is running. Under NT there are often no dialogs   that pop up
+while the saver is running. If developing under   NT, remember to keep
+an <tt>IsDialogActive</tt> flag and to   behave appropriately with
+respect to this flag. It would be   good to have your saver pop up any
+old dialog just to check   that it works. </li>
+  <li>Under NT, the system itself sends <tt>WM_CLOSE</tt> messages to
+your   saver if it thinks that some message, such as mouse movement,  
+should cause the saver to terminate. If writing an interactive   saver
+you must protect against the presumptions of the system   with a <tt>ReallyClose</tt>
+flag. </li>
+  <li>Under NT, the Display properties control panel will use the  
+string resource with ID 1, if it exists, as the name for the saver;  
+under '95 it will use the saver's long filename. Be sure that   both of
+these have the same name. </li>
+  <li>Under NT, <tt>ChangeDisplaySettings</tt> is able to change the  
+colour depth of the screen; under '95 it cannot. Maybe you should use  
+DirectDraw to change screen mode if you want a different colour depth.</li>
+</ul>
+<p></p>
+<p></p>
+<h3><a name="AnimationStopsWhenDialogAppears">Animation stops when a
+dialog appears</a></h3>
+Some people like to put animation code in their message-loop, to be
+executed whenever the message queue is empty. This has advantages: the
+animation function can be called a lot more frequently than with
+WM_TIMER; and it does not degrade user-responsiveness. However, when a
+modal dialog box is being executed, Windows runs its own internal
+message loop and the main message-loop of your application ends up not
+being called.
+<p></p>
+<p>The solution is simply to use WM_TIMER messages instead. If you want
+something faster you can use multimedia timers or multi-threading.</p>
+<p>In the ScrPlus library, written by the author of this document,
+there is a special high-performance multi-threaded timer. It sends
+timer messages to your application just like a normal WM_TIMER so you
+do not need to change any code at all, but it has speed and
+responsiveness as good as something in the message loop. You might
+consider using this library.</p>
+<p></p>
+<h3><a name="ProgramLocksUpWhenDialogAppears">Program locks up when
+dialog appears</a></h3>
+It is easy to forget to use an <tt>IsDialogActive</tt> flag to protect
+your dialogs. Suppose you forgot to set it to true before activating a
+dialog. The appearance of the dialog would cause your saver window to
+lose focus. This would cause it to send a <tt>WM_CLOSE</tt> message to
+itself, which in turn would cause it to pop up a password-verification
+dialog again. And so on.
+<p></p>
+<p>The problem can be cured by ensuring that the dialog appears as a
+child of the saver window, by ensuring that you use the IsDialogActive
+flag properly, and by putting in a <tt>DebugMessage</tt> routine as
+above.</p>
+<p>If the dialog appears as a child of NULL then it will actually
+appear underneath the WS_EX_TOPMOST saver window. That means that you
+will never see it, and hence never realise why your saver locked up.
+So: be sure to create dialogs as children of your saver window rather
+than of NULL.</p>
+<p>Another common mistake that causes lockup is when you forget to put
+a <tt>break</tt> statement at the end of a case in your <tt>SaverWindowProc</tt>.
+Perhaps the <tt>WM_CLOSE</tt> method ends up being called immediately
+after <tt>WM_SETCURSOR</tt> or something like that.</p>
+<p></p>
+<h3><a name="PerformanceDegradesSometimes">Performance degrades
+sometimes: lots of disk access</a></h3>
+When the saver is launched in full-screen mode, it runs at an <tt>IDLE_PRIORITY_CLASS</tt>.
+Some utilities such as FastFind (which comes with Microsoft Office)
+perform a scan of the hard disk periodically. If you are still awake at
+2am and are playing with a saver, then such utilities may activate
+themselves and if they do they will end up taking most of the
+processing time away from the saver. This is by design: a saver is
+meant to let important stuff happen while it is running.
+<p></p>
+<p></p>
+<h3><a name="AccessViolationWhenInstallingSaver">I get an access
+violation when I try to install a saver</a></h3>
+This problem is caused by a faulty version of <tt>DESK.CPL</tt>. This
+faulty version gets installed by the Win'98 preview and (possibly) by
+IE4. It remains there even though you uninstall the Win'98 preview. If
+you are a user, there is nothing you can do. If you are a saver
+developer, then you should write your installation routines as per <a
+ href="#InstallationOfSaver">Installation</a> above.
+<p></p>
+<h3><a name="SaverAbortsWhenChangingScreenMode">Saver aborts when
+changing screen mode</a></h3>
+When you change screen mode, a bunch of spurious <tt>WM_MOUSEMOVE</tt>
+messages get sent, and sometimes also <tt>WM_ACTIVATE</tt> messages.
+These get sent after your mode-changing call has returned. You should
+be able to detect this problem with a <tt>DebugMessage</tt> log. The
+section on <a href="#DifferentScreenModes">Different Screen Modes</a>
+suggests some possible solutions.
+<p></p>
+<p></p>
+<h2><a name="Reference">Reference</a></h2>
+<p></p>
+This chapter has information on the those API calls that are not
+mentioned in normal Microsoft documentation.
+<p></p>
+<h3><a name="PwdChangePassword">PwdChangePassword</a></h3>
+PwdChangePassword is in <tt>MPR.DLL</tt>, the Multiple Provider
+Router. It does all the password management associated with <i>Regkeyname</i>,
+including popping up a dialog (as a child of hwnd). The two reserved
+things should be zero. I'm not sure what they do. Apparently the call
+is documented somewhere in the MSDN. The call (and the DLL) exist in
+Windows '95 but not in NT.
+<p></p>
+<p></p>
+<pre>typedef VOID (WINAPI *PWDCHANGEPASSWORD) (<br>            LPCSTR lpcRegkeyname,<br>            HWND hwnd,<br>            UINT uiReserved1,<br>            UINT uiReserved2);</pre>
+<p></p>
+<p></p>
+<h4><a name="PwdChangePasswordCode">Example of using PwdChangePassword</a></h4>
+<pre>void ChangePassword(HWND hwnd)<br>{ <i>// This only ever gets called under '95, when started with the /a option.</i>
+  HINSTANCE hmpr=::LoadLibrary("MPR.DLL");
+  if (hmpr==NULL) {Debug("MPR.DLL not found: cannot change password.");return;}
+  typedef VOID (WINAPI *PWDCHANGEPASSWORD)
+      (LPCSTR lpcRegkeyname,HWND hwnd,UINT uiReserved1,UINT uiReserved2);
+  PWDCHANGEPASSWORD PwdChangePassword=
+      (PWDCHANGEPASSWORD)::GetProcAddress(hmpr,"PwdChangePasswordA");
+  if (PwdChangePassword==NULL)
+  {  FreeLibrary(hmpr);
+     Debug("PwdChangeProc not found: cannot change password");return;
+  }
+  PwdChangePassword("SCRSAVE",hwnd,0,0); FreeLibrary(hmpr);
+}</pre>
+This will pop up a change-password dialog box that relates to the
+entries stored in the registry under the key <tt>\HKEY_LOCAL_MACHINE\System\CurrentControlSet\control\PwdProvider\SCRSAVE</tt>.
+This registry key contains the following fields:
+<pre>   ChangePassword=PPChangePassword;<br>   Description=Windows screen saver;<br>   GetPasswordStatus=PPGetPasswordStatus;<br>   ProviderPath=password.cpl</pre>
+We don't have to worry about all this. But it's worth noting that <tt>PASSWORD.CPL</tt>
+contains the the function VerifyScreenSavePwd, which we use later on to
+check the password.
+<p></p>
+<p></p>
+<h3><a name="VerifyScreenSavePwd">VerifyScreenSavePwd</a></h3>
+VerifyScreenSavePwd is in <tt>PASSWORD.CPL</tt>. It pops up a dialog
+box (as child of <i>hwnd</i>) prompting for a password. If the user
+gets it wrong, it prints a message saying so and prompts for it again.
+If the user presses OK then it returns TRUE; if the user presses CANCEL,
+then it returns FALSE. The call (and the DLL) exist in Windows '95 but
+not in NT.
+<p></p>
+<p></p>
+<pre>typedef BOOL (WINAPI *VERIFYSCREENSAVEPWD)(HWND hwnd);</pre>
+<p></p>
+<p></p>
+<h4><a name="VerifyScreenSavePwdCode">Example of VerifyPassword</a></h4>
+<pre>BOOL VerifyPassword(HWND hwnd)<br>{ <i>// Under NT, we return TRUE immediately. This lets the saver quit,<br>  // and the system manages passwords. Under '95, we call VerifyScreenSavePwd.<br>  // This checks the appropriate registry key and, if necessary,<br>  // pops up a verify dialog</i>
+  OSVERSIONINFO osv; osv.dwOSVersionInfoSize=sizeof(osv); GetVersionEx(&amp;osv);
+  if (osv.dwPlatformId==VER_PLATFORM_WIN32_NT) return TRUE;
+  HINSTANCE hpwdcpl=::LoadLibrary("PASSWORD.CPL");
+  if (hpwdcpl==NULL) {<i>Debug("Unable to load PASSWORD.CPL. Aborting");</i>return TRUE;}<br>  typedef BOOL (WINAPI *VERIFYSCREENSAVEPWD)(HWND hwnd);<br>  VERIFYSCREENSAVEPWD VerifyScreenSavePwd;<br>  VerifyScreenSavePwd=<br>       (VERIFYSCREENSAVEPWD)GetProcAddress(hpwdcpl,"VerifyScreenSavePwd");<br>  if (VerifyScreenSavePwd==NULL)<br>  { <i>Debug("Unable to get VerifyPwProc address. Aborting");</i>
+    FreeLibrary(hpwdcpl);return TRUE;
+  }
+  <i>Debug("About to call VerifyPwProc");</i>
+  BOOL bres=VerifyScreenSavePwd(hwnd); FreeLibrary(hpwdcpl);
+  return bres;
+}</pre>
+<p></p>
+<p></p>
+<h3><a name="SpiScreenSaverRunning">SPI_SETSCREENSAVERRUNNING</a></h3>
+There are two calls: SPI_SETSCREENSAVERRUNNING, for a saver to tell the
+system that it is running; and SPI_GETSCREENSAVERRUNNING, for a general
+utility program to detect whether the saver is running. (In the olden
+days there used to be just SPI_SCREENSAVERRUNNING, which was exactly
+the same as the SET call). These only work under '95, '98 and NT5. For
+NT4 and earlier versions they do nothing. Note that, for the SET call,
+the &amp;oldval is <em>mandatory</em>.
+<p></p>
+<p></p>
+<pre>BOOL SystemParametersInfo(SPI_SETSCREENSAVERRUNNING,<br>                          UINT newval,<br>                          LPVOID &amp;oldval,<br>                          0);<br><br>BOOL SystemParametersInfo(SPI_GETSCREENSAVERRUNNING,<br>                          0,<br>                          LPVOID &amp;val,<br>                          0); <br></pre>
+<p></p>
+<p></p>
+<h4><a name="SpiScreenSaverRunningCode">Example of
+SPI_SETSCREENSAVERRUNNING</a></h4>
+<pre>... create window ...<br>UINT oldval;<br>if (ScrMode==smSaver) SystemParametersInfo(SPI_SETSCREENSAVERRUNNING,1,&amp;oldval,0);<br>MSG msg;<br>while (GetMessage(&amp;msg,NULL,0,0))<br>{ TranslateMessage(&amp;msg);<br>  DispatchMessage(&amp;msg);<br>}<br>if (ScrMode==smSaver) SystemParametersInfo(SPI_SETSCREENSAVERRUNNING,0,&amp;oldval,0);<br></pre>
+<p></p>
+<h3><a name="SystemAgentDetect">System_Agent_Detect</a></h3>
+For hot corners to be running, it is required both that a
+hot-corner-services program be present on the system, and that it be
+turned on. The call <tt>System_Agent_Detect</tt> tells whether or not
+the hot corner services have been turned on. (And to tell whether a DLL
+is present in the system, simply try to load it).
+<p></p>
+<p>You must cope with the possibility that different users have
+different hot-corner service programs. Windows Plus! comes with <tt>Sage.dll</tt>,
+which is one. The only other currently available program that provides
+hot corner services is ScrHots, written by the author. ScrHots runs on
+all Win32 platforms and is freely distributable. You can download it in
+the file <a href="download/install.zip">install.zip</a>, which also
+contains source code for a self-extracting screen saver installer.</p>
+<p></p>
+<pre>typedef BOOL (WINAPI *VERIFYSCREENSAVEPWD)();</pre>
+<p></p>
+<p></p>
+<h4><a name="SystemAgentDetectCode">Example of System_Agent_Detect</a></h4>
+<pre>BOOL CheckHots()<br>{ typedef BOOL (WINAPI *SYSTEMAGENTDETECT)();<br>  HINSTANCE sagedll=LoadLibrary("Sage.dll");<br>  if (sagedll!=NULL)<br>  { SYSTEMAGENTDETECT detectproc=(SYSTEMAGENTDETECT)<br>        GetProcAddress(sagedll,"System_Agent_Detect");<br>    BOOL res=FALSE;<br>    if (detectproc!=NULL) res=detectproc();<br>    FreeLibrary(sagedll);<br>    if (res) return TRUE;<br>  }<br>  HINSTANCE hotsdll=LoadLibrary("ScrHots.dll");<br>  if (hotsdll!=NULL)<br>  { SYSTEMAGENTDETECT detectproc=(SYSTEMAGENTDETECT)<br>        GetProcAddress(hotsdll,"System_Agent_Detect");<br>    BOOL res=FALSE;<br>    if (detectproc!=NULL) res=detectproc();<br>    FreeLibrary(hotsdll);<br>    if (res) return TRUE;<br>  }<br>  return FALSE;<br>}</pre>
+<p></p>
+<h3><a name="ScreenSaverChanged">Screen_Saver_Changed</a></h3>
+If hot corner services are running, and your configuration dialog makes
+a change to the current hot corners, you will have to inform the hot
+corners. As above, you must deal with the possibility that different
+hot-corner services programs might be installed on different machines.
+<p></p>
+<pre>typedef VOID (WINAPI *SCREENSAVERCHANGED)();</pre>
+<p></p>
+<p></p>
+<h4><a name="ScreenSaverChangedCode">Example of Screen_Saver_Changed</a></h4>
+<pre>void __fastcall NotifyHots()<br>{ typedef VOID (WINAPI *SCREENSAVERCHANGED)();<br>  HINSTANCE sagedll=LoadLibrary("Sage.DLL");<br>  if (sagedll!=NULL)<br>  { SCREENSAVERCHANGED changedproc=(SCREENSAVERCHANGED)<br>        GetProcAddress(sagedll,"Screen_Saver_Changed");<br>    if (changedproc!=NULL) changedproc();<br>    FreeLibrary(sagedll);<br>  }<br>  HINSTANCE hotsdll=LoadLibrary("ScrHots.dll");<br>  if (hotsdll!=NULL)<br>  { SCREENSAVERCHANGED changedproc=(SCREENSAVERCHANGED)<br>        GetProcAddress(hotsdll,"Screen_Saver_Changed");<br>    if (changedproc!=NULL) changedproc();<br>    FreeLibrary(hotsdll);<br>  }<br>}</pre>
+<p></p>
+<p class="modified"> Last updated July 2000 by <a
+ href="http://www.wischik.com/lu">Lucian Wischik</a> </p>
+</body>
+</html>

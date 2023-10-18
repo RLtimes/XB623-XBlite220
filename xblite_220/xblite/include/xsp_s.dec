@@ -1,0 +1,71 @@
+TYPE SPRITEDATA
+	STRING*128 .fileName'file name
+	XLONG .bmpWidth'BMP width
+	XLONG .bmpHeight'BMP height
+	XLONG .hMemBmp'sprite memory bitmap handle    'imageGrid
+	XLONG .hWnd'window handle									'grid
+	XLONG .x'current sprite x position in hWnd
+	XLONG .y'current sprite y position in hWnd
+	XLONG .dx'sprite speed x (offset x) in hWnd
+	XLONG .dy'sprite speed y (offset y) in hWnd
+	XLONG .scale'sprite scale in percent
+	XLONG .orient'orientation values  0=normal 1=mirror 2=flip 3=180
+	XLONG .nextID'next animation sequence sID
+	XLONG .previousID'previous animation sequence sID
+	XLONG .startFlag'flag to turn on sprite animation sequence on = $$TRUE, off = $$FALSE
+	XLONG .repeatCount'count for sprite animation
+	ULONG .bb_width'bounding box width
+	ULONG .bb_height'bounding box height
+	ULONG .bb_xOffset'bounding box x offset
+	ULONG .bb_yOffset'bounding box y offset
+	XLONG .detection'sprite collision detection  on = $$TRUE, off = $$FALSE
+	ULONG	.xMin'x min range
+	ULONG	.xMax'x max range
+	ULONG	.yMin'y min range
+	ULONG	.yMax'y max range
+END TYPE
+'
+TYPE STAGEGRID
+	XLONG .hWnd'window handle
+	XLONG .width'window width
+	XLONG .height'window height
+	XLONG .hWndStage'handle of stage window			'stageGrid
+	XLONG .sID'background sprite ID or screenGrid if $$TRUE
+	XLONG .hWndScr'handle of screen window   	'scrGrid
+	XLONG .hWndParent'parent window handle
+END TYPE
+'
+'
+EXTERNAL FUNCTION  Xsp         ()
+EXTERNAL FUNCTION  XspLoadSpriteBmp (hWnd, fileName$, @sID)
+EXTERNAL FUNCTION  XspRefreshScreen (hWnd)
+EXTERNAL FUNCTION  XspPause (msec)
+EXTERNAL FUNCTION  XspCaptureBackground (hWnd)
+EXTERNAL FUNCTION  XspScrollBackground (hWnd, dx, dy)
+EXTERNAL FUNCTION  XspAddSpriteToBackground (hWnd, sID, x, y, scale, orient)
+EXTERNAL FUNCTION  XspLoadSpriteLibraryBmp (hWnd, fileName$, @hMemBmpLib)
+EXTERNAL FUNCTION  XspCreateLibrarySprite (hMemBmpLib, x1, y1, x2, y2, @sID)
+EXTERNAL FUNCTION  XspGetSpriteInfo (sID, @fileName$, @hWnd, @hMemBmp, @w, @h, @x, @y, @dx, @dy)
+EXTERNAL FUNCTION  XspSetSpriteScale (sID, scale)
+EXTERNAL FUNCTION  XspSetSpriteOrientation (sID, orient)
+EXTERNAL FUNCTION  XspGetSpriteOrientAndScale (sID, @orient, @scale)
+EXTERNAL FUNCTION  XspDrawSprite (hWnd, sID, x, y, orient)
+EXTERNAL FUNCTION  XspGetStageSize (hWnd, @gw, @gh)
+EXTERNAL FUNCTION  XspSetSpriteSequence (sID, @sequence[])
+EXTERNAL FUNCTION  XspDrawSpriteAnimation (hWnd, @sID, direction, repeat)
+EXTERNAL FUNCTION  XspCloneSprite (sID, @sIDNew)
+EXTERNAL FUNCTION  XspSetSpritePositionAndSpeed (sID, x, y, dx, dy)
+EXTERNAL FUNCTION  XspGetSpritePositionAndSpeed (sID, @x, @y, @dx, @dy)
+EXTERNAL FUNCTION  XspCreateBoundingBox (sID, @bb_width, @bb_height, @bb_xOffset, @bb_yOffset)
+EXTERNAL FUNCTION  XspDetectCollision (sID1, sID2)
+EXTERNAL FUNCTION  XspSetSpriteDetection (sID, detection)
+EXTERNAL FUNCTION  XspDetectAllCollisions (@list[])
+EXTERNAL FUNCTION  XspDetectCollisions (sID, @list[])
+EXTERNAL FUNCTION  XspStartSpriteAnimation (sID)
+EXTERNAL FUNCTION  XspSetBackgroundBmp (hWnd, sID)
+EXTERNAL FUNCTION  XspUnloadSprites ()
+EXTERNAL FUNCTION  XspReverseSpriteDirection (sID, direction)
+EXTERNAL FUNCTION  XspDrawSpriteRange (hWnd, sID, direction, fInvert)
+EXTERNAL FUNCTION  XspSetSpriteRange (sID, xMin, xMax, yMin, yMax)
+EXTERNAL FUNCTION  XspGetSpriteRange (sID, @xMin, @xMax, @yMin, @yMax)
+'

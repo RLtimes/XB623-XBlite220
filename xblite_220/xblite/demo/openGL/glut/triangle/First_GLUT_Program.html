@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta name="GENERATOR" content="Microsoft Visual Studio 6.0">
+  <title>GameDev.net - Basics of GLUT</title>
+</head>
+<body bgcolor="#ffffff" text="#000000" link="#666699" alink="#000000"
+ vlink="#666699">
+<table border="0" cellpadding="5" cellspacing="0" width="100%">
+  <tbody>
+  <tr>
+    <td align="center"><big><big><big>Basics of GLUT</big></big></big></td>
+    <td align="right" nowrap="nowrap"><b>See Also:</b><br>
+      <a
+ href="http://www.gamedev.net/reference/list.asp?categoryid=31#57">OpenGL:GLUT
+Library</a><br>
+      <a
+ href="http://www.gamedev.net/reference/list.asp?categoryid=53#123">Sweet
+Snippets:All</a>    </td>
+  </tr>
+  </tbody>
+</table>
+<p align="center"><span class="title">Basics of GLUT</span><br>
+<span class="author">by <a href="mailto:ben@elf-stone.com">Ben Woodhouse</a></span>
+</p>
+<p><img src="screenshot.jpg" height="327" width="308" align="right"
+ alt="screenshot">In this tutorial I'll cover the basics of setting up and
+using OpenGL and GLUT with VC++. I'll take you through initializing your
+GLUT display, opening a window and displaying a triangle in it. The program
+you'll learn how to create is a foundation for more complex GLUT projects
+you might want to undertake in the future.</p>
+  
+<h1>What is GLUT?</h1>
+<p>GLUT stands for OpenGL Utility Toolkit. It's an API for OpenGL written
+by Mark Kilgard. GLUT is very easy to set up and use compared to traditional
+Win32 OpenGL, making it great for beginners. Because GLUT handles input and
+window setup, GLUT code is not platform specific, meaning any application
+you write will run on just about any platform (until you start adding DirectSound
+code, that is...).</p>
+<p>Some preliminary links:</p>
+<blockquote>  
+  <p><a
+ href="http://www.opengl.org/developers/documentation/glut/index.html">Mark
+Kilgard's GLUT page</a><br>
+  <a href="http://www.opengl.org/developers/faqs/technical/glut.htm">The
+GLUT FAQ</a><br>
+  <a
+ href="http://www.opengl.org/developers/documentation/glut/spec3.html">The
+online GLUT 3 specification</a></p>
+</blockquote>
+<h1>Getting the GLUT files</h1>
+<p>You can download the latest version of glut from <a
+ href="http://www.xmission.com/%7Enate/glut.html">here</a>.</p>
+<p>Once you've downloaded and unzipped the file, copy glut32.dll to your windows\system
+directory, glut32.lib to your compiler's lib directory and glut.h to your
+complier's include\gl directory. Now you're ready to roll.</p>
+<h1>Creating your GLUT project</h1>
+<p>Start up VC++, then create an empty console application.</p>
+<p>Link to glut32.lib, glu32.lib and opengl32.lib in project &gt; settings</p>
+<h1>The Program</h1>
+<p>This code includes headers for the libraries we'll be using and declares
+our functions.</p>
+<blockquote>
+  <pre class="code">#include &lt;windows.h&gt;               <span
+ class="codecomment">//header file for windows</span>
+#include &lt;gl\gl.h&gt;                 <span
+ class="codecomment">//header file for openGL</span>
+#include &lt;gl\glu.h&gt;                <span
+ class="codecomment">//header file for the openGL utility library</span>
+#include &lt;gl\glut.h&gt;               <span
+ class="codecomment">//header file for GLUT</span>
+
+static void redraw(void);          <span
+ class="codecomment">//declarations</span>
+int main(int argc, char **argv);
+  </pre>
+</blockquote>
+   
+<p>The argc variable contains the number of arguments passed to our program,
+while argv is a pointer to the arguments. We don't need to worry about them
+particularly, except to pass them to glutInit() so it can process any command
+line parameters sent to GLUT. The glutInit() function initialises the GLUT
+framework. </p>
+<p>The glutInitDisplayMode function is used to set up the display mode. We'll
+call it with the following flags:</p>
+<ul>
+  <li><b>GLUT_RGB</b> specifies we want an RGB colour buffer in our window
+  </li>
+  <li><b>GLUT_DOUBLE</b>specifies we want a double buffer. Double buffering
+enables us to finish drawing before our image is sent to the screen, preventing
+flicker.   </li>
+  <li><b>GLUT_DEPTH</b> specifies we want a depth buffer. The depth buffer
+ensures that objects near the camera will always be on top of those further
+away. The output tends to be a bit messy otherwise. While this isn't necessary
+when we're only drawing a single triangle, it's good practice, so we'll include
+it anyway.</li>
+</ul>
+<p>The glutCreateWindow() function creates the window we're going to be drawing
+in. glutDisplayFunc() specifies the function we'll use to draw the display,
+which we'll have to write later. GLUT will call this function whenever the
+display needs updating.</p>
+<blockquote>
+  <pre class="code">int main(int argc, char **argv)<br>{<br>  glutInit(&amp;argc,argv);                                       <span
+ class="codecomment">//initializes the GLUT framework</span>
+  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);   <span
+ class="codecomment">//sets up the display mode</span>
+  glutCreateWindow("My first GLUT program");                  <span
+ class="codecomment">//creates a window</span>
+  glutDisplayFunc(redraw);                                    <span
+ class="codecomment">//specifies our redraw function</span>
+  </pre>
+</blockquote>
+   
+<p>Next we need to set up the projection matrix. The projection matrix is
+a 4x4 matrix which is used to translate points from their positions relative
+to the camera to their positions on the screen. We use it to specify how our
+scene will be projected. In order to change it we need to call glMatrixMode()
+with GL_PROJECTION. The gluPerspective() function creates a projection matrix
+with a perspective transform for us. All we need do is specify the view angle,
+aspect ratio and the postitions of the near and far clipping planes.</p>
+<blockquote>
+  <pre class="code">  glMatrixMode(GL_PROJECTION);   <span
+ class="codecomment">//changes the current matrix to the projection matrix</span>
+
+  <span
+ class="codecomment">//sets up the projection matrix for a perspective transform</span>
+  gluPerspective(45,     <span
+ class="codecomment">//view angle</span>
+                 1.0,    <span
+ class="codecomment">//aspect ratio</span>
+                 10.0,   <span
+ class="codecomment">//near clip</span>
+                 200.0); <span
+ class="codecomment">//far clip</span>
+  </pre>
+</blockquote>
+   
+<p>When we're done we switch the current matrix to the modelview matrix. The
+modelview matrix is a 4x4 matrix used to transform points from their actual
+positions (in world space) into their positions relative to the camera. It's
+the matrix we use to specify our camera postion and the position of anything
+we draw. The glutMainLoop() function is the main loop of the GLUT framework
+and we need to call it next.</p>
+<blockquote>
+  <pre class="code">  glMatrixMode(GL_MODELVIEW);   <span
+ class="codecomment">//changes the current matrix to the modelview matrix</span>
+
+  glutMainLoop();               <span
+ class="codecomment">//the main loop of the GLUT framework</span>
+
+  return 0;
+}
+  </pre>
+</blockquote>
+   
+<p>Next we need to create our redraw() function which will draw our triangle.
+glClear() called with GL_COLOR_BUFFER_BIT and GL_DEPTH_BUFFER_BIT will clear
+the colour and depth buffers in our window. We need to do this before we start
+drawing on it.</p>
+<blockquote>
+  <pre class="code">static void redraw(void)                               <span
+ class="codecomment">//all drawing code goes here</span>
+{
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  <span
+ class="codecomment">//clears the colour and depth buffers</span>
+  </pre>
+</blockquote>
+   
+<p>Now we're almost ready to start drawing. First though we need to store
+our camera's position ((0,0,0) on the x, y and z axes - the center of our
+world) with glPushMatrix() and then move it 100 on the Z axis, effectively
+moving the camera backwards, enabling us to see what we're drawing. Because
+the modelview matrix specifies where we are drawing relative to the camera,
+to move the camera we need to translate the matrix by the reverse of the translation
+we want from the camera, so to move the camera (0,0,100) we translate the
+modelview matrix (0,0,-100). This has the same effect as moving our triangle
+(0,0,-100).</p>
+<blockquote>
+  <pre class="code">  glPushMatrix();         <span class="codecomment">//saves the current matrix on the top of the matrix stack</span>
+  glTranslatef(0,0,-100); <span
+ class="codecomment">//translates the current matrix 0 in x, 0 in y and -100 in z</span>
+  </pre>
+</blockquote>
+   
+<p>Now we're going to draw the triangle. In order to do this, we need to call
+glBegin(GL_TRIANGLES), which tells OpenGL we're going to begin drawing triangles.
+OpenGL will then treat every group of three vertices as a triangle, and when
+glEnd() is called it will render the triangle(s) to our window.</p>
+<p>Between the glBegin() and glEnd() we need to specify 3 vertices with glVertex3f.
+The three values specified in the each glVertex3f() call are the vertex's
+X, Y and Z coordinates in world space. We can also specify a colour for each
+of the vertices by using glColor3f() before each call to glVertex3f. The parameters
+we call glColor3f() with are the red, green and blue elements (from 0 to
+1), which make up the colour. OpenGL will then blend the colours across the
+triangle.</p>
+<blockquote>
+  <pre class="code">  glBegin(GL_TRIANGLES);  <span class="codecomment">//tells OpenGL that we're going to start drawing triangles</span>
+  glColor3f(1,0,0);       <span
+ class="codecomment">//sets the current colour to red</span>
+  glVertex3f(-30,-30,0);  <span
+ class="codecomment">//specifies the first vertex of our triangle</span>
+  
+  glColor3f(0,1,0);       <span
+ class="codecomment">//sets the current colour to green</span>
+  glVertex3f(30,-30,0);   <span
+ class="codecomment">//specifies the second vertex of our triangle</span>
+  
+  glColor3f(0,0,1);       <span
+ class="codecomment">//sets the current colour to blue</span>
+  glVertex3f(-30,30,0);   <span
+ class="codecomment">//specifies the third vertex of our triangle</span>
+  glEnd();                <span
+ class="codecomment">//tells OpenGL that we've finished drawing</span>
+  </pre>
+</blockquote>
+<p>Next we retrieve our saved matrix from the top of the matrix stack with
+glPopMatrix(), setting the camera's position back to (0,0,0), ready for the
+next frame. Because we're using double buffering, all drawing has been done
+on the back buffer (the invisible buffer). Now the frame is completed we call
+glutSwapBuffers() to swap the front buffer (the visible buffer) and back
+buffer over, making what we have drawn visible.</p>
+<blockquote>
+  <pre class="code">  glPopMatrix();          <span class="codecomment">//retrieves our saved matrix from the top of the matrix stack</span>
+  glutSwapBuffers();      <span
+ class="codecomment">//swaps the front and back buffers</span>
+}                         <span
+ class="codecomment">//The end of our program!</span>
+  </pre>
+</blockquote>
+<p>That's it! The end of our program and this tutorial. Build the program
+and try it out. </p>
+<p>Hopefully with the help of this tutorial you should now be able to build
+and initialize a GLUT program and draw triangles. If you want to give some
+feedback on this tutorial or have any questions, please <a
+ href="mailto:ben@elf-stone.com">email me</a>.</p>
+<blockquote>
+  <p><a
+ href="http://www.gamedev.net/reference/articles/elfstone/glut1.zip">Code
+for this tutorial</a></p>
+</blockquote>
+<p align="center" class="maintext-2">This tutorial is Copyright &copy; 2001
+Ben Woodhouse</p>
+<p align="center"><b><a
+ href="http://www.gamedev.net/community/forums/topic.asp?key=featart&amp;uid=1680&amp;forum_id=35&amp;Topic_Title=Basics+of+GLUT">Discuss
+this article in the forums</a></b></p>
+<p><br>
+<span class="maintext-2">Date this article was posted to GameDev.net: <b>1/29/2002</b>
+<br>
+(Note that this date does not necessarily correspond to the date the article
+was written)</span></p>
+<p align="center">&copy; 1999-2002 Gamedev.net. All rights reserved. <a
+ href="http://www.gamedev.net/info/legal.htm#copyright"><u>Terms of Use</u></a>
+<a href="http://www.gamedev.net/info/legal.htm#privacy"><u>Privacy Policy</u></a>
+<br>
+<span class="maintext-1">Comments? Questions? Feedback? <a
+ href="mailto:webmaster@gamedev.net">Send us an e-mail!</a></span></p>
+<br>
+</body>
+</html>

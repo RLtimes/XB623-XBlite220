@@ -1,0 +1,46 @@
+'
+'
+' #########################  David SZAFRANSKI
+' #####  msimg32.dec  #####  copyright 2002
+' #########################  Windows XBLite declarations for Windows "msimg32"
+'
+' subject to LGPL license - see COPYING_LIB
+' for Windows XBLite
+'
+TYPE TRIVERTEX
+	ULONG	.x
+	ULONG	.y
+	USHORT	.Red
+	USHORT	.Green
+	USHORT	.Blue
+	USHORT	.Alpha
+END TYPE
+'
+TYPE GRADIENT_TRIANGLE
+	ULONG	.Vertex1
+	ULONG	.Vertex2
+	ULONG	.Vertex3
+END TYPE
+'
+TYPE GRADIENT_RECT
+	ULONG	.UpperLeft
+	ULONG	.LowerRight
+END TYPE
+'
+TYPE BLENDFUNCTION
+	UBYTE .BlendOp
+	UBYTE .BlendFlags
+	UBYTE .SourceConstantAlpha
+	UBYTE	.AlphaFormat
+END TYPE
+'
+EXTERNAL FUNCTION  vSetDdrawflag ()
+EXTERNAL FUNCTION  AlphaBlend (hdcDest, nXOriginDest, nYOrigDest, nWidthDest, nHeightDest, hdcSrc, nXOriginSrc, nYOriginSrc, nWidthSrc, nHeightSrc, BLENDFUNCTION blendFunction)
+EXTERNAL FUNCTION  DllInitialize ()
+EXTERNAL FUNCTION  GradientFill (hdc, vertexAddr, numVertex, meshAddr, numMesh, mode)
+EXTERNAL FUNCTION  TransparentBlt (hdcDest, nXOriginDest, nYOriginDest, nWidthDest, nHeightDest, hdcSrc, nXOriginSrc, nYOriginSrc, nWidthSrc, hHeightSrc, crTransparent)
+'
+$$GRADIENT_FILL_RECT_H = 0x0 
+$$GRADIENT_FILL_RECT_V = 0x1
+$$GRADIENT_FILL_RECT_TRIANGLE = 0x2
+$$GRADIANT_FILL_OP_FLAG = 0xFF 

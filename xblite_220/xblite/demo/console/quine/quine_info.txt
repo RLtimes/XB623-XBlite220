@@ -1,0 +1,15 @@
+
+What is a quine?
+
+A quine is a self-duplicating program which prints out its
+exact own source code. Every character in the output from the
+program is a duplicate of the program's text. This includes
+EOL characters like CR(\n) and LF(\n).
+
+For more info on quines, see
+
+http://www.nyx.net/~gthompso/quine.htm
+
+or
+
+http://www.madore.org/~david/computers/quine.html

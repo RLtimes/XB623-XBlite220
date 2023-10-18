@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>DevCentral - Using OpenGL in Visual C++: Part IV</title>
+     
+  <meta http-equiv="CONTENT-TYPE"
+ content="TEXT/HTML; CHARSET=ISO-8859-1">
+  
+  <meta name="keywords"
+ content="ITI, Interface, custom, software, development, technology, technologies, devcentral, devjournal, programmers, program, web, technical, project, professional, programming, design, application, ASP, Internet, developer, C, C++, VB, Java, VBScript, JavaScript, Swing, ASP, HTML, PHP, Windows, NT, 2000, UNIX, Linux, SQL, Server, Oracle, Microsoft, Win32, Transaction, MFC, ATL, OLE, JDBC, ODBC,  ADO, Object, Oriented, COM, DCOM,  ActiveX, CORBA, web-based, tools, Raleigh, NC, RTP, Triangle, Research, article, tutorial, SourceVizor, ITCLib">
+  
+  <meta name="description"
+ content="DevCentral - Articles and tutorials with easy to understand examples for the seasoned professional to the student.">
+</head>
+<body bgcolor="#ffffff" leftmargin="0" topmargin="0">
+<!-- This is the include file for the header -->
+<table width="750" border="0" cellspacing="0" cellpadding="0">
+	<tbody>
+    <tr valign="top">
+		 				 				 		<td width="5"><img
+ src="Using%20OpenGL%20Part%20IV_files/spacer.gif" width="5"></td>
+		 		<td width="454"><br>
+			<!-- This is the main body text --> <big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="3"><big><b>Using OpenGL
+in Visual C++:  Part IV</b></big></font>                <font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Simple 3-D Graphics</big></font></big>
+					        
+      <p align="right"><big>                    <font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="2"><big><i><b>by Alan
+Oursland</b></i></big></font>                </big></p>
+<!-- \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\   End TITLE SECTION -->
+        <!-- PDF File Download --><!-- /////////////////////////////////////////// Begin CONTENT -->
+      <big><a
+ href="http://download.iftech.com/DevCentral/source/openGL_part4.zip"><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>[Download the
+example source]</big></font></a>  <font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="3"><big><b>Simple 3-D
+Graphics</b></big></font></big>      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		The sample program presented in this section will show you
+how to use basic 3-D graphics. 		It will show you how to set up a perspective
+view, define and object and transform that object in space.  		This section
+assumes some knowledge of graphics. If you don't know what a word means, you
+can probably look it up in most graphics books. 		The Foley and Van Dam book
+listed on this page will definitely have the definitions. 	</big></font>
+     </big></p>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Create an OpenGL window with double buffering enabled. Set
+up 		the view class OnSize and OnPaint message handlers just as they 		are
+in the previous program. Add a RenderScene function to the 		document class,
+but do not put any OpenGL commands into it yet. 	</big></font></big></p>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		First we need to change our viewing coordinate system. gluOrtho2D,
+		the function we have been calling to set up our projection matrix, 		actually
+creates a 3 dimensional view with the near clipping plane 		at z=-1 and the
+far clipping plane at 1. All of the "2-D" 		commands we have been calling
+have actually been 3-D calls where 		the z coordinate was zero. Surprise!
+You've been doing 3-D programming 		all along. To view our cube, we would
+like to use perspective 		projection. To set up a perspective projection we
+need to change 		OnSize to the following: 	</big></font></big></p>
+      
+      <pre><big><font face="courier new" size="1" color="Navy"><big>void CGLSample4View::OnSize(UINT nType, int cx, int cy) <br>{<br>   CView::OnSize(nType, cx, cy);<br> <br>   GLsizei width, height;<br>   GLdouble aspect;<br><br>   width = cx;<br>   height = cy;<br><br>   if (cy==0)<br>      aspect = (GLdouble)width;<br>   else<br>      aspect = (GLdouble)width/(GLdouble)height;<br><br>   glViewport(0, 0, width, height);<br>   glMatrixMode(GL_PROJECTION);<br>   glLoadIdentity();<br>   gluPerspective(45, aspect, 1, 10.0);<br>   glMatrixMode(GL_MODELVIEW);<br>   glLoadIdentity();<br><br>   glDrawBuffer(GL_BACK);<br>}</big></font></big></pre>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		For those who didn't heed my warning above, orthogonal projection
+		maps everything in three dimensional space onto a two dimensional 		surface
+at right angles. The result is everything looks the same 		size regardless
+of its distance from the eye point. Perspective 		project simulates light
+passing through a point (as if you were 		using a pinhole camera). The result
+is a more natural picture 		where distant objects appear smaller. The gluPerspective
+call above 		sets the eye point at the origin, gives us a 45 angle field of
+		view, a front clipping plane at 1, and a back clipping plane at 		10. 	</big></font></big></p>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>Now lets draw our cube. Edit RenderScene to look like this:
+	</big></font></big></p>
+      
+      <pre><big><font face="courier new" size="1" color="Navy"><big>void CGLSample4Doc::RenderScene(void)<br>{<br>   glClear(GL_COLOR_BUFFER_BIT);<br><br>   glPushMatrix();    <br>      glTranslated(0.0, 0.0, -8.0);<br>      glRotated(m_xRotate, 1.0, 0.0, 0.0);<br>      glRotated(m_yRotate, 0.0, 1.0, 0.0);<br><br>      glBegin(GL_POLYGON);<br>         glNormal3d(  1.0,  0.0,  0.0);<br>         glVertex3d(  1.0,  1.0,  1.0);<br>         glVertex3d(  1.0, -1.0,  1.0);<br>         glVertex3d(  1.0, -1.0, -1.0);<br>         glVertex3d(  1.0,  1.0, -1.0);<br>      glEnd();<br><br>      glBegin(GL_POLYGON);<br>         glNormal3d( -1.0,  0.0,  0.0);<br>         glVertex3d( -1.0, -1.0,  1.0);<br>         glVertex3d( -1.0,  1.0,  1.0);<br>         glVertex3d( -1.0,  1.0, -1.0);<br>         glVertex3d( -1.0, -1.0, -1.0);<br>      glEnd();<br><br>      glBegin(GL_POLYGON);<br>         glNormal3d(  0.0,  1.0,  0.0);<br>         glVertex3d(  1.0,  1.0,  1.0);<br>         glVertex3d( -1.0,  1.0,  1.0);<br>         glVertex3d( -1.0,  1.0, -1.0);<br>         glVertex3d(  1.0,  1.0, -1.0);<br>      glEnd();                  <br><br>      glBegin(GL_POLYGON);<br>         glNormal3d(  0.0, -1.0,  0.0);<br>         glVertex3d( -1.0, -1.0,  1.0);<br>         glVertex3d(  1.0, -1.0,  1.0);<br>         glVertex3d(  1.0, -1.0, -1.0);<br>         glVertex3d( -1.0, -1.0, -1.0);<br>      glEnd();<br><br>      glBegin(GL_POLYGON);<br>         glNormal3d(  0.0,  0.0,  1.0);<br>         glVertex3d(  1.0,  1.0,  1.0);<br>         glVertex3d( -1.0,  1.0,  1.0);<br>         glVertex3d( -1.0, -1.0,  1.0);<br>         glVertex3d(  1.0, -1.0,  1.0);<br>      glEnd();<br><br>      glBegin(GL_POLYGON);<br>         glNormal3d(  0.0,  0.0, -1.0);<br>         glVertex3d( -1.0,  1.0, -1.0);<br>         glVertex3d(  1.0,  1.0, -1.0);<br>         glVertex3d(  1.0, -1.0, -1.0);<br>         glVertex3d( -1.0, -1.0, -1.0);<br>      glEnd();<br>   glPopMatrix();<br>}</big></font></big></pre>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Add member variables to the document class for m_xRotate
+and m_yRotate 		(look at the function definitions to determine the correct
+type). 		Add member variables and event handlers to the view class to modify
+		the document variables when you drag with the left mouse button 		just like
+we did in the last example (hint: Handle the WM_LBUTTONDOWN, 		WM_LBUTTONUP,
+and WM_MOUSEMOVE events. Look at the sample source 		code if you need help).
+Compile and run the program. You should 		see a white cube that you can rotate.
+You will not be able to 		see any discernible feature yet since the cube has
+no surface 		definition and there is no light source. We will add these features
+		next. 	</big></font></big></p>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Add the following lines to the beginning of RenderScene:
+	</big></font></big></p>
+      
+      <pre><big><font face="courier new" size="1" color="Navy"><big>GLfloat RedSurface[] = { 1.0f, 0.0f, 0.0f, 1.0f};<br>GLfloat GreenSurface[] = { 0.0f, 1.0f, 0.0f, 1.0f};<br>GLfloat BlueSurface[] = { 0.0f, 0.0f, 1.0f, 1.0f};</big></font></big></pre>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		These define surface property values. Once again, the numbers
+		represent the red, green, blue and alpha components of the surfaces. 		The
+surface properties are set with the command glMaterial. Add 		glMaterialCalls
+to the following locations: 	</big></font></big></p>
+      
+      <pre><big><font face="courier new" size="1" color="Navy"><big><b>glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, RedSurface);</b>
+glBegin(GL_POLYGON);
+   ...
+glEnd();
+
+glBegin(GL_POLYGON);
+   ...
+glEnd();
+
+<b>glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, GreenSurface);</b>
+glBegin(GL_POLYGON);
+   ...
+glEnd();                  
+
+glBegin(GL_POLYGON);
+   ...
+glEnd();
+
+<b>glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, BlueSurface);</b>
+glBegin(GL_POLYGON);
+   ...
+glEnd();
+
+glBegin(GL_POLYGON);
+   ...
+glEnd();</big></font></big></pre>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		These new calls make two of the cube faces red, two faces
+green, 		and two faces blue. The commands set the ambient color for front
+		and back of each face. However, the cube will still appear featureless
+		until the lighting model is enabled. To do this add the following 		command
+to the end of CGLSample4View::OnSize: 	</big></font></big></p>
+      
+      <pre><big><font face="courier new" size="1" color="Navy"><big>glEnable(GL_LIGHTING);</big></font></big></pre>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Compile and run the program. You should see one of the blue
+faces 		of the cube. Rotate the cube with your mouse. You will notice 		the
+cube looks very strange. Faces seem to appear and disappear 		at random. This
+is because we are simply drawing the faces of 		the cube with no regard as
+to which is in front. When we draw 		a face that is in back, it draws over
+any faces in front of it 		that have been drawn. The solution to this problem
+is z-buffering. 	</big></font></big></p>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		The z-buffer holds a value for every pixel on the screen.
+This 		value represents how close that pixel is to the eye point. Whenever
+		OpenGL attempts to draw to a pixel, it checks the z-buffer to 		see if the
+new color is closer to the eye point than the old color. 		If it is the pixel
+is set to the new color. If not, then the pixel 		retains the old color. As
+you can guess, z-buffering can take 		up a large amount of memory and CPU
+time. The cDepthBits parameter 		in the PIXELFORMATDESCRIPTOR we used in
+SetWindowPixelFormat defines 		the number of bits in each z-buffer value.
+Enable z-buffering 		by adding the following command at the end of OnSize:
+	</big></font></big></p>
+      
+      <pre><big><font face="courier new" size="1" color="Navy"><big>glEnable(GL_DEPTH_TEST);</big></font></big></pre>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		We also need to clear the z-buffer when we begin a new drawing.
+		Change the glClear command in RenderScene to the following: 	</big></font>
+      </big></p>
+      
+      <pre><big><font face="courier new" size="1" color="Navy"><big>glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</big></font></big></pre>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>Compile and run the program to see the results. 	</big></font>
+      </big></p>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		We now have a colorful cube that rotates in space and draws
+correctly, 		but it is very faint. Let's add a light to the scene so that
+we 		can see the cube better. Add the following declaration to the 		beginning
+of RenderScene: 	</big></font></big></p>
+      
+      <pre><big><font face="courier new" size="1" color="Navy"><big>GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 0.1f };<br>GLfloat LightDiffuse[] = { 0.7f, 0.7f, 0.7f, 0.7f };<br>GLfloat LightSpecular[] = { 0.0f, 0.0f, 0.0f, 0.1f };<br>GLfloat LightPosition[] = { 5.0f, 5.0f, 5.0f, 0.0f };</big></font></big></pre>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		These will serve as the property values for our light. Now
+add 		the following commands just after glClear in RenderScene: 	</big></font>
+      </big></p>
+      
+      <pre><big><font face="courier new" size="1" color="Navy"><big>glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient);<br>glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse);<br>glLightfv(GL_LIGHT0, GL_SPECULAR, LightSpecular);<br>glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);<br>glEnable(GL_LIGHT0);</big></font></big></pre>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		glLight defines properties for light sources. OpenGL's light
+sources 		are all created within the implementation of OpenGL. Each light
+		source has an identifier GL_LIGHT<i>i</i> where <i>i</i> is zero 		to GL_MAX_LIGHTS.
+The above commands set the ambient, diffuse, 		and specular properties, as
+well as the position, of light zero. 		glEnable(GL_LIGHT0) turns on the light.
+	</big></font></big></p>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		The program is currently wasting time by drawing the interior
+		faces of the cube with our colored surfaces. To fix this, change 		the GL_FRONT_AND_BACK
+parameter in all of the glMaterialfv calls 		to GL_FRONT. We also want to
+set the diffuse reflectivity of the 		cube faces now that we have a light
+source. To do this, change 		the GL_AMBIENT parameter in the glMaterialfv
+calls to GL_AMBIENT_AND_DIFFUSE. 		Compile and run the program. 	</big></font></big></p>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		You now have a program that displays a lighted, multi-colored
+		cube in three dimensions that uses z-buffering and double buffering. 		Go
+ahead and pat yourself on the back. You deserve it. 	</big></font></big></p>
+      <big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="3"><big><b>Conclusion</b></big></font></big>
+      
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		This concludes the construction of GLSample4 and this tutorial.
+		You should now know how to set up an OpenGL program in Windows, 		and should
+also understand some of the basic graphics commands. 		If you wish to explore
+OpenGL further, I recommend studying the  		sample programs in the Microsoft
+Platform SDK. If you would  		like to learn more about graphics in general,
+		I recommend the following books. It really is necessary to understand 		the
+basics of the material in either of these books if you want 		to do any serious
+3-D graphics. 	</big></font></big></p>
+      
+      <ul>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Foley, J. D. and
+Dam, A. V. and Feiner, S. K. and Hughes., J. F. <u>Computer Graphics, Principles
+and Practice</u>. Addison-Wesley Publishing Company: Reading, Massachusetts,
+1990</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Hill, F. S. <u>Computer
+Graphics</u>. MacMillian Publishing Company: New York, 1990.</big></font></big></li>
+        <big></big>      
+      </ul>
+      <big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>You
+may also visit these sites to learn more about OpenGL programming:</big></font></big>
+      
+      <ul>
+        <big>	</big><li><big><a href="http://www.opengl.org/"><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>OpenGL WWW Center</big></font></a></big></li>
+        <big>	</big><li><big><a
+ href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/opengl/ntopnglo_0e0o.asp"><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Microsoft OpenGL
+Information Sheet</big></font></a></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Microsoft also
+offers the following OpenGL articles in </big></font><a
+ href="http://msdn.microsoft.com/"><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>MSDN Online</big></font></a></big></li>
+        <big>	</big><li><big>		</big>          
+          <ul>
+            <big>			</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Windows NT OpenGL:
+Getting Started</big></font></big></li>
+            <big>			</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>OpenGL I: Quick
+Start</big></font></big></li>
+            <big>			</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>OpenGL II: Windows
+Palettes in RGBA Mode</big></font></big></li>
+            <big>			</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>OpenGL III: Building
+an OpenGL C++ Class</big></font></big></li>
+            <big>			</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>OpenGL IV: Color
+Index Mode</big></font></big></li>
+            <big>			</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>OpenGL V: Translating
+Windows DIBs</big></font></big></li>
+            <big>			</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Usenet Graphics
+Related FAQs</big></font></big></li>
+            <big>		</big>          
+          </ul>
+          <big>	</big></li>
+        <big></big>      
+      </ul>
+      <big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>SAMPLE:
+MFCOGL a Generic MFC OpenGL Code Sample (Q127071)</big></font></big>    
+ 
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Good luck and happy programming.  I would appreciate any
+comments or suggestions for this tutorial. Please email me at <a
+ href="mailto:naoursla@bellsouth.net"><i>naoursla@bellsouth.net</i></a>. Thanks!
+	</big></font></big></p>
+      <big></big><big>	</big><big></big><big></big>        
+      <table border="1">
+        <tbody>
+          <tr>
+            <td><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>Developed Under:<br>
+            <br>
+	Visual C++ 5+</big></font></big></td>
+            </tr>
+          
+        </tbody>      
+      </table>
+			 		</td>
+		<!-- RHS Margin -->				 		<!-- RHS divider line -->		<td width="1"
+ bgcolor="#48115b"><big>			<img
+ src="Using%20OpenGL%20Part%20IV_files/spacer.gif">		</big></td>
+		<!-- RHS Margin -->				<!-- RHS proper -->			</tr>
+  
+  </tbody>
+</table>
+<!-- This is the include file for the footer --><!-- End Footer --><br>
+<br>
+</body>
+</html>

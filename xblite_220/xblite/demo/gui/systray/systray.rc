@@ -1,0 +1,32 @@
+#include "winres.h"
+
+face1    ICON    face1.ico
+face2    ICON    face2.ico
+face3    ICON    face3.ico
+face4    ICON    face4.ico
+face5    ICON    face5.ico
+
+100 DIALOG 103, 94, 78, 160
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Select Icon"
+FONT 8, "MS Sans Serif"
+BEGIN
+  CONTROL  "", 101, "Button", BS_AUTORADIOBUTTON, 13, 19, 12, 10
+  CONTROL  "", 102, "Button", BS_AUTORADIOBUTTON, 13, 45, 12, 10
+  CONTROL  "", 103, "Button", BS_AUTORADIOBUTTON, 13, 70, 12, 10
+  CONTROL  "", 104, "Button", BS_AUTORADIOBUTTON, 13, 99, 12, 10
+  CONTROL  "", 105, "Button", BS_AUTORADIOBUTTON, 13, 132, 12, 10
+  ICON     "FACE1", -1, 33,  12, 18, 20
+  ICON     "FACE2", -1, 33,  38, 18, 20
+  ICON     "FACE3", -1, 33,  64, 18, 20
+  ICON     "FACE4", -1, 33,  93, 18, 20
+  ICON     "FACE5", -1, 33, 125, 18, 20
+END
+
+POPUPMENU MENU
+  BEGIN
+    POPUP "&Tray"
+      BEGIN
+        MENUITEM "Exit Tray Example", 106
+      END
+  END

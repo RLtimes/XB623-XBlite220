@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>The m4 Macro Package | Linux Journal</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <base href="http://www.linuxjournal.com/">
+  <style type="text/css" media="all">@import "misc/drupal.css";</style>
+  <link rel="stylesheet" type="text/css" media="screen"
+ href="menuExpandable3.css">
+  <style type="text/css" media="all">@import "sites/default/themes/linuxjournal/style.css";</style>
+</head>
+<body bgcolor="#ffffff">
+<br>
+<table id="content" border="0" cellpadding="15" cellspacing="0"
+ width="100%">
+  <tbody>
+    <tr>
+      <td valign="top">
+      <div id="main">
+      <h1 class="title">The m4 Macro Package</h1>
+      <p><span class="submitted">By <a
+ href="http://www.linuxjournal.com/user/800993"
+ title="View user profile.">Robert Adams</a> on Mon,
+2002-04-01 02:00.</span></p>
+      <p>When you installed Linux, you installed a lot of cool
+programs, many of which you use every day. At the
+same time hundreds of little utilities also got installed, simply
+because they were required by the bigger,
+more elaborate applications. However, many of these little utilities
+are extremely useful in their own right.
+This article describes one of these second-class utilities: m4.</p>
+      <p><span class="bold"><b>m4</b></span> is a macro processor,
+meaning that it copies its input to the output,
+expanding macros along the way. In this regard it's similar to another
+macro processor you're probably
+already familiar with: cpp (C Pre-Processor). Like cpp, m4 originally
+was written as the pre-processor for a
+programming language (Rational FORTRAN); however, m4 is much more
+powerful and feature-rich than cpp, which
+makes it much more useful than just defining constants in programs.</p>
+      <p>Being a macro processor, m4 certainly provides the ability to
+define simple macros, but it goes much
+further. You also can define parameterized macros (macros with
+arguments), conditionally include text into
+the output stream, do looping via recursion, run a shell command and
+insert its output into the output
+stream, include a file, perform simple string operations (length,
+substring search, regexp search, etc.),
+perform simple integer arithmetic and much more.</p>
+      <p>The examples that follow illustrate many of the features of
+m4, but this article can't do justice to
+everything m4 can do for you. Take a look at the info page (see
+Resources) for a complete description. Also,
+the examples below are abbreviated versions of m4 macros that I
+actually use. You can find the full source at
+my web page listed in Resources.</p>
+      <p>A word of warning from the m4 info page:</p>
+      <div class="blockquote">
+      <blockquote class="blockquote">
+        <p>Some people [find] m4 to be fairly addictive...learning how
+to write complex m4 sets of macros....Once
+really addicted, users pursue writing of sophisticated m4 applications
+even to solve simple
+problems....Beware that m4 may be dangerous for the health of
+compulsive programmers.</p>
+      </blockquote>
+      </div>
+      </div>
+      <div class="simplesect" lang="en">
+      <div class="titlepage">
+      <h2 class="title"><a name="N0x850ca10.0x8573c0c"></a>Defining and
+Using Macros</h2>
+      </div>
+      <p>The basic tool of m4 is the macro. Macros are defined with the
+define command. For example, <b>define(`hello', `Hello, World')</b>
+defines a macro called
+hello. Notice the quote characters ` and '.
+These group words together to form phrases, and when they surround a
+single word they inhibit macro
+expansion. Usually, m4 will expand macros within both the macro name
+and the macro body unless you tell it
+not to by quoting.</p>
+      <p>Like cpp, you don't need any special commands or prefix
+characters to use macros. Everywhere the macro
+name appears in the input stream, m4 will substitute the macro body.</p>
+      <p>To run m4, simply give it the name of the file(s) to use as
+input. It reads through the input, expanding
+macros as it goes, and generates text on the standard output.</p>
+      <p>Assume we have the following file called sample.m4:</p>
+      <pre class="programlisting"><tt>define(`hello', `Hello, World')<br>hello, welcome to m4!<br></tt><br>      </pre>
+      <p>If we run this file through m4 with the command</p>
+      <pre class="programlisting"><tt>m4 sample.m4 &gt; sample.txt<br></tt><br>      </pre>
+it produces the following output:
+      <pre class="programlisting"><tt>Hello, World, welcome to m4!<br></tt><br>      </pre>
+      <br>
+      <br>
+      </div>
+      <div class="simplesect" lang="en">
+      <div class="titlepage">
+      <h2 class="title"><a name="N0x850ca10.0x8573df0"></a>HTML Example</h2>
+      </div>
+      <p>As I said above, m4 goes beyond simple macros. This example
+demonstrates some of m4's advanced features by
+defining some macros to ensure that HTML pages all have the same look
+and feel. HTML purists probably could
+do this with JavaScript and CSS, but it's so easy with m4 and doesn't
+require anything special from the
+browser.</p>
+      <p>Four macros are defined: one to produce the HTML header, a
+second to create a banner at the top of the
+HTML page, a third to create banners within an HTML page (like section
+headers) and a final one to do some
+housekeeping at the end of the page. We put these macros into a file
+called html.m4 and use it as a macro
+package later.</p>
+      <p>First, the macro to start an HTML page:</p>
+      <pre class="programlisting"><tt>define(`START_HTML',<br>`&lt;html&gt;<br>&lt;head&gt;<br>  &lt;meta http-equiv="Content-Type" content="text/html;<br>   charset=iso-8859-1"&gt;<br>  &lt;meta name="Author" content="D. Robert Adams"&gt;<br>  &lt;title&gt;$1&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body text="#000000"<br>  ifdef(`BACKGROUND_IMAGE',<br>        `background="BACKGROUND_IMAGE"')<br>  bgcolor="#e5e5e5" link="#3333ff"<br>vlink="#000099"<br>  alink="#ffffff"&gt;<br>')<br></tt><br>      </pre>
+      <p>Line one defines a macro called START_HTML that expands to all
+the text that follows. Note the use of $1
+on line seven. This expands to the first macro argument, which will
+become the page's title (see the next
+section for how these macros are used). Also note the use of m4's ifdef
+macro on line 11. <span class="bold"><b>ifdef</b></span> checks if a
+macro has been defined. If it has, it includes the text given in the
+second argument. In this case, ifdef checks if BACKGROUND_IMAGE has
+been defined. If it has, we include the
+HTML code to use the image as the web page's background.</p>
+      <p>Next comes the page header macro:</p>
+      <pre class="programlisting"><tt>define(`PAGE_HEADER',<br>`&lt;table border="0" background="steel.jpg"<br>width="100%"&gt;<br>  &lt;tr&gt;<br>    &lt;td align="left"&gt;$1&lt;/td&gt;<br>    &lt;td align="right"&gt;$2&lt;/td&gt;<br>  &lt;/tr&gt;<br>&lt;/table&gt;<br>&lt;div align=right&gt;<br>  Last Modified: esyscmd(`date')<br>&lt;/div&gt;<br>')<br></tt><br>      </pre>
+      <p>Again, note the use of $1 and $2 on lines four and five that
+get expanded with macro arguments. Further,
+note the esyscmd() macro on line nine. <span class="bold"><b>esyscmd()</b></span>
+tells m4 to run the given
+shell command and insert its output at the given location. In this
+case, we run ``date'' to produce a
+timestamp in our document.</p>
+      <p>Next, we create the macro to make a section banner within the
+page. This uses nothing you haven't seen
+before:</p>
+      <pre class="programlisting"><tt>define(`HTML_BANNER',<br>`&lt;table border="0"<br>background="steel.jpg"<br>width="100%"&gt;<br>  &lt;tr&gt;<br>    &lt;td&gt;<br>      &lt;img src="$2"&gt;<br>      &lt;h2&gt;$1&lt;/h2&gt;<br>    &lt;/td&gt;<br>  &lt;/tr&gt;<br>&lt;/table&gt;<br>')<br></tt><br>      </pre>
+      <p>The final piece necessary is the macro to close the HTML
+``body'' and ``html'' tags:</p>
+      <pre class="programlisting"><tt>define(`END_HTML', `&lt;/body&gt;&lt;/html&gt;')<br></tt><br>      </pre>
+Given the above four macros, creating a web page is extraordinarily
+easy. Create a file (index.m4) that
+contains calls to our HTML macros. The only thing new is the include
+macro that inserts our HTML macros:
+      <pre class="programlisting"><tt>include(`html.m4')<br>define(`BACKGROUND_IMAGE', `bg.jpg')<br>START_HTML(`Sample Page')<br>PAGE_HEADER(`computer.jpg', `Sample HTML<br>Page')<br>HTML_BANNER(`img1.jpg', `News')<br>HTML_BANNER(`img2.jpg', `Downloads')<br>END_HTML<br></tt><br>      </pre>
+Once we've declared the macros and a file that uses them, the final
+step is to run m4 to create the HTML
+page. The command is:
+      <pre class="programlisting"><tt>m4 index.m4 &gt; index.html<br></tt><br>      </pre>
+That's it! With just seven lines of code we create a fully functional
+HTML document. By using the macros to
+create other HTML pages, every page will have the same look and feel.
+Furthermore, we can change the look by
+simply changing the macro definitions and re-creating the HTML files. <br>
+      <br>
+      </div>
+      <div class="simplesect" lang="en">
+      <div class="titlepage">
+      <h2 class="title"><a name="N0x850ca10.0x8574108"></a>A Simple
+Database Example</h2>
+      </div>
+      <p>In this second example, we create a ``database'' of exam
+questions for a course. The goals are 1) to
+manage exam questions in a single repository, 2) to be able to create a
+LaTeX-format exam by simply choosing
+which questions to include and 3) to produce an answer key with equally
+little effort.</p>
+      <p>The question database consists of an m4 macro for each
+question. We store the macros in a file called
+questions.m4. For example:</p>
+      <pre class="programlisting"><tt>define(`QUESTION_1',<br>  `Why did the chicken cross the road?<br>  ANSWER(1in, `To get to the other side')<br>')<br></tt><br>      </pre>
+      <p>Obviously, this macro will be expanded with the question
+itself, but note the use of the embedded macro
+ANSWER. It expands to one inch of vertical space if we're producing the
+exam, otherwise it expands to the
+answer if we're producing an answer key. ANSWER is defined as:</p>
+      <pre class="programlisting"><tt>define(ANSWER, ifdef(`ANSWER_KEY', `Answer: $2',<br>`\vspace*{$1}'))<br></tt><br>      </pre>
+If ANSWER_KEY is defined, we include the answer ($2), otherwise we
+include some vertical space ($1) so the
+student can write in the answer. <br>
+      <br>
+      <p>Using the question macros is as easy as using the HTML macros.
+The complete exam code is stored in a file
+called exam.m4:</p>
+      <pre class="programlisting"><tt>include(examMacros.m4)<br>EXAM_HEADER(`JOKE 101', `Fall 2001',<br>`First Exam')<br>include(questions.m4)<br>QUESTION_1<br>QUESTION_2<br>EXAM_TRAILER<br></tt><br>      </pre>
+      <p>The ``include'' on line one includes the code for EXAM_HEADER
+and EXAM_TRAILER that generate boilerplate
+LaTeX at the top and bottom of the exam. Line three includes the
+question macros we just created. Lines four
+and five include two questions from the database.</p>
+      <p>To create an exam, we run the command <b>m4 exam.m4 &gt;
+exam.tex</b>. Because ANSWER_KEY was never
+defined, each question will include space for an answer. To create an
+answer key, we use m4's command-line
+options to temporarily define an ANSWER_KEY macro:</p>
+      <pre class="programlisting"><tt>m4 -DANSWER_KEY exam.m4 &gt; exam.key.tex<br></tt><br>      </pre>
+      </div>
+      <div class="simplesect" lang="en">
+      <div class="titlepage">
+      <h2 class="title"><a name="N0x850ca10.0x8574344"></a>Conclusion</h2>
+      </div>
+      <p><span class="bold"><b>m4</b></span> is a tool that has
+applications in an endless number of domains.
+Anywhere you want to reduce duplication of effort, m4 can help. It is
+feature-rich enough that you can do
+almost anything and produce any kind of content you may wish. I hope
+I've given you enough to whet your
+appetite for m4 and to give you an appreciation for what m4 can do for
+you. Happy macro writing!</p>
+      <span class="bold"><b>Robert Adams</b></span> is a professor of
+computer science at GVSU. When he's not
+teaching he enjoys playing the fiddle, dancing and spending time with
+his daughter Turah.
+      <div class="blockquote"> </div>
+      </div>
+      <p>email: <a href="mailto:adams@csis.gvsu.edu">adams@csis.gvsu.edu</a></p>
+<!-- main --> </td>
+    </tr>
+  </tbody>
+</table>
+<!--
+<table id="footer-menu" summary="Navigation elements." border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tr>
+    <td align="center" valign="middle">
+      <div class="primary-links"><div id="left">
+
+	<table height="75px" cellpadding="0">
+
+	<tr><td>
+
+		<img src="/sites/default/themes/linuxjournal/ljlogo.png" alt="Home" border="0" />
+
+	</td></tr>
+
+	</table>
+
+</div>
+
+
+
+<div id="center">
+
+	<table height="75px" align="left" cellpadding="0">
+
+	<tr>
+
+		<td id="tagline" valign="bottom" align="left">Since 1994: The Original Monthly Magazine of the Linux Community</td>
+
+	</tr>
+
+	</table>
+
+</div>
+
+
+
+<div id="right">
+
+	<table id="primary-links-table" cellpadding="0">
+
+			<tr>
+
+				<td id="primary-links-hdr">Subscribe&nbsp;&nbsp;<strong>Now</strong></td>
+
+			</tr>
+
+			<tr>
+
+				<td id="primary-links">
+
+					<ul class="subscribebar">
+
+						<li><a href="http://www.linuxjournal.com/subscribe">Subscribe</a></li>
+
+						<li><a href="https://www.ssc.com/dlissc">Customer Service</a></li>
+
+					</ul>
+
+				</td>
+
+			</tr>
+
+	</table>
+
+</div>
+
+</div>
+      <div class="secondary-links"><table id="secondary-links-table" summary="Navigation elements." border="0" cellpadding="0" cellspacing="0" width="100%">
+
+ <tr>
+
+   <td id="secondary-links">
+
+
+
+<table align="center"><tr>
+
+<td width="18%">&#160;</td>
+
+<td align="center" width="16%"><a class="first" href="/xstatic/magazine">Magazine</a></td>
+
+<td align="center" width="16%"><a class="second" href="/xstatic/advertising/advertising">Advertise</a></td>
+
+<td align="center" width="16%"><a class="second" href="/xstatic/community">Community</a></td>
+
+<td align="center" width="16%"><a class="second" href="/xstatic/aboutus">About&#160;Us</a></td>
+
+
+
+<td width="18%">&#160;</td>
+
+</tr></table>
+
+
+
+   </td>
+
+ </tr>
+
+</table></div>
+    </td>
+  </tr>
+</table>
+-->
+</body>
+</html>

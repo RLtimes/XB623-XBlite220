@@ -1,0 +1,42 @@
+#include "winres.h"
+
+scrabble ICON    scrabble.ico
+
+100 DIALOG 0, 0, 102, 136
+STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_MODALFRAME | WS_VISIBLE
+CAPTION "Hex Calculator"
+FONT 10, "MS Sans Serif"
+BEGIN
+ PUSHBUTTON "D",    68,  8,  34, 14, 14
+ PUSHBUTTON "A",    65,  8,  50, 14, 14
+ PUSHBUTTON "7",    55,  8,  66, 14, 14
+ PUSHBUTTON "4",    52,  8,  82, 14, 14
+ PUSHBUTTON "1",    49,  8,  98, 14, 14
+ PUSHBUTTON "0",    48,  8, 114, 14, 14
+ EDITTEXT           27,  8,   3, 86, 12, ES_RIGHT, WS_EX_CLIENTEDGE
+ EDITTEXT           28,  8,  18, 86, 12, ES_RIGHT, WS_EX_CLIENTEDGE
+ PUSHBUTTON "E",    69, 26,  34, 14, 14
+ PUSHBUTTON "B",    66, 26,  50, 14, 14
+ PUSHBUTTON "8",    56, 26,  66, 14, 14
+ PUSHBUTTON "5",    53, 26,  82, 14, 14
+ PUSHBUTTON "2",    50, 26,  98, 14, 14
+ PUSHBUTTON "/F",    8, 44, 114, 14, 14
+ PUSHBUTTON "CE",  120, 26, 114, 14, 14
+ PUSHBUTTON "C",    67, 44,  50, 14, 14
+ PUSHBUTTON "F",    70, 44,  34, 14, 14
+ PUSHBUTTON "9",    57, 44,  66, 14, 14
+ PUSHBUTTON "6",    54, 44,  82, 14, 14
+ PUSHBUTTON "3",    51, 44,  98, 14, 14
+ PUSHBUTTON "+",    43, 62,  34, 14, 14
+ PUSHBUTTON "-",    45, 62,  50, 14, 14
+ PUSHBUTTON "*",    42, 62,  66, 14, 14
+ PUSHBUTTON "/",    47, 62,  82, 14, 14
+ PUSHBUTTON "%",    37, 62,  98, 14, 14
+ PUSHBUTTON "=",    61, 62, 114, 32, 14
+ PUSHBUTTON "&&",   38, 80,  34, 14, 14
+ PUSHBUTTON "|",   124, 80,  50, 14, 14
+ PUSHBUTTON "^",    94, 80,  66, 14, 14
+ PUSHBUTTON "<<",   60, 80,  82, 14, 14
+ PUSHBUTTON ">>",   62, 80,  98, 14, 14
+END
+

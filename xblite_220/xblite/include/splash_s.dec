@@ -1,0 +1,14 @@
+EXTERNAL FUNCTION  Splash							()
+' user functions
+EXTERNAL FUNCTION  KillSplash 					(hWnd)
+EXTERNAL FUNCTION  RunSplash 					(resName$, delay, msg$, msgHeight, textColor, backColor)
+EXTERNAL FUNCTION  SetSplashText 			(hWnd, text$)
+EXTERNAL FUNCTION  SetSplashTextFont 	(hWnd, hFont)
+'
+' splitter class name
+$$SPLASHCTLCLASSNAME = "splashctl"
+'
+' define custom window messages
+$$WM_KILLSPLASH     							= 1025' destroy splash window
+$$WM_SETSPLASHTEXTFONT 						= 1026' lParam = font handle
+$$WM_SETSPLASHTEXT								= 1027' wParam = text length, lParam = address of text string

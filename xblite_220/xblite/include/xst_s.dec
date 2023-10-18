@@ -1,0 +1,401 @@
+'
+TYPE EXCEPTION_DATA
+	XLONG	.code
+	XLONG .type
+	XLONG	.address
+	XLONG	.response
+	XLONG .info[14]
+END TYPE
+'
+TYPE TBYTE
+	UNION
+		UBYTE 			.ub[11]
+		USHORT			.us[5]
+		LONGDOUBLE 	.ld
+	END UNION
+END TYPE
+'
+'END EXPORT
+'
+'EXPORT
+'
+' ****************************************
+' *****  Standard Library Functions  *****
+' ****************************************
+'
+' system functions, error functions, exception functions
+'
+EXTERNAL FUNCTION  Xst                            ()
+EXTERNAL FUNCTION  XstVersion$                    ()
+EXTERNAL FUNCTION  XstCauseException              (exception)
+EXTERNAL FUNCTION  XstErrorNameToNumber           (error$, @error)
+EXTERNAL FUNCTION  XstErrorNumberToName           (error, @error$)
+EXTERNAL FUNCTION  XstExceptionNameToNumber       (exception$, exception)
+EXTERNAL FUNCTION  XstExceptionNumberToName       (exception, @exception$)
+EXTERNAL FUNCTION  XstExceptionToSystemException  (exception, @sysException)
+EXTERNAL FUNCTION  XstRaiseException              (exception, type, arguments[])
+EXTERNAL FUNCTION  XstRegisterException           (@exception$, @exception)
+EXTERNAL FUNCTION  XstSystemErrorNumberToName     (sysError, @sysError$)
+EXTERNAL FUNCTION  XstSystemExceptionToException  (sysException, @exception)
+EXTERNAL FUNCTION  XstSystemErrorToError          (sysError, error)
+EXTERNAL FUNCTION  XstSystemExceptionNumberToName (sysException, sysException$)
+EXTERNAL FUNCTION  XstGetSystemError              (sysError)
+EXTERNAL FUNCTION  XstSetSystemError              (sysError)
+EXTERNAL FUNCTION  XstGetException                (@exception)
+EXTERNAL FUNCTION  XstGetExceptionFunction        (@function)
+EXTERNAL FUNCTION  XstSetException                (exception)
+EXTERNAL FUNCTION  XstSetExceptionFunction        (function)
+EXTERNAL FUNCTION  XstGetEnvironmentVariable      (@name$, @value$)
+'
+EXTERNAL FUNCTION XstGetExceptionInformation     (EXCEPTION_RECORD @exRec, CONTEXT @context)
+EXTERNAL FUNCTION XstTry                         (SUBADDR Try, SUBADDR Handler, EXCEPTION_DATA @exception)
+'
+'
+' win32 helper functions
+'
+EXTERNAL FUNCTION  HIWORD                         (x)
+EXTERNAL FUNCTION  LOWORD                         (x)
+EXTERNAL FUNCTION  MAKELONG                       (lo, hi)
+EXTERNAL FUNCTION  RGB                            (r, g, b)
+'
+' file functions
+'
+EXTERNAL FUNCTION  XstFileToSystemFile            (fileNumber, @systemFileNumber)
+EXTERNAL FUNCTION  XstLockFileSection             (fileNumber, mode, offset$$, length$$)
+EXTERNAL FUNCTION  XstUnlockFileSection           (fileNumber, mode, offset$$, length$$)
+EXTERNAL FUNCTION  XstPathString$                 (path$)
+'
+' LONGDOUBLE support functions
+'
+EXTERNAL FUNCTION  USHORT FPClassifyL             (LONGDOUBLE x)
+EXTERNAL FUNCTION  IsFiniteL                      (LONGDOUBLE x)
+EXTERNAL FUNCTION  IsInfL                         (LONGDOUBLE x)
+EXTERNAL FUNCTION  IsNanL                         (LONGDOUBLE x)
+EXTERNAL FUNCTION  IsNormalL                      (LONGDOUBLE x)
+EXTERNAL FUNCTION  IsSubNormalL                   (LONGDOUBLE x)
+EXTERNAL FUNCTION  IsZeroL                        (LONGDOUBLE x)
+EXTERNAL FUNCTION  SignBitL                       (LONGDOUBLE x)
+EXTERNAL FUNCTION  XstStringToLongDouble          (text$, start, @after, @rtype, LONGDOUBLE value)
+EXTERNAL FUNCTION  XstLongDoubleToString$         (LONGDOUBLE ld, maxDigits, expChar, prefixChar)
+'
+' xlib functions
+'
+EXTERNAL FUNCTION  XstStringToNumber             (s$, startOff, afterOff, rtype, value$$)
+EXTERNAL FUNCTION  XstFindMemoryMatch            (addrStart, addrAfter, addrMatch, minLength, maxLength)
+'
+' misc functions
+'
+EXTERNAL FUNCTION  XstCenterWindow                (hWnd)
+'
+EXTERNAL FUNCTION  XxxXstFreeLibrary              (lib$, handle)
+EXTERNAL FUNCTION  XxxXstLoadLibrary              (lib$)
+EXTERNAL FUNCTION  InitProgram                    ()
+'
+' FPU control word functions
+'
+EXTERNAL FUNCTION  USHORT XstEnableFPExceptions   ()
+EXTERNAL FUNCTION  USHORT XstGetFPUControlWord    ()
+EXTERNAL FUNCTION  USHORT XstSetFPUControlWord    (USHORT cw)
+EXTERNAL FUNCTION  USHORT XstSetFPUPrecision      (mode)
+EXTERNAL FUNCTION  USHORT XstSetFPURounding       (mode)
+'
+EXTERNAL FUNCTION  XxxEof                         (fileNumber)
+EXTERNAL FUNCTION  XxxWriteFile                   (fileNumber, addr, bytes, bytesWritten, overlapped)
+EXTERNAL FUNCTION  XxxReadFile                    (fileNumber, addr, bytes, bytesRead, overlapped)
+EXTERNAL FUNCTION  XxxClose                       (fileNumber)
+EXTERNAL FUNCTION  XxxLof                         (fileNumber)
+EXTERNAL FUNCTION  XxxOpen                        (fileName$, openMode)
+EXTERNAL FUNCTION  XxxPof                         (fileNumber)
+EXTERNAL FUNCTION  XxxInfile$                     (fileNumber)
+EXTERNAL FUNCTION  XxxInline$                     (prompt$)
+EXTERNAL FUNCTION  XxxSeek                        (fileNumber, position)
+EXTERNAL FUNCTION  XxxShell                       (command$)
+'
+' exception handler initialization
+'
+EXTERNAL FUNCTION  Xit                            (appStart)
+EXTERNAL FUNCTION InitExceptionArray ()
+EXTERNAL FUNCTION InitErrorStringArrays ()
+'
+'
+' ****************************************
+' *****  Standard Library Constants  *****
+' ****************************************
+'
+' path slash characters (different for DOS/Windows vs UNIX)
+'
+  $$PathSlash$          = "\\"' Windows
+  $$PathSlash           = '\\'' Windows
+' This is the character that separates directories in environment-variables
+' (e.g. PATH).
+	$$PathSeparator				= ';'' Windows
+	$$PathSeparator$			= ";"' Windows
+' $$PathSlash$          = "/"       ' UNIX
+' $$PathSlash           = '/'       ' UNIX
+'	$$PathSeparator				= ':'				' Unix
+'	$$PathSeparator$			= ":"				' Unix
+' ********************************
+' *****  File I/O Constants  *****  for OPEN()
+' ********************************
+'
+  $$RD                  = 0x0000' read file
+  $$WR                  = 0x0001' write file
+  $$RW                  = 0x0002' read/write file
+  $$WRNEW               = 0x0003' write new file
+  $$RWNEW               = 0x0004' read/write new file
+  $$NOSHARE             = 0x0000' share file for none
+  $$RDSHARE             = 0x0010' share file for read
+  $$WRSHARE             = 0x0020' share file for write
+  $$RWSHARE             = 0x0030' share file for read & write
+  $$ALL                 = -1' CLOSE ($$ALL)
+'
+' ********************************
+' *****  Language Constants  *****  I/O, Kinds, DataTypes, Scope, etc...
+' ********************************
+'
+  $$ZERO                =  0
+  $$ONE                 =  1
+  $$ENDIAN              =  0
+  $$STDIN               =  0
+  $$STDOUT              =  1
+  $$STDERR              =  2
+  $$VOID                =  1
+  $$SBYTE               =  2
+  $$UBYTE               =  3
+  $$SSHORT              =  4
+  $$USHORT              =  5
+  $$SLONG               =  6
+  $$ULONG               =  7
+  $$XLONG               =  8
+  $$GOADDR              =  9
+  $$SUBADDR             = 10
+  $$FUNCADDR            = 11
+  $$GIANT               = 12
+  $$SINGLE              = 13
+  $$DOUBLE              = 14
+	$$LONGDOUBLE          = 15
+  $$ARRAY               = 16
+  $$ANY                 = 16
+  $$ETC                 = 17
+  $$VARARG              = 18
+  $$STRING              = 19
+  $$COMPOSITE           = 31
+  $$SCOMPLEX            = 32
+  $$DCOMPLEX            = 33
+  $$AUTO                =  0
+  $$AUTOX               =  1
+  $$STATIC              =  2
+  $$SHARED              =  3
+  $$EXTERNAL            =  4
+  $$ARGUMENT            =  7
+' FPU rounding modes
+$$ROUND_NEAREST = 0
+$$ROUND_DOWN = 1
+$$ROUND_UP = 2
+$$TRUNCATE = 3
+' FPU precision modes
+$$24_BITS = 0
+$$53_BITS = 1
+$$64_BITS = 2
+'
+' FP Classification constants
+$$FP_NAN		   = 0x0100
+$$FP_NORMAL	   = 0x0400
+$$FP_INFINITE	 = 0x0500' (FP_NAN | FP_NORMAL)
+$$FP_ZERO		   = 0x4000
+$$FP_SUBNORMAL = 0x4400' (FP_NORMAL | FP_ZERO)
+'
+'
+' **********************************
+' *****  Native Error Numbers  *****
+' **********************************
+'
+' "Native Error Numbers" are USHORT values composed of two parts:
+'    1. ErrorObject in upper byte - object associated with error
+'    2. ErrorNature in lower byte - nature of action or error
+'
+  $$ErrorObjectNone                =  0' or unknown
+  $$ErrorObjectData                =  1
+  $$ErrorObjectDisk                =  2
+  $$ErrorObjectFile                =  3
+  $$ErrorObjectFont                =  4
+  $$ErrorObjectGrid                =  5
+  $$ErrorObjectIcon                =  6
+  $$ErrorObjectName                =  7
+  $$ErrorObjectNode                =  8
+  $$ErrorObjectPipe                =  9
+  $$ErrorObjectUser                = 10
+  $$ErrorObjectArray               = 11
+  $$ErrorObjectImage               = 12
+  $$ErrorObjectMedia               = 13
+  $$ErrorObjectQueue               = 14
+  $$ErrorObjectStack               = 15
+  $$ErrorObjectTimer               = 16
+  $$ErrorObjectBuffer              = 17
+  $$ErrorObjectCursor              = 18
+  $$ErrorObjectDevice              = 19
+  $$ErrorObjectDriver              = 20
+  $$ErrorObjectMemory              = 21
+  $$ErrorObjectSocket              = 22
+  $$ErrorObjectString              = 23
+  $$ErrorObjectSystem              = 24
+  $$ErrorObjectThread              = 25
+  $$ErrorObjectWindow              = 26
+  $$ErrorObjectCommand             = 27
+  $$ErrorObjectDisplay             = 28
+  $$ErrorObjectLibrary             = 29
+  $$ErrorObjectMessage             = 30
+  $$ErrorObjectNetwork             = 31
+  $$ErrorObjectPrinter             = 32
+  $$ErrorObjectProcess             = 33
+  $$ErrorObjectProgram             = 34
+  $$ErrorObjectArgument            = 35
+  $$ErrorObjectComputer            = 36
+  $$ErrorObjectFunction            = 37
+  $$ErrorObjectIdentity            = 38
+  $$ErrorObjectPassword            = 39
+  $$ErrorObjectClipboard           = 40
+  $$ErrorObjectDirectory           = 41
+  $$ErrorObjectSemaphore           = 42
+  $$ErrorObjectStatement           = 43
+  $$ErrorObjectSystemRoutine       = 44
+  $$ErrorObjectSystemFunction      = 45
+  $$ErrorObjectSystemResource      = 46
+  $$ErrorObjectOperatingSystem     = 47
+  $$ErrorObjectIntegerLogicUnit    = 48
+  $$ErrorObjectFloatingPointUnit   = 49
+'
+  $$ErrorNatureNone                =  0
+  $$ErrorNatureBusy                =  1
+  $$ErrorNatureFull                =  2
+  $$ErrorNatureError               =  3
+  $$ErrorNatureEmpty               =  4
+  $$ErrorNatureReset               =  5
+  $$ErrorNatureExists              =  6
+  $$ErrorNatureFailed              =  7
+  $$ErrorNatureHalted              =  8
+  $$ErrorNatureExpired             =  9
+  $$ErrorNatureInvalid             = 10
+  $$ErrorNatureMissing             = 11
+  $$ErrorNatureTimeout             = 12
+  $$ErrorNatureTooMany             = 13
+  $$ErrorNatureUnknown             = 14
+  $$ErrorNatureBreakKey            = 15
+  $$ErrorNatureDeadlock            = 16
+  $$ErrorNatureDisabled            = 17
+  $$ErrorNatureNotEmpty            = 18
+  $$ErrorNatureObsolete            = 19
+  $$ErrorNatureOverflow            = 20
+  $$ErrorNatureTooLarge            = 21
+  $$ErrorNatureTooSmall            = 22
+  $$ErrorNatureAbandoned           = 23
+  $$ErrorNatureAvailable           = 24
+  $$ErrorNatureDuplicate           = 25
+  $$ErrorNatureExhausted           = 26
+  $$ErrorNaturePrivilege           = 27
+  $$ErrorNatureUndefined           = 28
+  $$ErrorNatureUnderflow           = 29
+  $$ErrorNatureAllocation          = 30
+  $$ErrorNatureBreakpoint          = 31
+  $$ErrorNatureContention          = 32
+  $$ErrorNaturePermission          = 33
+  $$ErrorNatureTerminated          = 34
+  $$ErrorNatureUndeclared          = 35
+  $$ErrorNatureUnexpected          = 36
+  $$ErrorNatureWouldBlock          = 37
+  $$ErrorNatureInterrupted         = 38
+  $$ErrorNatureMalfunction         = 39
+  $$ErrorNatureNonexistent         = 40
+  $$ErrorNatureUnavailable         = 41
+  $$ErrorNatureUnspecified         = 42
+  $$ErrorNatureDisconnected        = 43
+  $$ErrorNatureDivideByZero        = 44
+  $$ErrorNatureIncompatible        = 45
+  $$ErrorNatureNotConnected        = 46
+  $$ErrorNatureLimitExceeded       = 47
+  $$ErrorNatureNotInitialized      = 48
+  $$ErrorNatureHigherDimension     = 49
+  $$ErrorNatureLowestDimension     = 50
+  $$ErrorNatureCannotInitialize    = 51
+  $$ErrorNatureInitializeFailed    = 52
+  $$ErrorNatureAlreadyInitialized  = 53
+  $$ErrorNatureInvalidAccess       = 54
+  $$ErrorNatureInvalidAddress      = 55
+  $$ErrorNatureInvalidAlignment    = 56
+  $$ErrorNatureInvalidArgument     = 57
+  $$ErrorNatureInvalidCheck        = 58
+  $$ErrorNatureInvalidCoordinates  = 59
+  $$ErrorNatureInvalidCommand      = 60
+  $$ErrorNatureInvalidData         = 61
+  $$ErrorNatureInvalidDimension    = 62
+  $$ErrorNatureInvalidEntry        = 63
+  $$ErrorNatureInvalidFormat       = 64
+  $$ErrorNatureInvalidKind         = 65
+  $$ErrorNatureInvalidIdentity     = 66
+  $$ErrorNatureInvalidInstruction  = 67
+  $$ErrorNatureInvalidLocation     = 68
+	$$ErrorNatureInvalidMessage      = 69
+  $$ErrorNatureInvalidName         = 70
+  $$ErrorNatureInvalidNode         = 71
+  $$ErrorNatureInvalidNumber       = 72
+  $$ErrorNatureInvalidOperand      = 73
+  $$ErrorNatureInvalidOperation    = 74
+  $$ErrorNatureInvalidReply        = 75
+  $$ErrorNatureInvalidRequest      = 76
+  $$ErrorNatureInvalidResult       = 77
+  $$ErrorNatureInvalidSelection    = 78
+  $$ErrorNatureInvalidSignature    = 79
+  $$ErrorNatureInvalidSize         = 80
+  $$ErrorNatureInvalidType         = 81
+  $$ErrorNatureInvalidValue        = 82
+  $$ErrorNatureInvalidVersion      = 83
+  $$ErrorNatureInvalidDistribution = 84
+  $$ErrorNatureInvalidMargin       = 85
+'
+'
+' ****************************************
+' *****  Native Exception Constants  *****
+' ****************************************
+'
+  $$ExceptionNone                  =  0
+  $$ExceptionSegmentViolation      =  1
+  $$ExceptionOutOfBounds           =  2
+  $$ExceptionBreakpoint            =  3
+  $$ExceptionBreakKey              =  4
+  $$ExceptionAlignment             =  5
+  $$ExceptionDenormal              =  6
+  $$ExceptionDivideByZero          =  7
+  $$ExceptionInvalidOperation      =  8
+  $$ExceptionOverflow              =  9
+  $$ExceptionStackCheck            = 10
+  $$ExceptionUnderflow             = 11
+  $$ExceptionInvalidInstruction    = 12
+  $$ExceptionPrivilege             = 13
+  $$ExceptionStackOverflow         = 14
+  $$ExceptionReserved              = 15
+  $$ExceptionTimer                 = 16
+  $$ExceptionUnknown               = 17
+	$$ExceptionIntDivideByZero       = 18
+	$$ExceptionIntOverflow           = 19
+	$$ExceptionPrecision             = 20
+	$$ExceptionGuardPage             = 21
+	$$ExceptionInPage                = 22
+	$$ExceptionDisposition           = 23
+	$$ExceptionNoncontinuable        = 24
+	$$ExceptionSingleStep            = 25
+	$$ExceptionMemoryAllocation      = 26
+	$$ExceptionNodeNotEmpty          = 27
+	$$ExceptionArrayDimension        = 28
+	$$ExceptionInvalidArgument       = 29
+  $$ExceptionUpper                 = 31
+	$$ExceptionFloatDivideByZero     = $$ExceptionDivideByZero
+  $$ExceptionFloatOverflow         = $$ExceptionOverflow
+'
+  $$ExceptionTerminate             =  0
+  $$ExceptionContinue              = -1
+	$$ExceptionRetry                 = -2
+	$$ExceptionForward							 =  1
+	$$ExceptionCodeUser              = 0x20000000
+	$$ExceptionTypeInformation       = 0x40000000
+	$$ExceptionTypeWarning           = 0x80000000
+	$$ExceptionTypeError             = 0xC0000000

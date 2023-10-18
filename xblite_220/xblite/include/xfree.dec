@@ -1,0 +1,450 @@
+$$SEEK_SET = 0
+$$SEEK_CUR = 1
+$$SEEK_END = 2
+' Indexes for byte arrays, masks and shifts for treating pixels as words
+' These coincide with the order of RGBQUAD and RGBTRIPLE
+$$FI_RGBA_RED         = 2
+$$FI_RGBA_GREEN       = 1
+$$FI_RGBA_BLUE        = 0
+$$FI_RGBA_ALPHA       = 3
+$$FI_RGBA_RED_MASK    = 0x00FF0000
+$$FI_RGBA_GREEN_MASK  = 0x0000FF00
+$$FI_RGBA_BLUE_MASK   = 0x000000FF
+$$FI_RGBA_ALPHA_MASK  = 0xFF000000
+$$FI_RGBA_RED_SHIFT   = 16
+$$FI_RGBA_GREEN_SHIFT = 8
+$$FI_RGBA_BLUE_SHIFT  = 0
+$$FI_RGBA_ALPHA_SHIFT = 24
+$$FI_RGBA_RGB_MASK    = 0x00FFFFFF 'FI_RGBA_RED_MASK|FI_RGBA_GREEN_MASK|FI_RGBA_BLUE_MASK
+' The 16bit macros only include masks and shifts, since each color
+' element is not byte aligned
+$$FI16_555_RED_MASK     = 0x7C00
+$$FI16_555_GREEN_MASK   = 0x03E0
+$$FI16_555_BLUE_MASK    = 0x001F
+$$FI16_555_RED_SHIFT    = 10
+$$FI16_555_GREEN_SHIFT  = 5
+$$FI16_555_BLUE_SHIFT   = 0
+$$FI16_565_RED_MASK     = 0xF800
+$$FI16_565_GREEN_MASK   = 0x07E0
+$$FI16_565_BLUE_MASK    = 0x001F
+$$FI16_565_RED_SHIFT    = 11
+$$FI16_565_GREEN_SHIFT  = 5
+$$FI16_565_BLUE_SHIFT   = 0
+' ICC profile support
+$$FIICC_DEFAULT       = 0x00
+$$FIICC_COLOR_IS_CMYK = 0x01
+TYPE FIICCPROFILE
+	USHORT  .flags  ' info flag
+	ULONG   .size   ' profile's size measured in bytes
+	XLONG   .data   ' points to a block of contiguous memory containing the profile
+END TYPE
+' I/O image format identifiers.
+'FREE_IMAGE_FORMAT
+$$FIF_UNKNOWN = -1
+$$FIF_BMP     = 0
+$$FIF_ICO     = 1
+$$FIF_JPEG    = 2
+$$FIF_JNG     = 3
+$$FIF_KOALA   = 4
+$$FIF_LBM     = 5
+$$FIF_IFF     = $$FIF_LBM
+$$FIF_MNG     = 6
+$$FIF_PBM     = 7
+$$FIF_PBMRAW  = 8
+$$FIF_PCD     = 9
+$$FIF_PCX     = 10
+$$FIF_PGM     = 11
+$$FIF_PGMRAW  = 12
+$$FIF_PNG     = 13
+$$FIF_PPM     = 14
+$$FIF_PPMRAW  = 15
+$$FIF_RAS     = 16
+$$FIF_TARGA   = 17
+$$FIF_TIFF    = 18
+$$FIF_WBMP    = 19
+$$FIF_PSD     = 20
+$$FIF_CUT     = 21
+$$FIF_XBM     = 22
+$$FIF_XPM     = 23
+$$FIF_DDS     = 24
+$$FIF_GIF     = 25
+' Image type used in FreeImage.
+'FREE_IMAGE_TYPE
+$$FIT_UNKNOWN = 0 ' unknown type
+$$FIT_BITMAP  = 1 ' standard image      : 1-, 4-, 8-, 16-, 24-, 32-bit
+$$FIT_UINT16  = 2 ' array of unsigned short : unsigned 16-bit
+$$FIT_INT16   = 3 ' array of short      : signed 16-bit
+$$FIT_UINT32  = 4 ' array of unsigned long  : unsigned 32-bit
+$$FIT_INT32   = 5 ' array of long     : signed 32-bit
+$$FIT_FLOAT   = 6 ' array of float      : 32-bit IEEE floating point
+$$FIT_DOUBLE  = 7 ' array of double     : 64-bit IEEE floating point
+$$FIT_COMPLEX = 8 ' array of FICOMPLEX    : 2 x 64-bit IEEE floating point
+' Data structure for COMPLEX type  (complex number)
+TYPE FICOMPLEX
+	DOUBLE .r
+	DOUBLE .i
+END TYPE
+' Image color type used in FreeImage.
+'FREE_IMAGE_COLOR_TYPE
+$$FIC_MINISWHITE = 0    ' min value is white
+$$FIC_MINISBLACK = 1    ' min value is black
+$$FIC_RGB        = 2    ' RGB color model
+$$FIC_PALETTE    = 3    ' color map indexed
+$$FIC_RGBALPHA   = 4    ' RGB color model with alpha channel
+$$FIC_CMYK       = 5    ' CMYK color model
+' Color quantization algorithms.
+'Constants used in FreeImage_ColorQuantize.
+'FREE_IMAGE_QUANTIZE
+$$FIQ_WUQUANT = 0   ' Xiaolin Wu color quantization algorithm
+$$FIQ_NNQUANT = 1   ' NeuQuant neural-net quantization algorithm by Anthony Dekker
+' Dithering algorithms.
+'Constants used FreeImage_Dither.
+'FREE_IMAGE_DITHER
+$$FID_FS            = 0 ' Floyd & Steinberg error diffusion
+$$FID_BAYER4x4      = 1 ' Bayer ordered dispersed dot dithering  (order 2 dithering matrix)
+$$FID_BAYER8x8      = 2 ' Bayer ordered dispersed dot dithering  (order 3 dithering matrix)
+$$FID_CLUSTER6x6    = 3 ' Ordered clustered dot dithering  (order 3 - 6x6 matrix)
+$$FID_CLUSTER8x8    = 4 ' Ordered clustered dot dithering  (order 4 - 8x8 matrix)
+$$FID_CLUSTER16x16  = 5 ' Ordered clustered dot dithering  (order 8 - 16x16 matrix)
+' Upsampling / downsampling filters.
+'Constants used in FreeImage_Rescale.
+'FREE_IMAGE_FILTER
+$$FILTER_BOX        = 0 ' Box, pulse, Fourier window, 1st order  (constant) b-spline
+$$FILTER_BICUBIC    = 1 ' Mitchell & Netravali's two-param cubic filter
+$$FILTER_BILINEAR   = 2 ' Bilinear filter
+$$FILTER_BSPLINE    = 3 ' 4th order  (cubic) b-spline
+$$FILTER_CATMULLROM = 4 ' Catmull-Rom spline, Overhauser spline
+$$FILTER_LANCZOS3   = 5 ' Lanczos3 filter
+' Color channels.
+'Constants used in color manipulation routines.
+'FREE_IMAGE_COLOR_CHANNEL
+$$FICC_RGB    = 0 ' Use red, green and blue channels
+$$FICC_RED    = 1 ' Use red channel
+$$FICC_GREEN  = 2 ' Use green channel
+$$FICC_BLUE   = 3 ' Use blue channel
+$$FICC_ALPHA  = 4 ' Use alpha channel
+$$FICC_BLACK  = 5 ' Use black channel
+$$FICC_REAL   = 6 ' Complex images: use real part
+$$FICC_IMAG   = 7 ' Complex images: use imaginary part
+$$FICC_MAG    = 8 ' Complex images: use magnitude
+$$FICC_PHASE  = 9 ' Complex images: use phase
+' Metadata support
+'  Tag data type information  (based on TIFF specifications)
+' Note: RATIONALs are the ratio of two 32-bit integer values.
+'FREE_IMAGE_MDTYPE
+$$FIDT_NOTYPE     = 0   ' placeholder
+$$FIDT_BYTE       = 1   ' 8-bit unsigned integer
+$$FIDT_ASCII      = 2   ' 8-bit bytes w/ last byte null
+$$FIDT_SHORT      = 3   ' 16-bit unsigned integer
+$$FIDT_LONG       = 4   ' 32-bit unsigned integer
+$$FIDT_RATIONAL   = 5   ' 64-bit unsigned fraction
+$$FIDT_SBYTE      = 6   ' 8-bit signed integer
+$$FIDT_UNDEFINED  = 7   ' 8-bit untyped data
+$$FIDT_SSHORT     = 8   ' 16-bit signed integer
+$$FIDT_SLONG      = 9   ' 32-bit signed integer
+$$FIDT_SRATIONAL  = 10  ' 64-bit signed fraction
+$$FIDT_FLOAT      = 11  ' 32-bit IEEE floating point
+$$FIDT_DOUBLE     = 12  ' 64-bit IEEE floating point
+$$FIDT_IFD        = 13  ' 32-bit unsigned integer  (offset)
+' Metadata models supported by FreeImage
+'FREE_IMAGE_MDMODEL
+$$FIMD_NODATA         = -1
+$$FIMD_COMMENTS       = 0 ' single comment or keywords
+$$FIMD_EXIF_MAIN      = 1 ' Exif-TIFF metadata
+$$FIMD_EXIF_EXIF      = 2 ' Exif-specific metadata
+$$FIMD_EXIF_GPS       = 3 ' Exif GPS metadata
+$$FIMD_EXIF_MAKERNOTE = 4 ' Exif maker note metadata
+$$FIMD_EXIF_INTEROP   = 5 ' Exif interoperability metadata
+$$FIMD_IPTC           = 6 ' IPTC/NAA metadata
+$$FIMD_XMP            = 7 ' Abobe XMP metadata
+$$FIMD_GEOTIFF        = 8 ' GeoTIFF metadata
+$$FIMD_CUSTOM         = 9 ' Used to attach other metadata types to a dib
+'  Handle to a metadata model
+TYPE FIMETADATA = XLONG
+'  Handle to a FreeImage tag
+TYPE FITAG = XLONG
+' File IO routines
+' Prototypes for user-written functions - addresses are used in FREEIMAGEIO
+'	EXTERNAL FUNCTION FI_ReadProc (buffer, size, count, handle)
+'	EXTERNAL FUNCTION FI_WriteProc (buffer, size, count, handle)
+'	EXTERNAL FUNCTION FI_SeekProc (handle, offset, origin)
+'	EXTERNAL FUNCTION FI_TellProc (handle)
+TYPE FreeImageIO
+	FUNCADDR  .read_proc   (XLONG, ULONG, ULONG, XLONG)
+	FUNCADDR  .write_proc  (XLONG, ULONG, ULONG, XLONG)
+	FUNCADDR  .seek_proc   (XLONG, SLONG, SLONG)
+	FUNCADDR  .tell_proc   (XLONG)
+END TYPE
+TYPE FREEIMAGEIO = FreeImageIO 'older FreeImage versions used all caps
+' Plugin routines
+' Prototypes for functions in the plugin (addresses of these functions
+'  are used in the Plugin TYPE variable):
+' EXTERNAL FUNCTION FI_InitProc (Plugin plugin, format_id)
+'	EXTERNAL FUNCTION FI_FormatProc ()
+'	EXTERNAL FUNCTION FI_DescriptionProc ()
+'	EXTERNAL FUNCTION FI_ExtensionListProc ()
+'	EXTERNAL FUNCTION FI_RegExprProc ()
+'	EXTERNAL FUNCTION FI_OpenProc (FreeImageIO, handle, read)
+'	EXTERNAL FUNCTION FI_CloseProc (FreeImageIO, handle, data)
+'	EXTERNAL FUNCTION FI_PageCountProc (FreeImageIO, handle, data)
+'	EXTERNAL FUNCTION FI_PageCapabilityProc (FreeImageIO, handle, data)
+'	EXTERNAL FUNCTION FI_LoadProc (FreeImageIO, handle, page, flags, data)
+'	EXTERNAL FUNCTION FI_SaveProc (FreeImageIO, dib, handle, page, flags, data)
+'	EXTERNAL FUNCTION FI_ValidateProc (FreeImageIO, handle)
+'	EXTERNAL FUNCTION FI_MimeProc ()
+'	EXTERNAL FUNCTION FI_SupportsExportBPPProc (bpp)
+'	EXTERNAL FUNCTION FI_SupportsExportTypeProc (type)
+'	EXTERNAL FUNCTION FI_SupportsICCProfilesProc ()
+TYPE Plugin
+	FUNCADDR  .format_proc ()
+	FUNCADDR  .description_proc ()
+	FUNCADDR  .extension_proc ()
+	FUNCADDR  .regexpr_proc ()
+	FUNCADDR  .open_proc (XLONG, XLONG, SLONG)
+	FUNCADDR  .close_proc (XLONG, XLONG, XLONG)
+	FUNCADDR  .pagecount_proc (XLONG, XLONG, XLONG)
+	FUNCADDR  .pagecapability_proc (XLONG, XLONG, XLONG)
+	FUNCADDR  .load_proc (XLONG, XLONG, SLONG, SLONG, XLONG)
+	FUNCADDR  .save_proc (XLONG, XLONG, XLONG, SLONG, SLONG, XLONG)
+	FUNCADDR  .validate_proc (XLONG, XLONG)
+	FUNCADDR  .mime_proc ()
+	FUNCADDR  .supports_export_bpp_proc (SLONG)
+	FUNCADDR  .supports_export_type_proc (XLONG)
+	FUNCADDR  .supports_icc_profiles_proc ()
+END TYPE
+' Load / Save flag constants -----------------------------------------------
+$$BMP_DEFAULT         = 0
+$$BMP_SAVE_RLE        = 1
+$$CUT_DEFAULT         = 0
+$$DDS_DEFAULT         = 0
+$$GIF_DEFAULT         = 0
+$$ICO_DEFAULT         = 0
+$$ICO_MAKEALPHA       = 1   ' convert to 32bpp and create an alpha channel from the AND-mask when loading
+$$IFF_DEFAULT         = 0
+$$JPEG_DEFAULT        = 0
+$$JPEG_FAST           = 1
+$$JPEG_ACCURATE       = 2
+$$JPEG_QUALITYSUPERB  = 0x80
+$$JPEG_QUALITYGOOD    = 0x100
+$$JPEG_QUALITYNORMAL  = 0x200
+$$JPEG_QUALITYAVERAGE = 0x400
+$$JPEG_QUALITYBAD     = 0x800
+$$JPEG_CMYK           = 0x1000  ' load separated CMYK "as is"  (use | to combine with other flags)
+$$KOALA_DEFAULT       = 0
+$$LBM_DEFAULT         = 0
+$$MNG_DEFAULT         = 0
+$$PCD_DEFAULT         = 0
+$$PCD_BASE            = 1   ' load the bitmap sized 768 x 512
+$$PCD_BASEDIV4        = 2   ' load the bitmap sized 384 x 256
+$$PCD_BASEDIV16       = 3   ' load the bitmap sized 192 x 128
+$$PCX_DEFAULT         = 0
+$$PNG_DEFAULT         = 0
+$$PNG_IGNOREGAMMA     = 1   ' avoid gamma correction
+$$PNM_DEFAULT         = 0
+$$PNM_SAVE_RAW        = 0       ' If set the writer saves in RAW format  (i.e. P4, P5 or P6)
+$$PNM_SAVE_ASCII      = 1       ' If set the writer saves in ASCII format  (i.e. P1, P2 or P3)
+$$PSD_DEFAULT         = 0
+$$RAS_DEFAULT         = 0
+$$TARGA_DEFAULT       = 0
+$$TARGA_LOAD_RGB888   = 1       ' If set the loader converts RGB555 and ARGB8888 -> RGB888.
+$$TIFF_DEFAULT        = 0
+$$TIFF_CMYK           = 0x0001  ' reads/stores tags for separated CMYK  (use | to combine with compression flags)
+$$TIFF_PACKBITS       = 0x0100  ' save using PACKBITS compression
+$$TIFF_DEFLATE        = 0x0200  ' save using DEFLATE compression  (a.k.a. ZLIB compression)
+$$TIFF_ADOBE_DEFLATE  = 0x0400  ' save using ADOBE DEFLATE compression
+$$TIFF_NONE           = 0x0800  ' save without any compression
+$$TIFF_CCITTFAX3      = 0x1000  ' save using CCITT Group 3 fax encoding
+$$TIFF_CCITTFAX4      = 0x2000  ' save using CCITT Group 4 fax encoding
+$$TIFF_LZW            = 0x4000  ' save using LZW compression
+$$TIFF_JPEG           = 0x8000  ' save using JPEG compression
+$$WBMP_DEFAULT        = 0
+$$XBM_DEFAULT         = 0
+$$XPM_DEFAULT         = 0
+EXTERNAL FUNCTION  Xfree_Init ()
+EXTERNAL FUNCTION  FreeImage_Initialise (XLONG)
+EXTERNAL FUNCTION  FreeImage_DeInitialise ()
+EXTERNAL FUNCTION  STRING FreeImage_GetVersion ()
+EXTERNAL FUNCTION  STRING FreeImage_GetCopyrightMessage ()
+EXTERNAL FUNCTION  FreeImage_SetOutputMessage (XLONG)
+EXTERNAL FUNCTION  FreeImage_Allocate (XLONG, XLONG, XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_AllocateT (XLONG, XLONG, XLONG, XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_Clone (XLONG)
+EXTERNAL FUNCTION  FreeImage_Unload (XLONG)
+EXTERNAL FUNCTION  FreeImage_Load (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_LoadFromHandle (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_Save (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SaveToHandle (XLONG, XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_OpenMemory (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_CloseMemory (XLONG)
+EXTERNAL FUNCTION  FreeImage_LoadFromMemory (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SaveToMemory (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_TellMemory (XLONG)
+EXTERNAL FUNCTION  FreeImage_SeekMemory (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_AcquireMemory (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_RegisterLocalPlugin (XLONG, XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_RegisterExternalPlugin (XLONG, XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetFIFCount ()
+EXTERNAL FUNCTION  FreeImage_SetPluginEnabled (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_IsPluginEnabled (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetFIFFromFormat (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetFIFFromMime (XLONG)
+EXTERNAL FUNCTION  STRING FreeImage_GetFormatFromFIF (XLONG)
+EXTERNAL FUNCTION  STRING FreeImage_GetFIFExtensionList (XLONG)
+EXTERNAL FUNCTION  STRING FreeImage_GetFIFDescription (XLONG)
+EXTERNAL FUNCTION  STRING FreeImage_GetFIFRegExpr (XLONG)
+EXTERNAL FUNCTION  STRING FreeImage_GetFIFMimeType (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetFIFFromFilename (XLONG)
+EXTERNAL FUNCTION  FreeImage_FIFSupportsReading (XLONG)
+EXTERNAL FUNCTION  FreeImage_FIFSupportsWriting (XLONG)
+EXTERNAL FUNCTION  FreeImage_FIFSupportsExportBPP (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_FIFSupportsExportType (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_FIFSupportsICCProfiles (XLONG)
+EXTERNAL FUNCTION  FreeImage_OpenMultiBitmap (XLONG, XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_CloseMultiBitmap (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetPageCount (XLONG)
+EXTERNAL FUNCTION  FreeImage_AppendPage (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_InsertPage (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_DeletePage (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_LockPage (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_UnlockPage (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_MovePage (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetLockedPageNumbers (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetFileType (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetFileTypeFromHandle (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetFileTypeFromMemory (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetImageType (XLONG)
+EXTERNAL FUNCTION  FreeImage_IsLittleEndian ()
+EXTERNAL FUNCTION  FreeImage_LookupX11Color (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_LookupSVGColor (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetBits (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetScanLine (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetPixelIndex (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetPixelColor (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetPixelIndex (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetPixelColor (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetColorsUsed (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetBPP (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetWidth (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetHeight (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetLine (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetPitch (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetDIBSize (XLONG)
+EXTERNAL FUNCTION  RGBQUAD FreeImage_GetPalette (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetDotsPerMeterX (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetDotsPerMeterY (XLONG)
+EXTERNAL FUNCTION  FreeImage_SetDotsPerMeterX (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetDotsPerMeterY (XLONG, XLONG)
+EXTERNAL FUNCTION  BITMAPINFOHEADER FreeImage_GetInfoHeader (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetInfo (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetColorType (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetRedMask (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetGreenMask (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetBlueMask (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetTransparencyCount (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetTransparencyTable (XLONG)
+EXTERNAL FUNCTION  FreeImage_SetTransparent (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetTransparencyTable (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_IsTransparent (XLONG)
+EXTERNAL FUNCTION  FreeImage_HasBackgroundColor (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetBackgroundColor (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetBackgroundColor (XLONG, XLONG)
+EXTERNAL FUNCTION  FIICCPROFILE FreeImage_GetICCProfile (XLONG)
+EXTERNAL FUNCTION  FIICCPROFILE FreeImage_CreateICCProfile (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_DestroyICCProfile (XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine1To4 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine8To4 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine16To4_555 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine16To4_565 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine24To4 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine32To4 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine1To8 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine4To8 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine16To8_555 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine16To8_565 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine24To8 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine32To8 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine1To16_555 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine4To16_555 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine8To16_555 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine16_565_To16_555 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine24To16_555 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine32To16_555 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine1To16_565 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine4To16_565 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine8To16_565 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine16_555_To16_565 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine24To16_565 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine32To16_565 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine1To24 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine4To24 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine8To24 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine16To24_555 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine16To24_565 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine32To24 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine1To32 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine4To32 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine8To32 (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine16To32_555 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine16To32_565 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertLine24To32 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertTo4Bits (XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertTo8Bits (XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertTo16Bits555 (XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertTo16Bits565 (XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertTo24Bits (XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertTo32Bits (XLONG)
+EXTERNAL FUNCTION  FreeImage_ColorQuantize (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_Threshold (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_Dither (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertFromRawBits (XLONG, XLONG, XLONG, XLONG, XLONG, XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertToRawBits (XLONG, XLONG, XLONG, XLONG, XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertToStandardType (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ConvertToType (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ZLibCompress (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ZLibUncompress (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ZLibGZip (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_ZLibCRC32 (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_CreateTag ()
+EXTERNAL FUNCTION  FreeImage_DeleteTag (XLONG)
+EXTERNAL FUNCTION  FreeImage_CloneTag (XLONG)
+EXTERNAL FUNCTION  STRING FreeImage_GetTagKey (XLONG)
+EXTERNAL FUNCTION  STRING FreeImage_GetTagDescription (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetTagID (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetTagType (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetTagCount (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetTagLength (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetTagValue (XLONG)
+EXTERNAL FUNCTION  FreeImage_SetTagKey (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetTagDescription (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetTagID (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetTagType (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetTagCount (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetTagLength (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetTagValue (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_FindFirstMetadata (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_FindNextMetadata (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_FindCloseMetadata (XLONG)
+EXTERNAL FUNCTION  FreeImage_SetMetadata (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetMetadata (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetMetadataCount (XLONG, XLONG)
+EXTERNAL FUNCTION  STRING FreeImage_TagToString (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_RotateClassic (XLONG, DOUBLE)
+EXTERNAL FUNCTION  FreeImage_RotateEx (XLONG, DOUBLE, DOUBLE, DOUBLE, DOUBLE, DOUBLE, XLONG)
+EXTERNAL FUNCTION  FreeImage_FlipHorizontal (XLONG)
+EXTERNAL FUNCTION  FreeImage_FlipVertical (XLONG)
+EXTERNAL FUNCTION  FreeImage_Rescale (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_AdjustCurve (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_AdjustGamma (XLONG, DOUBLE)
+EXTERNAL FUNCTION  FreeImage_AdjustBrightness (XLONG, DOUBLE)
+EXTERNAL FUNCTION  FreeImage_AdjustContrast (XLONG, DOUBLE)
+EXTERNAL FUNCTION  FreeImage_Invert (XLONG)
+EXTERNAL FUNCTION  FreeImage_GetHistogram (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetChannel (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetChannel (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_GetComplexChannel (XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_SetComplexChannel (XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_Copy (XLONG, XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_Paste (XLONG, XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  FreeImage_Composite (XLONG, XLONG, XLONG, XLONG)
+EXTERNAL FUNCTION  Xfree_GetInfo (v0, BITMAPINFOHEADER bmih, RGBQUAD colorTable[])
+

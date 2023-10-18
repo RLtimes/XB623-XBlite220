@@ -1,0 +1,4 @@
+#include "winres.h"
+
+scrabble ICON    scrabble.ico
+100      RCDATA  DIGIRU__.TTF

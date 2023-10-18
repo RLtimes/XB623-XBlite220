@@ -1,0 +1,204 @@
+'
+'
+' ########################  Max Reason
+' #####  README.TXT  #####  copyright 1988-2000
+' ########################  Linux XBasic introduction
+'
+' http://www.xbasic.org
+' http://groups.yahoo.com/group/xbasic
+' maxreason@maxreason.com
+'
+' for Linux XBasic
+'
+'
+' #####  introduction  #####
+'
+' XBasic is a integrated software development environment
+' including an advanced compiler, edit/run/debug environment,
+' and interactive GuiDesigner.  Windows XBasic and Linux XBasic
+' are compatible implementations - even applications containing
+' extensive graphics and GUI functionality will run unmodified
+' on both operating systems without any source-code changes.
+'
+' XBasic is "open-source freeware".  The XBasic compiler and
+' edit/run/debug environment are subject to the GPL license
+' reproduced in file COPYING included in this distribution.
+' The general purpose XBasic function libraries are subject
+' to the LGPL license reproduced in file COPYING_LIB included
+' in this distribution.  All sample programs included with
+' this distribution are public-domain unless otherwise
+' specified in the sample program itself.
+'
+' Which license that applies each file is specified near
+' the top of the file.
+' 
+'
+' #####  install XBasic  #####
+'
+' You must follow the installation instructions exactly,
+' or XBasic will not work properly, if at all.
+'
+' - Installing from xbasic-$(VERSION)-linux-i386.tar.gz
+'   (note: replace $(VERSION) with the correct version
+'   number)
+'
+'   1. Put the xbasic-$(VERSION)-linux-i386.tar.gz file in
+'      your / root directory.
+'   2. Start an xterm window, then enter the following
+'      lines:
+'      cd /
+'      tar xfz xbasic-$(VERSION)-linux-i386.tar.gz
+'
+' - Install from xbasic-$(VERSION).i386.rpm
+'   1. Start an xterm window, then enter the following
+'      lines:
+'      rpm --install xbasic-$(VERSION).i386.rpm
+'   If a previous version of xbasic was installed, remove it
+'   first by running 'rpm --erase xbasic-$(VERSION)'.
+'
+' All files are installed in the /usr/xb directory and
+' subdirectories of /usr/xb except a symbolic link to the
+' XBasic executable which is installed /usr/bin/xb ->
+' /usr/xb/bin/xb and a symbolic link to the XBasic library
+' which is installed as /usr/lib/libxb.a ->
+' /usr/xb/lib/libxb.a
+'
+' To run XBasic, enter the following line:
+'     xb
+'
+' Previous releases of XBasic created a directory ~/xb and
+' copied some files into it. All versions from 6.1.0
+' onwards don't do that anymore and an existing ~/xb
+' directory is ignored.
+' Previous releases also had a 'master directory' (/usr/xb)
+' and a 'working directory' (~/xb). All versions from 6.1.0
+' onward ONLY have a 'master directory' which contains all
+' files needed by the XBasic compiler/PDE. You can now use
+' any directory as the working directory. Using ~/xb is
+' discouraged, using a seperate directory per project is
+' strongly encouraged.
+'
+'
+' #####  run XBasic  #####
+'
+' To run XBasic, simply enter "xb" on an xterm command line.
+' Better yet, put a link to /usr/bin/xb on your desktop.
+' Thereafter start XBasic by double-clicking the icon.
+'
+' The first time you run XBasic, select "help+new" and
+' "help+notes" in the main window menu-bar and read them.
+'
+'
+' #####  documentation  #####
+'
+' The old XBasic documentation was in Microsoft Word format.
+' The new XBasic documentation is in HTML format, and will
+' henceforth be enhanced and improved by XBasic programmers.
+' See http://www.maxreason.com/software/xbasic/xbasic.html
+' for links to the HTML documentation that you can view
+' online and/or download into your computer.
+'
+'
+' #####  build XBasic  #####
+'
+' All XBasic source code and other files needed to modify
+' and rebuild XBasic are in a separate distribution:
+' xbasic-$(VERSION)-linux-src.tar.gz.
+' Note that because XBasic is written in XBasic you need
+' to have an XBasic compiler installed before you're able
+' to rebuild XBasic.
+' To rebuild XBasic do the following:
+'
+' 1.  Start an xterm window, then enter the following:
+'     cd /usr/src (or any other directory you like)
+'     tar xfz xbasic-$(VERSION)-linux-src.tar.gz
+'     cd xbasic-$VERSION
+'     make
+'     make install
+'     Note: make install installs the new XBasic in
+'     /usr/xb-$(VERSION). This way you'll still have a
+'     working XBasic (the one in /usr/xb) if your build
+'     is faulty.
+'
+' "make" builds a new XBasic executable.  By default, "make"
+' finds instructions in the file called "makefile", and is
+' equivalent to "make -f makefile".  A more secure way to
+'
+' The files necessary to rebuild XBasic include (at least):
+'
+'  xcm.x       ' complex number function library
+'  xcol.x      ' XBasic compiler
+'  xdis.x      ' 32-bit i486+ disassembler
+'  xgr.x       ' graphics function library
+'  xin.x       ' sockets/network/internet library
+'  xit.x       ' integrated development environment
+'  xma.x       ' mathematics function library
+'  xrun.x      ' standalone executable support
+'  xst.x       ' standard function library
+'  xui.x       ' GuiDesigner function library
+'
+'  appstart.s  ' standalone executable support
+'  xlib.s      ' core/startup assembly library
+'  xstart.s    ' standalone executable support
+'              ' many files in xxx subdirectory
+'
+'
+' You can run, modify, debug "xma.x", "xcm.x", "xui.x"
+' and possibly "xin.x" in the development environment.
+' You can do the same with "xcol.x" if you do what is
+' specified near the top of that source-file, but be
+' careful not to forget changing those /xxx/ fields
+' or you will have endless and unexplainable troubles!
+'
+' You need to understand what ##WHOMASK and ##LOCKOUT
+' are for before you start adding or modifying XBasic.
+' Hint: ##WHOMASK self-implements a crude "two-thread"
+' scheme that distinguishes memory allocated for the
+' development environment from programs running in it.
+' And ##LOCKOUT prevents signal being processed inside
+' signals where that might cause problems.
+'
+'
+' #####  build executables  #####
+'
+' To build a standalone executables from applications
+' you already debugged in the development environment,
+' do the following (assume your program is "prog.x").
+'
+' 1.  Start an xterm window, then enter:
+'     cd <source directory>
+'     xb prog.x
+'     make prog.mak
+' 2.  To execute your application, enter:
+'     ./prog
+'
+' ##############################
+' #####  Compiling XBasic  #####
+' ##############################
+'
+' To be able to compile XBasic itself you need the following things
+' - A working XBasic compiler (note: XBasic is largely written in XBasic
+'   itself)
+'
+' To compile XBasic:
+' - unpack the sources into a separate directory (from the XBasic binary
+'   directory)
+' - Goto that directory
+' - make
+' - make install
+'
+'
+' #####  status  #####
+'
+' This is the first release of XBasic in open-source.
+' The documentation included to support development
+' of the source-code is minimal at present.  Join the
+' XBasic mail-list forum for receive and provide help.
+' Browse to http://groups.yahoo.com/group/xbasic .
+'
+'
+' #####  always  #####
+'
+' I hope you enjoy XBasic.
+'
+'

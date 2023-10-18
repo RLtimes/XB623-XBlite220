@@ -1,0 +1,355 @@
+'
+'
+' #########################  XBLite
+' #####  shell32.dec  #####  copyright 1988-2005
+' #########################  Windows XBLite declarations for Windows "shell32"
+'
+' subject to LGPL license - see COPYING_LIB
+' for Windows XBLite
+' VERSION  "0.0006"    ' 2005/04/15
+'
+' ###########################
+' #####  declare types  #####
+' ###########################
+'
+'IMPORT "gdi32"
+' NOTE: import gdi32.dec before shell32.dec
+'
+'TYPE POINTAPI
+'  ULONG     .x
+'  ULONG     .y
+'END TYPE
+'
+'TYPE RECT
+'  ULONG      .Left
+'  ULONG      .Top
+'  ULONG      .Right
+'  ULONG      .Bottom
+'END TYPE
+'
+TYPE DRAGINFO
+  ULONG      .uSize     
+  POINT      .pt
+  ULONG      .fNC
+  ULONG      .lpFileList
+  ULONG      .grfKeyState
+END TYPE
+'
+TYPE APPBARDATA
+  ULONG      .cbSize
+  ULONG      .hwnd
+  ULONG      .uCallbackMessage
+  ULONG      .uEdge
+  RECT       .rc
+  ULONG      .lParam     
+END TYPE
+'
+TYPE SHFILEOPSTRUCT
+  ULONG      .hwnd
+  ULONG      .wFunc
+  ULONG      .pFrom
+  ULONG      .pTo
+  USHORT     .fFlags
+  ULONG      .fAnyOperationsAborted
+  ULONG      .hNameMappings
+  ULONG      .lpszProgressTitle     
+END TYPE
+'
+TYPE SHNAMEMAPPING
+  ULONG      .pszOldPath
+  ULONG      .pszNewPath
+  ULONG      .cchOldPath
+  ULONG      .cchNewPath
+END TYPE
+'
+TYPE SHELLEXECUTEINFO
+  ULONG      .cbSize
+  ULONG      .fMask
+  ULONG      .hwnd
+  ULONG      .lpVerb
+  ULONG      .lpFile
+  ULONG      .lpParameters
+  ULONG      .lpDirectory
+  ULONG      .nShow
+  ULONG      .hInstApp
+'
+'  Optional fields
+'
+  ULONG      .lpIDList
+  ULONG      .lpClass
+  ULONG      .hkeyClass
+  ULONG      .dwHotKey
+  ULONG      .hIcon
+  ULONG      .hProcess
+END TYPE
+'
+TYPE NOTIFYICONDATA
+  ULONG      .cbSize
+  ULONG      .hWnd
+  ULONG      .uID
+  ULONG      .uFlags
+  ULONG      .uCallbackMessage
+  ULONG      .hIcon
+  STRING*64  .szTip     
+END TYPE
+'
+TYPE SHFILEINFO
+  ULONG      .hIcon     
+  ULONG      .iIcon     
+  ULONG      .dwAttributes     
+  STRING*260 .szDisplayName         
+  STRING*80  .szTypeName              
+END TYPE
+
+TYPE SHORTITEMID
+	ULONG	.cb
+	UBYTE	.abID
+END TYPE
+
+TYPE ITEMIDLIST
+	SHORTITEMID	.mkid
+END TYPE
+
+TYPE BROWSEINFO
+	ULONG	.hWndOwner
+	ULONG	.pIDLRoot 
+	ULONG	.pszDisplayName 
+	ULONG	.lpszTitle 
+	ULONG	.ulFlags 
+	XLONG	.lpfnCallback
+	ULONG	.lParam 
+	ULONG	.iImage 
+END TYPE
+
+'
+'
+'
+' ###############################
+' #####  declare functions  #####
+' ###############################
+'
+EXTERNAL FUNCTION DoEnvironmentSubstA (szStringAddr, cbString)
+EXTERNAL FUNCTION DragAcceptFiles (hwnd, fAccept)
+EXTERNAL FUNCTION DragFinish (hDrop)
+EXTERNAL FUNCTION DragQueryFileA (hDrop, iFile, lpszFile, cch)
+EXTERNAL FUNCTION DragQueryPoint (hDrop, lpPoint)
+EXTERNAL FUNCTION DuplicateIcon (hInst, hIcon)
+EXTERNAL FUNCTION ExtractAssociatedIconA (hInst, lpIconPathAddr, lpiIcon)   'hInst,lpIconPathAddr,lpiIcon
+EXTERNAL FUNCTION ExtractIconA (hInst, lpszExeFileNameAddr, nIconIndex)
+EXTERNAL FUNCTION ExtractIconExA (lpszFileAddr, nIconIndex, phiconLarge, phiconSmall, nIcons)
+EXTERNAL FUNCTION FindEnvironmentStringA (szEnvVarAddr)
+EXTERNAL FUNCTION FindExecutableA (lpFileAddr, lpDirectoryAddr, lpResultAddr)
+
+EXTERNAL FUNCTION ShellAboutA (hwnd, szAppAddr, szOtherStuffAddr, hIcon)
+EXTERNAL FUNCTION ShellExecuteA (hwnd, lpOperationAddr, lpFileAddr, lpParametersAddr, lpDirectoryAddr, nShowCmd)
+EXTERNAL FUNCTION ShellExecuteExA (addrSHELLEXECUTEINFO)
+EXTERNAL FUNCTION Shell_NotifyIconA (dwMessage, addrNOTIFYICONDATA)
+
+EXTERNAL FUNCTION SHAppBarMessage (dwMessage, addrAPPBARDATA)
+EXTERNAL FUNCTION SHBrowseForFolderA (addrBROWSEINFO)
+EXTERNAL FUNCTION SHChangeNotify (nEventId, uFlags, dwItem1, dwItem2)
+EXTERNAL FUNCTION SHFileOperationA (addrFileOp)
+EXTERNAL FUNCTION SHFormatDrive (hwnd, drive, fmtID, options)
+EXTERNAL FUNCTION SHFreeNameMappings (hNameMappings)
+EXTERNAL FUNCTION SHGetFileInfoA (pszPathAddr, dwFileAttributes, psfi, cbFileInfo, uFlags)
+EXTERNAL FUNCTION SHGetNewLinkInfoA (pszLinktoAddr, pszDirAddr, pszNameAddr, pfMustCopy, uFlags)
+EXTERNAL FUNCTION SHGetPathFromIDListA (pidList, lpBuffer)
+EXTERNAL FUNCTION SHGetSpecialFolderLocation (hwndOwner, nFolder, addrITEMIDLIST)
+
+EXTERNAL FUNCTION WinExecErrorA (hwnd, error, lpstrFileNameAddr, lpstrTitleAddr)
+'
+'
+' #######################
+' #####  constants  #####
+' #######################
+'
+' AppBar constants
+'
+$$ABM_NEW                 = 0x00000000
+$$ABM_REMOVE              = 0x00000001
+$$ABM_QUERYPOS            = 0x00000002
+$$ABM_SETPOS              = 0x00000003
+$$ABM_GETSTATE            = 0x00000004
+$$ABM_GETTASKBARPOS       = 0x00000005
+$$ABM_ACTIVATE            = 0x00000006             
+$$ABM_GETAUTOHIDEBAR      = 0x00000007
+$$ABM_SETAUTOHIDEBAR      = 0x00000008          
+$$ABM_WINDOWPOSCHANGED    = 0x00000009
+'
+' constants for wparam of callback messages
+'
+$$ABN_STATECHANGE         = 0x00000000
+$$ABN_POSCHANGED          = 0x00000001
+$$ABN_FULLSCREENAPP       = 0x00000002
+$$ABN_WINDOWARRANGE       = 0x00000003 
+'
+' constant flags for get state
+'
+$$ABS_AUTOHIDE            = 0x00000001
+$$ABS_ALWAYSONTOP         = 0x00000002
+$$ABE_LEFT                = 0x00000000
+$$ABE_TOP                 = 0x00000001
+$$ABE_RIGHT               = 0x00000002
+$$ABE_BOTTOM              = 0x00000003
+'
+$$EIRESID                 = -1
+'
+' Shell File Operations constants
+'
+$$FO_MOVE                 = 0x00000001
+$$FO_COPY                 = 0x00000002
+$$FO_DELETE               = 0x00000003
+$$FO_RENAME               = 0x00000004
+$$FOF_MULTIDESTFILES      = 0x00000001
+$$FOF_CONFIRMMOUSE        = 0x00000002
+$$FOF_SILENT              = 0x00000004                      
+$$FOF_RENAMEONCOLLISION   = 0x00000008
+$$FOF_NOCONFIRMATION      = 0x00000010             
+$$FOF_WANTMAPPINGHANDLE   = 0x00000020          
+
+$$FOF_ALLOWUNDO           = 0x00000040
+$$FOF_FILESONLY           = 0x00000080                  
+$$FOF_SIMPLEPROGRESS      = 0x00000100            
+$$FOF_NOCONFIRMMKDIR      = 0x00000200            
+
+$$PO_DELETE               = 0x00000013           
+$$PO_RENAME               = 0x00000014           
+$$PO_PORTCHANGE           = 0x00000020       
+$$PO_REN_PORT             = 0x00000034         
+'
+' ShellExecute() and ShellExecuteEx() constants
+'
+$$SE_ERR_FNF              =  2                     
+$$SE_ERR_PNF              =  3                    
+$$SE_ERR_ACCESSDENIED     =  5            
+$$SE_ERR_OOM              =  8                    
+$$SE_ERR_DLLNOTFOUND      = 32
+'
+$$SEE_MASK_CLASSNAME      = 0x00000001
+$$SEE_MASK_CLASSKEY       = 0x00000003
+$$SEE_MASK_IDLIST         = 0x00000004
+$$SEE_MASK_INVOKEIDLIST   = 0x0000000C
+$$SEE_MASK_ICON           = 0x00000010
+$$SEE_MASK_HOTKEY         = 0x00000020
+$$SEE_MASK_NOCLOSEPROCESS = 0x00000040
+$$SEE_MASK_CONNECTNETDRV  = 0x00000080
+$$SEE_MASK_FLAG_DDEWAIT   = 0x00000100
+$$SEE_MASK_DOENVSUBST     = 0x00000200
+$$SEE_MASK_FLAG_NO_UI     = 0x00000400
+'
+' Tray notification constants
+'
+$$NIM_ADD                 = 0x00000000
+$$NIM_MODIFY              = 0x00000001
+$$NIM_DELETE              = 0x00000002
+$$NIF_MESSAGE             = 0x00000001
+$$NIF_ICON                = 0x00000002
+$$NIF_TIP                 = 0x00000004
+'
+' Shell get file info constants
+'
+$$SHGFI_ICON              = 0x00000100                        
+$$SHGFI_DISPLAYNAME       = 0x00000200                  
+$$SHGFI_TYPENAME          = 0x00000400                    
+$$SHGFI_ATTRIBUTES        = 0x00000800                   
+$$SHGFI_ICONLOCATION      = 0x00001000               
+$$SHGFI_EXETYPE           = 0x00002000                     
+$$SHGFI_SYSICONINDEX      = 0x00004000               
+$$SHGFI_LINKOVERLAY       = 0x00008000                
+$$SHGFI_SELECTED          = 0x00010000                   
+$$SHGFI_LARGEICON         = 0x00000000                     
+$$SHGFI_SMALLICON         = 0x00000001                      
+$$SHGFI_OPENICON          = 0x00000002                      
+$$SHGFI_SHELLICONSIZE     = 0x00000004                  
+$$SHGFI_PIDL              = 0x00000008                          
+$$SHGFI_USEFILEATTRIBUTES = 0x00000010            
+
+$$MAX_PATH                = 260
+'
+' Shell Get new link info constants
+'
+$$SHGNLI_PIDL             = 0x00000001                          
+$$SHGNLI_PREFIXNAME       = 0x00000002   
+'
+'$$BIF_RETURNONLYFSDIRS  = 0x1
+'$$BIF_DONTGOBELOWDOMAIN = 0x2  ' For starting the Find Computer
+'$$BIF_STATUSTEXT        = 0x4
+'$$BIF_RETURNFSANCESTORS = 0x8
+'$$BIF_RETURNCOMPUTERS   = 0x1000
+'$$BIF_RETURNPRINTERS    = 0x2000
+'$$BIF_RETURNALL         = 0x4000
+
+$$BIF_RETURNONLYFSDIRS = 0x1         ' Only returns file system directories. If the user selects folders
+                                                   '   that are not part of the file system, the OK button is grayed.
+$$BIF_DONTGOBELOWDOMAIN = 0x2        ' Do not include network folders below the domain level in the tree
+                                                   '   view control.
+$$BIF_STATUSTEXT = 0x4               ' Include a status area in the dialog box. The callback function
+                                                   '   can set the status text by sending messages to the dialog box.
+$$BIF_RETURNFSANCESTORS = 0x8        ' Only return file system ancestors. If the user selects anything
+                                                   '   other than a file system ancestor, the OK button is grayed.
+$$BIF_EDITBOX = 0x10                 ' Version 4.71.  The browse dialog includes an edit control in which
+                                                   '   the user can type the name of an item.
+$$BIF_VALIDATE = 0x20                ' Version 4.71.  If the user types an invalid name into the edit box,
+                                                   '   the browse dialog will call the application's BrowseCallbackProc
+                                                   '   with the BFFM_VALIDATEFAILED message. This flag is ignored if
+                                                   '   BIF_EDITBOX is not specified.
+$$BIF_NEWDIALOGSTYLE = 0x40          ' Version 5.00.  Use the new user-interface. Setting this flag
+                                                   '   provides the user with a larger dialog box that can be resized.
+                                                   '   It has several new capabilities including: drag and drop
+                                                   '   capability within the dialog box, reordering, context menus,
+                                                   '   new folders, delete, and other context menu commands. To use
+                                                   '   this flag, you must call OleInitialize or CoInitialize before
+                                                   '   calling SHBrowseForFolder.
+$$BIF_BROWSEINCLUDEURLS = 0x80       ' Version 5.00.  The browse dialog box can display URLs. The
+                                                   '   BIF_USENEWUI and BIF_BROWSEINCLUDEFILES flags must also be set.
+                                                   '   If these three flags are not set, the browser dialog box will
+                                                   '   reject URLs.  Even when these flags are set, the browse dialog
+                                                   '   box will only display URLs if the folder that contains the
+                                                   '   selected item supports them. When the folder's                                          
+                                                   '   IShellFolder::GetAttributesOf method is called to request the
+                                                   '   selected item's attributes, the folder must set the SFGAO_FOLDER
+                                                   '   attribute flag. Otherwise, the browse dialog box will not
+                                                   '   display the URL.
+$$BIF_USENEWUI = 0x50 '(BIF_NEWDIALOGSTYLE Or BIF_EDITBOX)
+                                                   ' Version 5.00.  Use the new user interface, including an edit box.
+                                                   '   This flag is equivalent to BIF_EDITBOX | BIF_NEWDIALOGSTYLE.
+                                                   '   To use BIF_USENEWUI, you must call OleInitialize or CoInitialize
+                                                   '   before calling SHBrowseForFolder.
+$$BIF_BROWSEFORCOMPUTER = 0x1000     ' Only return computers. If the user selects anything other than a
+                                                   '   computer, the OK button is grayed.
+$$BIF_BROWSEFORPRINTER = 0x2000      ' Only return printers. If the user selects anything other than a
+                                                   '   printer, the OK button is grayed.
+$$BIF_BROWSEINCLUDEFILES = 0x4000    ' Version 4.71.  The browse dialog will display files as well as
+                                                   '   folders.
+$$BIF_SHAREABLE = 0x8000             ' Version 5.00.  The browse dialog box can display shareable
+                                                   '   resources on remote systems. It is intended for applications
+                                                   '   that want to expose remote shares on a local system. The
+                                                   '   BIF_USENEWUI flag must also be set.
+
+$$BFFM_INITIALIZED      = 1
+$$BFFM_SELCHANGED       = 2
+$$BFFM_VALIDATEFAILEDA  = 3
+$$BFFM_VALIDATEFAILEDW  = 4
+
+$$BFFM_SETSTATUSTEXTA  = 1124  ' (WM_USER + 100)
+$$BFFM_ENABLEOK        = 1125  ' (WM_USER + 101)
+$$BFFM_SETSELECTIONA   = 1126  ' (WM_USER + 102)
+$$BFFM_SETSELECTIONW   = 1127  ' (WM_USER + 103)
+$$BFFM_SETSTATUSTEXTW  = 1128  ' (WM_USER + 104)
+
+'Browsing Types
+$$CSIDL_BITBUCKET = 10
+$$CSIDL_CONTROLS = 3
+$$CSIDL_DESKTOP = 0
+$$CSIDL_DRIVES = 17
+$$CSIDL_FONTS = 20
+$$CSIDL_NETHOOD = 18
+$$CSIDL_NETWORK = 19
+$$CSIDL_PERSONAL = 5
+$$CSIDL_PRINTERS = 4
+$$CSIDL_PROGRAMS = 2
+$$CSIDL_RECENT = 8
+$$CSIDL_SENDTO = 9
+$$CSIDL_STARTMENU = 11
+
+

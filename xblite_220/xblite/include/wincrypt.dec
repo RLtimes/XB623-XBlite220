@@ -1,0 +1,2896 @@
+' ########################  XBLite
+' #####  wincrypt.h  #####  copyright 2003
+' ########################  Windows XLite declarations for Windows "advapi32"
+'
+' wincrypt.h declarations for advapi32
+' subject to GPLL license - see gpll.txt
+' VERSION  "0.0001"  ' 2003/06/23
+'
+' ###########################
+' #####  declare types  #####
+' ###########################
+
+XLONG ALG_ID
+ULONG HCRYPTKEY
+ULONG HCRYPTHASH
+ULONG HCRYPTPROV
+
+XLONG HCRYPTMSG
+XLONG HCRYPTOIDFUNCSET
+XLONG HCRYPTOIDFUNCADDR
+XLONG HCERTSTOREPROV
+XLONG HCERTSTORE
+XLONG PCCERT_CONTEXT
+XLONG HCRYPTASYNC
+
+TYPE VTableProvStruc
+	XLONG	.Version
+	XLONG	.FuncVerifyImage
+	XLONG	.FuncReturnhWnd
+	XLONG	.dwProvType
+	XLONG	.pbContextInfo
+	XLONG	.cbContextInfo
+END TYPE
+
+TYPE HMAC_Info
+	ALG_ID .HashAlgid
+	XLONG	.pbInnerString
+	XLONG	.cbInnerString
+	XLONG	.pbOuterString
+	XLONG	.cbOuterString
+END TYPE
+
+TYPE SCHANNEL_ALG
+	XLONG	.dwUse
+	ALG_ID .Algid
+	XLONG	.cBits
+END TYPE
+
+TYPE PROV_ENUMALGS 
+	ALG_ID .aiAlgid
+	XLONG .dwBitLen
+	XLONG .dwNameLen
+	STRING * 20 .szName
+END TYPE
+
+TYPE PROV_ENUMALGS_EX 
+	ALG_ID .aiAlgid
+	XLONG .dwDefaultLen
+	XLONG .dwMinLen
+	XLONG .dwMaxLen
+	XLONG .dwProtocols
+	XLONG .dwNameLen
+	STRING * 20 .szName
+	XLONG .dwLongNameLen
+	STRING * 40 .szLongName
+END TYPE
+
+TYPE PUBLICKEYSTRUC 
+	UBYTE .bType
+	UBYTE .bVersion
+	USHORT .reserved
+	ALG_ID .aiKeyAlg
+END TYPE
+
+TYPE RSAPUBKEY 
+	XLONG .magic
+	XLONG .bitlen
+	XLONG .pubexp
+END TYPE
+
+TYPE PUBKEY 
+	XLONG .magic
+	XLONG .bitlen
+END TYPE			
+
+PUBKEY DHPUBKEY, DSSPUBKEY, KEAPUBKEY, TEKPUBKEY 
+
+TYPE DSSSEED 
+	XLONG .counter
+	UBYTE .seed[19]
+END TYPE
+
+TYPE KEY_TYPE_SUBTYPE 
+	XLONG .dwKeySpec
+	GUID .Type
+	GUID .Subtype
+END TYPE
+
+TYPE CERT_FORTEZZA_DATA_PROP 
+	UBYTE .SerialNumber[7]
+	USHORT .CertIndex
+	UBYTE .CertLabel[35]
+END TYPE
+
+TYPE CRYPTOAPI_BLOB 
+	XLONG .cbData
+	XLONG	.pbData
+END TYPE
+
+CRYPTOAPI_BLOB CRYPT_UINT_BLOB, CRYPT_OBJID_BLOB, CERT_NAME_BLOB, CERT_RDN_VALUE_BLOB  
+CRYPTOAPI_BLOB CERT_BLOB, CRL_BLOB, DATA_BLOB, CRYPT_DATA_BLOB
+CRYPTOAPI_BLOB CRYPT_HASH_BLOB, CRYPT_DIGEST_BLOB, CRYPT_DER_BLOB, CRYPT_ATTR_BLOB
+
+TYPE CRYPT_BIT_BLOB 
+	XLONG .cbData
+	XLONG .pbData
+	XLONG .cUnusedBits
+END TYPE
+
+TYPE CRYPT_ALGORITHM_IDENTIFIER 
+	XLONG .pszObjId
+	CRYPT_OBJID_BLOB .Parameters
+END TYPE
+
+TYPE CRYPT_OBJID_TABLE 
+	XLONG .dwAlgId
+	XLONG .pszObjId
+END TYPE
+
+TYPE CRYPT_HASH_INFO 
+	CRYPT_ALGORITHM_IDENTIFIER .HashAlgorithm
+	CRYPT_HASH_BLOB .Hash
+END TYPE
+
+TYPE CERT_EXTENSION 
+	XLONG .pszObjId
+	XLONG .fCritical
+	CRYPT_OBJID_BLOB .Value
+END TYPE
+
+TYPE CRYPT_ATTRIBUTE_TYPE_VALUE 
+	XLONG .pszObjId
+	CRYPT_OBJID_BLOB .Value
+END TYPE
+
+TYPE CRYPT_ATTRIBUTE 
+	XLONG .pszObjId
+	XLONG .cValue
+	XLONG .rgValue		' PCRYPT_ATTR_BLOB .rgValue
+END TYPE
+
+TYPE CRYPT_ATTRIBUTES 
+	XLONG .cAttr
+	XLONG .rgAttr
+END TYPE
+
+TYPE CERT_RDN_ATTR 
+	XLONG .pszObjId
+	XLONG .dwValueType
+	CERT_RDN_VALUE_BLOB .Value
+END TYPE
+
+TYPE CERT_RDN 
+	XLONG .cRDNAttr
+	XLONG .rgRDNAttr
+END TYPE
+
+TYPE CERT_NAME_INFO 
+	XLONG .cRDN
+	XLONG .rgRDN
+END TYPE
+
+TYPE CERT_NAME_VALUE 
+	XLONG .dwValueType
+	CERT_RDN_VALUE_BLOB .Value
+END TYPE
+
+TYPE CERT_PUBLIC_KEY_INFO 
+	CRYPT_ALGORITHM_IDENTIFIER .Algorithm
+	CRYPT_BIT_BLOB .PublicKey
+END TYPE
+
+TYPE CRYPT_PRIVATE_KEY_INFO 
+	XLONG .Version
+	CRYPT_ALGORITHM_IDENTIFIER .Algorithm
+	CRYPT_DER_BLOB .PrivateKey
+	XLONG .pAttributes
+END TYPE
+
+TYPE CRYPT_ENCRYPTED_PRIVATE_KEY_INFO 
+	CRYPT_ALGORITHM_IDENTIFIER .EncryptionAlgorithm
+	CRYPT_DATA_BLOB .EncryptedPrivateKey
+END TYPE
+
+'typedef BOOL(CALLBACK * PCRYPT_DECRYPT_PRIVATE_KEY_FUNC) ( CRYPT_ALGORITHM_IDENTIFIER Algorithm,CRYPT_DATA_BLOB EncryptedPrivateKey,XLONG .pbClearTextKey,XLONG .* pcbClearTextKey,LPVOID pVoidDecryptFunc)
+'typedef BOOL(CALLBACK * PCRYPT_ENCRYPT_PRIVATE_KEY_FUNC) ( CRYPT_ALGORITHM_IDENTIFIER * pAlgorithm,CRYPT_DATA_BLOB * pClearTextPrivateKey,XLONG .pbEncryptedKey,XLONG .* pcbEncryptedKey,LPVOID pVoidEncryptFunc)
+'typedef BOOL(CALLBACK * PCRYPT_RESOLVE_HCRYPTPROV_FUNC) ( CRYPT_PRIVATE_KEY_INFO * pPrivateKeyInfo,HCRYPTPROV * phCryptProv,LPVOID pVoidResolveFunc) 
+
+TYPE CRYPT_PKCS8_IMPORT_PARAMS
+	CRYPT_DIGEST_BLOB .PrivateKey
+	XLONG .pResolvehCryptProvFunc
+	XLONG .pVoidResolveFunc
+	XLONG .pDecryptPrivateKeyFunc
+	XLONG .pVoidDecryptFunc
+END TYPE					
+
+TYPE CRYPT_PRIVATE_KEY_BLOB_AND_PARAMS
+	CRYPT_DIGEST_BLOB .PrivateKey
+	XLONG .pResolvehCryptProvFunc
+	XLONG .pVoidResolveFunc
+	XLONG .pDecryptPrivateKeyFunc
+	XLONG .pVoidDecryptFunc
+END TYPE
+		
+TYPE CRYPT_PKCS8_EXPORT_PARAMS 
+	XLONG .hCryptProv
+	XLONG .dwKeySpec
+	XLONG .pszPrivateKeyObjId
+	XLONG .pEncryptPrivateKeyFunc
+	XLONG .pVoidEncryptFunc
+END TYPE
+
+TYPE CERT_INFO 
+	XLONG .dwVersion
+	CRYPT_INTEGER_BLOB .SerialNumber
+	CRYPT_ALGORITHM_IDENTIFIER .SignatureAlgorithm
+	CERT_NAME_BLOB .Issuer
+	FILETIME .NotBefore
+	FILETIME .NotAfter
+	CERT_NAME_BLOB .Subject
+	CERT_PUBLIC_KEY_INFO .SubjectPublicKeyInfo
+	CRYPT_BIT_BLOB .IssuerUniqueId
+	CRYPT_BIT_BLOB .SubjectUniqueId
+	XLONG .cExtension
+	XLONG .rgExtension
+END TYPE
+
+TYPE CRL_ENTRY 
+	CRYPT_INTEGER_BLOB .SerialNumber
+	FILETIME .RevocationDate
+	XLONG .cExtension
+	XLONG .rgExtension
+END TYPE
+
+TYPE CRL_INFO 
+	XLONG .dwVersion
+	CRYPT_ALGORITHM_IDENTIFIER .SignatureAlgorithm
+	CERT_NAME_BLOB .Issuer
+	FILETIME .ThisUpdate
+	FILETIME .NextUpdate
+	XLONG .cCRLEntry
+	XLONG .rgCRLEntry
+	XLONG .cExtension
+	XLONG .rgExtension
+END TYPE
+
+TYPE CERT_REQUEST_INFO 
+	XLONG .dwVersion
+	CERT_NAME_BLOB .Subject
+	CERT_PUBLIC_KEY_INFO .SubjectPublicKeyInfo
+	XLONG .cAttribute
+	XLONG .rgAttribute
+END TYPE
+
+TYPE CERT_KEYGEN_REQUEST_INFO 
+	XLONG .dwVersion
+	CERT_PUBLIC_KEY_INFO .SubjectPublicKeyInfo
+	XLONG .pwszChallengeString
+END TYPE
+
+TYPE CERT_SIGNED_CONTENT_INFO 
+	CRYPT_DER_BLOB .ToBeSigned
+	CRYPT_ALGORITHM_IDENTIFIER .SignatureAlgorithm
+	CRYPT_BIT_BLOB .Signature
+END TYPE
+
+TYPE CTL_USAGE 
+	XLONG .cUsageIdentifier
+	XLONG .rgpszUsageIdentifier
+END TYPE					
+
+TYPE CERT_ENHKEY_USAGE
+	XLONG .cUsageIdentifier
+	XLONG .rgpszUsageIdentifier
+END TYPE
+
+TYPE CTL_ENTRY 
+	CRYPT_DATA_BLOB .SubjectIdentifier
+	XLONG .cAttribute
+	XLONG .rgAttribute
+END TYPE
+
+TYPE CTL_INFO 
+	XLONG .dwVersion
+	CTL_USAGE .SubjectUsage
+	CRYPT_DATA_BLOB .ListIdentifier
+	CRYPT_INTEGER_BLOB .SequenceNumber
+	FILETIME .ThisUpdate
+	FILETIME .NextUpdate
+	CRYPT_ALGORITHM_IDENTIFIER .SubjectAlgorithm
+	XLONG .cCTLEntry
+	XLONG	.rgCTLEntry
+	XLONG .cExtension
+	XLONG .rgExtension
+END TYPE
+
+TYPE CRYPT_TIME_STAMP_REQUEST_INFO 
+	XLONG .pszTimeStampAlgorithm
+	XLONG .pszContentType
+	CRYPT_OBJID_BLOB .Content
+	XLONG .cAttribute
+	XLONG .rgAttribute
+END TYPE
+
+TYPE CRYPT_ENROLLMENT_NAME_VALUE_PAIR 
+	XLONG .pwszName
+	XLONG .pwszValue
+END TYPE
+
+TYPE CRYPT_CSP_PROVIDER 
+	XLONG .dwKeySpec
+	XLONG .pwszProviderName
+	CRYPT_BIT_BLOB .Signature
+END TYPE
+
+'typedef LPVOID(WINAPI * PFN_CRYPT_ALLOC) (UINT cbSize);
+'typedef VOID(WINAPI * PFN_CRYPT_FREE) (LPVOID pv);
+
+XLONG PFN_CRYPT_ALLOC
+XLONG PFN_CRYPT_FREE
+
+TYPE CRYPT_ENCODE_PARA 
+	XLONG .cbSize
+	XLONG .pfnAlloc
+	XLONG .pfnFree
+END TYPE
+
+TYPE CRYPT_DECODE_PARA 
+	XLONG .cbSize
+	XLONG .pfnAlloc
+	XLONG .pfnFree
+END TYPE
+
+TYPE CERT_EXTENSIONS 
+	XLONG .cExtension
+	XLONG .rgExtension
+END TYPE
+
+TYPE CERT_AUTHORITY_KEY_ID_INFO 
+	CRYPT_DATA_BLOB .KeyId
+	CERT_NAME_BLOB .CertIssuer
+	CRYPT_INTEGER_BLOB .CertSerialNumber
+END TYPE
+
+TYPE CERT_PRIVATE_KEY_VALIDITY 
+	FILETIME .NotBefore
+	FILETIME .NotAfter
+END TYPE
+
+TYPE CERT_KEY_ATTRIBUTES_INFO 
+	CRYPT_DATA_BLOB .KeyId
+	CRYPT_BIT_BLOB .IntendedKeyUsage
+	PCERT_PRIVATE_KEY_VALIDITY .pPrivateKeyUsagePeriod
+END TYPE
+
+TYPE CERT_POLICY_ID 
+	XLONG .cCertPolicyElementId
+	XLONG .rgpszCertPolicyElementId
+END TYPE
+
+TYPE CERT_KEY_USAGE_RESTRICTION_INFO 
+	XLONG .cCertPolicyId
+	XLONG .rgCertPolicyId
+	CRYPT_BIT_BLOB .RestrictedKeyUsage
+END TYPE
+
+TYPE CERT_OTHER_NAME 
+	XLONG .pszObjId
+	CRYPT_OBJID_BLOB .Value
+END TYPE
+
+TYPE CERT_ALT_NAME_ENTRY 
+	XLONG .dwAltNameChoice
+	UNION
+		XLONG .pOtherName
+		XLONG .pwszRfc822Name
+		XLONG .pwszDNSName
+		CERT_NAME_BLOB .DirectoryName
+		XLONG .pwszURL
+		CRYPT_DATA_BLOB .IPAddress
+		XLONG .pszRegisteredID
+	END UNION
+END TYPE
+
+TYPE CERT_ALT_NAME_INFO 
+	XLONG .cAltEntry
+	XLONG .rgAltEntry
+END TYPE
+
+TYPE CERT_BASIC_CONSTRAINTS_INFO 
+	CRYPT_BIT_BLOB .SubjectType
+	XLONG .fPathLenConstraint
+	XLONG .dwPathLenConstraint
+	XLONG .cSubtreesConstraint
+	XLONG .rgSubtreesConstraint
+END TYPE
+
+TYPE CERT_BASIC_CONSTRAINTS2_INFO 
+	XLONG .fCA
+	XLONG .fPathLenConstraint
+	XLONG .dwPathLenConstraint
+END TYPE
+
+TYPE CERT_POLICY_QUALIFIER_INFO 
+	XLONG .pszPolicyQualifierId
+	CRYPT_OBJID_BLOB .Qualifier
+END TYPE
+
+TYPE CERT_POLICY_INFO 
+	XLONG .pszPolicyIdentifier
+	XLONG .cPolicyQualifier
+	XLONG .rgPolicyQualifier
+END TYPE
+
+TYPE CERT_POLICIES_INFO 
+	XLONG .cPolicyInfo
+	XLONG .rgPolicyInfo
+END TYPE
+
+TYPE CERT_POLICY_QUALIFIER_NOTICE_REFERENCE 
+	XLONG .pszOrganization
+	XLONG .cNoticeNumbers
+	XLONG .rgNoticeNumbers
+END TYPE
+
+TYPE CERT_POLICY_QUALIFIER_USER_NOTICE 
+	XLONG .pNoticeReference
+	XLONG .pszDisplayText
+END TYPE
+
+TYPE CPS_URLS 
+	XLONG .pszURL
+	XLONG .pAlgorithm
+	XLONG .pDigest
+END TYPE
+
+TYPE CERT_POLICY95_QUALIFIER1 
+	XLONG .pszPracticesReference
+	XLONG .pszNoticeIdentifier
+	XLONG .pszNSINoticeIdentifier
+	XLONG .cCPSURLs
+	XLONG .rgCPSURLs
+END TYPE
+
+TYPE CRYPT_CONTENT_INFO_SEQUENCE_OF_ANY 
+	XLONG .pszObjId
+	XLONG .cValue
+	XLONG .rgValue
+END TYPE
+
+TYPE CRYPT_CONTENT_INFO 
+	XLONG .pszObjId
+	CRYPT_DER_BLOB .Content
+END TYPE
+
+TYPE CRYPT_SEQUENCE_OF_ANY 
+	XLONG .cValue
+	XLONG .rgValue
+END TYPE
+
+TYPE CERT_AUTHORITY_KEY_ID2_INFO 
+	CRYPT_DATA_BLOB .KeyId
+	CERT_ALT_NAME_INFO .AuthorityCertIssuer
+	CRYPT_INTEGER_BLOB .AuthorityCertSerialNumber
+END TYPE
+
+TYPE CERT_ACCESS_DESCRIPTION 
+	XLONG .pszAccessMethod
+	CERT_ALT_NAME_ENTRY .AccessLocation
+END TYPE
+
+TYPE CERT_AUTHORITY_INFO_ACCESS 
+	XLONG .cAccDescr
+	XLONG .rgAccDescr
+END TYPE
+
+TYPE CRL_DIST_POINT_NAME 
+	XLONG .dwDistPointNameChoice
+	UNION
+		CERT_ALT_NAME_INFO .FullName
+	END UNION
+END TYPE
+
+TYPE CRL_DIST_POINT 
+	CRL_DIST_POINT_NAME .DistPointName
+	CRYPT_BIT_BLOB .ReasonFlags
+	CERT_ALT_NAME_INFO .CRLIssuer
+END TYPE
+
+TYPE CRL_DIST_POINTS_INFO 
+	XLONG .cDistPoint
+	XLONG .rgDistPoint
+END TYPE
+
+TYPE CERT_DSS_PARAMETERS 
+	CRYPT_UINT_BLOB .p
+	CRYPT_UINT_BLOB .q
+	CRYPT_UINT_BLOB .g
+END TYPE
+
+TYPE CERT_DH_PARAMETERS 
+	CRYPT_UINT_BLOB .p
+	CRYPT_UINT_BLOB .g
+END TYPE
+
+TYPE CRYPT_RC2_CBC_PARAMETERS 
+	XLONG .dwVersion
+	XLONG .fIV
+	UBYTE .rgbIV[7]
+END TYPE
+
+TYPE CRYPT_SMIME_CAPABILITY 
+	XLONG .pszObjId
+	CRYPT_OBJID_BLOB .Parameters
+END TYPE
+
+TYPE CRYPT_SMIME_CAPABILITIES 
+	XLONG .cCapability
+	XLONG .rgCapability
+END TYPE
+
+TYPE CRYPT_OID_FUNC_ENTRY 
+	XLONG .pszOID
+	XLONG .pvFuncAddr
+END TYPE
+
+'TYPE PFN_CRYPT_ENUM_OID_FUNC
+'	XLONG .dwEncodingType
+'	XLONG .pszFuncName
+'	XLONG .pszOID,
+'	XLONG .cValue
+'	XLONG .rgdwValueType[]
+'	XLONG .rgpwszValueName[]
+'	XLONG .rgpbValueData[]
+'	XLONG .rgcbValueData[]
+'	XLONG .pvArg
+'END TYPE
+
+TYPE CRYPT_OID_INFO 
+	XLONG .cbSize
+	XLONG .pszOID
+	XLONG .pwszName
+	XLONG .dwGroupId
+	UNION
+		XLONG .dwValue
+		ALG_ID .Algid
+		XLONG .dwLength
+	END UNION
+	CRYPT_DATA_BLOB .ExtraInfo
+END TYPE
+
+CRYPT_OID_INFO CCRYPT_OID_INFO
+
+'typedef BOOL(WINAPI * PFN_CRYPT_ENUM_OID_INFO) (PCCRYPT_OID_INFO,XLONG)
+
+TYPE CMSG_SIGNER_ENCODE_INFO 
+	XLONG .cbSize
+	XLONG .pCertInfo
+	XLONG .hCryptProv
+	XLONG .dwKeySpec
+	CRYPT_ALGORITHM_IDENTIFIER .HashAlgorithm
+	XLONG .pvHashAuxInfo
+	XLONG .cAuthAttr
+	XLONG .rgAuthAttr
+	XLONG .cUnauthAttr
+	XLONG .rgUnauthAttr
+END TYPE
+
+TYPE CMSG_SIGNED_ENCODE_INFO 
+	XLONG .cbSize
+	XLONG .cSigners
+	XLONG .rgSigners
+	XLONG .cCertEncoded
+	XLONG .rgCertEncoded
+	XLONG .cCrlEncoded
+	XLONG .rgCrlEncoded
+END TYPE
+
+TYPE CMSG_ENVELOPED_ENCODE_INFO 
+	XLONG .cbSize
+	XLONG .hCryptProv
+	CRYPT_ALGORITHM_IDENTIFIER .ContentEncryptionAlgorithm
+	XLONG .pvEncryptionAuxInfo
+	XLONG .cRecipients
+	XLONG .rgpRecipients
+END TYPE
+
+TYPE CMSG_RC2_AUX_INFO 
+	XLONG .cbSize
+	XLONG .dwBitLen
+END TYPE
+
+TYPE CMSG_SP3_COMPATIBLE_AUX_INFO 
+	XLONG .cbSize
+	XLONG .dwFlags
+END TYPE
+
+TYPE CMSG_SIGNED_AND_ENVELOPED_ENCODE_INFO 
+	XLONG .cbSize
+	CMSG_SIGNED_ENCODE_INFO .SignedInfo
+	CMSG_ENVELOPED_ENCODE_INFO .EnvelopedInfo
+END TYPE
+
+TYPE CMSG_HASHED_ENCODE_INFO 
+	XLONG .cbSize
+	XLONG .hCryptProv
+	CRYPT_ALGORITHM_IDENTIFIER .HashAlgorithm
+	XLONG .pvHashAuxInfo
+END TYPE
+
+TYPE CMSG_ENCRYPTED_ENCODE_INFO 
+	XLONG .cbSize
+	CRYPT_ALGORITHM_IDENTIFIER .ContentEncryptionAlgorithm
+	XLONG .pvEncryptionAuxInfo
+END TYPE
+
+'typedef BOOL(WINAPI * PFN_CMSG_STREAM_OUTPUT) (const XLONG pvArg,	XLONG pbData, XLONG cbData, BOOL fFinal)
+
+TYPE CMSG_STREAM_INFO 
+	XLONG .cbContent
+	XLONG .pfnStreamOutput
+	XLONG .pvArg
+END TYPE
+
+TYPE CMSG_CTRL_DECRYPT_PARA 
+	XLONG .cbSize
+	XLONG .hCryptProv
+	XLONG .dwKeySpec
+	XLONG .dwRecipientIndex
+END TYPE
+
+TYPE CMSG_CTRL_ADD_SIGNER_UNAUTH_ATTR_PARA 
+	XLONG .cbSize
+	XLONG .dwSignerIndex
+	CRYPT_DATA_BLOB .Blob
+END TYPE
+
+TYPE CMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR_PARA 
+	XLONG .cbSize
+	XLONG .dwSignerIndex
+	XLONG .dwUnauthAttrIndex
+END TYPE
+
+TYPE CMSG_SIGNER_INFO 
+	XLONG .dwVersion
+	CERT_NAME_BLOB .Issuer
+	CRYPT_INTEGER_BLOB .SerialNumber
+	CRYPT_ALGORITHM_IDENTIFIER .HashAlgorithm
+	CRYPT_ALGORITHM_IDENTIFIER .HashEncryptionAlgorithm
+	CRYPT_DATA_BLOB .EncryptedHash
+	CRYPT_ATTRIBUTES .AuthAttrs
+	CRYPT_ATTRIBUTES .UnauthAttrs
+END TYPE
+
+CRYPT_ATTRIBUTES CMSG_ATTR
+
+'typedef XLONG (WINAPI * PFN_CMSG_ALLOC) (unsigned long cb)
+'typedef BOOL(WINAPI * PFN_CMSG_GEN_ENCRYPT_KEY) (phCryptProv, paiEncrypt, pvEncryptAuxInfo, pPublicKeyInfo, pfnAlloc, phEncryptKey, ppbEncryptParameters, pcbEncryptParameters)
+'typedef BOOL(WINAPI * PFN_CMSG_EXPORT_ENCRYPT_KEY) (hCryptProv, hEncryptKey,	pPublicKeyInfo, pbData, pcbData)
+'typedef BOOL(WINAPI * PFN_CMSG_IMPORT_ENCRYPT_KEY) (hCryptProv, dwKeySpec, paiEncrypt, paiPubKey, pbEncodedKey, cbEncodedKey, phEncryptKey)
+
+TYPE CERT_CONTEXT 
+	XLONG .dwCertEncodingType
+	XLONG .pbCertEncoded
+	XLONG .cbCertEncoded
+	XLONG .pCertInfo
+	XLONG .hCertStore
+END TYPE
+
+TYPE CRL_CONTEXT 
+	XLONG .dwCertEncodingType
+	XLONG .pbCrlEncoded
+	XLONG .cbCrlEncoded
+	XLONG .pCrlInfo
+	XLONG .hCertStore
+END TYPE
+
+TYPE CTL_CONTEXT 
+	XLONG .dwMsgAndCertEncodingType
+	XLONG .pbCtlEncoded
+	XLONG .cbCtlEncoded
+	XLONG .pCtlInfo
+	XLONG .hCertStore
+	XLONG .hCryptMsg
+	XLONG .pbCtlContent
+	XLONG .cbCtlContent
+END TYPE
+
+TYPE CRYPT_KEY_PROV_PARAM 
+	XLONG .dwParam
+	XLONG .pbData
+	XLONG .cbData
+	XLONG .dwFlags
+END TYPE
+
+TYPE CRYPT_KEY_PROV_INFO 
+	XLONG .pwszContainerName
+	XLONG .pwszProvName
+	XLONG .dwProvType
+	XLONG .dwFlags
+	XLONG .cProvParam
+	XLONG .rgProvParam
+	XLONG .dwKeySpec
+END TYPE
+
+TYPE CERT_KEY_CONTEXT 
+	XLONG .cbSize
+	XLONG .hCryptProv
+	XLONG .dwKeySpec
+END TYPE
+
+TYPE CERT_SYSTEM_STORE_RELOCATE_PARA 
+	UNION
+		XLONG .hKeyBase
+		XLONG .pvBase
+	END UNION
+	UNION
+		XLONG .pvSystemStore
+		XLONG .pszSystemStore
+	XLONG .pwszSystemStore
+	END UNION
+END TYPE
+
+TYPE CERT_REGISTRY_STORE_CLIENT_GPT_PARA 
+	XLONG .hKeyBase
+	XLONG .pwszRegPath
+END TYPE
+
+TYPE CERT_REGISTRY_STORE_ROAMING_PARA 
+	XLONG .hKey
+	XLONG .pwszStoreDirectory
+END TYPE
+
+TYPE CERT_STORE_PROV_INFO 
+	XLONG .cbSize
+	XLONG .cStoreProvFunc
+	XLONG .rgpvStoreProvFunc
+	XLONG .hStoreProv
+	XLONG .dwStoreProvFlags
+	XLONG .hStoreProvFuncAddr2
+END TYPE
+
+'typedef BOOL(WINAPI * PFN_CERT_DLL_OPEN_STORE_PROV_FUNC) (LPCSTR,DWORD,HCRYPTPROV,DWORD,XLONG .,HCERTSTORE,PCERT_STORE_PROV_INFO)
+'typedef void (WINAPI * PFN_CERT_STORE_PROV_CLOSE) ( HCERTSTOREPROV,DWORD)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_READ_CERT) (HCERTSTOREPROV,PCCERT_CONTEXT,DWORD,PCCERT_CONTEXT *)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_WRITE_CERT) (HCERTSTOREPROV,PCCERT_CONTEXT,DWORD)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_DELETE_CERT) ( HCERTSTOREPROV hStoreProv,PCCERT_CONTEXT pCertContext,XLONG .dwFlags)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_SET_CERT_PROPERTY) ( HCERTSTOREPROV,PCCERT_CONTEXT,DWORD,DWORD,XLONG .)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_READ_CRL) ( HCERTSTOREPROV,PCCRL_CONTEXT,DWORD,PCCRL_CONTEXT *)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_WRITE_CRL) (HCERTSTOREPROV,PCCRL_CONTEXT,DWORD)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_DELETE_CRL) (HCERTSTOREPROV,PCCRL_CONTEXT,DWORD)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_SET_CRL_PROPERTY) (HCERTSTOREPROV,PCCRL_CONTEXT,DWORD,DWORD,XLONG .)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_READ_CTL) (HCERTSTOREPROV,PCCTL_CONTEXT,DWORD,PCCTL_CONTEXT *)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_WRITE_CTL) (HCERTSTOREPROV,PCCTL_CONTEXT,DWORD)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_DELETE_CTL) (HCERTSTOREPROV,PCCTL_CONTEXT,DWORD)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_SET_CTL_PROPERTY) (HCERTSTOREPROV,PCCTL_CONTEXT,DWORD,DWORD,XLONG .)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_CONTROL) (HCERTSTOREPROV,DWORD,DWORD,XLONG .)
+
+TYPE CERT_STORE_PROV_FIND_INFO 
+	XLONG .cbSize
+	XLONG .dwMsgAndCertEncodingType
+	XLONG .dwFindFlags
+	XLONG .dwFindType
+	XLONG .pvFindPara
+END TYPE
+
+CERT_STORE_PROV_FIND_INFO CCERT_STORE_PROV_FIND_INFO
+
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_FIND_CERT) (HCERTSTOREPROV hStoreProv,PCCERT_STORE_PROV_FIND_INFO pFindInfo,PCCERT_CONTEXT pPrevCertContext,dwFlags,ppvStoreProvFindInfo,PCCERT_CONTEXT * ppProvCertContext)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_FREE_FIND_CERT) (HCERTSTOREPROV hStoreProv, PCCERT_CONTEXT pCertContext,pvStoreProvFindInfo,dwFlags)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_GET_CERT_PROPERTY) (HCERTSTOREPROV hStoreProv,	PCCERT_CONTEXT pCertContext,dwPropId,dwFlags,pvData,pcbData)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_FIND_CRL) (HCERTSTOREPROV hStoreProv,PCCERT_STORE_PROV_FIND_INFO pFindInfo,PCCRL_CONTEXT pPrevCrlContext,dwFlags,ppvStoreProvFindInfo,PCCRL_CONTEXT * ppProvCrlContext)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_FREE_FIND_CRL) (HCERTSTOREPROV hStoreProv,PCCRL_CONTEXT pCrlContext,pvStoreProvFindInfo,dwFlags)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_GET_CRL_PROPERTY) (HCERTSTOREPROV hStoreProv,PCCRL_CONTEXT pCrlContext,dwPropId,dwFlags,pvData,pcbData)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_FIND_CTL) (HCERTSTOREPROV hStoreProv,PCCERT_STORE_PROV_FIND_INFO pFindInfo,PCCTL_CONTEXT pPrevCtlContext,dwFlags,ppvStoreProvFindInfo,PCCTL_CONTEXT * ppProvCtlContext)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_FREE_FIND_CTL) (HCERTSTOREPROV hStoreProv,PCCTL_CONTEXT pCtlContext,pvStoreProvFindInfo,dwFlags)
+'typedef BOOL(WINAPI * PFN_CERT_STORE_PROV_GET_CTL_PROPERTY) (HCERTSTOREPROV,PCCTL_CONTEXT,DWORD,DWORD,XLONG,XLONG)
+
+TYPE CTL_ANY_SUBJECT_INFO 
+	CRYPT_ALGORITHM_IDENTIFIER .SubjectAlgorithm
+	CRYPT_DATA_BLOB .SubjectIdentifier
+END TYPE
+
+TYPE CTL_FIND_USAGE_PARA 
+	XLONG .cbSize
+	CTL_USAGE .SubjectUsage
+	CRYPT_DATA_BLOB .ListIdentifier
+	XLONG .pSigner
+END TYPE
+
+TYPE CTL_FIND_SUBJECT_PARA 
+	XLONG .cbSize
+	XLONG .pUsagePara
+	XLONG .dwSubjectType
+	XLONG .pvSubject
+END TYPE
+
+TYPE CERT_CREATE_CONTEXT_PARA 
+	XLONG .cbSize
+	XLONG .pfnFree
+	XLONG .pvFree
+END TYPE
+
+TYPE CERT_SYSTEM_STORE_INFO 
+	XLONG .cbSize
+END TYPE
+
+TYPE CERT_PHYSICAL_STORE_INFO 
+	XLONG .cbSize
+	XLONG .pszOpenStoreProvider
+	XLONG .dwOpenEncodingType
+	XLONG .dwOpenFlags
+	CRYPT_DATA_BLOB .OpenParameters
+	XLONG .dwFlags
+	XLONG .dwPriority
+END TYPE
+
+'typedef BOOL(WINAPI * PFN_CERT_ENUM_SYSTEM_STORE_LOCATION) (pwszStoreLocation,dwFlags,pvReserved,pvArg)
+'typedef BOOL(WINAPI * PFN_CERT_ENUM_SYSTEM_STORE) (pvSystemStore,dwFlags,PCERT_SYSTEM_STORE_INFO pStoreInfo,pvReserved,pvArg)
+'typedef BOOL(WINAPI * PFN_CERT_ENUM_PHYSICAL_STORE) (pvSystemStore,dwFlags,pwszStoreName,PCERT_PHYSICAL_STORE_INFO pStoreInfo,pvReserved,pvArg)
+
+TYPE CTL_VERIFY_USAGE_PARA 
+	XLONG .cbSize
+	CRYPT_DATA_BLOB .ListIdentifier
+	XLONG .cCtlStore
+	XLONG .rghCtlStore
+	XLONG .cSignerStore
+	XLONG .rghSignerStore
+END TYPE
+
+TYPE CTL_VERIFY_USAGE_STATUS 
+	XLONG .cbSize
+	XLONG .dwError
+	XLONG .dwFlags
+	XLONG .ppCtl
+	XLONG .dwCtlEntryIndex
+	XLONG .ppSigner
+	XLONG .dwSignerIndex
+END TYPE
+
+TYPE CERT_REVOCATION_PARA 
+	XLONG .cbSize
+	XLONG .pIssuerCert
+	XLONG .cCertStore
+	XLONG .rgCertStore
+END TYPE
+
+TYPE CERT_REVOCATION_STATUS 
+	XLONG .cbSize
+	XLONG .dwIndex
+	XLONG .dwError
+	XLONG .dwReason
+END TYPE
+
+XLONG HCRYPTDEFAULTCONTEXT
+
+TYPE CRYPT_DEFAULT_CONTEXT_MULTI_OID_PARA 
+	XLONG .cOID
+	XLONG .rgpszOID
+END TYPE
+
+'typedef BOOL(WINAPI * PFN_IMPORT_PRIV_KEY_FUNC) (HCRYPTPROV hCryptProv,CRYPT_PRIVATE_KEY_INFO * pPrivateKeyInfo,dwFlags,pvAuxInfo)
+'typedef BOOL(WINAPI * PFN_EXPORT_PRIV_KEY_FUNC) (HCRYPTPROV hCryptProv,dwKeySpec,LPSTR pszPrivateKeyObjId,dwFlags,pvAuxInfo,	CRYPT_PRIVATE_KEY_INFO * pPrivateKeyInfo,pcbPrivateKeyBlob)
+'typedef PCCERT_CONTEXT(WINAPI * PFN_CRYPT_GET_SIGNER_CERTIFICATE) (pvGetArg,dwCertEncodingType,PCERT_INFO pSignerId,HCERTSTORE hMsgCertStore)
+
+TYPE CRYPT_SIGN_MESSAGE_PARA 
+	XLONG .cbSize
+	XLONG .dwMsgEncodingType
+	XLONG .pSigningCert
+	CRYPT_ALGORITHM_IDENTIFIER .HashAlgorithm
+	XLONG .pvHashAuxInfo
+	XLONG .cMsgCert
+	XLONG .rgpMsgCert
+	XLONG .cMsgCrl
+	XLONG .rgpMsgCrl
+	XLONG .cAuthAttr
+	XLONG .rgAuthAttr
+	XLONG .cUnauthAttr
+	XLONG .rgUnauthAttr
+	XLONG .dwFlags
+	XLONG .dwInnerContentType
+END TYPE
+
+TYPE CRYPT_VERIFY_MESSAGE_PARA 
+	XLONG .cbSize
+	XLONG .dwMsgAndCertEncodingType
+	XLONG .hCryptProv
+	XLONG .pfnGetSignerCertificate
+	XLONG .pvGetArg
+END TYPE
+
+TYPE CRYPT_ENCRYPT_MESSAGE_PARA 
+	XLONG .cbSize
+	XLONG .dwMsgEncodingType
+	XLONG .hCryptProv
+	CRYPT_ALGORITHM_IDENTIFIER .ContentEncryptionAlgorithm
+	XLONG .pvEncryptionAuxInfo
+	XLONG .dwFlags
+	XLONG .dwInnerContentType
+END TYPE
+
+TYPE CRYPT_DECRYPT_MESSAGE_PARA 
+	XLONG .cbSize
+	XLONG .dwMsgAndCertEncodingType
+	XLONG .cCertStore
+	XLONG .rghCertStore
+END TYPE
+
+TYPE CRYPT_HASH_MESSAGE_PARA 
+	XLONG .cbSize
+	XLONG .dwMsgEncodingType
+	XLONG .hCryptProv
+	CRYPT_ALGORITHM_IDENTIFIER .HashAlgorithm
+	XLONG .pvHashAuxInfo
+END TYPE
+
+TYPE CRYPT_KEY_SIGN_MESSAGE_PARA 
+	XLONG .cbSize
+	XLONG .dwMsgAndCertEncodingType
+	XLONG .hCryptProv
+	XLONG .dwKeySpec
+	CRYPT_ALGORITHM_IDENTIFIER .HashAlgorithm
+	XLONG .pvHashAuxInfo
+	CRYPT_ALGORITHM_IDENTIFIER .PubKeyAlgorithm
+END TYPE
+
+TYPE CRYPT_KEY_VERIFY_MESSAGE_PARA 
+	XLONG .cbSize
+	XLONG .dwMsgEncodingType
+	XLONG .hCryptProv
+END TYPE
+
+TYPE CERT_CHA
+	XLONG .cCerts
+	XLONG .certs
+	CRYPT_KEY_PROV_INFO .KeyLocatorInfo
+END TYPE
+
+'typedef VOID(WINAPI * PFN_CRYPT_ASYNC_PARAM_FREE_FUNC) (LPSTR pszParamOid,LPVOID pvParam )
+
+TYPE CRYPT_BLOB_ARRAY 
+	XLONG .cBlob
+	XLONG .rgBlob
+END TYPE
+
+TYPE CRYPT_CREDENTIALS 
+	XLONG .cbSize
+	XLONG .pszCredentialsOid
+	XLONG .pvCredentials
+END TYPE
+
+TYPE CRYPT_PASSWORD_CREDENTIALSA 
+	XLONG .cbSize
+	XLONG .pszUsername
+	XLONG .pszPassword
+END TYPE
+
+TYPE CRYPT_PASSWORD_CREDENTIALSW 
+	XLONG .cbSize
+	XLONG .pszUsername
+	XLONG .pszPassword
+END TYPE
+
+'CRYPT_PASSWORD_CREDENTIALSW CRYPT_PASSWORD_CREDENTIALS
+'PCRYPT_PASSWORD_CREDENTIALSW PCRYPT_PASSWORD_CREDENTIALS
+ 
+CRYPT_PASSWORD_CREDENTIALSA CRYPT_PASSWORD_CREDENTIALS
+'PCRYPT_PASSWORD_CREDENTIALSA PCRYPT_PASSWORD_CREDENTIALS
+ 
+'typedef VOID(WINAPI * PFN_FREE_ENCODED_OBJECT_FUNC) (LPCSTR pszObjectOid,PCRYPT_BLOB_ARRAY pObject,LPVOID pvFreeContext)
+'typedef VOID(WINAPI * PFN_CRYPT_ASYNC_RETRIEVAL_COMPLETION_FUNC) (LPVOID pvCompletion,dwCompletionCode,LPCSTR pszUrl,LPSTR pszObjectOid,	LPVOID pvObject)
+
+TYPE CRYPT_ASYNC_RETRIEVAL_COMPLETION 
+	XLONG .pfnCompletion
+	XLONG .pvCompletion
+END TYPE
+
+'typedef BOOL(WINAPI * PFN_CANCEL_ASYNC_RETRIEVAL_FUNC) (HCRYPTASYNC hAsyncRetrieve)
+
+TYPE CRYPT_URL_ARRAY 
+	XLONG .cUrl
+	XLONG .rgwszUrl
+END TYPE
+
+TYPE CRYPT_URL_INFO 
+	XLONG .cbSize
+END TYPE
+
+TYPE CRYPTPROTECT_PROMPTSTRUCT 
+	XLONG .cbSize
+	XLONG .dwPromptFlags
+	XLONG .hwndApp
+	XLONG .szPrompt
+END TYPE
+
+'typedef BOOL(WINAPI * PFN_CRYPT_ENUM_KEYID_PROP) (const CRYPT_HASH_BLOB * pKeyIdentifier,dwFlags,pvReserved,pvArg,cProp,lprgdwPropId,lprgpvData,lprgcbData)
+
+XLONG HCERTCHAINENGINE
+
+TYPE CERT_CHAIN_ENGINE_CONFIG 
+	XLONG .cbSize
+	XLONG .hRestrictedRoot
+	XLONG .hRestrictedTrust
+	XLONG .hRestrictedOther
+	XLONG .cAdditionalStore
+	XLONG .rghAdditionalStore
+	XLONG .dwFlags
+	XLONG .dwUrlRetrievalTimeout
+	XLONG .MaximumCachedCertificates
+	XLONG .CycleDetectionModulus
+END TYPE
+
+TYPE CERT_TRUST_STATUS 
+	XLONG .dwErrorStatus
+	XLONG .dwInfoStatus
+END TYPE
+
+TYPE CERT_REVOCATION_INFO 
+	XLONG .cbSize
+	XLONG .dwRevocationResult
+	XLONG .pszRevocationOid
+	XLONG .pvOidSpecificInfo
+END TYPE
+
+TYPE CERT_TRUST_LIST_INFO 
+	XLONG .cbSize
+	XLONG .pCtlEntry
+	XLONG .pCtlContext
+END TYPE
+
+TYPE CERT_CHAIN_ELEMENT 
+	XLONG .cbSize
+	XLONG .pCertContext
+	CERT_TRUST_STATUS .TrustStatus
+	XLONG .pRevocationInfo
+END TYPE
+
+TYPE CERT_SIMPLE_CHAIN
+	XLONG .cbSize
+	CERT_TRUST_STATUS .TrustStatus
+	XLONG .cElement
+	XLONG .rgpElement
+	XLONG .pTrustListInfo
+END TYPE
+
+TYPE CERT_CHAIN_CONTEXT 
+	XLONG .cbSize
+	CERT_TRUST_STATUS .TrustStatus
+	XLONG .cChain
+	XLONG .rgpChain
+END TYPE
+
+TYPE CERT_USAGE_MATCH 
+	XLONG .dwType
+	CERT_ENHKEY_USAGE .Usage
+END TYPE
+
+TYPE CTL_USAGE_MATCH 
+	XLONG .dwType
+	CTL_USAGE .Usage
+END TYPE
+
+TYPE CERT_CHAIN_PARA 
+	XLONG .cbSize
+	CERT_USAGE_MATCH .RequestedUsage
+END TYPE
+
+TYPE CRL_REVOCATION_INFO 
+	XLONG .pCrlEntry
+	XLONG .pCrlContext
+	XLONG .pCrlIssuerChain
+END TYPE
+
+'typedef BOOL(WINAPI * PFN_CERT_CHAIN_FIND_BY_ISSUER_CALLBACK) (PCCERT_CONTEXT pCert,pvFindArg)
+
+TYPE CERT_CHAIN_FIND_BY_ISSUER_PARA 
+	XLONG .cbSize
+	XLONG .pszUsageIdentifier
+	XLONG .dwKeySpec
+	XLONG .dwAcquirePrivateKeyFlags
+	XLONG .cIssuer
+	XLONG .rgIssuer
+	XLONG .pfnFindCallback
+	XLONG .pvFindArg
+END TYPE
+
+TYPE CERT_CHAIN_POLICY_PARA 
+	XLONG .cbSize
+	XLONG .dwFlags
+	XLONG .pvExtraPolicyPara
+END TYPE
+
+TYPE CERT_CHAIN_POLICY_STATUS 
+	XLONG .cbSize
+	XLONG .dwError
+	XLONG .lChainIndex
+	XLONG .lElementIndex
+	XLONG .pvExtraPolicyStatus
+END TYPE
+
+TYPE AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_PARA 
+	XLONG .cbSize
+	XLONG .dwRegPolicySettings
+	XLONG .pSignerInfo
+END TYPE
+
+TYPE AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_STATUS 
+	XLONG .cbSize
+	XLONG .fCommercial
+END TYPE
+
+TYPE AUTHENTICODE_TS_EXTRA_CERT_CHAIN_POLICY_PARA 
+	XLONG .cbSize
+	XLONG .dwRegPolicySettings
+	XLONG .fCommercial
+END TYPE
+
+' ###############################
+' #####  declare functions  #####
+' ###############################
+
+EXTERNAL FUNCTION CryptAcquireContextA (lphProv, lpszContainer, lpszProvider, dwProvType, dwFlags)
+EXTERNAL FUNCTION CryptAcquireContextW (lphProv, lpszContainer, lpszProvider, dwProvType, dwFlags)
+EXTERNAL FUNCTION CryptContextAddRef (hProv, lpdwReserved, dwFlags)
+EXTERNAL FUNCTION CryptCreateHash (hProv, Algid, hKey, dwFlags, lphHash)
+EXTERNAL FUNCTION CryptDecrypt (hKey, hHash, bFinal, dwFlags, lpbData, lpdwDataLen)
+EXTERNAL FUNCTION CryptDeriveKey (Algid, hBaseData, dwFlags, lphKey)
+EXTERNAL FUNCTION CryptDestroyHash (hHash)
+EXTERNAL FUNCTION CryptDestroyKey (hKey)
+EXTERNAL FUNCTION CryptDuplicateHash (hHash, lpdwReserved, dwFlags, lphHash)
+EXTERNAL FUNCTION CryptDuplicateKey (hKey, lpdwReserved, dwFlags, lphKey)
+EXTERNAL FUNCTION CryptEncrypt (hKey, hHash, bFinal, dwFlags, lpbData, lpdwDataLen, dwBufLen)
+EXTERNAL FUNCTION CryptEnumProviderTypesA (dwIndex, lpdwReserved, dwFlags, lpdwProvType, lpszTypeName, lpcbTypeName)
+EXTERNAL FUNCTION CryptEnumProviderTypesW (dwIndex, lpdwReserved, dwFlags, lpdwProvType, lpszTypeName, lpcbTypeName)
+EXTERNAL FUNCTION CryptEnumProvidersA (dwIndex, lpdwReserved, dwFlags, lpdwProvType, lpszProvName, lpcbProvName)
+EXTERNAL FUNCTION CryptEnumProvidersW (dwIndex, lpdwReserved, dwFlags, lpdwProvType, lpszProvName, lpcbProvName)
+EXTERNAL FUNCTION CryptExportKey (hKey, hExpKey, dwBlobType, dwFlags, lpbData, lpdwDataLen)
+EXTERNAL FUNCTION CryptGenKey (hProv, Algid, dwFlags, lphKey)
+EXTERNAL FUNCTION CryptGenRandom (hProv, dwLen, lpbBuffer)
+EXTERNAL FUNCTION CryptGetDefaultProviderA (dwProvType, lpdwReserved, dwFlags, lpszProvName, lpcbProvName)
+EXTERNAL FUNCTION CryptGetDefaultProviderW (dwProvType, lpdwReserved, dwFlags, lpszProvName, lpcbProvName)
+EXTERNAL FUNCTION CryptGetHashParam (hHash, dwParam, lpbData, lpdwDataLen, dwFlags)
+EXTERNAL FUNCTION CryptGetKeyParam (hkey, dwParam, lpbData, lpdwDataLen, dwFlags)
+EXTERNAL FUNCTION CryptGetProvParam (hProv, dwParam, lpbData, lpdwDataLen, dwFlags)
+EXTERNAL FUNCTION CryptGetUserKey (hProv, dwKeySpec, lphUserKey)
+EXTERNAL FUNCTION CryptHashData (hHash, lpbData, dwDataLen, dwFlags)
+EXTERNAL FUNCTION CryptHashSessionKey (hHash, hKey, dwFlags )
+EXTERNAL FUNCTION CryptImportKey (hProv, lpbData, dwDataLen, hImpKey, dwFlags, lphKey)
+EXTERNAL FUNCTION CryptReleaseContext (hProv, dwFlags)
+EXTERNAL FUNCTION CryptSetHashParam (hHash, dwParam, lpbData, dwFlags)
+EXTERNAL FUNCTION CryptSetKeyParam (hKey, dwParam, lpbData, dwFlags)
+EXTERNAL FUNCTION CryptSetProvParam (hProv, dwParam, lpbData, dwFlags)
+EXTERNAL FUNCTION CryptSetProviderA (lpszProvName, dwProvType)
+EXTERNAL FUNCTION CryptSetProviderExA (lpszProvName, dwProvType, lpdwReserved, dwFlags)
+EXTERNAL FUNCTION CryptSetProviderExW (lpszProvName, dwProvType, lpdwReserved, dwFlags)
+EXTERNAL FUNCTION CryptSetProviderW (lpszProvName, dwProvType)
+EXTERNAL FUNCTION CryptSignHashA (hHash, dwKeySpec, lpszDescription, dwFlags, lpbSignature, lpdwSigLen)
+EXTERNAL FUNCTION CryptSignHashW (hHash, dwKeySpec, lpszDescription, dwFlags, lpbSignature, lpdwSigLen)
+EXTERNAL FUNCTION CryptVerifySignatureA (hHash, lpbSignature, dwSigLen, hPubKey, lpszDescription, dwFlags)
+EXTERNAL FUNCTION CryptVerifySignatureW (hHash, lpbSignature, dwSigLen, hPubKey, lpszDescription, dwFlags)
+
+' these functions are found in crypt32.dll
+
+'EXTERNAL FUNCTION CryptFormatObject (DWORD,DWORD,DWORD,XLONG ,LPCSTR,BYTE *,DWORD,XLONG ,XLONG *)
+'EXTERNAL FUNCTION CryptEncodeObjectEx (dwCertEncodingType, lpszStructType, lpvStructInfo, dwFlags, lpEncodePara, lpvEncoded, lpcbEncoded)
+'EXTERNAL FUNCTION CryptEncodeObject (dwCertEncodingType, lpszStructType, lpvStructInfo, lpbEncoded, pcbEncoded)
+'EXTERNAL FUNCTION CryptDecodeObjectEx (dwCertEncodingType, lpszStructType, lpbEncoded, cbEncoded, dwFlags, lpDecodePara, lpvStructInfo, lpcbStructInfo )
+'EXTERNAL FUNCTION CryptDecodeObject (dwCertEncodingType, lpszStructType, lpbEncoded, cbEncoded, dwFlags, lpvStructInfo, lpcbStructInfo)
+'EXTERNAL FUNCTION CryptInstallOIDFunctionAddress (hModule, dwEncodingType, lpszFuncName, cFuncEntry, const CRYPT_OID_FUNC_ENTRY rgFuncEntry[], dwFlags)
+'EXTERNAL FUNCTION CryptInitOIDFunctionSet (lpszFuncName, dwFlags)
+'EXTERNAL FUNCTION CryptGetOIDFunctionAddress (hFuncSet, dwEncodingType, lpszOID, dwFlags, lppvFuncAddr, lphFuncAddr)
+'EXTERNAL FUNCTION CryptGetDefaultOIDDllList (hFuncSet, dwEncodingType, lpwszDllList, lpcchDllList)
+'EXTERNAL FUNCTION CryptGetDefaultOIDFunctionAddress (hFuncSet, dwEncodingType, lpwszDll, dwFlags, lppvFuncAddr, lphFuncAddr)
+'EXTERNAL FUNCTION CryptFreeOIDFunctionAddress (hFuncAddr, dwFlags)
+'EXTERNAL FUNCTION CryptRegisterOIDFunction (dwEncodingType, lpszFuncName, lpszOID, lpwszDll, lpszOverrideFuncName)
+'EXTERNAL FUNCTION CryptUnregisterOIDFunction (dwEncodingType, lpszFuncName, lpszOID)
+'EXTERNAL FUNCTION CryptRegisterDefaultOIDFunction (dwEncodingType, lpszFuncName, dwIndex, lpwszDll)
+'EXTERNAL FUNCTION CryptUnregisterDefaultOIDFunction (dwEncodingType, lpszFuncName, lpwszDll)
+'EXTERNAL FUNCTION CryptSetOIDFunctionValue (dwEncodingType, lpszFuncName, lpszOID, lpwszValueName, dwValueType, lpbValueData, cbValueData)
+'EXTERNAL FUNCTION CryptGetOIDFunctionValue (dwEncodingType, lpszFuncName, lpszOID, lpwszValueName, lpdwValueType, lpbValueData, lpcbValueData)
+'EXTERNAL FUNCTION CryptEnumOIDFunction (dwEncodingType, lpszFuncName, lpszOID, dwFlags, pvArg, pfnEnumOIDFunc)
+'EXTERNAL FUNCTION CryptFindOIDInfo (dwKeyType, lpvKey, dwGroupId)
+
+'EXTERNAL FUNCTION CryptRegisterOIDInfo (PCCRYPT_OID_INFO,DWORD)
+'EXTERNAL FUNCTION CryptUnregisterOIDInfo (PCCRYPT_OID_INFO)
+'EXTERNAL FUNCTION CryptEnumOIDInfo (DWORD,DWORD,XLONG .,PFN_CRYPT_ENUM_OID_INFO)
+'EXTERNAL FUNCTION CryptFindLocalizedName (LPCWSTR)
+'EXTERNAL FUNCTION CryptMsgOpenToEncode (DWORD,DWORD,DWORD,void const *,LPSTR,PCMSG_STREAM_INFO)
+'EXTERNAL FUNCTION CryptMsgCalculateEncodedLength (DWORD,DWORD,DWORD,void const *,LPSTR,DWORD)
+'EXTERNAL FUNCTION CryptMsgOpenToDecode (DWORD,DWORD,DWORD,HCRYPTPROV,PCERT_INFO,PCMSG_STREAM_INFO)
+
+'EXTERNAL FUNCTION CryptMsgDuplicate (hCryptMsg)
+'EXTERNAL FUNCTION CryptMsgClose (hCryptMsg)
+
+'EXTERNAL FUNCTION CryptMsgUpdate (hCryptMsg,const BYTE *,DWORD,BOOL)
+'EXTERNAL FUNCTION CryptMsgControl (hCryptMsg,DWORD,DWORD,void const *)
+
+'EXTERNAL FUNCTION CryptMsgVerifyCountersignatureEncoded (hCryptProv, dwEncodingType, lpbSignerInfo, cbSignerInfo, lpbSignerInfoCountersignature, cbSignerInfoCountersignature, lpciCountersigner)
+'EXTERNAL FUNCTION CryptMsgCountersign (hCryptMsg, dwIndex, cCountersigners, lprgCountersigners)
+'EXTERNAL FUNCTION CryptMsgCountersignEncoded (dwEncodingType, lpbSignerInfo, cbSignerInfo, cCountersigners, lprgCountersigners, lpbCountersignature, lpcbCountersignature)
+'EXTERNAL FUNCTION CryptMsgGetParam (hCryptMsg, dwParamType, dwIndex, lpvData, lpcbData)
+'EXTERNAL FUNCTION CertOpenStore (lpszStoreProvider, dwEncodingType, hCryptProv, dwFlags, lpvPara)
+
+'EXTERNAL FUNCTION CertDuplicateStore (HCERTSTORE)
+'EXTERNAL FUNCTION CertSaveStore (HCERTSTORE,DWORD,DWORD,DWORD,XLONG .,DWORD)
+'EXTERNAL FUNCTION CertCloseStore ( HCERTSTORE,DWORD)
+'EXTERNAL FUNCTION CertGetSubjectCertificateFromStore (HCERTSTORE,DWORD,PCERT_INFO)
+'EXTERNAL FUNCTION CertEnumCertificatesInStore (HCERTSTORE,PCCERT_CONTEXT)
+'EXTERNAL FUNCTION CertFindCertificateInStore (HCERTSTORE,DWORD,DWORD,DWORD,const XLONG .,PCCERT_CONTEXT)
+'EXTERNAL FUNCTION CertGetIssuerCertificateFromStore (HCERTSTORE,PCCERT_CONTEXT,PCCERT_CONTEXT,XLONG .*)
+'EXTERNAL FUNCTION CertVerifySubjectCertificateContext (PCCERT_CONTEXT,PCCERT_CONTEXT,XLONG .*)
+'EXTERNAL FUNCTION CertDuplicateCertificateContext (PCCERT_CONTEXT)
+'EXTERNAL FUNCTION CertCreateCertificateContext (DWORD,const BYTE *,DWORD)
+'EXTERNAL FUNCTION CertFreeCertificateContext ( PCCERT_CONTEXT pCertContext )
+'EXTERNAL FUNCTION CertSetCertificateContextProperty (PCCERT_CONTEXT,DWORD,DWORD,const XLONG)
+'EXTERNAL FUNCTION CertGetCertificateContextProperty ( PCCERT_CONTEXT,DWORD,XLONG,XLONG)
+'EXTERNAL FUNCTION CertEnumCertificateContextProperties (PCCERT_CONTEXT,DWORD)
+'EXTERNAL FUNCTION CertGetCRLFromStore (HCERTSTORE,PCCERT_CONTEXT,PCCRL_CONTEXT,XLONG)
+'EXTERNAL FUNCTION CertEnumCRLsInStore (HCERTSTORE,PCCRL_CONTEXT)
+'EXTERNAL FUNCTION CertFindCRLInStore (HCERTSTORE,DWORD,DWORD,DWORD,const XLONG,PCCRL_CONTEXT)
+'EXTERNAL FUNCTION CertDuplicateCRLContext (PCCRL_CONTEXT)
+
+'EXTERNAL FUNCTION CertCreateCRLContext (dwCertEncodingType, lpbCrlEncoded, cbCrlEncoded)
+'EXTERNAL FUNCTION CertFreeCRLContext (lpCrlContext)
+
+'EXTERNAL FUNCTION CertSetCRLContextProperty ( PCCRL_CONTEXT,DWORD,DWORD,const XLONG .)
+'EXTERNAL FUNCTION CertGetCRLContextProperty ( PCCRL_CONTEXT,DWORD,XLONG .,XLONG .*)
+'EXTERNAL FUNCTION CertEnumCRLContextProperties (PCCRL_CONTEXT,DWORD)
+'EXTERNAL FUNCTION CertFindCertificateInCRL (PCCERT_CONTEXT,PCCRL_CONTEXT,DWORD,XLONG .,PCRL_ENTRY *)
+'EXTERNAL FUNCTION CertAddEncodedCertificateToStore (HCERTSTORE,DWORD,const BYTE *,DWORD,DWORD,PCCERT_CONTEXT *)
+'EXTERNAL FUNCTION CertAddCertificateContextToStore (HCERTSTORE,PCCERT_CONTEXT,DWORD,PCCERT_CONTEXT *)
+'EXTERNAL FUNCTION CertAddSerializedElementToStore (HCERTSTORE,const BYTE *,DWORD,DWORD,DWORD,DWORD,XLONG .*,const XLONG .*)
+'EXTERNAL FUNCTION CertDeleteCertificateFromStore ( PCCERT_CONTEXT)
+
+'EXTERNAL FUNCTION CertAddEncodedCRLToStore (hCertStore, dwCertEncodingType, lpbCrlEncoded, cbCrlEncoded, dwAddDisposition, lplpCrlContext)
+'EXTERNAL FUNCTION CertAddCRLContextToStore (hCertStore, pCrlContext, dwAddDisposition, ppStoreContext)
+'EXTERNAL FUNCTION CertDeleteCRLFromStore (pCrlContext)
+'EXTERNAL FUNCTION CertSerializeCertificateStoreElement (pCertContext, dwFlags, lpbElement, lpcbElement)
+'EXTERNAL FUNCTION CertSerializeCRLStoreElement (pCrlContext, dwFlags, lpbElement, lpcbElement)
+'EXTERNAL FUNCTION CertDuplicateCTLContext (lpCtlContext)
+'EXTERNAL FUNCTION CertCreateCTLContext (dwMsgAndCertEncodingType, lpbCtlEncoded, cbCtlEncoded)
+'EXTERNAL FUNCTION CertFreeCTLContext (pCtlContext)
+'EXTERNAL FUNCTION CertSetCTLContextProperty (pCtlContext, dwPropId, dwFlags, lpvData)
+'EXTERNAL FUNCTION CertGetCTLContextProperty (pCtlContext, dwPropId, lpvData, lpcbData)
+'EXTERNAL FUNCTION CertEnumCTLContextProperties (pCtlContext, dwPropId)
+'EXTERNAL FUNCTION CertEnumCTLsInStore (hCertStore, pPrevCtlContext)
+'EXTERNAL FUNCTION CertFindSubjectInCTL (dwEncodingType, dwSubjectType, lpvSubject, lpCtlContext, dwFlags)
+'EXTERNAL FUNCTION CertFindCTLInStore (hCertStore, dwMsgAndCertEncodingType,	dwFindFlags, dwFindType, lpvFindPara, lpPrevCtlContext)
+'EXTERNAL FUNCTION CertAddEncodedCTLToStore (hCertStore, dwMsgAndCertEncodingType, lpbCtlEncoded, cbCtlEncoded, dwAddDisposition, lppCtlContext)
+'EXTERNAL FUNCTION CertAddCTLContextToStore (hCertStore, lpCtlContext, dwAddDisposition, lplpStoreContext)
+
+'EXTERNAL FUNCTION CertSerializeCTLStoreElement (PCCTL_CONTEXT,DWORD,BYTE *,XLONG .*)
+'EXTERNAL FUNCTION CertDeleteCTLFromStore (PCCTL_CONTEXT)
+'EXTERNAL FUNCTION CertAddCertificateLinkToStore (HCERTSTORE,PCCERT_CONTEXT,DWORD,PCCERT_CONTEXT *)
+'EXTERNAL FUNCTION CertAddCRLLinkToStore (HCERTSTORE,PCCRL_CONTEXT,DWORD,PCCRL_CONTEXT *)
+'EXTERNAL FUNCTION CertAddCTLLinkToStore (HCERTSTORE,PCCTL_CONTEXT,DWORD,PCCTL_CONTEXT * )
+'EXTERNAL FUNCTION CertAddStoreToCollection (HCERTSTORE,HCERTSTORE,DWORD,DWORD)
+'EXTERNAL FUNCTION CertRemoveStoreFromCollection (HCERTSTORE,HCERTSTORE)
+'EXTERNAL FUNCTION CertControlStore (HCERTSTORE,DWORD,DWORD,void const *)
+'EXTERNAL FUNCTION CertSetStoreProperty (HCERTSTORE,DWORD,DWORD,const XLONG)
+'EXTERNAL FUNCTION CertGetStoreProperty (HCERTSTORE,DWORD,XLONG,XLONG *)
+'EXTERNAL FUNCTION CertCreateContext (DWORD,DWORD,const BYTE *,DWORD,DWORD,PCERT_CREATE_CONTEXT_PARA)
+
+'EXTERNAL FUNCTION CertRegisterSystemStore (lpvSystemStore, dwFlags, pStoreInfo, lpvReserved)
+'EXTERNAL FUNCTION CertRegisterPhysicalStore (lpvSystemStore, dwFlags, lpwszStoreName, lpStoreInfo, lpvReserved)
+'EXTERNAL FUNCTION CertUnregisterSystemStore (lpvSystemStore, dwFlags)
+
+'EXTERNAL FUNCTION CertUnregisterPhysicalStore (const XLONG,DWORD,LPCWSTR)
+
+'EXTERNAL FUNCTION CertEnumSystemStoreLocation (dwFlags, lpvArg, pfnEnum)
+'EXTERNAL FUNCTION CertEnumSystemStore (dwFlags, lpvSystemStoreLocationPara, lpvArg, pfnEnum)
+'EXTERNAL FUNCTION CertEnumPhysicalStore (lpvSystemStore, dwFlags, lpvArg, lpfnEnum)
+
+'EXTERNAL FUNCTION CertGetEnhancedKeyUsage ( PCCERT_CONTEXT,DWORD,PCERT_ENHKEY_USAGE,XLONG *)
+'EXTERNAL FUNCTION CertSetEnhancedKeyUsage ( PCCERT_CONTEXT,PCERT_ENHKEY_USAGE )
+'EXTERNAL FUNCTION CertAddEnhancedKeyUsageIdentifier ( PCCERT_CONTEXT,LPCSTR)
+'EXTERNAL FUNCTION CertRemoveEnhancedKeyUsageIdentifier ( PCCERT_CONTEXT,LPCSTR )
+'EXTERNAL FUNCTION CertGetValidUsages ( DWORD,PCCERT_CONTEXT *,int *,LPSTR *,XLONG * )
+'EXTERNAL FUNCTION CryptMsgGetAndVerifySigner ( HCRYPTMSG,DWORD,HCERTSTORE *,DWORD,PCCERT_CONTEXT *,XLONG * )
+'EXTERNAL FUNCTION CryptMsgSignCTL (DWORD,BYTE *,DWORD,PCMSG_SIGNED_ENCODE_INFO,DWORD,BYTE *,XLONG * )
+'EXTERNAL FUNCTION CryptMsgEncodeAndSignCTL (DWORD,PCTL_INFO,PCMSG_SIGNED_ENCODE_INFO,DWORD,BYTE *,XLONG *)
+'EXTERNAL FUNCTION CertFindSubjectInSortedCTL (PCRYPT_DATA_BLOB,PCCTL_CONTEXT,DWORD,XLONG ,PCRYPT_DER_BLOB)
+'EXTERNAL FUNCTION CertEnumSubjectInSortedCTL ( PCCTL_CONTEXT,XLONG *,PCRYPT_DER_BLOB,PCRYPT_DER_BLOB )
+'EXTERNAL FUNCTION CertVerifyCTLUsage (DWORD,DWORD,XLONG ,PCTL_USAGE,DWORD,PCTL_VERIFY_USAGE_PARA,PCTL_VERIFY_USAGE_STATUS )
+
+'EXTERNAL FUNCTION CertVerifyRevocation (dwEncodingType, dwRevType, cContext, rgpvContextArray, dwFlags, pRevPara, pRevStatus)
+'EXTERNAL FUNCTION CertCompareIntegerBlob (lpInt1, lpInt2)
+'EXTERNAL FUNCTION CertCompareCertificate (dwCertEncodingType, lpCertId1, lpCertId2)
+'EXTERNAL FUNCTION CertCompareCertificateName (dwCertEncodingType, lpCertName1, lpCertName2)
+'EXTERNAL FUNCTION CertIsRDNAttrsInCertificateName (dwCertEncodingType, dwFlags, lpCertName, lpRDN)
+'EXTERNAL FUNCTION CertComparePublicKeyInfo (dwCertEncodingType, lpPublicKey1, lpPublicKey2)
+'EXTERNAL FUNCTION CertGetPublicKeyLength (dwCertEncodingType, pPublicKey)
+'EXTERNAL FUNCTION CryptVerifyCertificateSignature (hCryptProv, dwCertEncodingType, lpbEncoded, cbEncoded, pPublicKey)
+'EXTERNAL FUNCTION CryptHashToBeSigned (hCryptProv, dwCertEncodingType, lpbEncoded, cbEncoded, lpbComputedHash, lpcbComputedHash)
+'EXTERNAL FUNCTION CryptHashCertificate (hCryptProv, ALG_ID Algid, dwFlags, lpbEncoded, cbEncoded, lpbComputedHash, lpcbComputedHash)
+'EXTERNAL FUNCTION CryptSignCertificate (hCryptProv, dwKeySpec, dwCertEncodingType, lpbEncodedToBeSigned, cbEncodedToBeSigned, lpSignatureAlgorithm, lpvHashAuxInfo, lpbSignature, lpcbSignature)
+'EXTERNAL FUNCTION CryptSignAndEncodeCertificate (hCryptProv, dwKeySpec, dwCertEncodingType, lpszStructType, lpvStructInfo, lpSignatureAlgorithm, lpvHashAuxInfo, lpbEncoded, lpcbEncoded)
+'EXTERNAL FUNCTION CertVerifyTimeValidity (lpTimeToVerify, lpCertInfo)
+'EXTERNAL FUNCTION CertVerifyCRLTimeValidity (lpTimeToVerify, pCrlInfo)
+'EXTERNAL FUNCTION CertVerifyValidityNesting (lpSubjectInfo, lpIssuerInfo)
+'EXTERNAL FUNCTION CertVerifyCRLRevocation (dwCertEncodingType, lpCertId, cCrlInfo, lprgpCrlInfoArray)
+'EXTERNAL FUNCTION CertAlgIdToOID (dwAlgId)
+'EXTERNAL FUNCTION CertOIDToAlgId (lpszObjId)
+
+'EXTERNAL FUNCTION CertFindExtension (lpszObjId, cExtensions, CERT_EXTENSION rgExtensions[])
+'EXTERNAL FUNCTION CertFindAttribute (lpszObjId, cAttr, CRYPT_ATTRIBUTE rgAttr[])
+
+'EXTERNAL FUNCTION CertFindRDNAttr (lpszObjId, lpName)
+'EXTERNAL FUNCTION CertGetIntendedKeyUsage (dwCertEncodingType, lpCertInfo, lpbKeyUsage, cbKeyUsage)
+'EXTERNAL FUNCTION CryptInstallDefaultContext (hCryptProv, dwDefaultType, lpvDefaultPara, dwFlags, lpvReserved, lphDefaultContext)
+'EXTERNAL FUNCTION CryptUninstallDefaultContext (hDefaultContext, dwFlags, lpvReserved)
+'EXTERNAL FUNCTION CryptExportPublicKeyInfo (hCryptProv, dwKeySpec, dwCertEncodingType, lpInfo, lpcbInfo)
+
+'EXTERNAL FUNCTION CryptExportPublicKeyInfoEx (HCRYPTPROV,DWORD,DWORD,LPSTR,DWORD,XLONG ,PCERT_PUBLIC_KEY_INFO,XLONG *)
+'EXTERNAL FUNCTION CryptImportPublicKeyInfo (HCRYPTPROV,DWORD,PCERT_PUBLIC_KEY_INFO,HCRYPTKEY *)
+
+'EXTERNAL FUNCTION CryptImportPublicKeyInfoEx (hCryptProv, dwCertEncodingType, pInfo, ALG_ID aiKeyAlg, dwFlags, lpvAuxInfo, lphKey)
+'EXTERNAL FUNCTION CryptAcquireCertificatePrivateKey (pCert, dwFlags, lpvReserved, lphCryptProv, lpdwKeySpec, lpfCallerFreeProv)
+'EXTERNAL FUNCTION CryptFindCertificateKeyProvInfo (lpCert, dwFlags, lpvReserved)
+'EXTERNAL FUNCTION CryptImportPKCS8 (CRYPT_PKCS8_IMPORT_PARAMS sImportParams, dwFlags, lphCryptProv, lpvAuxInfo)
+'EXTERNAL FUNCTION CryptExportPKCS8 (hCryptProv, dwKeySpec, lpszPrivateKeyObjId, dwFlags, lpvAuxInfo, lpbPrivateKeyBlob, lpcbPrivateKeyBlob)
+'EXTERNAL FUNCTION CryptExportPKCS8Ex (lpsExportParams, dwFlags, lpvAuxInfo, lpbPrivateKeyBlob, lpcbPrivateKeyBlob)
+'EXTERNAL FUNCTION CryptHashPublicKeyInfo (hCryptProv, ALG_ID Algid, dwFlags, dwCertEncodingType, lpInfo, lpbComputedHash, lpcbComputedHash)
+'EXTERNAL FUNCTION CertRDNValueToStrA (dwValueType, pValue, lpsz, csz)
+'EXTERNAL FUNCTION CertRDNValueToStrW (dwValueType, pValue, lpsz, csz)
+'EXTERNAL FUNCTION CertNameToStrA (dwCertEncodingType, pName, dwStrType, lpsz, csz)
+'EXTERNAL FUNCTION CertNameToStrW (dwCertEncodingType, pName, dwStrType, lpsz, csz)
+'EXTERNAL FUNCTION CertStrToNameA (dwCertEncodingType, lpszX500, dwStrType, lpvReserved, lpbEncoded, lpcbEncoded, lppszError)
+'EXTERNAL FUNCTION CertStrToNameW (dwCertEncodingType, lpszX500, dwStrType, lpvReserved, lpbEncoded, lpcbEncoded, lppszError)
+'EXTERNAL FUNCTION CertGetNameStringA (lpCertContext, dwType, dwFlags, lpvTypePara, lpszNameString, cchNameString)
+'EXTERNAL FUNCTION CertGetNameStringW (lpCertContext, dwType, dwFlags, lpvTypePara, lpszNameString, cchNameString)
+'EXTERNAL FUNCTION CryptSignMessage (lpSignPara, fDetachedSignature, cToBeSigned, rgpbToBeSigned[], rgcbToBeSigned[], lpbSignedBlob, lpcbSignedBlob)
+'EXTERNAL FUNCTION CryptVerifyMessageSignature (lpVerifyPara, dwSignerIndex, lpbSignedBlob, cbSignedBlob, pbDecoded, lpcbDecoded, lppSignerCert)
+'EXTERNAL FUNCTION CryptGetMessageSignerCount (dwMsgEncodingType, lpbSignedBlob, cbSignedBlob)
+'EXTERNAL FUNCTION CryptGetMessageCertificates (dwMsgAndCertEncodingType, hCryptProv, dwFlags, lpbSignedBlob, cbSignedBlob)
+'EXTERNAL FUNCTION CryptVerifyDetachedMessageSignature (lpVerifyPara, dwSignerIndex, lpbDetachedSignBlob, cbDetachedSignBlob, cToBeSigned, rgpbToBeSigned[], rgcbToBeSigned[], lppSignerCert)
+'EXTERNAL FUNCTION CryptEncryptMessage (lpEncryptPara, cRecipientCert, lprgpRecipientCertArray, lpbToBeEncrypted, cbToBeEncrypted, lpbEncryptedBlob, lpcbEncryptedBlob)
+'EXTERNAL FUNCTION CryptDecryptMessage (lpDecryptPara, lpbEncryptedBlob, cbEncryptedBlob, lpbDecrypted, lpcbDecrypted,lppXchgCert)
+'EXTERNAL FUNCTION CryptSignAndEncryptMessage (lpSignPara, lpEncryptPara, cRecipientCert, lprgpRecipientCertArray, lpbToBeSignedAndEncrypted, cbToBeSignedAndEncrypted, lpbSignedAndEncryptedBlob, lpcbSignedAndEncryptedBlob)
+'EXTERNAL FUNCTION CryptDecryptAndVerifyMessageSignature (lpDecryptPara, lpVerifyPara, dwSignerIndex, lpbEncryptedBlob, cbEncryptedBlob, lpbDecrypted, lpcbDecrypted, lppXchgCert, lppSignerCert)
+'EXTERNAL FUNCTION CryptDecodeMessage (dwMsgTypeFlags, lpDecryptPara, lpVerifyPara, dwSignerIndex, lpbEncodedBlob, cbEncodedBlob, dwPrevInnerContentType, lpdwMsgType, lpdwInnerContentType, lpbDecoded, lpcbDecoded, lppXchgCert, lppSignerCert)
+'EXTERNAL FUNCTION CryptHashMessage (lpHashPara, fDetachedHash, cToBeHashed, lprgpbToBeHashedArray, rgcbToBeHashed[], lpbHashedBlob, lpcbHashedBlob, lpbComputedHash, lpcbComputedHash)
+'EXTERNAL FUNCTION CryptVerifyMessageHash (lpHashPara, lpbHashedBlob, cbHashedBlob, lpbToBeHashed, lpcbToBeHashed, lpbComputedHash, lpcbComputedHash)
+'EXTERNAL FUNCTION CryptVerifyDetachedMessageHash (lpHashPara, lpbDetachedHashBlob, cbDetachedHashBlob, cToBeHashed, lprgpbToBeHashedArray, rgcbToBeHashed[], lpbComputedHash, lpcbComputedHash)
+'EXTERNAL FUNCTION CryptSignMessageWithKey (lpSignPara, lpbToBeSigned, cbToBeSigned, lpbSignedBlob, lpcbSignedBlob)
+'EXTERNAL FUNCTION CryptVerifyMessageSignatureWithKey (lpVerifyPara, lpPublicKeyInfo, lpbSignedBlob, cbSignedBlob, lpbDecoded, lpcbDecoded)
+'EXTERNAL FUNCTION CertOpenSystemStoreA (hProv, lpszSubsystemProtocol)
+'EXTERNAL FUNCTION CertOpenSystemStoreW (hProv, lpszSubsystemProtocol)
+
+'EXTERNAL FUNCTION CertAddEncodedCertificateToSystemStoreA (LPCSTR,const BYTE *,DWORD)
+'EXTERNAL FUNCTION CertAddEncodedCertificateToSystemStoreW (LPCWSTR,const BYTE *,DWORD)
+
+'EXTERNAL FUNCTION FindCertsByIssuer (lpCertChains, lpcbCertChains, lpcCertChains, lpbEncodedIssuerName, cbEncodedIssuerName, lpwszPurpose, dwKeySpec)
+'EXTERNAL FUNCTION CryptQueryObject (dwObjectType, lpvObject, dwExpectedContentTypeFlags, dwExpectedFormatTypeFlags, dwFlags, lpdwMsgAndCertEncodingType, lpdwContentType, lpdwFormatType, lphCertStore, lphMsg, lppvContext)
+'EXTERNAL FUNCTION CryptMemAlloc (cbSize )
+'EXTERNAL FUNCTION CryptMemRealloc (lpv, cbSize)
+'EXTERNAL FUNCTION CryptMemFree (lpv)
+'EXTERNAL FUNCTION CryptCreateAsyncHandle (dwFlags, lphAsync)
+
+'EXTERNAL FUNCTION CryptSetAsyncParam ( HCRYPTASYNC,LPSTR,LPVOID,PFN_CRYPT_ASYNC_PARAM_FREE_FUNC)
+'EXTERNAL FUNCTION CryptGetAsyncParam ( HCRYPTASYNC,LPSTR,LPVOID *,PFN_CRYPT_ASYNC_PARAM_FREE_FUNC * )
+
+'EXTERNAL FUNCTION CryptCloseAsyncHandle (hAsync)
+'EXTERNAL FUNCTION CryptRetrieveObjectByUrlA (lpszUrl, lpszObjectOid, dwRetrievalFlags, dwTimeout, lppvObject, hAsyncRetrieve, lpCredentials, lpvVerify, lpvReserved)
+
+'EXTERNAL FUNCTION CryptRetrieveObjectByUrlW (LPCWSTR,LPCSTR,DWORD,DWORD,LPVOID *,HCRYPTASYNC,PCRYPT_CREDENTIALS,LPVOID,LPVOID)
+
+'EXTERNAL FUNCTION CryptCancelAsyncRetrieval (hAsyncRetrieval)
+'EXTERNAL FUNCTION CryptGetObjectUrl (lpszUrlOid, lpvPara, dwFlags, lpUrlArray, lpcbUrlArray, lpUrlInfo, lpcbUrlInfo, lpvReserved)
+'EXTERNAL FUNCTION CryptGetTimeValidObject (lpszTimeValidOid, lpvPara, lpIssuer, lpftValidFor, dwFlags, dwTimeout, lppvObject, lpCredentials, lpvReserved)
+'EXTERNAL FUNCTION CryptFlushTimeValidObject (lpszFlushTimeValidOid, lpvPara, lpIssuer, dwFlags, lpvReserved)
+
+'EXTERNAL FUNCTION CryptProtectData ( DATA_BLOB * , XLONG ., DATA_BLOB * , PVOID , CRYPTPROTECT_PROMPTSTRUCT *, XLONG , DATA_BLOB *)
+'EXTERNAL FUNCTION CryptUnprotectData ( DATA_BLOB * , LPWSTR * , DATA_BLOB *, PVOID , CRYPTPROTECT_PROMPTSTRUCT *, XLONG , DATA_BLOB *)
+'EXTERNAL FUNCTION CertCreateSelfSignCertificate ( HCRYPTPROV,PCERT_NAME_BLOB,DWORD,PCRYPT_KEY_PROV_INFO,PCRYPT_ALGORITHM_IDENTIFIER,LPSYSTEMTIME,LPSYSTEMTIME,PCERT_EXTENSIONS )
+
+'EXTERNAL FUNCTION CryptEnumKeyIdentifierProperties (pKeyIdentifier, dwPropId, dwFlags, lpwszComputerName, lpvReserved, lpvArg, lpfnEnum)
+
+'EXTERNAL FUNCTION CryptCreateKeyIdentifierFromCSP ( DWORD,LPCSTR,const PUBLICKEYSTRUC *,DWORD,DWORD,XLONG ,BYTE *,XLONG * )
+'EXTERNAL FUNCTION CertCreateCertificateChainEngine ( PCERT_CHAIN_ENGINE_CONFIG,HCERTCHAINENGINE * )
+'EXTERNAL FUNCTION CertFreeCertificateChainEngine ( HCERTCHAINENGINE)
+'EXTERNAL FUNCTION CertResyncCertificateChainEngine ( HCERTCHAINENGINE)
+'EXTERNAL FUNCTION CryptGetKeyIdentifierProperty ( const CRYPT_HASH_BLOB *, XLONG , XLONG , XLONG , XLONG , XLONG , XLONG *)
+'EXTERNAL FUNCTION CryptSetKeyIdentifierProperty ( const CRYPT_HASH_BLOB *,DWORD,DWORD,LPCWSTR,XLONG ,const XLONG )
+
+'EXTERNAL FUNCTION CertGetCertificateChain (hChainEngine, lpCertContext, lpftTime, hAdditionalStore, lpChainPara, dwFlags, lpvReserved, lppChainContext)
+
+'EXTERNAL FUNCTION CertFreeCertificateChain (PCCERT_CHAIN_CONTEXT)
+'EXTERNAL FUNCTION CertDuplicateCertificateChain (PCCERT_CHAIN_CONTEXT)
+
+'EXTERNAL FUNCTION CertFindChainInStore (hCertStore, dwCertEncodingType, dwFindFlags, dwFindType, lpvFindPara, lpPrevChainContext)
+
+'EXTERNAL FUNCTION CertVerifyCertificateChainPolicy (LPCSTR,PCCERT_CHAIN_CONTEXT,PCERT_CHAIN_POLICY_PARA,PCERT_CHAIN_POLICY_STATUS)
+
+' #######################
+' #####  constants  #####
+' #######################
+
+
+'$$GET_ALG_CLASS(x) (x & (7 << 13))
+'$$GET_ALG_TYPE(x) (x & (15 << 9))
+'$$GET_ALG_SID(x) (x & (511))
+
+$$ALG_CLASS_ANY = 0
+$$ALG_CLASS_SIGNATURE = 0x2000
+$$ALG_CLASS_MSG_ENCRYPT = 0x4000
+$$ALG_CLASS_DATA_ENCRYPT = 0x6000
+$$ALG_CLASS_HASH = 0x8000
+$$ALG_CLASS_KEY_EXCHANGE = 0xA000
+$$ALG_TYPE_ANY = 0
+$$ALG_TYPE_DSS = 0x200
+$$ALG_TYPE_RSA = 0x400
+$$ALG_TYPE_BLOCK = 0x600
+$$ALG_TYPE_STREAM = 0x800
+$$ALG_TYPE_DH = 0xA00
+$$ALG_TYPE_SECURECHANNEL = 0xC00
+$$ALG_SID_ANY = 0
+$$ALG_SID_RSA_ANY = 0
+$$ALG_SID_RSA_PKCS = 1
+$$ALG_SID_RSA_MSATWORK = 2
+$$ALG_SID_RSA_ENTRUST = 3
+$$ALG_SID_RSA_PGP = 4
+$$ALG_SID_DSS_ANY = 0
+$$ALG_SID_DSS_PKCS = 1
+$$ALG_SID_DSS_DMS = 2
+$$ALG_SID_DES = 1
+$$ALG_SID_3DES = 3
+$$ALG_SID_DESX = 4
+$$ALG_SID_IDEA = 5
+$$ALG_SID_CAST = 6
+$$ALG_SID_SAFERSK64 = 7
+$$ALG_SID_SAFERSK128 = 8
+$$ALG_SID_3DES_112 = 9
+$$ALG_SID_CYLINK_MEK = 12
+$$ALG_SID_RC5 = 13
+$$ALG_SID_SKIPJACK = 10
+$$ALG_SID_TEK = 11
+$$CRYPT_MODE_CBCI = 6
+$$CRYPT_MODE_CFBP = 7
+$$CRYPT_MODE_OFBP = 8
+$$CRYPT_MODE_CBCOFM = 9
+$$CRYPT_MODE_CBCOFMI = 10
+$$ALG_SID_RC2 = 2
+$$ALG_SID_RC4 = 1
+$$ALG_SID_SEAL = 2
+$$ALG_SID_DH_SANDF = 1
+$$ALG_SID_DH_EPHEM = 2
+$$ALG_SID_AGREED_KEY_ANY = 3
+$$ALG_SID_KEA = 4
+$$ALG_SID_MD2 = 1
+$$ALG_SID_MD4 = 2
+$$ALG_SID_MD5 = 3
+$$ALG_SID_SHA = 4
+$$ALG_SID_SHA1 = 4
+$$ALG_SID_MAC = 5
+$$ALG_SID_RIPEMD = 6
+$$ALG_SID_RIPEMD160 = 7
+$$ALG_SID_SSL3SHAMD5 = 8
+$$ALG_SID_HMAC = 9
+$$ALG_SID_TLS1PRF = 10
+$$ALG_SID_SSL3_MASTER = 1
+$$ALG_SID_SCHANNEL_MASTER_HASH = 2
+$$ALG_SID_SCHANNEL_MAC_KEY = 3
+$$ALG_SID_PCT1_MASTER = 4
+$$ALG_SID_SSL2_MASTER = 5
+$$ALG_SID_TLS1_MASTER = 6
+$$ALG_SID_SCHANNEL_ENC_KEY = 7
+$$ALG_SID_EXAMPLE = 80
+
+$$CALG_MD2 = 0x8001		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_MD2)
+$$CALG_MD4 = 0x8002		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_MD4)
+$$CALG_MD5 = 0x8003		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_MD5)
+$$CALG_SHA = 0x8004		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_SHA)
+$$CALG_SHA1 = 0x8004		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_SHA1)
+$$CALG_MAC = 0x8005		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_MAC)
+
+$$CALG_RSA_SIGN = 0x2400	' ($$ALG_CLASS_SIGNATURE | $$ALG_TYPE_RSA | $$ALG_SID_RSA_ANY)
+$$CALG_DSS_SIGN = 0x2200	' ($$ALG_CLASS_SIGNATURE | $$ALG_TYPE_DSS | $$ALG_SID_DSS_ANY)
+$$CALG_RSA_KEYX = 0xA400	' ($$ALG_CLASS_KEY_EXCHANGE | $$ALG_TYPE_RSA | $$ALG_SID_RSA_ANY)
+$$CALG_DES = 0x6601		' ($$ALG_CLASS_DATA_ENCRYPT | $$ALG_TYPE_BLOCK | $$ALG_SID_DES)
+$$CALG_3DES_112 = 0x6609	' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_3DES_112)
+$$CALG_3DES = 0x6603		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_3DES)
+$$CALG_DESX = 0x6604		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_DESX)
+$$CALG_RC2 = 0x6602		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_RC2)
+$$CALG_RC4 = 0x6801		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_STREAM|$$ALG_SID_RC4)
+$$CALG_SEAL = 0x6802		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_STREAM|$$ALG_SID_SEAL)
+$$CALG_DH_SF = 0xAA01		' ($$ALG_CLASS_KEY_EXCHANGE|$$ALG_TYPE_DH|$$ALG_SID_DH_SANDF)
+$$CALG_DH_EPHEM = 0xAA02	' ($$ALG_CLASS_KEY_EXCHANGE|$$ALG_TYPE_DH|$$ALG_SID_DH_EPHEM)
+$$CALG_AGREEDKEY_ANY = 0xAA03	' ($$ALG_CLASS_KEY_EXCHANGE|$$ALG_TYPE_DH|$$ALG_SID_AGREED_KEY_ANY)
+$$CALG_KEA_KEYX = 0xAA04	' ($$ALG_CLASS_KEY_EXCHANGE|$$ALG_TYPE_DH|$$ALG_SID_KEA)
+$$CALG_HUGHES_MD5 = 0xA003	' ($$ALG_CLASS_KEY_EXCHANGE|$$ALG_TYPE_ANY|$$ALG_SID_MD5)
+$$CALG_SKIPJACK = 0x660A	' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_SKIPJACK)
+$$CALG_TEK = 0x660B		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_TEK)
+$$CALG_CYLINK_MEK = 0x660C	' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_CYLINK_MEK)
+$$CALG_SSL3_SHAMD5 = 0x8008	' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_SSL3SHAMD5)
+$$CALG_SSL3_MASTER = 0x4C01	' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_SSL3_MASTER)
+$$CALG_SCHANNEL_MASTER_HASH = 0x4C02	' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_SCHANNEL_MASTER_HASH)
+$$CALG_SCHANNEL_MAC_KEY = 0x4C03		' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_SCHANNEL_MAC_KEY)
+$$CALG_SCHANNEL_ENC_KEY = 0x4C07		' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_SCHANNEL_ENC_KEY)
+$$CALG_PCT1_MASTER = 0x4C04	' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_PCT1_MASTER)
+$$CALG_SSL2_MASTER = 0x4C05	' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_SSL2_MASTER)
+$$CALG_TLS1_MASTER = 0x4C06	' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_TLS1_MASTER)
+$$CALG_RC5 = 0x660D		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_RC5)
+$$CALG_HMAC = 0x8009		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_HMAC)
+$$CALG_TLS1PRF = 0x800A		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_TLS1PRF)
+
+$$SIGNATURE_RESOURCE_NUMBER = 666
+
+$$CRYPT_VERIFYCONTEXT = 0xF0000000
+$$CRYPT_NEWKEYSET = 0x00000008
+$$CRYPT_DELETEKEYSET = 0x00000010
+$$CRYPT_MACHINE_KEYSET = 0x00000020
+$$CRYPT_SILENT = 0x00000040
+$$CRYPT_EXPORTABLE = 0x00000001
+$$CRYPT_USER_PROTECTED = 0x00000002
+$$CRYPT_CREATE_SALT = 0x00000004
+$$CRYPT_UPDATE_KEY = 0x00000008
+$$CRYPT_NO_SALT = 0x00000010
+$$CRYPT_PREGEN = 0x00000040
+$$CRYPT_RECIPIENT = 0x00000010
+$$CRYPT_INITIATOR = 0x00000040
+$$CRYPT_ONLINE = 0x00000080
+$$CRYPT_SF = 0x00000100
+$$CRYPT_CREATE_IV = 0x00000200
+$$CRYPT_KEK = 0x00000400
+$$CRYPT_DATA_KEY = 0x00000800
+$$CRYPT_VOLATILE = 0x00001000
+$$CRYPT_SERVER = 0x00000400
+$$KEY_LENGTH_MASK = 0xFFFF0000
+$$CRYPT_Y_ONLY = 0x00000001
+$$CRYPT_SSL2_FALLBACK = 0x00000002
+$$CRYPT_DESTROYKEY = 0x00000004
+$$CRYPT_LITTLE_ENDIAN = 0x00000001
+$$CRYPT_NOHASHOID = 0x00000001
+$$CRYPT_TYPE2_FORMAT = 0x00000002
+$$CRYPT_MACHINE_DEFAULT = 0x00000001
+$$CRYPT_USER_DEFAULT = 0x00000002
+$$CRYPT_DELETE_DEFAULT = 0x00000004
+$$SIMPLEBLOB = 0x1
+$$PUBLICKEYBLOB = 0x6
+$$PRIVATEKEYBLOB = 0x7
+$$PLAINTEXTKEYBLOB = 0x8
+$$OPAQUEKEYBLOB = 0x9
+$$PUBLICKEYBLOBEX = 0xA
+$$AT_KEYEXCHANGE = 1
+$$AT_SIGNATURE = 2
+$$CRYPT_USERDATA = 1
+$$KP_IV = 1
+$$KP_SALT = 2
+$$KP_PADDING = 3
+$$KP_MODE = 4
+$$KP_MODE_BITS = 5
+$$KP_PERMISSIONS = 6
+$$KP_ALGID = 7
+$$KP_BLOCKLEN = 8
+$$KP_KEYLEN = 9
+$$KP_SALT_EX = 10
+$$KP_P = 11
+$$KP_G = 12
+$$KP_Q = 13
+$$KP_X = 14
+$$KP_Y = 15
+$$KP_RA = 16
+$$KP_RB = 17
+$$KP_INFO = 18
+$$KP_EFFECTIVE_KEYLEN = 19
+$$KP_SCHANNEL_ALG = 20
+$$KP_CLIENT_RANDOM = 21
+$$KP_SERVER_RANDOM = 22
+$$KP_RP = 23
+$$KP_PRECOMP_MD5 = 24
+$$KP_PRECOMP_SHA = 25
+$$KP_CERTIFICATE = 26
+$$KP_CLEAR_KEY = 27
+$$KP_PUB_EX_LEN = 28
+$$KP_PUB_EX_VAL = 29
+$$KP_KEYVAL = 30
+$$KP_ADMIN_PIN = 31
+$$KP_KEYEXCHANGE_PIN = 32
+$$KP_SIGNATURE_PIN = 33
+$$KP_PREHASH = 34
+$$PKCS5_PADDING = 1
+$$RANDOM_PADDING = 2
+$$ZERO_PADDING = 3
+$$CRYPT_MODE_CBC = 1
+$$CRYPT_MODE_ECB = 2
+$$CRYPT_MODE_OFB = 3
+$$CRYPT_MODE_CFB = 4
+$$CRYPT_MODE_CTS = 5
+$$CRYPT_ENCRYPT = 0x0001
+$$CRYPT_DECRYPT = 0x0002
+$$CRYPT_EXPORT = 0x0004
+$$CRYPT_READ = 0x0008
+$$CRYPT_WRITE = 0x0010
+$$CRYPT_MAC = 0x0020
+$$CRYPT_EXPORT_KEY = 0x0040
+$$CRYPT_IMPORT_KEY = 0x0080
+$$HP_ALGID = 0x0001
+$$HP_HASHVAL = 0x0002
+$$HP_HASHSIZE = 0x0004
+$$HP_HMAC_INFO = 0x0005
+$$HP_TLS1PRF_LABEL = 0x0006
+$$HP_TLS1PRF_SEED = 0x0007
+
+$$CRYPT_FAILED = 0				' FALSE
+$$CRYPT_SUCCEED = 1				' TRUE
+
+'$$RCRYPT_SUCCEEDED(rt) ((rt) == CRYPT_SUCCEED)
+'$$RCRYPT_FAILED(rt) ((rt) == CRYPT_FAILED)
+
+$$PP_ENUMALGS = 1
+$$PP_ENUMCONTAINERS = 2
+$$PP_IMPTYPE = 3
+$$PP_NAME = 4
+$$PP_VERSION = 5
+$$PP_CONTAINER = 6
+$$PP_CHANGE_PASSWORD = 7
+$$PP_KEYSET_SEC_DESCR = 8
+$$PP_CERTCHAIN = 9
+$$PP_KEY_TYPE_SUBTYPE = 10
+$$PP_PROVTYPE = 16
+$$PP_KEYSTORAGE = 17
+$$PP_APPLI_CERT = 18
+$$PP_SYM_KEYSIZE = 19
+$$PP_SESSION_KEYSIZE = 20
+$$PP_UI_PROMPT = 21
+$$PP_ENUMALGS_EX = 22
+$$PP_ENUMMANDROOTS = 25
+$$PP_ENUMELECTROOTS = 26
+$$PP_KEYSET_TYPE = 27
+$$PP_ADMIN_PIN = 31
+$$PP_KEYEXCHANGE_PIN = 32
+$$PP_SIGNATURE_PIN = 33
+$$PP_SIG_KEYSIZE_INC = 34
+$$PP_KEYX_KEYSIZE_INC = 35
+$$PP_UNIQUE_CONTAINER = 36
+$$CRYPT_FIRST = 1
+$$CRYPT_NEXT = 2
+$$CRYPT_IMPL_HARDWARE = 1
+$$CRYPT_IMPL_SOFTWARE = 2
+$$CRYPT_IMPL_MIXED = 3
+$$CRYPT_IMPL_UNKNOWN = 4
+$$CRYPT_SEC_DESCR = 0x00000001
+$$CRYPT_PSTORE = 0x00000002
+$$CRYPT_UI_PROMPT = 0x00000004
+$$CRYPT_FLAG_PCT1 = 0x0001
+$$CRYPT_FLAG_SSL2 = 0x0002
+$$CRYPT_FLAG_SSL3 = 0x0004
+$$CRYPT_FLAG_TLS1 = 0x0008
+$$PP_CLIENT_HWND = 1
+$$PP_CONTEXT_INFO = 11
+$$PP_KEYEXCHANGE_KEYSIZE = 12
+$$PP_SIGNATURE_KEYSIZE = 13
+$$PP_KEYEXCHANGE_ALG = 14
+$$PP_SIGNATURE_ALG = 15
+$$PP_DELETEKEY = 24
+$$PROV_RSA_FULL = 1
+$$PROV_RSA_SIG = 2
+$$PROV_DSS = 3
+$$PROV_FORTEZZA = 4
+$$PROV_MS_EXCHANGE = 5
+$$PROV_SSL = 6
+$$PROV_RSA_SCHANNEL = 12
+$$PROV_DSS_DH = 13
+$$PROV_EC_ECDSA_SIG = 14
+$$PROV_EC_ECNRA_SIG = 15
+$$PROV_EC_ECDSA_FULL = 16
+$$PROV_EC_ECNRA_FULL = 17
+$$PROV_DH_SCHANNEL = 18
+$$PROV_SPYRUS_LYNKS = 20
+$$PROV_STT_MER = 7
+$$PROV_STT_ACQ = 8
+$$PROV_STT_BRND = 9
+$$PROV_STT_ROOT = 10
+$$PROV_STT_ISS = 11
+
+$$MS_DEF_PROV_A = "Microsoft Base Cryptographic Provider v1.0"
+$$MS_DEF_PROV_W = "Microsoft Base Cryptographic Provider v1.0"
+
+'$$MS_DEF_PROV = $$MS_DEF_PROV_W
+$$MS_DEF_PROV = $$MS_DEF_PROV_A
+
+$$MS_ENHANCED_PROV_A = "Microsoft Enhanced Cryptographic Provider v1.0"
+$$MS_ENHANCED_PROV_W = "Microsoft Enhanced Cryptographic Provider v1.0"
+
+'$$MS_ENHANCED_PROV = $$MS_ENHANCED_PROV_W
+$$MS_ENHANCED_PROV = $$MS_ENHANCED_PROV_A
+
+$$MS_DEF_RSA_SIG_PROV_A = "Microsoft RSA Signature Cryptographic Provider"
+$$MS_DEF_RSA_SIG_PROV_W = "Microsoft RSA Signature Cryptographic Provider"
+ 
+'$$MS_DEF_RSA_SIG_PROV = $$MS_DEF_RSA_SIG_PROV_W
+$$MS_DEF_RSA_SIG_PROV = $$MS_DEF_RSA_SIG_PROV_A
+ 
+$$MS_DEF_RSA_SCHANNEL_PROV_A = "Microsoft RSA SChannel Cryptographic Provider"
+$$MS_DEF_RSA_SCHANNEL_PROV_W = "Microsoft RSA SChannel Cryptographic Provider"
+ 
+'$$MS_DEF_RSA_SCHANNEL_PROV = $$MS_DEF_RSA_SCHANNEL_PROV_W
+$$MS_DEF_RSA_SCHANNEL_PROV = $$MS_DEF_RSA_SCHANNEL_PROV_A
+ 
+$$MS_DEF_DSS_PROV_A = "Microsoft Base DSS Cryptographic Provider"
+$$MS_DEF_DSS_PROV_W = "Microsoft Base DSS Cryptographic Provider"
+ 
+'$$MS_DEF_DSS_PROV = $$MS_DEF_DSS_PROV_W
+$$MS_DEF_DSS_PROV = $$MS_DEF_DSS_PROV_A
+ 
+$$MS_DEF_DSS_DH_PROV_A = "Microsoft Base DSS and Diffie-Hellman Cryptographic Provider"
+$$MS_DEF_DSS_DH_PROV_W = "Microsoft Base DSS and Diffie-Hellman Cryptographic Provider"
+ 
+'$$MS_DEF_DSS_DH_PROV = $$MS_DEF_DSS_DH_PROV_W
+$$MS_DEF_DSS_DH_PROV = $$MS_DEF_DSS_DH_PROV_A
+ 
+$$MS_ENH_DSS_DH_PROV_A = "Microsoft Enhanced DSS and Diffie-Hellman Cryptographic Provider"
+$$MS_ENH_DSS_DH_PROV_W = "Microsoft Enhanced DSS and Diffie-Hellman Cryptographic Provider"
+ 
+'$$MS_ENH_DSS_DH_PROV = $$MS_ENH_DSS_DH_PROV_W
+$$MS_ENH_DSS_DH_PROV = $$MS_ENH_DSS_DH_PROV_A
+ 
+$$MS_DEF_DH_SCHANNEL_PROV_A = "Microsoft DH SChannel Cryptographic Provider"
+$$MS_DEF_DH_SCHANNEL_PROV_W = "Microsoft DH SChannel Cryptographic Provider"
+ 
+'$$MS_DEF_DH_SCHANNEL_PROV = $$MS_DEF_DH_SCHANNEL_PROV_W
+$$MS_DEF_DH_SCHANNEL_PROV = $$MS_DEF_DH_SCHANNEL_PROV_A
+ 
+$$MS_SCARD_PROV_A = "Microsoft Base Smart Card Crypto Provider"
+$$MS_SCARD_PROV_W = "Microsoft Base Smart Card Crypto Provider"
+ 
+'$$MS_SCARD_PROV = $$MS_SCARD_PROV_W
+$$MS_SCARD_PROV = $$MS_SCARD_PROV_A
+ 
+$$MAXUIDLEN = 64
+$$CUR_BLOB_VERSION = 2
+
+$$SCHANNEL_MAC_KEY = 0x00000000
+$$SCHANNEL_ENC_KEY = 0x00000001
+
+$$szOID_RSA = "1.2.840.113549"
+$$szOID_PKCS = "1.2.840.113549.1"
+$$szOID_RSA_HASH = "1.2.840.113549.2"
+$$szOID_RSA_ENCRYPT = "1.2.840.113549.3"
+$$szOID_PKCS_1 = "1.2.840.113549.1.1"
+$$szOID_PKCS_2 = "1.2.840.113549.1.2"
+$$szOID_PKCS_3 = "1.2.840.113549.1.3"
+$$szOID_PKCS_4 = "1.2.840.113549.1.4"
+$$szOID_PKCS_5 = "1.2.840.113549.1.5"
+$$szOID_PKCS_6 = "1.2.840.113549.1.6"
+$$szOID_PKCS_7 = "1.2.840.113549.1.7"
+$$szOID_PKCS_8 = "1.2.840.113549.1.8"
+$$szOID_PKCS_9 = "1.2.840.113549.1.9"
+$$szOID_PKCS_10 = "1.2.840.113549.1.10"
+$$szOID_PKCS_12 = "1.2.840.113549.1.12"
+$$szOID_RSA_RSA = "1.2.840.113549.1.1.1"
+$$szOID_RSA_MD2RSA = "1.2.840.113549.1.1.2"
+$$szOID_RSA_MD4RSA = "1.2.840.113549.1.1.3"
+$$szOID_RSA_MD5RSA = "1.2.840.113549.1.1.4"
+$$szOID_RSA_SHA1RSA = "1.2.840.113549.1.1.5"
+$$szOID_RSA_SETOAEP_RSA = "1.2.840.113549.1.1.6"
+$$szOID_RSA_DH = "1.2.840.113549.1.3.1"
+$$szOID_RSA_data = "1.2.840.113549.1.7.1"
+$$szOID_RSA_signedData = "1.2.840.113549.1.7.2"
+$$szOID_RSA_envelopedData = "1.2.840.113549.1.7.3"
+$$szOID_RSA_signEnvData = "1.2.840.113549.1.7.4"
+$$szOID_RSA_digestedData = "1.2.840.113549.1.7.5"
+$$szOID_RSA_hashedData = "1.2.840.113549.1.7.5"
+$$szOID_RSA_encryptedData = "1.2.840.113549.1.7.6"
+$$szOID_RSA_emailAddr = "1.2.840.113549.1.9.1"
+$$szOID_RSA_unstructName = "1.2.840.113549.1.9.2"
+$$szOID_RSA_contentType = "1.2.840.113549.1.9.3"
+$$szOID_RSA_messageDigest = "1.2.840.113549.1.9.4"
+$$szOID_RSA_signingTime = "1.2.840.113549.1.9.5"
+$$szOID_RSA_counterSign = "1.2.840.113549.1.9.6"
+$$szOID_RSA_challengePwd = "1.2.840.113549.1.9.7"
+$$szOID_RSA_unstructAddr = "1.2.840.113549.1.9.8"
+$$szOID_RSA_extCertAttrs = "1.2.840.113549.1.9.9"
+$$szOID_RSA_SMIMECapabilities = "1.2.840.113549.1.9.15"
+$$szOID_RSA_preferSignedData = "1.2.840.113549.1.9.15.1"
+$$szOID_RSA_MD2 = "1.2.840.113549.2.2"
+$$szOID_RSA_MD4 = "1.2.840.113549.2.4"
+$$szOID_RSA_MD5 = "1.2.840.113549.2.5"
+$$szOID_RSA_RC2CBC = "1.2.840.113549.3.2"
+$$szOID_RSA_RC4 = "1.2.840.113549.3.4"
+$$szOID_RSA_DES_EDE3_CBC = "1.2.840.113549.3.7"
+$$szOID_RSA_RC5_CBCPad = "1.2.840.113549.3.9"
+$$szOID_ANSI_X942 = "1.2.840.10046"
+$$szOID_ANSI_X942_DH = "1.2.840.10046.2.1"
+$$szOID_X957 = "1.2.840.10040"
+$$szOID_X957_DSA = "1.2.840.10040.4.1"
+$$szOID_X957_SHA1DSA = "1.2.840.10040.4.3"
+$$szOID_DS = "2.5"
+$$szOID_DSALG = "2.5.8"
+$$szOID_DSALG_CRPT = "2.5.8.1"
+$$szOID_DSALG_HASH = "2.5.8.2"
+$$szOID_DSALG_SIGN = "2.5.8.3"
+$$szOID_DSALG_RSA = "2.5.8.1.1"
+$$szOID_OIW = "1.3.14"
+$$szOID_OIWSEC = "1.3.14.3.2"
+$$szOID_OIWSEC_md4RSA = "1.3.14.3.2.2"
+$$szOID_OIWSEC_md5RSA = "1.3.14.3.2.3"
+$$szOID_OIWSEC_md4RSA2 = "1.3.14.3.2.4"
+$$szOID_OIWSEC_desECB = "1.3.14.3.2.6"
+$$szOID_OIWSEC_desCBC = "1.3.14.3.2.7"
+$$szOID_OIWSEC_desOFB = "1.3.14.3.2.8"
+$$szOID_OIWSEC_desCFB = "1.3.14.3.2.9"
+$$szOID_OIWSEC_desMAC = "1.3.14.3.2.10"
+$$szOID_OIWSEC_rsaSign = "1.3.14.3.2.11"
+$$szOID_OIWSEC_dsa = "1.3.14.3.2.12"
+$$szOID_OIWSEC_shaDSA = "1.3.14.3.2.13"
+$$szOID_OIWSEC_mdc2RSA = "1.3.14.3.2.14"
+$$szOID_OIWSEC_shaRSA = "1.3.14.3.2.15"
+$$szOID_OIWSEC_dhCommMod = "1.3.14.3.2.16"
+$$szOID_OIWSEC_desEDE = "1.3.14.3.2.17"
+$$szOID_OIWSEC_sha = "1.3.14.3.2.18"
+$$szOID_OIWSEC_mdc2 = "1.3.14.3.2.19"
+$$szOID_OIWSEC_dsaComm = "1.3.14.3.2.20"
+$$szOID_OIWSEC_dsaCommSHA = "1.3.14.3.2.21"
+$$szOID_OIWSEC_rsaXchg = "1.3.14.3.2.22"
+$$szOID_OIWSEC_keyHashSeal = "1.3.14.3.2.23"
+$$szOID_OIWSEC_md2RSASign = "1.3.14.3.2.24"
+$$szOID_OIWSEC_md5RSASign = "1.3.14.3.2.25"
+$$szOID_OIWSEC_sha1 = "1.3.14.3.2.26"
+$$szOID_OIWSEC_dsaSHA1 = "1.3.14.3.2.27"
+$$szOID_OIWSEC_dsaCommSHA1 = "1.3.14.3.2.28"
+$$szOID_OIWSEC_sha1RSASign = "1.3.14.3.2.29"
+$$szOID_OIWDIR = "1.3.14.7.2"
+$$szOID_OIWDIR_CRPT = "1.3.14.7.2.1"
+$$szOID_OIWDIR_HASH = "1.3.14.7.2.2"
+$$szOID_OIWDIR_SIGN = "1.3.14.7.2.3"
+$$szOID_OIWDIR_md2 = "1.3.14.7.2.2.1"
+$$szOID_OIWDIR_md2RSA = "1.3.14.7.2.3.1"
+$$szOID_INFOSEC = "2.16.840.1.101.2.1"
+$$szOID_INFOSEC_sdnsSignature = "2.16.840.1.101.2.1.1.1"
+$$szOID_INFOSEC_mosaicSignature = "2.16.840.1.101.2.1.1.2"
+$$szOID_INFOSEC_sdnsConfidentiality = "2.16.840.1.101.2.1.1.3"
+$$szOID_INFOSEC_mosaicConfidentiality = "2.16.840.1.101.2.1.1.4"
+$$szOID_INFOSEC_sdnsIntegrity = "2.16.840.1.101.2.1.1.5"
+$$szOID_INFOSEC_mosaicIntegrity = "2.16.840.1.101.2.1.1.6"
+$$szOID_INFOSEC_sdnsTokenProtection = "2.16.840.1.101.2.1.1.7"
+$$szOID_INFOSEC_mosaicTokenProtection = "2.16.840.1.101.2.1.1.8"
+$$szOID_INFOSEC_sdnsKeyManagement = "2.16.840.1.101.2.1.1.9"
+$$szOID_INFOSEC_mosaicKeyManagement = "2.16.840.1.101.2.1.1.10"
+$$szOID_INFOSEC_sdnsKMandSig = "2.16.840.1.101.2.1.1.11"
+$$szOID_INFOSEC_mosaicKMandSig = "2.16.840.1.101.2.1.1.12"
+$$szOID_INFOSEC_SuiteASignature = "2.16.840.1.101.2.1.1.13"
+$$szOID_INFOSEC_SuiteAConfidentiality = "2.16.840.1.101.2.1.1.14"
+$$szOID_INFOSEC_SuiteAIntegrity = "2.16.840.1.101.2.1.1.15"
+$$szOID_INFOSEC_SuiteATokenProtection = "2.16.840.1.101.2.1.1.16"
+$$szOID_INFOSEC_SuiteAKeyManagement = "2.16.840.1.101.2.1.1.17"
+$$szOID_INFOSEC_SuiteAKMandSig = "2.16.840.1.101.2.1.1.18"
+$$szOID_INFOSEC_mosaicUpdatedSig = "2.16.840.1.101.2.1.1.19"
+$$szOID_INFOSEC_mosaicKMandUpdSig = "2.16.840.1.101.2.1.1.20"
+$$szOID_INFOSEC_mosaicUpdatedInteg = "2.16.840.1.101.2.1.1.21"
+
+$$szOID_COMMON_NAME = "2.5.4.3"
+$$szOID_SUR_NAME = "2.5.4.4"
+$$szOID_DEVICE_SERIAL_NUMBER = "2.5.4.5"
+$$szOID_COUNTRY_NAME = "2.5.4.6"
+$$szOID_LOCALITY_NAME = "2.5.4.7"
+$$szOID_STATE_OR_PROVINCE_NAME = "2.5.4.8"
+$$szOID_STREET_ADDRESS = "2.5.4.9"
+$$szOID_ORGANIZATION_NAME = "2.5.4.10"
+$$szOID_ORGANIZATIONAL_UNIT_NAME = "2.5.4.11"
+$$szOID_TITLE = "2.5.4.12"
+$$szOID_DESCRIPTION = "2.5.4.13"
+$$szOID_SEARCH_GUIDE = "2.5.4.14"
+$$szOID_BUSINESS_CATEGORY = "2.5.4.15"
+$$szOID_POSTAL_ADDRESS = "2.5.4.16"
+$$szOID_POSTAL_CODE = "2.5.4.17"
+$$szOID_POST_OFFICE_BOX = "2.5.4.18"
+$$szOID_PHYSICAL_DELIVERY_OFFICE_NAME = "2.5.4.19"
+$$szOID_TELEPHONE_NUMBER = "2.5.4.20"
+$$szOID_TELEX_NUMBER = "2.5.4.21"
+$$szOID_TELETEXT_TERMINAL_IDENTIFIER = "2.5.4.22"
+$$szOID_FACSIMILE_TELEPHONE_NUMBER = "2.5.4.23"
+$$szOID_X21_ADDRESS = "2.5.4.24"
+$$szOID_INTERNATIONAL_ISDN_NUMBER = "2.5.4.25"
+$$szOID_REGISTERED_ADDRESS = "2.5.4.26"
+$$szOID_DESTINATION_INDICATOR = "2.5.4.27"
+$$szOID_PREFERRED_DELIVERY_METHOD = "2.5.4.28"
+$$szOID_PRESENTATION_ADDRESS = "2.5.4.29"
+$$szOID_SUPPORTED_APPLICATION_CONTEXT = "2.5.4.30"
+$$szOID_MEMBER = "2.5.4.31"
+$$szOID_OWNER = "2.5.4.32"
+$$szOID_ROLE_OCCUPANT = "2.5.4.33"
+$$szOID_SEE_ALSO = "2.5.4.34"
+$$szOID_USER_PASSWORD = "2.5.4.35"
+$$szOID_USER_CERTIFICATE = "2.5.4.36"
+$$szOID_CA_CERTIFICATE = "2.5.4.37"
+$$szOID_AUTHORITY_REVOCATION_LIST = "2.5.4.38"
+$$szOID_CERTIFICATE_REVOCATION_LIST = "2.5.4.39"
+$$szOID_CROSS_CERTIFICATE_PAIR = "2.5.4.40"
+$$szOID_GIVEN_NAME = "2.5.4.42"
+$$szOID_INITIALS = "2.5.4.43"
+$$szOID_DN_QUALIFIER = "2.5.4.46"
+$$szOID_DOMAIN_COMPONENT = "0.9.2342.19200300.100.1.25"
+$$szOID_PKCS_12_FRIENDLY_NAME_ATTR = "1.2.840.113549.1.9.20"
+$$szOID_PKCS_12_LOCAL_KEY_ID = "1.2.840.113549.1.9.21"
+$$szOID_PKCS_12_KEY_PROVIDER_NAME_ATTR = "1.3.6.1.4.1.311.17.1"
+$$szOID_LOCAL_MACHINE_KEYSET = "1.3.6.1.4.1.311.17.2"
+
+$$CERT_RDN_ANY_TYPE = 0
+$$CERT_RDN_ENCODED_BLOB = 1
+$$CERT_RDN_OCTET_STRING = 2
+$$CERT_RDN_NUMERIC_STRING = 3
+$$CERT_RDN_PRINTABLE_STRING = 4
+$$CERT_RDN_TELETEX_STRING = 5
+$$CERT_RDN_T61_STRING = 5
+$$CERT_RDN_VIDEOTEX_STRING = 6
+$$CERT_RDN_IA5_STRING = 7
+$$CERT_RDN_GRAPHIC_STRING = 8
+$$CERT_RDN_VISIBLE_STRING = 9
+$$CERT_RDN_ISO646_STRING = 9
+$$CERT_RDN_GENERAL_STRING = 10
+$$CERT_RDN_UNIVERSAL_STRING = 11
+$$CERT_RDN_INT4_STRING = 11
+$$CERT_RDN_BMP_STRING = 12
+$$CERT_RDN_UNICODE_STRING = 12
+$$CERT_RDN_TYPE_MASK = 0x000000FF
+$$CERT_RDN_FLAGS_MASK = 0xFF000000
+$$CERT_RDN_ENABLE_T61_UNICODE_FLAG = 0x80000000
+$$CERT_RDN_DISABLE_CHECK_TYPE_FLAG = 0x40000000
+$$CERT_RDN_DISABLE_IE4_UTF8_FLAG = 0x01000000
+
+'$$IS_CERT_RDN_CHAR_STRING(X) (((X) & CERT_RDN_TYPE_MASK) >= CERT_RDN_NUMERIC_STRING)
+
+$$CERT_RSA_PUBLIC_KEY_OBJID = $$szOID_RSA_RSA
+$$CERT_DEFAULT_OID_PUBLIC_KEY_SIGN = $$szOID_RSA_RSA
+$$CERT_DEFAULT_OID_PUBLIC_KEY_XCHG = $$szOID_RSA_RSA
+
+$$CERT_V1 = 0
+$$CERT_V2 = 1
+$$CERT_V3 = 2
+$$CERT_INFO_VERSION_FLAG = 1
+$$CERT_INFO_SERIAL_NUMBER_FLAG = 2
+$$CERT_INFO_SIGNATURE_ALGORITHM_FLAG = 3
+$$CERT_INFO_ISSUER_FLAG = 4
+$$CERT_INFO_NOT_BEFORE_FLAG = 5
+$$CERT_INFO_NOT_AFTER_FLAG = 6
+$$CERT_INFO_SUBJECT_FLAG = 7
+$$CERT_INFO_SUBJECT_PUBLIC_KEY_INFO_FLAG = 8
+$$CERT_INFO_ISSUER_UNIQUE_ID_FLAG = 9
+$$CERT_INFO_SUBJECT_UNIQUE_ID_FLAG = 10
+$$CERT_INFO_EXTENSION_FLAG = 11
+
+$$CRL_V1 = 0
+$$CRL_V2 = 1
+$$CERT_REQUEST_V1 = 0
+$$CERT_KEYGEN_REQUEST_V1 = 0
+$$CTL_V1 = 0
+
+$$CERT_ENCODING_TYPE_MASK = 0x0000FFFF
+$$CMSG_ENCODING_TYPE_MASK = 0xFFFF0000
+
+'$$GET_CERT_ENCODING_TYPE(X) (X & CERT_ENCODING_TYPE_MASK)
+'$$GET_CMSG_ENCODING_TYPE(X) (X & CMSG_ENCODING_TYPE_MASK)
+
+$$CRYPT_ASN_ENCODING = 0x00000001
+$$CRYPT_NDR_ENCODING = 0x00000002
+$$X509_ASN_ENCODING = 0x00000001
+$$X509_NDR_ENCODING = 0x00000002
+$$PKCS_7_ASN_ENCODING = 0x00010000
+$$PKCS_7_NDR_ENCODING = 0x00020000
+
+$$CRYPT_FORMAT_STR_MULTI_LINE = 0x0001
+$$CRYPT_FORMAT_STR_NO_HEX = 0x0010
+$$CRYPT_FORMAT_SIMPLE = 0x0001
+$$CRYPT_FORMAT_X509 = 0x0002
+$$CRYPT_FORMAT_OID = 0x0004
+$$CRYPT_FORMAT_RDN_SEMICOLON = 0x0100
+$$CRYPT_FORMAT_RDN_CRLF = 0x0200
+$$CRYPT_FORMAT_RDN_UNQUOTE = 0x0400
+$$CRYPT_FORMAT_RDN_REVERSE = 0x0800
+$$CRYPT_FORMAT_COMMA = 0x1000
+$$CRYPT_FORMAT_SEMICOLON = $$CRYPT_FORMAT_RDN_SEMICOLON
+$$CRYPT_FORMAT_CRLF = $$CRYPT_FORMAT_RDN_CRLF
+
+$$CRYPT_ENCODE_ALLOC_FLAG = 0x8000
+
+$$CRYPT_UNICODE_NAME_ENCODE_ENABLE_T61_UNICODE_FLAG = $$CERT_RDN_ENABLE_T61_UNICODE_FLAG
+$$CRYPT_UNICODE_NAME_ENCODE_DISABLE_CHECK_TYPE_FLAG = $$CERT_RDN_DISABLE_CHECK_TYPE_FLAG
+$$CRYPT_SORTED_CTL_ENCODE_HASHED_SUBJECT_IDENTIFIER_FLAG = 0x10000
+
+$$CRYPT_DECODE_NOCOPY_FLAG = 0x1
+$$CRYPT_DECODE_TO_BE_SIGNED_FLAG = 0x2
+$$CRYPT_DECODE_SHARE_OID_STRING_FLAG = 0x4
+$$CRYPT_DECODE_ALLOC_FLAG = 0x8000
+$$CRYPT_UNICODE_NAME_DECODE_DISABLE_IE4_UTF8_FLAG = $$CERT_RDN_DISABLE_IE4_UTF8_FLAG
+$$CRYPT_ENCODE_DECODE_NONE = 0
+$$X509_CERT = 1
+$$X509_CERT_TO_BE_SIGNED = 2
+$$X509_CERT_CRL_TO_BE_SIGNED = 3
+$$X509_CERT_REQUEST_TO_BE_SIGNED = 4
+$$X509_EXTENSIONS = 5
+$$X509_NAME_VALUE = 6
+$$X509_NAME = 7
+$$X509_PUBLIC_KEY_INFO = 8
+$$X509_AUTHORITY_KEY_ID = 9
+$$X509_KEY_ATTRIBUTES = 10
+$$X509_KEY_USAGE_RESTRICTION = 11
+$$X509_ALTERNATE_NAME = 12
+$$X509_BASIC_CONSTRAINTS = 13
+$$X509_KEY_USAGE = 14
+$$X509_BASIC_CONSTRAINTS2 = 15
+$$X509_CERT_POLICIES = 16
+$$PKCS_UTC_TIME = 17
+$$PKCS_TIME_REQUEST = 18
+$$RSA_CSP_PUBLICKEYBLOB = 19
+$$X509_UNICODE_NAME = 20
+$$X509_KEYGEN_REQUEST_TO_BE_SIGNED = 21
+$$PKCS_ATTRIBUTE = 22
+$$PKCS_CONTENT_INFO_SEQUENCE_OF_ANY = 23
+$$X509_UNICODE_NAME_VALUE = 24
+$$X509_ANY_STRING = $$X509_NAME_VALUE
+$$X509_UNICODE_ANY_STRING = $$X509_UNICODE_NAME_VALUE
+$$X509_OCTET_STRING = 25
+$$X509_BITS = 26
+$$X509_INTEGER = 27
+$$X509_MULTI_BYTE_INTEGER = 28
+$$X509_ENUMERATED = 29
+$$X509_CHOICE_OF_TIME = 30
+$$X509_AUTHORITY_KEY_ID2 = 31
+$$X509_AUTHORITY_INFO_ACCESS = 32
+$$X509_CRL_REASON_CODE = $$X509_ENUMERATED
+$$PKCS_CONTENT_INFO = 33
+$$X509_SEQUENCE_OF_ANY = 34
+$$X509_CRL_DIST_POINTS = 35
+$$X509_ENHANCED_KEY_USAGE = 36
+$$PKCS_CTL = 37
+$$X509_MULTI_BYTE_UINT = 38
+$$X509_DSS_PUBLICKEY = $$X509_MULTI_BYTE_UINT
+$$X509_DSS_PARAMETERS = 39
+$$X509_DSS_SIGNATURE = 40
+$$PKCS_RC2_CBC_PARAMETERS = 41
+$$PKCS_SMIME_CAPABILITIES = 42
+$$PKCS_RSA_PRIVATE_KEY = 43
+$$PKCS_PRIVATE_KEY_INFO = 44
+$$PKCS_ENCRYPTED_PRIVATE_KEY_INFO = 45
+$$X509_PKIX_POLICY_QUALIFIER_USERNOTICE = 46
+$$X509_DH_PUBLICKEY = $$X509_MULTI_BYTE_UINT
+$$X509_DH_PARAMETERS = 47
+$$PKCS_ATTRIBUTES = 48
+$$PKCS_SORTED_CTL = 49
+$$PKCS7_SIGNER_INFO = 500
+
+$$szOID_AUTHORITY_KEY_IDENTIFIER = "2.5.29.1"
+$$szOID_KEY_ATTRIBUTES = "2.5.29.2"
+$$szOID_CERT_POLICIES_95 = "2.5.29.3"
+$$szOID_KEY_USAGE_RESTRICTION = "2.5.29.4"
+$$szOID_SUBJECT_ALT_NAME = "2.5.29.7"
+$$szOID_ISSUER_ALT_NAME = "2.5.29.8"
+$$szOID_BASIC_CONSTRAINTS = "2.5.29.10"
+$$szOID_KEY_USAGE = "2.5.29.15"
+$$szOID_PRIVATEKEY_USAGE_PERIOD = "2.5.29.16"
+$$szOID_BASIC_CONSTRAINTS2 = "2.5.29.19"
+$$szOID_CERT_POLICIES = "2.5.29.32"
+$$szOID_AUTHORITY_KEY_IDENTIFIER2 = "2.5.29.35"
+$$szOID_SUBJECT_KEY_IDENTIFIER = "2.5.29.14"
+$$szOID_SUBJECT_ALT_NAME2 = "2.5.29.17"
+$$szOID_ISSUER_ALT_NAME2 = "2.5.29.18"
+$$szOID_CRL_REASON_CODE = "2.5.29.21"
+$$szOID_CRL_DIST_POINTS = "2.5.29.31"
+$$szOID_ENHANCED_KEY_USAGE = "2.5.29.37"
+$$szOID_RENEWAL_CERTIFICATE = "1.3.6.1.4.1.311.13.1"
+$$szOID_ENROLLMENT_NAME_VALUE_PAIR = "1.3.6.1.4.1.311.13.2.1"
+$$szOID_ENROLLMENT_CSP_PROVIDER = "1.3.6.1.4.1.311.13.2.2"
+$$szOID_ENROLLMENT_AGENT = "1.3.6.1.4.1.311.20.2.1"
+$$szOID_PKIX = "1.3.6.1.5.5.7"
+$$szOID_PKIX_PE = "1.3.6.1.5.5.7.1"
+$$szOID_AUTHORITY_INFO_ACCESS = "1.3.6.1.5.5.7.1.1"
+$$szOID_CERT_EXTENSIONS = "1.3.6.1.4.1.311.2.1.14"
+$$szOID_NEXT_UPDATE_LOCATION = "1.3.6.1.4.1.311.10.2"
+$$szOID_CTL = "1.3.6.1.4.1.311.10.1"
+$$szOID_SORTED_CTL = "1.3.6.1.4.1.311.10.1.1"
+$$szOID_AUTO_ENROLL_CTL_USAGE = "1.3.6.1.4.1.311.20.1"
+$$szOID_ENROLL_CERTTYPE_EXTENSION = "1.3.6.1.4.1.311.20.2"
+$$szOID_CERT_MANIFOLD = "1.3.6.1.4.1.311.20.3"
+$$szOID_NTDS_REPLICATION = "1.3.6.1.4.1.311.25.1"
+$$szOID_POLICY_MAPPINGS = "2.5.29.5"
+$$szOID_SUBJECT_DIR_ATTRS = "2.5.29.9"
+$$szOID_PKIX_KP = "1.3.6.1.5.5.7.3"
+$$szOID_PKIX_KP_SERVER_AUTH = "1.3.6.1.5.5.7.3.1"
+$$szOID_PKIX_KP_CLIENT_AUTH = "1.3.6.1.5.5.7.3.2"
+$$szOID_PKIX_KP_CODE_SIGNING = "1.3.6.1.5.5.7.3.3"
+$$szOID_PKIX_KP_EMAIL_PROTECTION = "1.3.6.1.5.5.7.3.4"
+$$szOID_PKIX_KP_IPSEC_END_SYSTEM = "1.3.6.1.5.5.7.3.5"
+$$szOID_PKIX_KP_IPSEC_TUNNEL = "1.3.6.1.5.5.7.3.6"
+$$szOID_PKIX_KP_IPSEC_USER = "1.3.6.1.5.5.7.3.7"
+$$szOID_PKIX_KP_TIMESTAMP_SIGNING = "1.3.6.1.5.5.7.3.8"
+$$szOID_KP_CTL_USAGE_SIGNING = "1.3.6.1.4.1.311.10.3.1"
+$$szOID_KP_TIME_STAMP_SIGNING = "1.3.6.1.4.1.311.10.3.2"
+$$szOID_SERVER_GATED_CRYPTO = "1.3.6.1.4.1.311.10.3.3"
+$$szOID_SGC_NETSCAPE = "2.16.840.1.113730.4.1"
+ 
+$$szOID_KP_EFS = "1.3.6.1.4.1.311.10.3.4"
+$$szOID_WHQL_CRYPTO = "1.3.6.1.4.1.311.10.3.5"
+$$szOID_NT5_CRYPTO = "1.3.6.1.4.1.311.10.3.6"
+$$szOID_YESNO_TRUST_ATTR = "1.3.6.1.4.1.311.10.4.1"
+$$szOID_PKIX_POLICY_QUALIFIER_CPS = "1.3.6.1.5.5.7.2.1"
+$$szOID_PKIX_POLICY_QUALIFIER_USERNOTICE = "1.3.6.1.5.5.7.2.2"
+$$szOID_CERT_POLICIES_95_QUALIFIER1 = "2.16.840.1.113733.1.7.1.1"
+
+$$CERT_UNICODE_RDN_ERR_INDEX_MASK = 0x3FF
+$$CERT_UNICODE_RDN_ERR_INDEX_SHIFT = 22
+$$CERT_UNICODE_ATTR_ERR_INDEX_MASK = 0x003F
+$$CERT_UNICODE_ATTR_ERR_INDEX_SHIFT = 16
+$$CERT_UNICODE_VALUE_ERR_INDEX_MASK = 0x0000FFFF
+$$CERT_UNICODE_VALUE_ERR_INDEX_SHIFT = 0
+
+'$$GET_CERT_UNICODE_RDN_ERR_INDEX(X) ((X >> CERT_UNICODE_RDN_ERR_INDEX_SHIFT) & CERT_UNICODE_RDN_ERR_INDEX_MASK)
+'$$GET_CERT_UNICODE_ATTR_ERR_INDEX(X) ((X >> CERT_UNICODE_ATTR_ERR_INDEX_SHIFT) & CERT_UNICODE_ATTR_ERR_INDEX_MASK)
+'$$GET_CERT_UNICODE_VALUE_ERR_INDEX(X) (X & CERT_UNICODE_VALUE_ERR_INDEX_MASK)
+
+$$CERT_DIGITAL_SIGNATURE_KEY_USAGE = 0x80
+$$CERT_NON_REPUDIATION_KEY_USAGE = 0x40
+$$CERT_KEY_ENCIPHERMENT_KEY_USAGE = 0x20
+$$CERT_DATA_ENCIPHERMENT_KEY_USAGE = 0x10
+$$CERT_KEY_AGREEMENT_KEY_USAGE = 0x08
+$$CERT_KEY_CERT_SIGN_KEY_USAGE = 0x04
+$$CERT_OFFLINE_CRL_SIGN_KEY_USAGE = 0x02
+$$CERT_CRL_SIGN_KEY_USAGE = 0x02
+$$CERT_ENCIPHER_ONLY_KEY_USAGE = 0x01
+$$CERT_DECIPHER_ONLY_KEY_USAGE = 0x80
+
+$$CERT_ALT_NAME_OTHER_NAME = 1
+$$CERT_ALT_NAME_RFC822_NAME = 2
+$$CERT_ALT_NAME_DNS_NAME = 3
+$$CERT_ALT_NAME_X400_ADDRESS = 4
+$$CERT_ALT_NAME_DIRECTORY_NAME = 5
+$$CERT_ALT_NAME_EDI_PARTY_NAME = 6
+$$CERT_ALT_NAME_URL = 7
+$$CERT_ALT_NAME_IP_ADDRESS = 8
+$$CERT_ALT_NAME_REGISTERED_ID = 9
+
+$$CERT_ALT_NAME_ENTRY_ERR_INDEX_MASK = 0xFF
+$$CERT_ALT_NAME_ENTRY_ERR_INDEX_SHIFT = 16
+$$CERT_ALT_NAME_VALUE_ERR_INDEX_MASK = 0x0000FFFF
+$$CERT_ALT_NAME_VALUE_ERR_INDEX_SHIFT = 0
+
+'$$GET_CERT_ALT_NAME_ENTRY_ERR_INDEX(X) ((X >> CERT_ALT_NAME_ENTRY_ERR_INDEX_SHIFT) & CERT_ALT_NAME_ENTRY_ERR_INDEX_MASK)
+'$$GET_CERT_ALT_NAME_VALUE_ERR_INDEX(X) (X & CERT_ALT_NAME_VALUE_ERR_INDEX_MASK)
+
+$$CERT_CA_SUBJECT_FLAG = 0x80
+$$CERT_END_ENTITY_SUBJECT_FLAG = 0x40
+
+$$szOID_PKIX_ACC_DESCR = "1.3.6.1.5.5.7.48"
+$$szOID_PKIX_OCSP = "1.3.6.1.5.5.7.48.1"
+$$szOID_PKIX_CA_ISSUERS = "1.3.6.1.5.5.7.48.2"
+$$CRL_REASON_UNSPECIFIED = 0
+$$CRL_REASON_KEY_COMPROMISE = 1
+$$CRL_REASON_CA_COMPROMISE = 2
+$$CRL_REASON_AFFILIATION_CHANGED = 3
+$$CRL_REASON_SUPERSEDED = 4
+$$CRL_REASON_CESSATION_OF_OPERATION = 5
+$$CRL_REASON_CERTIFICATE_HOLD = 6
+$$CRL_REASON_REMOVE_FROM_CRL = 8
+
+$$CRL_DIST_POINT_NO_NAME = 0
+$$CRL_DIST_POINT_FULL_NAME = 1
+$$CRL_DIST_POINT_ISSUER_RDN_NAME = 2
+
+$$CRL_REASON_UNUSED_FLAG = 0x80
+$$CRL_REASON_KEY_COMPROMISE_FLAG = 0x40
+$$CRL_REASON_CA_COMPROMISE_FLAG = 0x20
+$$CRL_REASON_AFFILIATION_CHANGED_FLAG = 0x10
+$$CRL_REASON_SUPERSEDED_FLAG = 0x08
+$$CRL_REASON_CESSATION_OF_OPERATION_FLAG = 0x04
+$$CRL_REASON_CERTIFICATE_HOLD_FLAG = 0x02
+
+$$CRL_DIST_POINT_ERR_INDEX_MASK = 0x7F
+$$CRL_DIST_POINT_ERR_INDEX_SHIFT = 24
+
+'$$GET_CRL_DIST_POINT_ERR_INDEX(X) ((X >> CRL_DIST_POINT_ERR_INDEX_SHIFT) & CRL_DIST_POINT_ERR_INDEX_MASK)
+
+$$CRL_DIST_POINT_ERR_CRL_ISSUER_BIT = 0x80000000
+
+'$$IS_CRL_DIST_POINT_ERR_CRL_ISSUER(X) (0 != (X & CRL_DIST_POINT_ERR_CRL_ISSUER_BIT))
+
+$$SORTED_CTL_EXT_FLAGS_OFFSET = 0
+$$SORTED_CTL_EXT_COUNT_OFFSET = 4
+$$SORTED_CTL_EXT_MAX_COLLISION_OFFSET = 8
+$$SORTED_CTL_EXT_HASH_BUCKET_OFFSET = 12
+$$SORTED_CTL_EXT_HASHED_SUBJECT_IDENTIFIER_FLAG = 0x1
+
+$$CERT_DSS_R_LEN = 20
+$$CERT_DSS_S_LEN = 20
+$$CERT_DSS_SIGNATURE_LEN = 40
+$$CERT_MAX_ASN_ENCODED_DSS_SIGNATURE_LEN = 48		' (2 + 2*(2 + 20 +1))
+
+$$CRYPT_RC2_40BIT_VERSION = 160
+$$CRYPT_RC2_64BIT_VERSION = 120
+$$CRYPT_RC2_128BIT_VERSION = 58
+
+$$szOID_NETSCAPE = "2.16.840.1.113730"
+$$szOID_NETSCAPE_CERT_EXTENSION = "2.16.840.1.113730.1"
+$$szOID_NETSCAPE_CERT_TYPE = "2.16.840.1.113730.1.1"
+$$szOID_NETSCAPE_BASE_URL = "2.16.840.1.113730.1.2"
+$$szOID_NETSCAPE_REVOCATION_URL = "2.16.840.1.113730.1.3"
+$$szOID_NETSCAPE_CA_REVOCATION_URL = "2.16.840.1.113730.1.4"
+$$szOID_NETSCAPE_CERT_RENEWAL_URL = "2.16.840.1.113730.1.7"
+$$szOID_NETSCAPE_CA_POLICY_URL = "2.16.840.1.113730.1.8"
+$$szOID_NETSCAPE_SSL_SERVER_NAME = "2.16.840.1.113730.1.12"
+$$szOID_NETSCAPE_COMMENT = "2.16.840.1.113730.1.13"
+$$szOID_NETSCAPE_DATA_TYPE = "2.16.840.1.113730.2"
+$$szOID_NETSCAPE_CERT_SEQUENCE = "2.16.840.1.113730.2.5"
+$$NETSCAPE_SSL_CLIENT_AUTH_CERT_TYPE = 0x80
+$$NETSCAPE_SSL_SERVER_AUTH_CERT_TYPE = 0x40
+$$NETSCAPE_SMIME_CERT_TYPE = 0x20
+$$NETSCAPE_SIGN_CERT_TYPE = 0x10
+$$NETSCAPE_SSL_CA_CERT_TYPE = 0x04
+$$NETSCAPE_SMIME_CA_CERT_TYPE = 0x02
+$$NETSCAPE_SIGN_CA_CERT_TYPE = 0x01
+
+$$CRYPT_OID_ENCODE_OBJECT_FUNC = "CryptDllEncodeObject"
+$$CRYPT_OID_DECODE_OBJECT_FUNC = "CryptDllDecodeObject"
+$$CRYPT_OID_ENCODE_OBJECT_EX_FUNC = "CryptDllEncodeObjectEx"
+$$CRYPT_OID_DECODE_OBJECT_EX_FUNC = "CryptDllDecodeObjectEx"
+$$CRYPT_OID_CREATE_COM_OBJECT_FUNC = "CryptDllCreateCOMObject"
+$$CRYPT_OID_VERIFY_REVOCATION_FUNC = "CertDllVerifyRevocation"
+$$CRYPT_OID_VERIFY_CTL_USAGE_FUNC = "CertDllVerifyCTLUsage"
+$$CRYPT_OID_FORMAT_OBJECT_FUNC = "CryptDllFormatObject"
+$$CRYPT_OID_FIND_OID_INFO_FUNC = "CryptDllFindOIDInfo"
+$$CRYPT_OID_FIND_LOCALIZED_NAME_FUNC = "CryptDllFindLocalizedName"
+$$CRYPT_OID_REGPATH = "Software\\Microsoft\\Cryptography\\OID"
+$$CRYPT_OID_REG_ENCODING_TYPE_PREFIX = "EncodingType "
+$$CRYPT_OID_REG_DLL_VALUE_NAME = "Dll"
+$$CRYPT_OID_REG_FUNC_NAME_VALUE_NAME = "FuncName"
+$$CRYPT_OID_REG_FUNC_NAME_VALUE_NAME_A = "FuncName"
+$$CRYPT_OID_REG_FLAGS_VALUE_NAME = "CryptFlags"
+$$CRYPT_DEFAULT_OID = "DEFAULT"
+
+$$CRYPT_INSTALL_OID_FUNC_BEFORE_FLAG = 1
+
+$$CRYPT_GET_INSTALLED_OID_FUNC_FLAG = 0x1
+$$CRYPT_REGISTER_FIRST_INDEX = 0
+$$CRYPT_REGISTER_LAST_INDEX = 0xFFFFFFFF
+
+$$CRYPT_MATCH_ANY_ENCODING_TYPE = 0xFFFFFFFF
+
+$$CRYPT_HASH_ALG_OID_GROUP_ID = 1
+$$CRYPT_ENCRYPT_ALG_OID_GROUP_ID = 2
+$$CRYPT_PUBKEY_ALG_OID_GROUP_ID = 3
+$$CRYPT_SIGN_ALG_OID_GROUP_ID = 4
+$$CRYPT_RDN_ATTR_OID_GROUP_ID = 5
+$$CRYPT_EXT_OR_ATTR_OID_GROUP_ID = 6
+$$CRYPT_ENHKEY_USAGE_OID_GROUP_ID = 7
+$$CRYPT_POLICY_OID_GROUP_ID = 8
+$$CRYPT_LAST_OID_GROUP_ID = 8
+$$CRYPT_FIRST_ALG_OID_GROUP_ID = $$CRYPT_HASH_ALG_OID_GROUP_ID
+$$CRYPT_LAST_ALG_OID_GROUP_ID = $$CRYPT_SIGN_ALG_OID_GROUP_ID
+$$CRYPT_OID_INHIBIT_SIGNATURE_FORMAT_FLAG = 0x1
+$$CRYPT_OID_USE_PUBKEY_PARA_FOR_PKCS7_FLAG = 0x2
+
+$$CRYPT_OID_INFO_OID_KEY = 1
+$$CRYPT_OID_INFO_NAME_KEY = 2
+$$CRYPT_OID_INFO_ALGID_KEY = 3
+$$CRYPT_OID_INFO_SIGN_KEY = 4
+$$CRYPT_INSTALL_OID_INFO_BEFORE_FLAG = 1
+
+$$CRYPT_LOCALIZED_NAME_ENCODING_TYPE = 0
+$$CRYPT_LOCALIZED_NAME_OID = "LocalizedNames"
+
+$$szOID_PKCS_7_DATA = "1.2.840.113549.1.7.1"
+$$szOID_PKCS_7_SIGNED = "1.2.840.113549.1.7.2"
+$$szOID_PKCS_7_ENVELOPED = "1.2.840.113549.1.7.3"
+$$szOID_PKCS_7_SIGNEDANDENVELOPED = "1.2.840.113549.1.7.4"
+$$szOID_PKCS_7_DIGESTED = "1.2.840.113549.1.7.5"
+$$szOID_PKCS_7_ENCRYPTED = "1.2.840.113549.1.7.6"
+$$szOID_PKCS_9_CONTENT_TYPE = "1.2.840.113549.1.9.3"
+$$szOID_PKCS_9_MESSAGE_DIGEST = "1.2.840.113549.1.9.4"
+$$CMSG_DATA = 1
+$$CMSG_SIGNED = 2
+$$CMSG_ENVELOPED = 3
+$$CMSG_SIGNED_AND_ENVELOPED = 4
+$$CMSG_HASHED = 5
+$$CMSG_ENCRYPTED = 6
+$$CMSG_ALL_FLAGS = 1				' (~0UL)
+$$CMSG_DATA_FLAG = 2				' (1 << CMSG_DATA)
+$$CMSG_SIGNED_FLAG = 4				' (1 << CMSG_SIGNED)
+$$CMSG_ENVELOPED_FLAG = 8			' (1 << CMSG_ENVELOPED)
+$$CMSG_SIGNED_AND_ENVELOPED_FLAG = 16	' (1 << CMSG_SIGNED_AND_ENVELOPED)
+$$CMSG_HASHED_FLAG = 32				' (1 << CMSG_HASHED)
+$$CMSG_ENCRYPTED_FLAG = 64			' (1 << CMSG_ENCRYPTED)
+
+$$CMSG_SP3_COMPATIBLE_ENCRYPT_FLAG = 0x80000000
+
+$$CMSG_INDEFINITE_LENGTH = 0xFFFFFFFF
+$$CMSG_BARE_CONTENT_FLAG = 0x00000001
+$$CMSG_LENGTH_ONLY_FLAG = 0x00000002
+$$CMSG_DETACHED_FLAG = 0x00000004
+$$CMSG_AUTHENTICATED_ATTRIBUTES_FLAG = 0x00000008
+$$CMSG_CONTENTS_OCTETS_FLAG = 0x00000010
+$$CMSG_MAX_LENGTH_FLAG = 0x00000020
+$$CMSG_CRYPT_RELEASE_CONTEXT_FLAG = 0x00008000
+
+$$CMSG_CTRL_VERIFY_SIGNATURE = 1
+$$CMSG_CTRL_DECRYPT = 2
+$$CMSG_CTRL_VERIFY_HASH = 5
+$$CMSG_CTRL_ADD_SIGNER = 6
+$$CMSG_CTRL_DEL_SIGNER = 7
+$$CMSG_CTRL_ADD_SIGNER_UNAUTH_ATTR = 8
+$$CMSG_CTRL_DEL_SIGNER_UNAUTH_ATTR = 9
+$$CMSG_CTRL_ADD_CERT = 10
+$$CMSG_CTRL_DEL_CERT = 11
+$$CMSG_CTRL_ADD_CRL = 12
+$$CMSG_CTRL_DEL_CRL = 13
+
+$$CMSG_TYPE_PARAM = 1
+$$CMSG_CONTENT_PARAM = 2
+$$CMSG_BARE_CONTENT_PARAM = 3
+$$CMSG_INNER_CONTENT_TYPE_PARAM = 4
+$$CMSG_SIGNER_COUNT_PARAM = 5
+$$CMSG_SIGNER_INFO_PARAM = 6
+$$CMSG_SIGNER_CERT_INFO_PARAM = 7
+$$CMSG_SIGNER_HASH_ALGORITHM_PARAM = 8
+$$CMSG_SIGNER_AUTH_ATTR_PARAM = 9
+$$CMSG_SIGNER_UNAUTH_ATTR_PARAM = 10
+$$CMSG_CERT_COUNT_PARAM = 11
+$$CMSG_CERT_PARAM = 12
+$$CMSG_CRL_COUNT_PARAM = 13
+$$CMSG_CRL_PARAM = 14
+$$CMSG_ENVELOPE_ALGORITHM_PARAM = 15
+$$CMSG_RECIPIENT_COUNT_PARAM = 17
+$$CMSG_RECIPIENT_INDEX_PARAM = 18
+$$CMSG_RECIPIENT_INFO_PARAM = 19
+$$CMSG_HASH_ALGORITHM_PARAM = 20
+$$CMSG_HASH_DATA_PARAM = 21
+$$CMSG_COMPUTED_HASH_PARAM = 22
+$$CMSG_ENCRYPT_PARAM = 26
+$$CMSG_ENCRYPTED_DIGEST = 27
+$$CMSG_ENCODED_SIGNER = 28
+$$CMSG_ENCODED_MESSAGE = 29
+
+$$CMSG_OID_GEN_ENCRYPT_KEY_FUNC = "CryptMsgDllGenEncryptKey"
+$$CMSG_OID_EXPORT_ENCRYPT_KEY_FUNC = "CryptMsgDllExportEncryptKey"
+$$CMSG_OID_IMPORT_ENCRYPT_KEY_FUNC = "CryptMsgDllImportEncryptKey"
+
+$$CERT_KEY_PROV_HANDLE_PROP_ID = 1
+$$CERT_KEY_PROV_INFO_PROP_ID = 2
+$$CERT_SHA1_HASH_PROP_ID = 3
+$$CERT_MD5_HASH_PROP_ID = 4
+$$CERT_HASH_PROP_ID = $$CERT_SHA1_HASH_PROP_ID
+$$CERT_KEY_CONTEXT_PROP_ID = 5
+$$CERT_KEY_SPEC_PROP_ID = 6
+$$CERT_IE30_RESERVED_PROP_ID = 7
+$$CERT_PUBKEY_HASH_RESERVED_PROP_ID = 8
+$$CERT_ENHKEY_USAGE_PROP_ID = 9
+$$CERT_CTL_USAGE_PROP_ID = $$CERT_ENHKEY_USAGE_PROP_ID
+$$CERT_NEXT_UPDATE_LOCATION_PROP_ID = 10
+$$CERT_FRIENDLY_NAME_PROP_ID = 11
+$$CERT_PVK_FILE_PROP_ID = 12
+$$CERT_DESCRIPTION_PROP_ID = 13
+$$CERT_ACCESS_STATE_PROP_ID = 14
+$$CERT_SIGNATURE_HASH_PROP_ID = 15
+$$CERT_SMART_CARD_DATA_PROP_ID = 16
+$$CERT_EFS_PROP_ID = 17
+$$CERT_FORTEZZA_DATA_PROP_ID = 18
+$$CERT_ARCHIVED_PROP_ID = 19
+$$CERT_KEY_IDENTIFIER_PROP_ID = 20
+$$CERT_AUTO_ENROLL_PROP_ID = 21
+$$CERT_FIRST_RESERVED_PROP_ID = 22
+$$CERT_LAST_RESERVED_PROP_ID = 0x00007FFF
+$$CERT_FIRST_USER_PROP_ID = 0x00008000
+$$CERT_LAST_USER_PROP_ID = 0x0000FFFF
+
+'$$IS_CERT_HASH_PROP_ID(X) (CERT_SHA1_HASH_PROP_ID == (X) || CERT_MD5_HASH_PROP_ID == (X) || CERT_SIGNATURE_HASH_PROP_ID == (X))
+
+$$CERT_ACCESS_STATE_WRITE_PERSIST_FLAG = 0x1
+$$CERT_ACCESS_STATE_SYSTEM_STORE_FLAG = 0x2
+
+$$CERT_SET_KEY_PROV_HANDLE_PROP_ID = 0x00000001
+$$CERT_SET_KEY_CONTEXT_PROP_ID = 0x00000001
+
+$$CERT_STORE_PROV_MSG = 1
+$$CERT_STORE_PROV_MEMORY = 2
+$$CERT_STORE_PROV_FILE = 3
+$$CERT_STORE_PROV_REG = 4
+$$CERT_STORE_PROV_PKCS7 = 5
+$$CERT_STORE_PROV_SERIALIZED = 6
+$$CERT_STORE_PROV_FILENAME_A = 7
+$$CERT_STORE_PROV_FILENAME_W = 8
+$$CERT_STORE_PROV_FILENAME = $$CERT_STORE_PROV_FILENAME_W
+$$CERT_STORE_PROV_SYSTEM_A = 9
+$$CERT_STORE_PROV_SYSTEM_W = 10
+$$CERT_STORE_PROV_SYSTEM = $$CERT_STORE_PROV_SYSTEM_W
+$$CERT_STORE_PROV_COLLECTION = 11
+$$CERT_STORE_PROV_SYSTEM_REGISTRY_A = 12
+$$CERT_STORE_PROV_SYSTEM_REGISTRY_W = 13
+$$CERT_STORE_PROV_SYSTEM_REGISTRY = $$CERT_STORE_PROV_SYSTEM_REGISTRY_W
+$$CERT_STORE_PROV_PHYSICAL_W = 14
+$$CERT_STORE_PROV_PHYSICAL = $$CERT_STORE_PROV_PHYSICAL_W
+$$CERT_STORE_PROV_SMART_CARD_W = 15
+$$CERT_STORE_PROV_SMART_CARD = $$CERT_STORE_PROV_SMART_CARD_W
+$$CERT_STORE_PROV_LDAP_W = 16
+$$CERT_STORE_PROV_LDAP = $$CERT_STORE_PROV_LDAP_W
+$$sz_CERT_STORE_PROV_MEMORY = "Memory"
+$$sz_CERT_STORE_PROV_FILENAME_W = "File"
+$$sz_CERT_STORE_PROV_FILENAME = %%sz_CERT_STORE_PROV_FILENAME_W
+$$sz_CERT_STORE_PROV_SYSTEM_W = "System"
+$$sz_CERT_STORE_PROV_SYSTEM = $$sz_CERT_STORE_PROV_SYSTEM_W
+$$sz_CERT_STORE_PROV_PKCS7 = "PKCS7"
+$$sz_CERT_STORE_PROV_SERIALIZED = "Serialized"
+$$sz_CERT_STORE_PROV_COLLECTION = "Collection"
+$$sz_CERT_STORE_PROV_SYSTEM_REGISTRY_W = "SystemRegistry"
+$$sz_CERT_STORE_PROV_SYSTEM_REGISTRY = $$sz_CERT_STORE_PROV_SYSTEM_REGISTRY_W
+$$sz_CERT_STORE_PROV_PHYSICAL_W = "Physical"
+$$sz_CERT_STORE_PROV_PHYSICAL = $$sz_CERT_STORE_PROV_PHYSICAL_W
+$$sz_CERT_STORE_PROV_SMART_CARD_W = "SmartCard"
+$$sz_CERT_STORE_PROV_SMART_CARD = $$sz_CERT_STORE_PROV_SMART_CARD_W
+$$sz_CERT_STORE_PROV_LDAP_W = "Ldap"
+$$sz_CERT_STORE_PROV_LDAP = $$sz_CERT_STORE_PROV_LDAP_W
+$$CERT_STORE_SIGNATURE_FLAG = 0x00000001
+$$CERT_STORE_TIME_VALIDITY_FLAG = 0x00000002
+$$CERT_STORE_REVOCATION_FLAG = 0x00000004
+$$CERT_STORE_NO_CRL_FLAG = 0x00010000
+$$CERT_STORE_NO_ISSUER_FLAG = 0x00020000
+$$CERT_STORE_NO_CRYPT_RELEASE_FLAG = 0x00000001
+$$CERT_STORE_SET_LOCALIZED_NAME_FLAG = 0x00000002
+$$CERT_STORE_DEFER_CLOSE_UNTIL_LAST_FREE_FLAG = 0x00000004
+$$CERT_STORE_DELETE_FLAG = 0x00000010
+$$CERT_STORE_MANIFOLD_FLAG = 0x00000100
+$$CERT_STORE_ENUM_ARCHIVED_FLAG = 0x00000200
+$$CERT_STORE_UPDATE_KEYID_FLAG = 0x00000400
+$$CERT_STORE_READONLY_FLAG = 0x00008000
+$$CERT_STORE_OPEN_EXISTING_FLAG = 0x00004000
+$$CERT_STORE_CREATE_NEW_FLAG = 0x00002000
+$$CERT_STORE_MAXIMUM_ALLOWED_FLAG = 0x00001000
+$$CERT_SYSTEM_STORE_MASK = 0xFFFF0000
+$$CERT_SYSTEM_STORE_RELOCATE_FLAG = 0x80000000
+
+$$CERT_SYSTEM_STORE_UNPROTECTED_FLAG = 0x40000000
+$$CERT_SYSTEM_STORE_LOCATION_MASK = 0x00FF0000
+$$CERT_SYSTEM_STORE_LOCATION_SHIFT = 16
+$$CERT_SYSTEM_STORE_CURRENT_USER_ID = 1
+$$CERT_SYSTEM_STORE_LOCAL_MACHINE_ID = 2
+$$CERT_SYSTEM_STORE_CURRENT_SERVICE_ID = 4
+$$CERT_SYSTEM_STORE_SERVICES_ID = 5
+$$CERT_SYSTEM_STORE_USERS_ID = 6
+$$CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY_ID = 7
+$$CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY_ID = 8
+$$CERT_SYSTEM_STORE_CURRENT_USER = 0x10000			' (CERT_SYSTEM_STORE_CURRENT_USER_ID << CERT_SYSTEM_STORE_LOCATION_SHIFT)
+$$CERT_SYSTEM_STORE_LOCAL_MACHINE = 0x20000			' (CERT_SYSTEM_STORE_LOCAL_MACHINE_ID << CERT_SYSTEM_STORE_LOCATION_SHIFT)
+$$CERT_SYSTEM_STORE_CURRENT_SERVICE = 0x40000			' (CERT_SYSTEM_STORE_CURRENT_SERVICE_ID << CERT_SYSTEM_STORE_LOCATION_SHIFT)
+$$CERT_SYSTEM_STORE_SERVICES = 0x50000				' (CERT_SYSTEM_STORE_SERVICES_ID << CERT_SYSTEM_STORE_LOCATION_SHIFT)
+$$CERT_SYSTEM_STORE_USERS = 0x60000					' (CERT_SYSTEM_STORE_USERS_ID << CERT_SYSTEM_STORE_LOCATION_SHIFT)
+$$CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY = 0x70000	' (CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY_ID << CERT_SYSTEM_STORE_LOCATION_SHIFT)
+$$CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY = 0x80000	' (CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY_ID << CERT_SYSTEM_STORE_LOCATION_SHIFT)
+$$CERT_GROUP_POLICY_SYSTEM_STORE_REGPATH = "Software\\Policies\\Microsoft\\SystemCertificates"
+$$CERT_EFSBLOB_REGPATH  = "\\EFS"
+$$CERT_GROUP_POLICY_SYSTEM_STORE_REGPATH = "\\EFS"
+$$CERT_EFSBLOB_VALUE_NAME = "EFSBlob"
+$$CERT_PROT_ROOT_FLAGS_REGPATH  = "\\Root\\ProtectedRoots"
+$$CERT_GROUP_POLICY_SYSTEM_STORE_REGPATH = "\\Root\\ProtectedRoots"
+$$CERT_PROT_ROOT_FLAGS_VALUE_NAME = "Flags"
+$$CERT_PROT_ROOT_DISABLE_CURRENT_USER_FLAG = 0x1
+$$CERT_PROT_ROOT_INHIBIT_ADD_AT_INIT_FLAG = 0x2
+$$CERT_PROT_ROOT_INHIBIT_PURGE_LM_FLAG = 0x4
+$$CERT_PROT_ROOT_ONLY_LM_GPT_FLAG = 0x8
+$$CERT_REGISTRY_STORE_REMOTE_FLAG = 0x10000
+$$CERT_REGISTRY_STORE_SERIALIZED_FLAG = 0x20000
+$$CERT_REGISTRY_STORE_CLIENT_GPT_FLAG = 0x80000000
+$$CERT_REGISTRY_STORE_LM_GPT_FLAG = 0x01000000
+
+$$CERT_REGISTRY_STORE_ROAMING_FLAG = 0x40000
+$$CERT_REGISTRY_STORE_MY_IE_DIRTY_FLAG = 0x80000
+$$CERT_IE_DIRTY_FLAGS_REGPATH = "Software\\Microsoft\\Cryptography\\IEDirtyFlags"
+$$CERT_FILE_STORE_COMMIT_ENABLE_FLAG = 0x10000
+
+$$CRYPT_OID_OPEN_STORE_PROV_FUNC = "CertDllOpenStoreProv"
+
+$$CERT_STORE_PROV_EXTERNAL_FLAG = 0x1
+$$CERT_STORE_PROV_DELETED_FLAG = 0x2
+$$CERT_STORE_PROV_NO_PERSIST_FLAG = 0x4
+$$CERT_STORE_PROV_SYSTEM_STORE_FLAG = 0x8
+$$CERT_STORE_PROV_CLOSE_FUNC = 0
+$$CERT_STORE_PROV_READ_CERT_FUNC = 1
+$$CERT_STORE_PROV_WRITE_CERT_FUNC = 2
+$$CERT_STORE_PROV_DELETE_CERT_FUNC = 3
+$$CERT_STORE_PROV_SET_CERT_PROPERTY_FUNC = 4
+$$CERT_STORE_PROV_READ_CRL_FUNC = 5
+$$CERT_STORE_PROV_WRITE_CRL_FUNC = 6
+$$CERT_STORE_PROV_DELETE_CRL_FUNC = 7
+$$CERT_STORE_PROV_SET_CRL_PROPERTY_FUNC = 8
+$$CERT_STORE_PROV_READ_CTL_FUNC = 9
+$$CERT_STORE_PROV_WRITE_CTL_FUNC = 10
+$$CERT_STORE_PROV_DELETE_CTL_FUNC = 11
+$$CERT_STORE_PROV_SET_CTL_PROPERTY_FUNC = 12
+$$CERT_STORE_PROV_CONTROL_FUNC = 13
+$$CERT_STORE_PROV_FIND_CERT_FUNC = 14
+$$CERT_STORE_PROV_FREE_FIND_CERT_FUNC = 15
+$$CERT_STORE_PROV_GET_CERT_PROPERTY_FUNC = 16
+$$CERT_STORE_PROV_FIND_CRL_FUNC = 17
+$$CERT_STORE_PROV_FREE_FIND_CRL_FUNC = 18
+$$CERT_STORE_PROV_GET_CRL_PROPERTY_FUNC = 19
+$$CERT_STORE_PROV_FIND_CTL_FUNC = 20
+$$CERT_STORE_PROV_FREE_FIND_CTL_FUNC = 21
+$$CERT_STORE_PROV_GET_CTL_PROPERTY_FUNC = 22
+$$CERT_STORE_PROV_WRITE_ADD_FLAG = 0x1
+
+$$CERT_STORE_SAVE_AS_STORE = 1
+$$CERT_STORE_SAVE_AS_PKCS7 = 2
+$$CERT_STORE_SAVE_TO_FILE = 1
+$$CERT_STORE_SAVE_TO_MEMORY = 2
+$$CERT_STORE_SAVE_TO_FILENAME_A = 3
+$$CERT_STORE_SAVE_TO_FILENAME_W = 4
+$$CERT_STORE_SAVE_TO_FILENAME = $$CERT_STORE_SAVE_TO_FILENAME_W
+
+$$CERT_CLOSE_STORE_FORCE_FLAG = 1
+$$CERT_CLOSE_STORE_CHECK_FLAG = 2
+$$CERT_COMPARE_MASK = 0xFFFF
+$$CERT_COMPARE_SHIFT = 16
+$$CERT_COMPARE_ANY = 0
+$$CERT_COMPARE_SHA1_HASH = 1
+$$CERT_COMPARE_NAME = 2
+$$CERT_COMPARE_ATTR = 3
+$$CERT_COMPARE_MD5_HASH = 4
+$$CERT_COMPARE_PROPERTY = 5
+$$CERT_COMPARE_PUBLIC_KEY = 6
+$$CERT_COMPARE_HASH = $$CERT_COMPARE_SHA1_HASH
+$$CERT_COMPARE_NAME_STR_A = 7
+$$CERT_COMPARE_NAME_STR_W = 8
+$$CERT_COMPARE_KEY_SPEC = 9
+$$CERT_COMPARE_ENHKEY_USAGE = 10
+$$CERT_COMPARE_CTL_USAGE = $$CERT_COMPARE_ENHKEY_USAGE
+$$CERT_COMPARE_SUBJECT_CERT = 11
+$$CERT_COMPARE_ISSUER_OF = 12
+$$CERT_COMPARE_EXISTING = 13
+$$CERT_COMPARE_SIGNATURE_HASH = 14
+$$CERT_COMPARE_KEY_IDENTIFIER = 15
+$$CERT_FIND_ANY = 0x0						' (CERT_COMPARE_ANY << CERT_COMPARE_SHIFT)
+$$CERT_FIND_SHA1_HASH = 0x10000				' (CERT_COMPARE_SHA1_HASH << CERT_COMPARE_SHIFT)
+$$CERT_FIND_MD5_HASH = 0x40000				' (CERT_COMPARE_MD5_HASH << CERT_COMPARE_SHIFT)
+$$CERT_FIND_SIGNATURE_HASH = 0xE0000			' (CERT_COMPARE_SIGNATURE_HASH << CERT_COMPARE_SHIFT)
+$$CERT_FIND_KEY_IDENTIFIER = 0xF0000			' (CERT_COMPARE_KEY_IDENTIFIER << CERT_COMPARE_SHIFT)
+$$CERT_FIND_HASH = $$CERT_FIND_SHA1_HASH
+$$CERT_FIND_PROPERTY = 0x50000				' (CERT_COMPARE_PROPERTY << CERT_COMPARE_SHIFT)
+$$CERT_FIND_PUBLIC_KEY = 0x60000				' (CERT_COMPARE_PUBLIC_KEY << CERT_COMPARE_SHIFT)
+
+$$CERT_FIND_SUBJECT_NAME = 0x20007				' (CERT_COMPARE_NAME << CERT_COMPARE_SHIFT | CERT_INFO_SUBJECT_FLAG)
+$$CERT_FIND_SUBJECT_ATTR = 0x30007				' (CERT_COMPARE_ATTR << CERT_COMPARE_SHIFT | CERT_INFO_SUBJECT_FLAG)
+$$CERT_FIND_ISSUER_NAME = 0x20004				' (CERT_COMPARE_NAME << CERT_COMPARE_SHIFT | CERT_INFO_ISSUER_FLAG)
+$$CERT_FIND_ISSUER_ATTR = 0x30004				' (CERT_COMPARE_ATTR << CERT_COMPARE_SHIFT | CERT_INFO_ISSUER_FLAG)
+$$CERT_FIND_SUBJECT_STR_A = 0x70007				' (CERT_COMPARE_NAME_STR_A << CERT_COMPARE_SHIFT | CERT_INFO_SUBJECT_FLAG)
+$$CERT_FIND_SUBJECT_STR_W = 0x80007				' (CERT_COMPARE_NAME_STR_W << CERT_COMPARE_SHIFT | CERT_INFO_SUBJECT_FLAG)
+$$CERT_FIND_SUBJECT_STR = $$CERT_FIND_SUBJECT_STR_W
+$$CERT_FIND_ISSUER_STR_A = 0x70004				' (CERT_COMPARE_NAME_STR_A << CERT_COMPARE_SHIFT | CERT_INFO_ISSUER_FLAG)
+$$CERT_FIND_ISSUER_STR_W = 0x80004				' (CERT_COMPARE_NAME_STR_W << CERT_COMPARE_SHIFT | CERT_INFO_ISSUER_FLAG)
+$$CERT_FIND_ISSUER_STR = $$CERT_FIND_ISSUER_STR_W
+$$CERT_FIND_KEY_SPEC = 0x90000				' (CERT_COMPARE_KEY_SPEC << CERT_COMPARE_SHIFT)
+$$CERT_FIND_ENHKEY_USAGE = 0xA0000				' (CERT_COMPARE_ENHKEY_USAGE << CERT_COMPARE_SHIFT)
+$$CERT_FIND_CTL_USAGE = $$CERT_FIND_ENHKEY_USAGE
+$$CERT_FIND_SUBJECT_CERT = 0xB0000				' (CERT_COMPARE_SUBJECT_CERT << CERT_COMPARE_SHIFT)
+$$CERT_FIND_ISSUER_OF = 0xC0000				' (CERT_COMPARE_ISSUER_OF << CERT_COMPARE_SHIFT)
+$$CERT_FIND_EXISTING = 0xD0000				' (CERT_COMPARE_EXISTING << CERT_COMPARE_SHIFT)
+
+$$CERT_FIND_OPTIONAL_ENHKEY_USAGE_FLAG = 0x1
+$$CERT_FIND_EXT_ONLY_ENHKEY_USAGE_FLAG = 0x2
+$$CERT_FIND_PROP_ONLY_ENHKEY_USAGE_FLAG = 0x4
+$$CERT_FIND_NO_ENHKEY_USAGE_FLAG = 0x8
+$$CERT_FIND_OR_ENHKEY_USAGE_FLAG = 0x10
+$$CERT_FIND_VALID_ENHKEY_USAGE_FLAG = 0x20
+$$CERT_FIND_OPTIONAL_CTL_USAGE_FLAG = $$CERT_FIND_OPTIONAL_ENHKEY_USAGE_FLAG
+$$CERT_FIND_EXT_ONLY_CTL_USAGE_FLAG = $$CERT_FIND_EXT_ONLY_ENHKEY_USAGE_FLAG
+$$CERT_FIND_PROP_ONLY_CTL_USAGE_FLAG = $$CERT_FIND_PROP_ONLY_ENHKEY_USAGE_FLAG
+$$CERT_FIND_NO_CTL_USAGE_FLAG = $$CERT_FIND_NO_ENHKEY_USAGE_FLAG
+$$CERT_FIND_OR_CTL_USAGE_FLAG = $$CERT_FIND_OR_ENHKEY_USAGE_FLAG
+$$CERT_FIND_VALID_CTL_USAGE_FLAG = $$CERT_FIND_VALID_ENHKEY_USAGE_FLAG
+
+$$CERT_SET_PROPERTY_IGNORE_PERSIST_ERROR_FLAG = 0x80000000
+
+$$CRL_FIND_ANY = 0
+$$CRL_FIND_ISSUED_BY = 1
+$$CRL_FIND_EXISTING = 2
+
+$$CERT_STORE_ADD_NEW = 1
+$$CERT_STORE_ADD_USE_EXISTING = 2
+$$CERT_STORE_ADD_REPLACE_EXISTING = 3
+$$CERT_STORE_ADD_ALWAYS = 4
+$$CERT_STORE_ADD_REPLACE_EXISTING_INHERIT_PROPERTIES = 5
+$$CERT_STORE_ADD_NEWER = 6
+$$CERT_STORE_ADD_NEWER_INHERIT_PROPERTIES = 7
+$$CERT_STORE_CERTIFICATE_CONTEXT = 1
+$$CERT_STORE_CRL_CONTEXT = 2
+$$CERT_STORE_CTL_CONTEXT = 3
+$$CERT_STORE_ALL_CONTEXT_FLAG = 1			' (~0UL)
+$$CERT_STORE_CERTIFICATE_CONTEXT_FLAG = 2		' (1 << CERT_STORE_CERTIFICATE_CONTEXT)
+$$CERT_STORE_CRL_CONTEXT_FLAG = 4			' (1 << CERT_STORE_CRL_CONTEXT)
+$$CERT_STORE_CTL_CONTEXT_FLAG = 8			' (1 << CERT_STORE_CTL_CONTEXT)
+
+$$CTL_ANY_SUBJECT_TYPE = 1
+$$CTL_CERT_SUBJECT_TYPE = 2
+
+$$CTL_FIND_ANY = 0
+$$CTL_FIND_SHA1_HASH = 1
+$$CTL_FIND_MD5_HASH = 2
+$$CTL_FIND_USAGE = 3
+$$CTL_FIND_SUBJECT = 4
+$$CTL_FIND_EXISTING = 5
+$$CTL_FIND_NO_LIST_ID_CBDATA = 0xFFFFFFFF
+$$CTL_FIND_NO_SIGNER_PTR = -1
+$$CTL_FIND_SAME_USAGE_FLAG = 0x1
+
+$$CERT_STORE_CTRL_RESYNC = 1
+$$CERT_STORE_CTRL_NOTIFY_CHANGE = 2
+$$CERT_STORE_CTRL_COMMIT = 3
+$$CERT_STORE_CTRL_AUTO_RESYNC = 4
+$$CERT_STORE_CTRL_COMMIT_FORCE_FLAG = 0x1
+$$CERT_STORE_CTRL_COMMIT_CLEAR_FLAG = 0x2
+$$CERT_STORE_LOCALIZED_NAME_PROP_ID = 0x1000
+$$CERT_CREATE_CONTEXT_NOCOPY_FLAG = 1
+$$CERT_CREATE_CONTEXT_SORTED_FLAG = 2
+
+$$CERT_PHYSICAL_STORE_ADD_ENABLE_FLAG = 0x1
+$$CERT_PHYSICAL_STORE_OPEN_DISABLE_FLAG = 0x2
+$$CERT_PHYSICAL_STORE_REMOTE_OPEN_DISABLE_FLAG = 0x4
+$$CERT_PHYSICAL_STORE_INSERT_COMPUTER_NAME_ENABLE_FLAG = 0x8
+
+$$CERT_PHYSICAL_STORE_PREDEFINED_ENUM_FLAG = 0x1
+$$CERT_PHYSICAL_STORE_DEFAULT_NAME = ".Default"
+$$CERT_PHYSICAL_STORE_GROUP_POLICY_NAME = ".GroupPolicy"
+$$CERT_PHYSICAL_STORE_LOCAL_MACHINE_NAME = ".LocalMachine"
+$$CERT_PHYSICAL_STORE_DS_USER_CERTIFICATE_NAME = ".UserCertificate"
+$$CERT_PHYSICAL_STORE_LOCAL_MACHINE_GROUP_POLICY_NAME = ".LocalMachineGroupPolicy"
+
+$$CRYPT_OID_OPEN_SYSTEM_STORE_PROV_FUNC = "CertDllOpenSystemStoreProv"
+$$CRYPT_OID_REGISTER_SYSTEM_STORE_FUNC = "CertDllRegisterSystemStore"
+$$CRYPT_OID_UNREGISTER_SYSTEM_STORE_FUNC = "CertDllUnregisterSystemStore"
+$$CRYPT_OID_ENUM_SYSTEM_STORE_FUNC = "CertDllEnumSystemStore"
+$$CRYPT_OID_REGISTER_PHYSICAL_STORE_FUNC = "CertDllRegisterPhysicalStore"
+$$CRYPT_OID_UNREGISTER_PHYSICAL_STORE_FUNC = "CertDllUnregisterPhysicalStore"
+$$CRYPT_OID_ENUM_PHYSICAL_STORE_FUNC = "CertDllEnumPhysicalStore"
+$$CRYPT_OID_SYSTEM_STORE_LOCATION_VALUE_NAME = "SystemStoreLocation"
+
+$$CMSG_TRUSTED_SIGNER_FLAG = 1
+$$CMSG_SIGNER_ONLY_FLAG = 2
+$$CMSG_USE_SIGNER_INDEX_FLAG = 4
+$$CMSG_ENCODE_SORTED_CTL_FLAG = 1
+$$CMSG_ENCODE_HASHED_SUBJECT_IDENTIFIER_FLAG = 2
+
+$$CERT_VERIFY_INHIBIT_CTL_UPDATE_FLAG = 0x1
+$$CERT_VERIFY_TRUSTED_SIGNERS_FLAG = 0x2
+$$CERT_VERIFY_NO_TIME_CHECK_FLAG = 0x4
+$$CERT_VERIFY_ALLOW_MORE_USAGE_FLAG = 0x8
+$$CERT_VERIFY_UPDATED_CTL_FLAG = 0x1
+
+$$CERT_CONTEXT_REVOCATION_TYPE = 1
+$$CERT_VERIFY_REV_CHAIN_FLAG = 0x1
+
+$$CERT_UNICODE_IS_RDN_ATTRS_FLAG = 0x1
+
+$$CRYPT_DEFAULT_CONTEXT_AUTO_RELEASE_FLAG = 0x00000001
+$$CRYPT_DEFAULT_CONTEXT_PROCESS_FLAG = 0x00000002
+$$CRYPT_DEFAULT_CONTEXT_CERT_SIGN_OID = 1
+$$CRYPT_DEFAULT_CONTEXT_MULTI_CERT_SIGN_OID = 2
+
+$$CRYPT_OID_EXPORT_PUBLIC_KEY_INFO_FUNC = "CryptDllExportPublicKeyInfoEx"
+$$CRYPT_OID_IMPORT_PUBLIC_KEY_INFO_FUNC = "CryptDllImportPublicKeyInfoEx"
+$$CRYPT_ACQUIRE_CACHE_FLAG = 0x1
+$$CRYPT_ACQUIRE_USE_PROV_INFO_FLAG = 0x2
+$$CRYPT_ACQUIRE_COMPARE_KEY_FLAG = 0x4
+
+$$CRYPT_FIND_USER_KEYSET_FLAG = 0x1
+$$CRYPT_FIND_MACHINE_KEYSET_FLAG = 0x2
+
+$$CRYPT_OID_IMPORT_PRIVATE_KEY_INFO_FUNC = "CryptDllImportPrivateKeyInfoEx"
+$$CRYPT_OID_EXPORT_PRIVATE_KEY_INFO_FUNC = "CryptDllExportPrivateKeyInfoEx"
+$$CRYPT_DELETE_KEYSET = 0x0001
+
+$$CERT_SIMPLE_NAME_STR = 1
+$$CERT_OID_NAME_STR = 2
+$$CERT_X500_NAME_STR = 3
+$$CERT_NAME_STR_SEMICOLON_FLAG = 0x40000000
+$$CERT_NAME_STR_NO_PLUS_FLAG = 0x20000000
+$$CERT_NAME_STR_NO_QUOTING_FLAG = 0x10000000
+$$CERT_NAME_STR_CRLF_FLAG = 0x08000000
+$$CERT_NAME_STR_COMMA_FLAG = 0x04000000
+$$CERT_NAME_STR_REVERSE_FLAG = 0x02000000
+$$CERT_NAME_STR_DISABLE_IE4_UTF8_FLAG = 0x00010000
+$$CERT_NAME_STR_ENABLE_T61_UNICODE_FLAG = 0x00020000
+
+$$CERT_NAME_EMAIL_TYPE = 1
+$$CERT_NAME_RDN_TYPE = 2
+$$CERT_NAME_ATTR_TYPE = 3
+$$CERT_NAME_SIMPLE_DISPLAY_TYPE = 4
+$$CERT_NAME_FRIENDLY_DISPLAY_TYPE = 5
+$$CERT_NAME_ISSUER_FLAG = 0x1
+$$CERT_NAME_DISABLE_IE4_UTF8_FLAG = 0x00010000
+
+$$CRYPT_MESSAGE_BARE_CONTENT_OUT_FLAG = 0x1
+
+$$CERT_QUERY_OBJECT_FILE = 0x00000001
+$$CERT_QUERY_OBJECT_BLOB = 0x00000002
+$$CERT_QUERY_CONTENT_CERT = 1
+$$CERT_QUERY_CONTENT_CTL = 2
+$$CERT_QUERY_CONTENT_CRL = 3
+$$CERT_QUERY_CONTENT_SERIALIZED_STORE = 4
+$$CERT_QUERY_CONTENT_SERIALIZED_CERT = 5
+$$CERT_QUERY_CONTENT_SERIALIZED_CTL = 6
+$$CERT_QUERY_CONTENT_SERIALIZED_CRL = 7
+$$CERT_QUERY_CONTENT_PKCS7_SIGNED = 8
+$$CERT_QUERY_CONTENT_PKCS7_UNSIGNED = 9
+$$CERT_QUERY_CONTENT_PKCS7_SIGNED_EMBED = 10
+$$CERT_QUERY_CONTENT_PKCS10 = 11
+$$CERT_QUERY_CONTENT_PFX = 12
+$$CERT_QUERY_CONTENT_FLAG_CERT = 0x2				' ( 1 << CERT_QUERY_CONTENT_CERT)
+$$CERT_QUERY_CONTENT_FLAG_CTL = 0x4					' ( 1 << CERT_QUERY_CONTENT_CTL)
+$$CERT_QUERY_CONTENT_FLAG_CRL = 0x8					' ( 1 << CERT_QUERY_CONTENT_CRL)
+$$CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE = 0x10		' ( 1 << CERT_QUERY_CONTENT_SERIALIZED_STORE)
+$$CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT = 0x20		' ( 1 << CERT_QUERY_CONTENT_SERIALIZED_CERT)
+$$CERT_QUERY_CONTENT_FLAG_SERIALIZED_CTL = 0x40			' ( 1 << CERT_QUERY_CONTENT_SERIALIZED_CTL)
+$$CERT_QUERY_CONTENT_FLAG_SERIALIZED_CRL = 0x80			' ( 1 << CERT_QUERY_CONTENT_SERIALIZED_CRL)
+$$CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED = 0x100			' ( 1 << CERT_QUERY_CONTENT_PKCS7_SIGNED)
+$$CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED = 0x200  		' ( 1 << CERT_QUERY_CONTENT_PKCS7_UNSIGNED)
+$$CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED = 0x400		' ( 1 << CERT_QUERY_CONTENT_PKCS7_SIGNED_EMBED)
+$$CERT_QUERY_CONTENT_FLAG_PKCS10 = 0x800				' ( 1 << CERT_QUERY_CONTENT_PKCS10)
+$$CERT_QUERY_CONTENT_FLAG_PFX = 0x1000				' ( 1 << CERT_QUERY_CONTENT_PFX)
+$$CERT_QUERY_CONTENT_FLAG_ALL = 0x1FFE				' CERT_QUERY_CONTENT_FLAG_CERT | CERT_QUERY_CONTENT_FLAG_CTL | CERT_QUERY_CONTENT_FLAG_CRL | CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE | CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT | CERT_QUERY_CONTENT_FLAG_SERIALIZED_CTL | CERT_QUERY_CONTENT_FLAG_SERIALIZED_CRL | CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED | CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED | 	CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED | CERT_QUERY_CONTENT_FLAG_PKCS10 | CERT_QUERY_CONTENT_FLAG_PFX
+$$CERT_QUERY_FORMAT_BINARY = 1
+$$CERT_QUERY_FORMAT_BASE64_ENCODED = 2
+$$CERT_QUERY_FORMAT_FLAG_BINARY = 0x2				' ( 1 << CERT_QUERY_FORMAT_BINARY)
+$$CERT_QUERY_FORMAT_FLAG_BASE64_ENCODED = 0x4			' ( 1 << CERT_QUERY_FORMAT_BASE64_ENCODED)
+$$CERT_QUERY_FORMAT_FLAG_ALL = 0x6					' CERT_QUERY_FORMAT_FLAG_BINARY | CERT_QUERY_FORMAT_FLAG_BASE64_ENCODED
+
+$$CREDENTIAL_OID_PASSWORD_CREDENTIALS_A = 1
+$$CREDENTIAL_OID_PASSWORD_CREDENTIALS_W = 2
+
+$$SCHEME_OID_RETRIEVE_ENCODED_OBJECT_FUNC = "SchemeDllRetrieveEncodedObject"
+
+$$CONTEXT_OID_CREATE_OBJECT_CONTEXT_FUNC = "ContextDllCreateObjectContext"
+$$CONTEXT_OID_CERTIFICATE = 1
+$$CONTEXT_OID_CRL = 2
+$$CONTEXT_OID_CTL =3
+$$CONTEXT_OID_PKCS7 =4
+$$CONTEXT_OID_CAPI2_ANY = 5
+$$CRYPT_RETRIEVE_MULTIPLE_OBJECTS = 0x00000001
+$$CRYPT_CACHE_ONLY_RETRIEVAL = 0x00000002
+$$CRYPT_WIRE_ONLY_RETRIEVAL = 0x00000004
+$$CRYPT_DONT_CACHE_RESULT = 0x00000008
+$$CRYPT_ASYNC_RETRIEVAL = 0x00000010
+$$CRYPT_VERIFY_CONTEXT_SIGNATURE = 0x00000020
+$$CRYPT_VERIFY_DATA_HASH = 0x00000040
+$$CRYPT_KEEP_TIME_VALID = 0x00000080
+$$CRYPT_DONT_VERIFY_SIGNATURE = 0x00000100
+$$CRYPT_DONT_CHECK_TIME_VALIDITY = 0x00000200
+
+$$CRYPT_PARAM_ASYNC_RETRIEVAL_COMPLETION = 1
+$$CRYPT_PARAM_CANCEL_ASYNC_RETRIEVAL = 2
+
+$$CRYPT_GET_URL_FROM_PROPERTY = 0x00000001
+$$CRYPT_GET_URL_FROM_EXTENSION = 0x00000002
+$$CRYPT_GET_URL_FROM_UNAUTH_ATTRIBUTE = 0x00000004
+$$CRYPT_GET_URL_FROM_AUTH_ATTRIBUTE = 0x00000008
+
+$$URL_OID_GET_OBJECT_URL_FUNC = "UrlDllGetObjectUrl"
+$$URL_OID_CERTIFICATE_ISSUER = 1
+$$URL_OID_CERTIFICATE_CRL_DIST_POINT = 2
+$$URL_OID_CTL_ISSUER = 3
+$$URL_OID_CTL_NEXT_UPDATE = 4
+$$URL_OID_CRL_ISSUER = 5
+
+$$TIME_VALID_OID_GET_OBJECT_FUNC = "TimeValidDllGetObject"
+$$TIME_VALID_OID_GET_CTL = 1
+$$TIME_VALID_OID_GET_CRL =2
+$$TIME_VALID_OID_GET_CRL_FROM_CERT = 3
+
+$$TIME_VALID_OID_FLUSH_OBJECT_FUNC = "TimeValidDllFlushObject"
+$$TIME_VALID_OID_FLUSH_CTL = 1
+$$TIME_VALID_OID_FLUSH_CRL = 2
+$$TIME_VALID_OID_FLUSH_CRL_FROM_CERT = 3
+
+'$$CRYPTPROTECT_DEFAULT_PROVIDER  { 0xdf9d8cd0,0x1501,0x11d1,{0x8c,0x7a,0x00,0xc0,0x4f,0xc2,0x97,0xeb} }
+
+$$CRYPTPROTECT_PROMPT_ON_UNPROTECT = 0x1
+$$CRYPTPROTECT_PROMPT_ON_PROTECT = 0x2
+$$CRYPTPROTECT_UI_FORBIDDEN = 0x1
+$$CRYPTPROTECT_LOCAL_MACHINE = 0x4
+$$CRYPTPROTECT_CRED_SYNC = 0x8
+$$CRYPTPROTECT_FIRST_RESERVED_FLAGVAL = 0x0FFFFFFF
+$$CRYPTPROTECT_LAST_RESERVED_FLAGVAL = 0xFFFFFFFF
+
+$$CERT_CREATE_SELFSIGN_NO_SIGN = 1
+$$CERT_CREATE_SELFSIGN_NO_KEY_INFO = 2
+
+$$CRYPT_KEYID_MACHINE_FLAG = 0x20
+$$CRYPT_KEYID_ALLOC_FLAG = 0x00008000
+
+$$CRYPT_KEYID_DELETE_FLAG = 0x00000010
+$$CRYPT_KEYID_SET_NEW_FLAG = 0x00002000
+
+$$HCCE_CURRENT_USER = 0
+$$HCCE_LOCAL_MACHINE = 0x1
+$$CERT_CHAIN_CACHE_END_CERT = 0x00000001
+$$CERT_CHAIN_THREAD_STORE_SYNC = 0x00000002
+$$CERT_CHAIN_CACHE_ONLY_URL_RETRIEVAL = 0x00000004
+$$CERT_CHAIN_USE_LOCAL_MACHINE_STORE = 0x00000008
+$$CERT_CHAIN_ENABLE_CACHE_AUTO_UPDATE = 0x00000010
+
+$$CERT_TRUST_NO_ERROR = 0x00000000
+$$CERT_TRUST_IS_NOT_TIME_VALID = 0x00000001
+$$CERT_TRUST_IS_NOT_TIME_NESTED = 0x00000002
+$$CERT_TRUST_IS_REVOKED = 0x00000004
+$$CERT_TRUST_IS_NOT_SIGNATURE_VALID = 0x00000008
+$$CERT_TRUST_IS_NOT_VALID_FOR_USAGE = 0x00000010
+$$CERT_TRUST_IS_UNTRUSTED_ROOT = 0x00000020
+$$CERT_TRUST_REVOCATION_STATUS_UNKNOWN = 0x00000040
+$$CERT_TRUST_IS_CYCLIC = 0x00000080
+$$CERT_TRUST_IS_PARTIAL_CHA = 0x00010000
+$$CERT_TRUST_CTL_IS_NOT_TIME_VALID = 0x00020000
+$$CERT_TRUST_CTL_IS_NOT_SIGNATURE_VALID = 0x00040000
+$$CERT_TRUST_CTL_IS_NOT_VALID_FOR_USAGE = 0x00080000
+$$CERT_TRUST_HAS_EXACT_MATCH_ISSUER = 0x00000001
+$$CERT_TRUST_HAS_KEY_MATCH_ISSUER = 0x00000002
+$$CERT_TRUST_HAS_NAME_MATCH_ISSUER = 0x00000004
+$$CERT_TRUST_IS_SELF_SIGNED = 0x00000008
+$$CERT_TRUST_IS_COMPLEX_CHA = 0x00010000
+
+$$USAGE_MATCH_TYPE_AND = 0x00000000
+$$USAGE_MATCH_TYPE_OR = 0x00000001
+
+$$CERT_CHAIN_REVOCATION_CHECK_END_CERT = 0x10000000
+$$CERT_CHAIN_REVOCATION_CHECK_CHA = 0x20000000
+$$CERT_CHAIN_REVOCATION_CHECK_CHAIN_EXCLUDE_ROOT = 0x40000000
+
+$$REVOCATION_OID_CRL_REVOCATION = 1
+
+$$CERT_CHAIN_FIND_BY_ISSUER = 1
+$$CERT_CHAIN_FIND_BY_ISSUER_COMPARE_KEY_FLAG = 0x0001
+$$CERT_CHAIN_FIND_BY_ISSUER_COMPLEX_CHAIN_FLAG = 0x0002
+$$CERT_CHAIN_FIND_BY_ISSUER_CACHE_ONLY_FLAG = 0x8000
+
+$$CERT_CHAIN_POLICY_IGNORE_NOT_TIME_VALID_FLAG = 1
+$$CERT_CHAIN_POLICY_IGNORE_CTL_NOT_TIME_VALID_FLAG = 2
+$$CERT_CHAIN_POLICY_IGNORE_NOT_TIME_NESTED_FLAG = 4
+$$CERT_CHAIN_POLICY_IGNORE_ALL_NOT_TIME_VALID_FLAGS = 7	' (CERT_CHAIN_POLICY_IGNORE_NOT_TIME_VALID_FLAG|CERT_CHAIN_POLICY_IGNORE_CTL_NOT_TIME_VALID_FLAG|CERT_CHAIN_POLICY_IGNORE_NOT_TIME_NESTED_FLAG)
+$$CERT_CHAIN_POLICY_ALLOW_UNKNOWN_CA_FLAG = 0x10
+$$CERT_CHAIN_POLICY_IGNORE_WRONG_USAGE_FLAG = 0x20
+
+$$CERT_CHAIN_POLICY_IGNORE_END_REV_UNKNOWN_FLAG = 0x100
+$$CERT_CHAIN_POLICY_IGNORE_CTL_SIGNER_REV_UNKNOWN_FLAG = 0x200
+$$CERT_CHAIN_POLICY_IGNORE_CA_REV_UNKNOWN_FLAG = 0x400
+$$CERT_CHAIN_POLICY_IGNORE_ROOT_REV_UNKNOWN_FLAG = 0x800
+$$CERT_CHAIN_POLICY_IGNORE_ALL_REV_UNKNOWN_FLAGS = 0xF00	' (CERT_CHAIN_POLICY_IGNORE_END_REV_UNKNOWN_FLAG|CERT_CHAIN_POLICY_IGNORE_CTL_SIGNER_REV_UNKNOWN_FLAG|CERT_CHAIN_POLICY_IGNORE_CA_REV_UNKNOWN_FLAG|CERT_CHAIN_POLICY_IGNORE_ROOT_REV_UNKNOWN_FLAG)
+$$CERT_CHAIN_POLICY_ALLOW_TESTROOT_FLAG = 0x8000
+$$CERT_CHAIN_POLICY_TRUST_TESTROOT_FLAG = 0x4000
+
+$$CRYPT_OID_VERIFY_CERTIFICATE_CHAIN_POLICY_FUNC  = "CertDllVerifyCertificateChainPolicy"
+$$CERT_CHAIN_POLICY_BASE = 1
+$$CERT_CHAIN_POLICY_AUTHENTICODE = 2
+$$CERT_CHAIN_POLICY_AUTHENTICODE_TS = 3
+$$CERT_CHAIN_POLICY_SSL = 4
+
+$$NTE_BAD_UID = 0x80090001
+$$NTE_BAD_HASH = 0x80090002
+$$NTE_BAD_KEY = 0x80090003
+$$NTE_BAD_LEN = 0x80090004
+$$NTE_BAD_DATA = 0x80090005
+$$NTE_BAD_SIGNATURE = 0x80090006
+$$NTE_BAD_VER = 0x80090007
+$$NTE_BAD_ALGID = 0x80090008
+$$NTE_BAD_FLAGS = 0x80090009
+$$NTE_BAD_TYPE = 0x8009000A
+$$NTE_BAD_KEY_STATE = 0x8009000B
+$$NTE_BAD_HASH_STATE = 0x8009000C
+$$NTE_NO_KEY = 0x8009000D
+$$NTE_NO_MEMORY = 0x8009000E
+$$NTE_EXISTS = 0x8009000F
+$$NTE_PERM = 0x80090010
+$$NTE_NOT_FOUND = 0x80090011
+$$NTE_DOUBLE_ENCRYPT = 0x80090012
+$$NTE_BAD_PROVIDER = 0x80090013
+$$NTE_BAD_PROV_TYPE = 0x80090014
+$$NTE_BAD_PUBLIC_KEY = 0x80090015
+$$NTE_BAD_KEYSET = 0x80090016
+$$NTE_PROV_TYPE_NOT_DEF = 0x80090017
+$$NTE_PROV_TYPE_ENTRY_BAD = 0x80090018
+$$NTE_KEYSET_NOT_DEF= 0x80090019
+$$NTE_KEYSET_ENTRY_BAD = 0x8009001A
+$$NTE_PROV_TYPE_NO_MATCH = 0x8009001B
+$$NTE_SIGNATURE_FILE_BAD = 0x8009001C
+$$NTE_PROVIDER_DLL_FAIL = 0x8009001D
+$$NTE_PROV_DLL_NOT_FOUND = 0x8009001E
+$$NTE_BAD_KEYSET_PARAM = 0x8009001F
+$$NTE_FAIL = 0x80090020
+$$NTE_SYS_ERR = 0x80090021
+$$NTE_SILENT_CONTEXT = 0x80090022
+$$NTE_TOKEN_KEYSET_STORAGE_FULL = 0x80090023
+
+$$NTE_OP_OK = 0

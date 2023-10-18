@@ -1,0 +1,66 @@
+#include "winres.h"
+
+scrabble ICON    scrabble.ico
+
+100 DIALOG 90, 12, 206, 226
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Modal Dialog Box As Main Window Demo"
+FONT 10, "MS Sans Serif"
+BEGIN
+    LTEXT           "Edit Control", 101, 10, 24, 54, 8, NOT WS_GROUP
+    LTEXT           "Drop-Down List", 102, 140, 140, 56, 8, NOT WS_GROUP
+    LTEXT           "Check Box", 103, 12, 92, 58, 8, NOT WS_GROUP
+    LTEXT           "Simple Combobox", 104, 10, 140, 72, 8, NOT WS_GROUP
+    LTEXT           "Drop-Down", 105, 88, 140, 46, 8, NOT WS_GROUP
+    LTEXT           "Button Control", 106, 10, 74, 56, 8, NOT WS_GROUP
+    EDITTEXT        107, 72, 22, 120, 10, ES_AUTOHSCROLL
+    LTEXT           "Dialog Box Demo", 108, 64, 4, 66, 14, NOT WS_GROUP
+    GROUPBOX        "Group Control", 109, 4, 12, 198, 200
+    PUSHBUTTON      "Press Me Now!", 110, 72, 74, 120, 12
+    CONTROL         " Select Me!", 111, "Button", BS_AUTOCHECKBOX | 
+                    WS_TABSTOP, 74, 92, 62, 10
+    GROUPBOX        "Radio Buttons", 112, 12, 108, 180, 28, WS_TABSTOP
+    CONTROL         " Radio A", 113, "Button", BS_AUTORADIOBUTTON | WS_GROUP, 
+                    18, 120, 50, 10
+    CONTROL         " Radio B", 114, "Button", BS_AUTORADIOBUTTON | WS_GROUP, 
+                    74, 120, 39, 10
+    CONTROL         " Radio C", 115, "Button", BS_AUTORADIOBUTTON | WS_GROUP, 
+                    128, 120, 39, 10
+    COMBOBOX        125, 12, 152, 60, 32, CBS_SIMPLE | CBS_SORT | WS_VSCROLL | 
+                    WS_TABSTOP
+    COMBOBOX        117, 80, 152, 52, 30, CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        118, 140, 152, 52, 30, CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    SCROLLBAR       119, 70, 190, 48, 9
+    LTEXT           "Hor Scroll Bar", 120, 10, 190, 56, 8, NOT WS_GROUP
+    SCROLLBAR       121, 184, 168, 9, 40, SBS_VERT
+    LTEXT           "Ver Scroll Bar", 122, 126, 190, 52, 8, NOT WS_GROUP
+    EDITTEXT        123, 72, 36, 120, 30, ES_MULTILINE | WS_VSCROLL
+    LTEXT           "Multiline Edit", 124, 10, 40, 58, 8, NOT WS_GROUP
+END
+
+menu MENU 
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "&New",                 	201
+		MENUITEM "&Open..",                 	202
+		MENUITEM "&Save..",                 	203
+		MENUITEM "Save &As..",                 	204
+		MENUITEM SEPARATOR
+		MENUITEM "Page Set&up..",               205
+		MENUITEM "&Print..",                    206
+		MENUITEM SEPARATOR
+		MENUITEM "&Exit",                       207
+	END
+	POPUP "&Edit"
+	BEGIN
+		MENUITEM "Cu&t",               		210
+		MENUITEM "&Copy",               	211
+		MENUITEM "&Paste",               	212
+		MENUITEM "De&lete",               	213
+
+	END
+END
+

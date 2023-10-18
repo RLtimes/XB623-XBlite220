@@ -1,0 +1,131 @@
+'
+EXTERNAL FUNCTION  Xdd ()
+'
+' xdd functions
+'
+EXTERNAL FUNCTION  XddInitDD       ()
+EXTERNAL FUNCTION  XddCleanUp      ()
+EXTERNAL FUNCTION  XddColorMatch   (pdds, rgb)
+EXTERNAL FUNCTION  XddCopyBitmap   (pdds, hbm, x, y, dx, dy)
+EXTERNAL FUNCTION  XddGetDxVersion (@version$)
+EXTERNAL FUNCTION  XddLoadBitmap   (pDD, bitmap$, dx, dy)
+EXTERNAL FUNCTION  XddSetColorKey  (pdds, rgb)
+'
+' direct draw functions
+'
+EXTERNAL FUNCTION  XddDirectDrawCreate (lpGUID, lpDD, pUnkOuter)
+EXTERNAL FUNCTION  XddDirectDrawCreateClipper (dwFlags, lpDDClipper, pUnkOuter)
+EXTERNAL FUNCTION  XddDirectDrawEnumerate (lpCallback, lpContext)
+EXTERNAL FUNCTION  XddDirectDrawEnumerateEx (lpCallback, lpContext, dwFlags)
+EXTERNAL FUNCTION  XddDirectDrawCreateEx (lpGuid, lpDD, iid, pUnkOuter)
+'
+' interface
+'
+EXTERNAL FUNCTION  IDirectDraw_QueryInterface (lpIUnknown, riid, ppvObj)
+EXTERNAL FUNCTION  IDirectDraw_AddRef (lpIUnknown)
+EXTERNAL FUNCTION  IDirectDraw_Release (lpIUnknown)
+EXTERNAL FUNCTION  IDirectDraw_Compact (lpDD)
+'
+' interface directdraw methods
+'
+EXTERNAL FUNCTION  IDirectDraw_CreateClipper (lpDD, dwFlags, lpDDClipper, pUnkOuter)
+EXTERNAL FUNCTION  IDirectDraw_CreatePalette (lpDD, lpColorTable, lpDDPalette, pUnkOuter, flag)
+EXTERNAL FUNCTION  IDirectDraw_CreateSurface (lpDD, lpDDSurfaceDesc, lpDDSurface, flag)
+EXTERNAL FUNCTION  IDirectDraw_DuplicateSurface (lpDD, lpDDSurface, lpDupDDSurface)
+EXTERNAL FUNCTION  IDirectDraw_EnumDisplayModes (lpDD, dwFlags, lpDDSurfaceDesc, lpContext, lpEnumModesCallback)
+EXTERNAL FUNCTION  IDirectDraw_EnumSurfaces (lpDD, dwFlags, lpDDSurfaceDesc, lpContext, lpEnumModesCallback)
+EXTERNAL FUNCTION  IDirectDraw_FlipToGDISurface (lpDD)
+EXTERNAL FUNCTION  IDirectDraw_GetCaps (lpDD, lpDDDriverCaps, lpDDHELCaps)
+EXTERNAL FUNCTION  IDirectDraw_GetDisplayMode (lpDD, lpDDSurfaceDesc)
+EXTERNAL FUNCTION  IDirectDraw_GetFourCCCodes (lpDD, lpNumCodes, lpCodes)
+EXTERNAL FUNCTION  IDirectDraw_GetGDISurface (lpDD, lpGDIDSSurface)
+EXTERNAL FUNCTION  IDirectDraw_MonitorFrequency (lpDD, lpdwFrequency)
+EXTERNAL FUNCTION  IDirectDraw_GetScanLine (lpDD, lpdwScanLine)
+EXTERNAL FUNCTION  IDirectDraw_GetVerticalBlankStatus (lpDD, lpbIsInVB)
+EXTERNAL FUNCTION  IDirectDraw_Initialize (lpDD, lpGUID)
+EXTERNAL FUNCTION  IDirectDraw_RestoreDisplayMode (lpDD)
+EXTERNAL FUNCTION  IDirectDraw_SetCooperativeLevel (lpDD, hWnd, dwFlags)
+EXTERNAL FUNCTION  IDirectDraw_SetDisplayMode (lpDD, dwWidth, dwHeight, dwBpp, dwRefreshRate, dwFlags)
+EXTERNAL FUNCTION  IDirectDraw_WaitForVerticalBlank (lpDD, dwFlags, hEvent)
+EXTERNAL FUNCTION  IDirectDraw_GetAvailableVidMem (lpDD, lpDDSCaps, lpdwTotal, lpdwFree)
+EXTERNAL FUNCTION  IDirectDraw_GetSurfaceFromDC (lpDD, hdc, lpDDS)
+EXTERNAL FUNCTION  IDirectDraw_RestoreAllSurfaces (lpDD)
+EXTERNAL FUNCTION  IDirectDraw_TestCooperativeLevel (lpDD)
+EXTERNAL FUNCTION  IDirectDraw_GetDeviceIdentifier (lpDD, lpdddi, dwFlags)
+EXTERNAL FUNCTION  IDirectDraw_StartModeTest (lpDD, lpModesToTest, dwNumEntries, dwFlags)
+EXTERNAL FUNCTION  IDirectDraw_EvaluateMode (lpDD, dwFlags, lpSecondsUntilTimeout)
+'
+' interface directdrawpalette methods
+'
+EXTERNAL FUNCTION  IDirectDrawPalette_GetCaps (lpDDPalette, lpdwCaps)
+EXTERNAL FUNCTION  IDirectDrawPalette_GetEntries (lpDDPalette, dwFlags, dwBase, dwNumEntries, lpEntries)
+EXTERNAL FUNCTION  IDirectDrawPalette_Initialize (lpDD, dwFlags, lpDDColorTable)
+EXTERNAL FUNCTION  IDirectDrawPalette_SetEntries (lpDDPalette, dwFlags, dwStartingEntry, dwCount, lpEntries)
+'
+' interface directdrawclipper methods
+'
+EXTERNAL FUNCTION  IDirectDrawClipper_GetClipList (lpDDClipper, lpRect, lpClipList, lpdwSize)
+EXTERNAL FUNCTION  IDirectDrawClipper_GetHWnd (lpDDClipper, lphWnd)
+EXTERNAL FUNCTION  IDirectDrawClipper_Initialize (lpDD, dwFlags)
+EXTERNAL FUNCTION  IDirectDrawClipper_IsClipChanged (lpDDClipper, dlpbChanged)
+EXTERNAL FUNCTION  IDirectDrawClipper_SetClipList (lpDDClipper, lpClipList, dwFlags)
+EXTERNAL FUNCTION  IDirectDrawClipper_SetHWnd (lpDDClipper, dwFlags, hWnd)
+'
+' interface directdrawsurface methods
+'
+EXTERNAL FUNCTION  IDirectDrawSurface_AddAttachedSurface (lpDDSurface, lpDDDestSurface)
+EXTERNAL FUNCTION  IDirectDrawSurface_AddOverlayDirtyRect (lpDDSurface, lpRect)
+EXTERNAL FUNCTION  IDirectDrawSurface_Blt (lpDDSurface, lpDestRect, lpDDSrcSurface, lpSrcRect, dwFlags, lpDDBltFx)
+EXTERNAL FUNCTION  IDirectDrawSurface_BltBatch (lpDDSurface, lpDDBltBatch, dwCount, dwFlags)
+EXTERNAL FUNCTION  IDirectDrawSurface_BltFast (lpDDSurface, dwX, dwY, lpDDSrcSurface, lpSrcRect, dwTrans)
+EXTERNAL FUNCTION  IDirectDrawSurface_DeleteAttachedSurface (lpDDSurface, dwFlags, lpDDAttachedSurface)
+EXTERNAL FUNCTION  IDirectDrawSurface_EnumAttachedSurfaces (lpDDSurface, lpContext, lpEnumSurfacesCallback)
+EXTERNAL FUNCTION  IDirectDrawSurface_EnumOverlayZOrders (lpDDSurface, dwFlags, lpContext, lpfnCallback)
+EXTERNAL FUNCTION  IDirectDrawSurface_Flip (lpDDSurface, lpDDSurfaceTargetOverride, dwFlags)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetAttachedSurface (lpDDSurface, lpDDSCaps, lpDDAttachedSurface)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetBltStatus (lpDDSurface, dwFlags)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetCaps (lpDDSurface, lpDDSCaps)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetClipper (lpDDSurface, lpDDClipper)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetColorKey (lpDDSurface, dwFlags, lpDDColorKey)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetDC (lpDDSurface, lphDC)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetFlipStatus (lpDDSurface, dwFlags)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetOverlayPosition (lpDDSurface, lplX, lplY)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetPalette (lpDDSurface, lpDDPalette)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetPixelFormat (lpDDSurface, lpDDPixelFormat)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetSurfaceDesc (lpDDSurface, lpDDSurfaceDesc)
+EXTERNAL FUNCTION  IDirectDrawSurface_Initialize (lpDD, lpDDSurfaceDesc)
+EXTERNAL FUNCTION  IDirectDrawSurface_IsLost (lpDDSurface)
+EXTERNAL FUNCTION  IDirectDrawSurface_Lock (lpDDSurface, lpDestRect, lpDDSurfaceDesc, dwFlags, hEvent)
+EXTERNAL FUNCTION  IDirectDrawSurface_ReleaseDC (lpDDSurface, hDC)
+EXTERNAL FUNCTION  IDirectDrawSurface_Restore (lpDDSurface)
+EXTERNAL FUNCTION  IDirectDrawSurface_SetClipper (lpDDSurface, lpDDClipper)
+EXTERNAL FUNCTION  IDirectDrawSurface_SetColorKey (lpDDSurface, dwFlags, lpDDColorKey)
+EXTERNAL FUNCTION  IDirectDrawSurface_SetOverlayPosition (lpDDSurface, lX, lY)
+EXTERNAL FUNCTION  IDirectDrawSurface_SetPalette (lpDDSurface, lpDDPalette)
+EXTERNAL FUNCTION  IDirectDrawSurface_Unlock (lpDDSurface, lpSurfaceData)
+EXTERNAL FUNCTION  IDirectDrawSurface_UpdateOverlay (lpDDSurface, lpSrcRect, lpDDDestSurface, lpDestRect, dwFlags, lpDDOverlayFx)
+EXTERNAL FUNCTION  IDirectDrawSurface_UpdateOverlayDisplay (lpDDSurface, dwFlags)
+EXTERNAL FUNCTION  IDirectDrawSurface_UpdateOverlayZOrder (lpDDSurface, dwFlags, lpDDSReference)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetDDInterface (lpDDSurface, lpDD)
+EXTERNAL FUNCTION  IDirectDrawSurface_PageLock (lpDDSurface, dwFlags)
+EXTERNAL FUNCTION  IDirectDrawSurface_PageUnlock (lpDDSurface, dwFlags)
+EXTERNAL FUNCTION  IDirectDrawSurface_SetSurfaceDesc (lpDDSurface, lpDDSurfaceDesc, dwFlags)
+EXTERNAL FUNCTION  IDirectDrawSurface_SetPrivateData (lpDDSurface, guidTag, lpData, cbSize, dwFlags)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetPrivateData (lpDDSurface, guidTag, lpBuffer, lpcbBufferSize)
+EXTERNAL FUNCTION  IDirectDrawSurface_FreePrivateData (lpDDSurface, guidTag)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetUniquenessValue (lpDDSurface, lpValue)
+EXTERNAL FUNCTION  IDirectDrawSurface_ChangeUniquenessValue (lpDDSurface)
+EXTERNAL FUNCTION  IDirectDrawSurface_SetPriority (lpDDSurface, dwPriority)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetPriority (lpDDSurface, lpdwPriority)
+EXTERNAL FUNCTION  IDirectDrawSurface_SetLOD (lpDDSurface, dwMaxLOD)
+EXTERNAL FUNCTION  IDirectDrawSurface_GetLOD (lpDDSurface, lpdwMaxLOD)
+'
+' interface directdrawcolorcontrol methods
+'
+EXTERNAL FUNCTION  IDirectDrawColorControl_GetColorControls (lpDDColorControl, lpColorControl)
+EXTERNAL FUNCTION  IDirectDrawColorControl_SetColorControls (lpDDColorControl, lpColorControl)
+'
+' interface directdrawgammacontrol methods
+'
+EXTERNAL FUNCTION  IDirectDrawGammaControl_GetGammaRamp (lpDDGammaControl, dwFlags, lpRampData)
+EXTERNAL FUNCTION  IDirectDrawGammaControl_SetGammaRamp (lpDDGammaControl, dwFlags, lpRampData)

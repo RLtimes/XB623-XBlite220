@@ -1,0 +1,673 @@
+'
+' ######################  XBLite
+' #####  riched32  #####  copyright 2003
+' ######################  XBLite declaration file for Windows "riched32"
+
+' subject to GPLL license - see gpll.txt
+' for Windows XBasic/XBLite
+
+' VERSION  "0.0002"  ' 2004/04/27
+
+' ###########################
+' #####  declare types  #####
+' ###########################
+
+' ***** notification structures  *****
+
+TYPE NMHDR_RICHED
+	ULONG	.hwndFrom 
+	ULONG	.idFrom 
+	ULONG	.code 
+END TYPE
+
+TYPE NMHDR_RICHEDIT
+	ULONG	.hwndFrom 
+	ULONG	.idFrom 
+	ULONG	.code 
+END TYPE
+
+
+TYPE MSGFILTER
+  NMHDR_RICHED	.hdr
+  ULONG	.msg
+  ULONG	.wParam
+  ULONG	.lParam
+END TYPE
+
+TYPE RECT_RICHED
+    XLONG .left 
+    XLONG .top 
+    XLONG .right 
+    XLONG .bottom 
+END TYPE
+
+TYPE REQRESIZE
+  NMHDR_RICHED	.hdr
+  RECT_RICHED	.rc
+END TYPE
+
+TYPE CHARRANGE
+  XLONG	.cpMin
+  XLONG	.cpMax
+END TYPE
+
+TYPE SELCHANGE
+  NMHDR_RICHED	.hdr
+  CHARRANGE	.chrg
+  USHORT	.seltyp
+END TYPE
+
+' ***** all character format measurements are in twips  *****
+TYPE CHARFORMAT
+  XLONG	.cbSize
+  ULONG	.dwMask
+  ULONG	.dwEffects
+  XLONG	.yHeight
+  XLONG	.yOffset
+  ULONG	.crTextColor
+  UBYTE	.bCharSet
+  UBYTE	.bPitchAndFamily
+  STRING*32	.szFaceName
+END TYPE
+
+TYPE CHARFORMAT2
+    ULONG	.cbSize
+    ULONG	.dwMask
+    ULONG	.dwEffects
+    XLONG	.yHeight
+    XLONG	.yOffset
+    XLONG	.crTextColor
+    UBYTE	.bCharSet
+    UBYTE 	.bPitchAndFamily
+    STRING*32	.szFaceName
+    USHORT	.wPad2
+    USHORT	.wWeight 			' Font weight (LOGFONT value) 
+    USHORT	.sSpacing 			' Amount to space between letters 
+    XLONG	.crBackColor		' Background color                 
+    XLONG	.lLCID			' Locale ID                        
+    XLONG	.dwReserved			' Reserved. Must be 0              
+    USHORT	.sStyle			' Style handle                     
+    USHORT	.wKerning 			' Twip size above which to kern char pair
+    UBYTE	.bUnderlineType		' Underline type                   
+    UBYTE	.bAnimation			' Animated text like marching ants 
+    UBYTE	.bRevAuthor			' Revision author index            
+    UBYTE	.bReserved1
+END TYPE
+
+TYPE TEXTRANGE
+  CHARRANGE	.chrg
+  ULONG	.lpstrText			
+END TYPE
+
+TYPE EDITSTREAM
+  ULONG	.dwCookie 			
+  ULONG	.dwError			
+  ULONG	.pfnCallback
+END TYPE
+
+TYPE FINDTEXTAPI
+  CHARRANGE	.chrg
+  ULONG	.lpstrText
+END TYPE
+
+TYPE FINDTEXTEX
+  CHARRANGE	.chrg
+  ULONG	.lpstrText
+  CHARRANGE	.chrgText
+END TYPE
+
+TYPE FORMATRANGE
+  XLONG	.hdc
+  XLONG	.hdcTarget
+  RECT_RICHED	.rc 
+  RECT_RICHED	.rcPage
+  CHARRANGE	.chrg
+END TYPE
+
+TYPE PARAFORMAT
+  XLONG	.cbSize
+  ULONG	.dwMask
+  USHORT	.wNumbering
+  USHORT	.wReserved
+  XLONG	.dxStartIndent
+  XLONG	.dxRightIndent
+  XLONG	.dxOffset
+  USHORT	.wAlignment
+  SSHORT	.cTabCount
+  XLONG	.lTabStops[31]
+END TYPE
+
+TYPE PARAFORMAT2
+    XLONG	.cbSize
+    ULONG	.dwMask
+    USHORT	.wNumbering
+    USHORT	.wReserved
+    XLONG	.dxStartIndent
+    XLONG	.dxRightIndent
+    XLONG	.dxOffset
+    USHORT	.wAlignment
+    USHORT	.cTabCount
+    XLONG	.lTabStops[31] 
+    XLONG	.dySpaceBefore 				' Vertical spacing before para        
+    XLONG	.dySpaceAfter 				' Vertical spacing after para         
+    XLONG	.dyLineSpacing 				' Line spacing depending on Rule      
+    USHORT	.sStyle					' Style handle                         
+    UBYTE	.bLineSpacingRule 			' Rule for line spacing (see tom.doc)  
+    UBYTE	.bCRC						' Reserved for CRC for rapid searching 
+    USHORT	.wShadingWeight				' Shading in hundredths of a per cent  
+    USHORT	.wShadingStyle				' Nibble 0: style, 1: cfpat, 2: cbpat  
+    USHORT	.wNumberingStart				' Starting value for numbering         
+    USHORT	.wNumberingStyle				' Alignment, roman/arabic, (), ), ., etc.
+    USHORT	.wNumberingTab 				' Space bet 1st indent and 1st-line text
+    USHORT	.wBorderSpace				' Space between border and text (twips
+    USHORT	.wBorderWidth				' Border pen width (twips)            
+    USHORT	.wBorders					' Byte 0: bits specify which borders   
+            						' Nibble 2: border style, 3: color index
+END TYPE
+
+TYPE ENDROPFILES
+  NMHDR_RICHED	.hdr
+  XLONG	.hDrop
+  XLONG	.cp
+  XLONG	.fProtected
+END TYPE
+
+TYPE ENPROTECTED
+  NMHDR_RICHED	.hdr
+  ULONG	.msg
+  ULONG	.wParam
+  ULONG	.lParam
+  CHARRANGE	.chrg
+END TYPE
+
+TYPE ENSAVECLIPBOARD
+  NMHDR_RICHED	.hdr
+  XLONG	.cObjectCount
+  XLONG	.cch
+END TYPE
+
+TYPE ENOLEOPFAILED
+  NMHDR_RICHED	.hdr
+  XLONG	.iob
+  XLONG	.lOper
+  XLONG	.hr
+END TYPE
+
+' ***** PenWin specific  *****
+TYPE ENCORRECTTEXT
+  NMHDR_RICHED	.hdr
+  CHARRANGE	.chrg
+  USHORT	.seltyp
+END TYPE
+
+' ***** Far East specific  *****
+TYPE PUNCTUATION
+  XLONG	.iSize
+  ULONG	.szPunctuation
+END TYPE
+
+' ***** Far East specific  *****
+TYPE COMPCOLOR
+  ULONG	.crText
+  ULONG	.crBackground
+  ULONG	.dwEffects
+END TYPE
+
+' ***** Paste Special  *****
+TYPE REPASTESPECIAL
+  ULONG	.dwAspect
+  ULONG	.dwParam
+END TYPE
+
+TYPE ENLINK
+    NMHDR_RICHED	.hdr 
+    ULONG	.msg
+    ULONG	.wParam
+    ULONG	.lParam 
+    CHARRANGE	.chrg 
+END TYPE
+
+' codepage for translation (CP_ACP for default,1200 for Unicode) 
+TYPE GETTEXTEX
+   ULONG	.cb							
+   ULONG	.flags						
+   ULONG	.codepage						
+   ULONG	.lpDefaultChar					
+   ULONG	.lpUsedDefChar					
+END TYPE
+
+TYPE SETTEXTEX
+	ULONG	.flags
+	ULONG	.codepage
+END TYPE
+' codepage for translation (CP_ACP for default,1200 for Unicode) 
+
+TYPE GETTEXTLENGTHEX
+    ULONG	.flags						
+    ULONG	.codepage						
+END TYPE
+
+' ***** BiDi specific features *****
+TYPE BIDIOPTIONS
+    ULONG	.cbSize 
+    USHORT	.wPad1
+    USHORT	.wMask 
+    USHORT	.wEffects 
+END TYPE
+
+' *********************************
+' ***** CONSTANT DECLARATIONS *****
+' *********************************
+
+' ***** Richedit Window Class Names *****
+$$RICHEDITCLASSNAME = "RichEdit"			' riched32.dll
+$$RICHEDITCLASSNAME10A = "RichEdit"			' riched32.dll
+$$RICHEDITCLASSNAME20A = "RichEdit20A"		' riched20.dll
+
+$$cchTextLimitDefault = 32767
+
+' ***** RichEdit messages  *****
+'WM_USER = 1024
+
+$$EM_CANPASTE           = 1074
+$$EM_DISPLAYBAND        = 1075
+$$EM_EXGETSEL           = 1076
+$$EM_EXLIMITTEXT        = 1077
+$$EM_EXLINEFROMCHAR     = 1078
+$$EM_EXSETSEL           = 1079
+$$EM_FINDTEXT           = 1080
+$$EM_FORMATRANGE        = 1081
+$$EM_GETCHARFORMAT      = 1082
+$$EM_GETEVENTMASK       = 1083
+$$EM_GETOLEINTERFACE    = 1084
+$$EM_GETPARAFORMAT      = 1085
+$$EM_GETSELTEXT         = 1086
+$$EM_HIDESELECTION      = 1087
+$$EM_PASTESPECIAL       = 1088
+$$EM_REQUESTRESIZE      = 1089
+$$EM_SELECTIONTYPE      = 1090
+$$EM_SETBKGNDCOLOR      = 1091
+$$EM_SETCHARFORMAT      = 1092
+$$EM_SETEVENTMASK       = 1093
+$$EM_SETOLECALLBACK     = 1094
+$$EM_SETPARAFORMAT      = 1095
+$$EM_SETTARGETDEVICE    = 1096
+$$EM_STREAMIN           = 1097
+$$EM_STREAMOUT          = 1098
+$$EM_GETTEXTRANGE       = 1099
+$$EM_FINDWORDBREAK      = 1100
+$$EM_SETOPTIONS         = 1101
+$$EM_GETOPTIONS         = 1102
+$$EM_FINDTEXTEX         = 1103
+$$EM_GETWORDBREAKPROCEX = 1104
+$$EM_SETWORDBREAKPROCEX = 1105
+
+' ***** RichEd20.dll messages *****
+$$EM_SETUNDOLIMIT    = 1106	
+$$EM_REDO            = 1107	
+$$EM_CANREDO         = 1108	
+$$EM_GETUNDONAME     = 1109	
+$$EM_GETREDONAME     = 1110	
+$$EM_STOPGROUPTYPING = 1112	
+$$EM_SETTEXTMODE     = 1113	
+$$EM_GETTEXTMODE     = 1114	
+$$EM_AUTOURLDETECT   = 1115
+$$EM_GETAUTOURLDETECT = 1116	
+$$EM_SETPALETTE      = 1117	
+$$EM_GETTEXTEX       = 1118	
+$$EM_GETTEXTLENGTHEX = 1119	
+
+$$EM_FINDTEXTW       = 1147	
+$$EM_FINDTEXTEXW     = 1148	
+
+$$TM_PLAINTEXT       = 1
+$$TM_RICHTEXT        = 2          
+$$TM_SINGLELEVELUNDO = 4
+$$TM_MULTILEVELUNDO  = 8         
+$$TM_SINGLECODEPAGE  = 16
+$$TM_MULTICODEPAGE   = 32        
+
+' ***** Far East specific messages  *****
+$$EM_SETPUNCTUATION  = 1124
+$$EM_GETPUNCTUATION  = 1125	
+$$EM_SETWORDWRAPMODE = 1126	
+$$EM_GETWORDWRAPMODE = 1127	
+$$EM_SETIMECOLOR     = 1128	
+$$EM_GETIMECOLOR     = 1129	
+$$EM_SETIMEOPTIONS   = 1130	
+$$EM_GETIMEOPTIONS   = 1131	
+$$EM_CONVPOSITION    = 1132	
+
+$$EM_SETLANGOPTIONS  = 1144	
+$$EM_GETLANGOPTIONS  = 1145	
+$$EM_GETIMECOMPMODE  = 1146	
+
+' ***** BiDi specific messages *****
+$$EM_SETBIDIOPTIONS  = 1204	
+$$EM_GETBIDIOPTIONS  = 1205	
+
+' ***** Options for EM_SETLANGOPTIONS and EM_GETLANGOPTIONS *****
+$$IMF_AUTOKEYBOARD        = 0x1
+$$IMF_AUTOFONT            = 0x2
+$$IMF_IMECANCELCOMPLETE   = 0x4      
+$$IMF_IMEALWAYSSENDNOTIFY = 0x8
+
+' ***** Values for EM_GETIMECOMPMODE *****
+$$ICM_NOTOPEN    = 0x0
+$$ICM_LEVEL3     = 0x1
+$$ICM_LEVEL2     = 0x2
+$$ICM_LEVEL2_5   = 0x3
+$$ICM_LEVEL2_SUI = 0x4
+
+' ***** new notifications  *****
+$$EN_MSGFILTER       = 0x0700
+$$EN_REQUESTRESIZE   = 0x0701
+$$EN_SELCHANGE       = 0x0702
+$$EN_DROPFILES       = 0x0703
+$$EN_PROTECTED       = 0x0704
+
+' ***** PenWin specific  *****
+$$EN_CORRECTTEXT     = 0x0705
+
+' ***** back to new notifications  *****
+$$EN_STOPNOUNDO      = 0x0706
+
+' ***** Far East specific notification  *****
+$$EN_IMECHANGE       = 0x0707
+
+' ***** back to new notifications  *****
+$$EN_SAVECLIPBOARD   = 0x0708
+$$EN_OLEOPFAILED     = 0x0709
+
+$$EN_OBJECTPOSITIONS = 0x70A
+$$EN_LINK            = 0x70B
+$$EN_DRAGDROPDONE    = 0x70C
+
+' ***** BiDi specific notifications *****
+$$EN_ALIGN_LTR = 0x710
+$$EN_ALIGN_RTL = 0x711
+
+' ***** event notification masks  *****
+$$ENM_NONE           = 0x00000000
+$$ENM_CHANGE         = 0x00000001
+$$ENM_UPDATE         = 0x00000002
+$$ENM_SCROLL         = 0x00000004
+$$ENM_SCROLLEVENTS   = 0x00000008
+$$ENM_DRAGDROPDONE   = 0x00000010
+$$ENM_KEYEVENTS      = 0x00010000
+$$ENM_MOUSEEVENTS    = 0x00020000
+$$ENM_REQUESTRESIZE  = 0x00040000
+$$ENM_SELCHANGE      = 0x00080000
+$$ENM_DROPFILES      = 0x00100000
+$$ENM_PROTECTED      = 0x00200000
+
+' ***** PenWin specific  *****
+$$ENM_CORRECTTEXT    = 0x00400000
+
+' ***** Far East specific notification mask  *****
+$$ENM_IMECHANGE       = 0x00800000
+$$ENM_LANGCHANGE      = 0x01000000
+$$ENM_OBJECTPOSITIONS = 0x02000000
+$$ENM_LINK            = 0x04000000
+
+' ***** new edit control styles  *****
+$$ES_SAVESEL         = 0x00008000
+$$ES_SUNKEN          = 0x00004000
+$$ES_DISABLENOSCROLL = 0x00002000
+$$ES_NOOLEDRAGDROP   = 0x00000008
+
+' ***** same as WS_MAXIMIZE *****
+$$ES_SELECTIONBAR    = 0x01000000
+
+' ***** new edit control extended style  *****
+$$ES_EX_NOCALLOLEINIT = 0x01000000
+
+' ***** These flag are used in the only FE Windows.  *****
+$$ES_VERTICAL        = 0x00400000
+$$ES_NOIME           = 0x00080000
+$$ES_SELFIME         = 0x00040000
+
+' ***** edit control options  *****
+$$ECO_AUTOWORDSELECTION = 0x00000001
+$$ECO_AUTOVSCROLL       = 0x00000040
+$$ECO_AUTOHSCROLL       = 0x00000080
+$$ECO_NOHIDESEL         = 0x00000100
+$$ECO_READONLY          = 0x00000800
+$$ECO_WANTRETURN        = 0x00001000
+$$ECO_SAVESEL           = 0x00008000
+$$ECO_SELECTIONBAR      = 0x01000000
+
+' ***** used only in FE Windows version  *****
+$$ECO_VERTICAL          = 0x00400000
+
+' ***** ECO operations  *****
+$$ECOOP_SET      = 0x0001
+$$ECOOP_OR       = 0x0002
+$$ECOOP_AND      = 0x0003
+$$ECOOP_XOR      = 0x0004
+
+' ***** new word break function actions  *****
+$$WB_CLASSIFY      = 3
+$$WB_MOVEWORDLEFT  = 4
+$$WB_MOVEWORDRIGHT = 5
+$$WB_LEFTBREAK     = 6
+$$WB_RIGHTBREAK    = 7
+
+' ***** Far East specific flags  *****
+$$WB_MOVEWORDPREV  = 4
+$$WB_MOVEWORDNEXT  = 5
+$$WB_PREVBREAK     = 6
+$$WB_NEXTBREAK     = 7
+
+$$PC_FOLLOWING     = 1
+$$PC_LEADING       = 2
+$$PC_OVERFLOW      = 3
+$$PC_DELIMITER     = 4
+$$WBF_WORDWRAP     = 0x010
+$$WBF_WORDBREAK    = 0x020
+$$WBF_OVERFLOW     = 0x040
+$$WBF_LEVEL1       = 0x080
+$$WBF_LEVEL2       = 0x100
+$$WBF_CUSTOM       = 0x200
+
+' ***** Far East specific flags  *****
+$$IMF_FORCENONE         = 0x0001
+$$IMF_FORCEENABLE       = 0x0002
+$$IMF_FORCEDISABLE      = 0x0004
+$$IMF_CLOSESTATUSWINDOW = 0x0008
+$$IMF_VERTICAL          = 0x0020
+$$IMF_FORCEACTIVE       = 0x0040
+$$IMF_FORCEINACTIVE     = 0x0080
+$$IMF_FORCEREMEMBER     = 0x0100
+$$IMF_MULTIPLEEDIT      = 0x0400
+
+' ***** word break flags (used with WB_CLASSIFY)  *****
+$$WBF_CLASS      = 0x0F
+$$WBF_ISWHITE    = 0x10
+$$WBF_BREAKLINE  = 0x20
+$$WBF_BREAKAFTER = 0x40
+
+' ***** CHARFORMAT masks  *****
+$$CFM_BOLD      = 0x00000001
+$$CFM_ITALIC    = 0x00000002
+$$CFM_UNDERLINE = 0x00000004
+$$CFM_STRIKEOUT = 0x00000008
+$$CFM_PROTECTED = 0x00000010
+$$CFM_LINK      = 0x00000020
+$$CFM_SMALLCAPS = 0x40                 
+$$CFM_ALLCAPS   = 0x80                  
+$$CFM_HIDDEN    = 0x100                   
+$$CFM_OUTLINE   = 0x200               
+$$CFM_SHADOW    = 0x400                  
+$$CFM_EMBOSS    = 0x800                  
+$$CFM_IMPRINT   = 0x1000                
+$$CFM_DISABLED  = 0x2000
+$$CFM_REVISED   = 0x4000
+$$CFM_SIZE      = 0x80000000
+$$CFM_COLOR     = 0x40000000
+$$CFM_FACE      = 0x20000000
+$$CFM_OFFSET    = 0x10000000
+$$CFM_CHARSET   = 0x08000000
+$$CFM_BACKCOLOR     = 0x4000000
+$$CFM_LCID          = 0x2000000
+$$CFM_UNDERLINETYPE = 0x0800000 
+$$CFM_WEIGHT        = 0x0400000
+$$CFM_SPACING       = 0x0200000           
+$$CFM_KERNING       = 0x0100000           
+$$CFM_STYLE         = 0x0080000                
+$$CFM_ANIMATION     = 0x0040000             
+$$CFM_REVAUTHOR     = 0x0008000
+
+' ***** CHARFORMAT effects  *****
+$$CFE_BOLD      = 0x0001
+$$CFE_ITALIC    = 0x0002
+$$CFE_UNDERLINE = 0x0004
+$$CFE_STRIKEOUT = 0x0008
+$$CFE_PROTECTED = 0x0010
+$$CFE_LINK      = 0x0020
+$$CFE_SUBSCRIPT   = 0x10000             ' Superscript and subscript are
+$$CFE_SUPERSCRIPT = 0x20000             ' mutually exclusive    
+
+$$CFM_SUBSCRIPT = 0x30000			' CFE_SUBSCRIPT Or CFE_SUPERSCRIPT
+$$CFM_SUPERSCRIPT = $$CFM_SUBSCRIPT
+
+' ***** NOTE: CFE_AUTOCOLOR corresponds to CFM_COLOR, which controls it  *****
+$$CFE_AUTOCOLOR = 0x40000000
+
+$$CFE_SMALLCAPS = $$CFM_SMALLCAPS
+$$CFE_ALLCAPS   = $$CFM_ALLCAPS
+$$CFE_HIDDEN    = $$CFM_HIDDEN
+$$CFE_OUTLINE   = $$CFM_OUTLINE
+$$CFE_SHADOW    = $$CFM_SHADOW
+$$CFE_EMBOSS    = $$CFM_EMBOSS
+$$CFE_IMPRINT   = $$CFM_IMPRINT
+$$CFE_DISABLED  = $$CFM_DISABLED
+$$CFE_REVISED   = $$CFM_REVISED
+
+$$CFE_AUTOBACKCOLOR = $$CFM_BACKCOLOR 
+
+' ***** Underline types *****
+$$CFU_CF1UNDERLINE    = 0xFF      
+$$CFU_INVERT          = 0xFE       
+$$CFU_UNDERLINEDOTTED = 0x4       
+$$CFU_UNDERLINEDOUBLE = 0x3     
+$$CFU_UNDERLINEWORD   = 0x2    
+$$CFU_UNDERLINE       = 0x1
+$$CFU_UNDERLINENONE   = 0x0
+
+$$yHeightCharPtsMost = 1638
+
+' ***** EM_SETCHARFORMAT wParam masks  *****
+$$SCF_DEFAULT    = 0x0000
+$$SCF_SELECTION  = 0x0001
+$$SCF_WORD       = 0x0002
+$$SCF_ALL        = 0x0004
+$$SCF_USEUIRULES = 0x0008
+
+' ***** stream formats  *****
+$$SF_TEXT      = 0x0001
+$$SF_RTF       = 0x0002
+$$SF_RTFNOOBJS = 0x0003 
+$$SF_TEXTIZED  = 0x0004
+$$SF_UNICODE   = 0x0010
+
+' ***** Flag telling stream operations to operate on the selection only  *****
+' ***** EM_STREAMIN will replace the current selection  *****
+' ***** EM_STREAMOUT will stream out the current selection  *****
+$$SFF_SELECTION = 0x8000
+
+' ***** Flag telling stream operations to operate on the common RTF keyword only  *****
+' ***** EM_STREAMIN will accept the only common RTF keyword  *****
+' ***** EM_STREAMOUT will stream out the only common RTF keyword  *****
+$$SFF_PLAINRTF = 0x4000
+
+' ***** all paragraph measurements are in twips  *****
+
+$$MAX_TAB_STOPS = 32
+$$lDefaultTab   = 720
+
+' ***** PARAFORMAT mask values  *****
+$$PFM_STARTINDENT    = 0x00000001
+$$PFM_RIGHTINDENT    = 0x00000002
+$$PFM_OFFSET         = 0x00000004
+$$PFM_ALIGNMENT      = 0x00000008
+$$PFM_TABSTOPS       = 0x00000010
+$$PFM_NUMBERING      = 0x00000020
+$$PFM_SPACEBEFORE    = 0x40
+$$PFM_SPACEAFTER      = 0x80
+$$PFM_LINESPACING     = 0x100
+$$PFM_STYLE           = 0x400
+$$PFM_BORDER          = 0x800              
+$$PFM_SHADING         = 0x1000               
+$$PFM_NUMBERINGSTYLE  = 0x2000         
+$$PFM_NUMBERINGTAB    = 0x4000           
+$$PFM_NUMBERINGSTART  = 0x8000         
+$$PFM_DIR             = 0x10000
+$$PFM_RTLPARA         = 0x10000          
+$$PFM_KEEP            = 0x20000              
+$$PFM_KEEPNEXT        = 0x40000            
+$$PFM_PAGEBREAKBEFORE = 0x80000       
+$$PFM_NOLINENUMBER    = 0x100000         
+$$PFM_NOWIDOWCONTROL  = 0x200000       
+$$PFM_DONOTHYPHEN     = 0x400000          
+$$PFM_SIDEBYSIDE      = 0x800000           
+$$PFM_OFFSETINDENT     = 0x80000000
+$$PFM_TABLE           = 0xC0000000   
+
+$$PFE_TABLEROW     = 0xC000                ' These 3 options are mutually 
+$$PFE_TABLECELLEND = 0x8000                ' exclusive and each imply  
+$$PFE_TABLECELL    = 0x4000                ' that para is part of a table
+          
+' ***** PARAFORMAT numbering options  *****
+$$PFN_BULLET         = 0x0001
+
+' ***** PARAFORMAT alignment options  *****
+$$PFA_LEFT           = 0x0001
+$$PFA_RIGHT          = 0x0002
+$$PFA_CENTER         = 0x0003
+$$PFA_JUSTIFY        = 0x0004
+
+$$SEL_EMPTY       = 0x0000
+$$SEL_TEXT        = 0x0001
+$$SEL_OBJECT      = 0x0002
+$$SEL_MULTICHAR   = 0x0004
+$$SEL_MULTIOBJECT = 0x0008
+
+$$OLEOP_DOVERB  = 1
+
+' ***** clipboard formats - use as parameter to RegisterClipboardFormat()  *****
+$$CF_RTF = "Rich Text Format"
+$$CF_RTFNOOBJS = "Rich Text Format Without Objects"
+$$CF_RETEXTOBJ = "RichEdit Text and Objects"
+
+$$GCM_RIGHTMOUSEDROP = 0x8000  
+
+' ***** flags for the GETTEXTLENGTHEX data structure *****      
+$$GTL_DEFAULT  = 0      		' do the default (return ' # of chars)     
+$$GTL_USECRLF  = 1      		' compute answer using CRLFs for paragraphs
+$$GTL_PRECISE  = 2      		' compute a precise answer            
+$$GTL_CLOSE    = 4        	' fast computation of a "close" answer 
+$$GTL_NUMCHARS = 8     		' return the number of characters 
+$$GTL_NUMBYTES = 16    		' return the number of _bytes_  
+
+' ***** BIDIOPTIONS masks *****
+$$BOM_DEFPARADIR       = 0x1             	' Default paragraph direction (implies alignment) (obsolete)
+$$BOM_PLAINTEXT        = 0x2              	' Use plain text layout (obsolete)
+$$BOM_NEUTRALOVERRIDE  = 0x4        		' Override neutral layout (obsolete) 
+$$BOM_CONTEXTREADING   = 0x8         	' Context reading order 
+$$BOM_CONTEXTALIGNMENT = 0x10      		' Context alignment 
+
+' ***** BIDIOPTIONS effects *****
+$$BOE_RTLDIR           = 0x1                 	' Default paragraph direction (implies alignment) (obsolete) 
+$$BOE_PLAINTEXT        = 0x2              		' Use plain text layout (obsolete) 
+$$BOE_NEUTRALOVERRIDE  = 0x4        			' Override neutral layout (obsolete) 
+$$BOE_CONTEXTREADING   = 0x8         		' Context reading order 
+$$BOE_CONTEXTALIGNMENT = 0x10      			' Context alignment 
+
+' ***** Additional EM_FINDTEXT[EX] flags *****
+$$FR_MATCHDIAC      = 0x20000000
+$$FR_MATCHKASHIDA   = 0x40000000
+$$FR_MATCHALEFHAMZA = 0x80000000
+
+' ***** UNICODE embedding character *****
+$$WCH_EMBEDDING = 0xFFFC

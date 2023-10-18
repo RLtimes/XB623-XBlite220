@@ -1,0 +1,786 @@
+'
+'
+' ##########################  David Szafranski
+' #####  advapi32.dec  #####  copyright 2002
+' ##########################  Windows XBLite declarations for Windows "advapi32"
+'
+' subject to LGPL license - see COPYING_LIB
+' version 0.002	2003/06/25
+'
+' ###########################
+' #####  declare types  #####
+' ###########################
+
+' IMPORT "kernel32"
+'
+TYPE SECURITY_DESCRIPTOR
+  UBYTE  .Revision
+  UBYTE  .Sbz1
+  USHORT  .nControl
+  ULONG  .Owner
+  ULONG  .Group
+  ULONG  .Sacl
+  ULONG  .Dacl
+END TYPE
+'
+'TYPE SECURITY_ATTRIBUTES
+'  XLONG  .nLength
+'  XLONG  .lpSecurityDescriptor
+'  XLONG  .bInheritHandle
+'END TYPE
+'
+TYPE GENERIC_MAPPING
+  ULONG  .GenericRead
+  ULONG  .GenericWrite
+  ULONG  .GenericExecute
+  ULONG  .GenericAll
+END TYPE
+'
+TYPE EVENTLOGRECORD
+  ULONG       .Length   ' Length of full record  
+  ULONG      .Reserved   ' Used by the service  
+  ULONG    .RecordNumber   ' Absolute record number  
+  ULONG    .TimeGenerated   ' Seconds since 1-1-1970  
+  ULONG     .TimeWritten   ' Seconds since 1-1-1970  
+  ULONG  .EventID
+  USHORT  .EventType
+  USHORT  .NumStrings
+  USHORT  .EventCategory
+  USHORT    .ReservedFlags   ' For use with paired events [auditing]  
+  ULONG .ClosingRecordNumber   ' For use with paired events [auditing]  
+  ULONG    .StringOffset   ' Offset from beginning of record  
+  ULONG  .UserSidLength
+  ULONG  .UserSidOffset
+  ULONG  .DataLength
+  ULONG     .DataOffset   ' Offset from beginning of record  
+'
+' Then follow:
+'
+' WCHAR SourceName[]
+' WCHAR Computername[]
+' SID  UserSid
+' WCHAR Strings[]
+' UBYTE Data[]
+' CHAR Pad[]
+' ULONG Length;
+END TYPE
+'
+TYPE LUID
+  ULONG  .LowPart
+  ULONG  .HighPart
+END TYPE
+'
+TYPE LUID_AND_ATTRIBUTES
+  ULONG  .pLuid
+  ULONG  .Attributes
+END TYPE
+'
+TYPE ACL
+  UBYTE  .AclRevision
+  UBYTE  .Sbz1
+  USHORT  .AclSize
+  USHORT  .AceCount
+  USHORT  .Sbz2
+END TYPE
+'
+TYPE PRIVILEGE_SET
+  ULONG  .PrivilegeCount
+  ULONG  .nControl
+  LUID_AND_ATTRIBUTES .Privilege[0]   ' array size may vary  
+END TYPE
+'
+TYPE SID_AND_ATTRIBUTES
+  ULONG	.Sid
+  ULONG	.Attributes
+END TYPE
+'
+TYPE TOKEN_GROUPS
+  ULONG  .GroupCount
+  SID_AND_ATTRIBUTES .Groups[0]   ' array size may vary  
+END TYPE
+'
+TYPE TOKEN_PRIVILEGES
+  ULONG  .PrivilegeCount
+  LUID_AND_ATTRIBUTES .Privileges[0]   ' array size may vary  
+END TYPE
+'
+TYPE SERVICE_STATUS
+  ULONG  .dwServiceType
+  ULONG  .dwCurrentState
+  ULONG  .dwControlsAccepted
+  ULONG  .dwWin32ExitCode
+  ULONG  .dwServiceSpecificExitCode
+  ULONG  .dwCheckPoint
+  ULONG  .dwWaitHint
+END TYPE
+'
+TYPE ENUM_SERVICE_STATUS
+  ULONG  .lpServiceName
+  ULONG  .lpDisplayName
+  SERVICE_STATUS  .ServiceStatus
+END TYPE
+'
+TYPE SID_IDENTIFIER_AUTHORITY
+  UBYTE  .Value[6]
+END TYPE
+'
+TYPE SERVICE_TABLE_ENTRY
+  ULONG  .lpServiceName
+  ULONG  .lpServiceProc
+END TYPE
+'
+TYPE QUERY_SERVICE_LOCK_STATUS
+  ULONG  .fIsLocked
+  ULONG  .lpLockOwner
+  ULONG  .dwLockDuration
+END TYPE
+'
+TYPE QUERY_SERVICE_CONFIG
+  ULONG  .dwServiceType
+  ULONG  .dwStartType
+  ULONG  .dwErrorControl
+  ULONG  .lpBinaryPathName
+  ULONG  .lpLoadOrderGroup
+  ULONG  .dwTagId
+  ULONG  .lpDependencies
+  ULONG  .lpServiceStartName
+  ULONG  .lpDisplayName
+END TYPE
+'
+' crypt types
+'
+TYPE ALG_ID = XLONG
+TYPE HCRYPTKEY = ULONG
+TYPE HCRYPTHASH = ULONG
+TYPE HCRYPTPROV = ULONG
+'
+TYPE BLOBHEADER
+    UBYTE   .bType
+    UBYTE   .bVersion
+    USHORT  .Reserved
+    XLONG   .aiKeyAlg
+END TYPE
+'
+TYPE RSAPUBKEY 
+	XLONG .magic
+	XLONG .bitlen
+	XLONG .pubexp
+END TYPE
+
+'
+' ###############################
+' #####  declare functions  #####
+' ###############################
+'
+'
+EXTERNAL FUNCTION AbortSystemShutdownA (lpMachineName)
+EXTERNAL FUNCTION AccessCheck (pSecurityDescriptor, ClientToken, DesiredAccess, GenericMapping, PrivilegeSet, PrivilegeSetLength, GrantedAccess, STATUS)
+EXTERNAL FUNCTION AccessCheckAndAuditAlarmA (SubsystemName, HandleId, ObjectTypeName, ObjectName, SecurityDescriptor, DesiredAccess, GenericMapping, ObjectCreation, GrantedAccess, AccessStatus, pfGenerateOnClose)
+EXTERNAL FUNCTION AddAccessAllowedAce (pAcl, dwAceRevision, AccessMask, pSid)
+EXTERNAL FUNCTION AddAccessDeniedAce (pAcl, dwAceRevision, AccessMask, pSid)
+EXTERNAL FUNCTION AddAce (pAcl, dwAceRevision, dwStartingAceIndex, pAceList, nAceListLength)
+EXTERNAL FUNCTION AddAuditAccessAce (pAcl, dwAceRevision, dwAccessMask, pSid, bAuditSuccess, bAuditFailure)
+EXTERNAL FUNCTION AdjustTokenGroups (TokenHandle, ResetToDefault, NewState, BufferLength, PreviousStateASTOKEN_GROUPS, ReturnLength)
+EXTERNAL FUNCTION AdjustTokenPrivileges (TokenHandle, DisableAllPrivileges, NewState, BufferLength, PreviousState, ReturnLength)
+EXTERNAL FUNCTION AllocateAndInitializeSid (pIdentifierAuthority, nSubAuthorityCount, nSubAuthority0, nSubAuthority1, nSubAuthority2, nSubAuthority3, nSubAuthority4, nSubAuthority5, nSubAuthority6, nSubAuthority7, lpPSid)
+EXTERNAL FUNCTION AllocateLocallyUniqueId (xLuid)
+EXTERNAL FUNCTION AreAllAccessesGranted (GrantedAccess, DesiredAccess)
+EXTERNAL FUNCTION AreAnyAccessesGranted (GrantedAccess, DesiredAccess)
+EXTERNAL FUNCTION BackupEventLogA (hEventLog, lpBackupFileName)
+EXTERNAL FUNCTION ChangeServiceConfigA (hService, dwServiceType, dwStartType, dwErrorControl, lpBinaryPathName, lpLoadOrderGroup, lpdwTagId, lpDependencies, lpServiceStartName, lpPassword, lpDisplayName)
+EXTERNAL FUNCTION ClearEventLogA (hEventLog, lpBackupFileName)
+EXTERNAL FUNCTION CloseEventLog (hEventLog)
+EXTERNAL FUNCTION CloseServiceHandle (hSCObject)
+EXTERNAL FUNCTION ControlService (hService, dwControl, lpServiceStatus)
+EXTERNAL FUNCTION CopySid (nDestinationSidLength, pDestinationSid, pSourceSid)
+EXTERNAL FUNCTION CreatePrivateObjectSecurity (ParentDescriptor, CreatorDescriptorASSECURITY_DESCRIPTOR, NewDescriptorASSECURITY_DESCRIPTOR, IsDirectoryObject, Token, GenericMapping)
+EXTERNAL FUNCTION CreateServiceA (hSCManager, lpServiceName, lpDisplayName, dwDesiredAccess, dwServiceType, dwStartType, dwErrorControl, lpBinaryPathName, lpLoadOrderGroup, lpdwTagId, lpDependencies, lp, lpPassword)
+EXTERNAL CFUNCTION CryptAcquireContextA (lphProv, lpszContainer, lpszProvider, dwProvType, dwFlags)
+EXTERNAL CFUNCTION CryptAcquireContextW (lphProv, lpszContainer, lpszProvider, dwProvType, dwFlags)
+EXTERNAL CFUNCTION CryptContextAddRef (HCRYPTPROV hProv, lpdwReserved, dwFlags)
+EXTERNAL CFUNCTION CryptCreateHash (HCRYPTPROV hProv, Algid, HCRYPTKEY hKey, dwFlags, lphHash)
+EXTERNAL CFUNCTION CryptDecrypt (HCRYPTKEY hKey, HCRYPTHASH hHash, bFinal, ULONG dwFlags, lpbData, lpdwDataLen)
+EXTERNAL CFUNCTION CryptDeriveKey (HCRYPTPROV hProv, Algid, hBaseData, dwFlags, lphKey)
+EXTERNAL CFUNCTION CryptDestroyHash (HCRYPTHASH hHash)
+EXTERNAL CFUNCTION CryptDestroyKey (HCRYPTKEY hKey)
+EXTERNAL CFUNCTION CryptDuplicateHash (HCRYPTHASH hHash, lpdwReserved, dwFlags, lphHash)
+EXTERNAL CFUNCTION CryptDuplicateKey (HCRYPTKEY hKey, lpdwReserved, dwFlags, lphKey)
+EXTERNAL CFUNCTION CryptEncrypt (HCRYPTKEY hKey, HCRYPTHASH hHash, bFinal, ULONG dwFlags, lpbData, lpdwDataLen, ULONG dwBufLen)
+EXTERNAL CFUNCTION CryptEnumProviderTypesA (dwIndex, lpdwReserved, dwFlags, lpdwProvType, lpszTypeName, lpcbTypeName)
+EXTERNAL CFUNCTION CryptEnumProviderTypesW (dwIndex, lpdwReserved, dwFlags, lpdwProvType, lpszTypeName, lpcbTypeName)
+EXTERNAL CFUNCTION CryptEnumProvidersA (dwIndex, lpdwReserved, dwFlags, lpdwProvType, lpszProvName, lpcbProvName)
+EXTERNAL CFUNCTION CryptEnumProvidersW (dwIndex, lpdwReserved, dwFlags, lpdwProvType, lpszProvName, lpcbProvName)
+EXTERNAL CFUNCTION CryptExportKey (HCRYPTKEY hKey, HCRYPTKEY hExpKey, dwBlobType, dwFlags, lpbData, lpdwDataLen)
+EXTERNAL CFUNCTION CryptGenKey (HCRYPTPROV hProv, Algid, dwFlags, lphKey)
+EXTERNAL CFUNCTION CryptGenRandom (HCRYPTPROV hProv, dwLen, lpbBuffer)
+EXTERNAL CFUNCTION CryptGetDefaultProviderA (dwProvType, lpdwReserved, dwFlags, lpszProvName, lpcbProvName)
+EXTERNAL CFUNCTION CryptGetDefaultProviderW (dwProvType, lpdwReserved, dwFlags, lpszProvName, lpcbProvName)
+EXTERNAL CFUNCTION CryptGetHashParam (HCRYPTHASH hHash, dwParam, lpbData, lpdwDataLen, dwFlags)
+EXTERNAL CFUNCTION CryptGetKeyParam (HCRYPTKEY hkey, dwParam, lpbData, lpdwDataLen, dwFlags)
+EXTERNAL CFUNCTION CryptGetProvParam (HCRYPTPROV hProv, dwParam, lpbData, lpdwDataLen, dwFlags)
+EXTERNAL CFUNCTION CryptGetUserKey (HCRYPTPROV hProv, dwKeySpec, lphUserKey)
+EXTERNAL CFUNCTION CryptHashData (HCRYPTHASH hHash, lpbData, dwDataLen, dwFlags)
+EXTERNAL CFUNCTION CryptHashSessionKey (HCRYPTHASH hHash, HCRYPTKEY hKey, dwFlags )
+EXTERNAL CFUNCTION CryptImportKey (HCRYPTPROV hProv, lpbData, dwDataLen, hImpKey, dwFlags, lphKey)
+EXTERNAL CFUNCTION CryptReleaseContext (HCRYPTPROV hProv, dwFlags)
+EXTERNAL CFUNCTION CryptSetHashParam (HCRYPTHASH hHash, dwParam, lpbData, dwFlags)
+EXTERNAL CFUNCTION CryptSetKeyParam (HCRYPTKEY hKey, dwParam, lpbData, dwFlags)
+EXTERNAL CFUNCTION CryptSetProvParam (HCRYPTPROV hProv, dwParam, lpbData, dwFlags)
+EXTERNAL CFUNCTION CryptSetProviderA (lpszProvName, dwProvType)
+EXTERNAL CFUNCTION CryptSetProviderExA (lpszProvName, dwProvType, lpdwReserved, dwFlags)
+EXTERNAL CFUNCTION CryptSetProviderExW (lpszProvName, dwProvType, lpdwReserved, dwFlags)
+EXTERNAL CFUNCTION CryptSetProviderW (lpszProvName, dwProvType)
+EXTERNAL CFUNCTION CryptSignHashA (HCRYPTHASH hHash, dwKeySpec, lpszDescription, dwFlags, lpbSignature, lpdwSigLen)
+EXTERNAL CFUNCTION CryptSignHashW (HCRYPTHASH hHash, dwKeySpec, lpszDescription, dwFlags, lpbSignature, lpdwSigLen)
+EXTERNAL CFUNCTION CryptVerifySignatureA (HCRYPTHASH hHash, lpbSignature, dwSigLen, hPubKey, lpszDescription, dwFlags)
+EXTERNAL CFUNCTION CryptVerifySignatureW (HCRYPTHASH hHash, lpbSignature, dwSigLen, hPubKey, lpszDescription, dwFlags)
+EXTERNAL FUNCTION DeleteAce (pAcl, dwAceIndex)
+EXTERNAL FUNCTION DeleteService (hService)
+EXTERNAL FUNCTION DeregisterEventSource (hEventLog)
+EXTERNAL FUNCTION DestroyPrivateObjectSecurity (ObjectDescriptor)
+EXTERNAL FUNCTION DuplicateToken (ExistingTokenHandle, ImpersonationLevel, DuplicateTokenHandle)
+EXTERNAL FUNCTION EnumDependentServicesA (hService, dwServiceState, lpServices, cbBufSize, pcbBytesNeeded, lpServicesReturned)
+EXTERNAL FUNCTION EnumServicesStatusA (hSCManager, dwServiceType, dwServiceState, lpServices, cbBufSize, pcbBytesNeeded, lpServicesReturned, lpResumeHandle)
+EXTERNAL FUNCTION EqualPrefixSid (pSid1, pSid2)
+EXTERNAL FUNCTION EqualSid (pSid1, pSid2)
+EXTERNAL FUNCTION FindFirstFreeAce (pAcl, pAce)
+EXTERNAL FUNCTION FreeSid (pSid)
+EXTERNAL FUNCTION GetAce (pAcl, dwAceIndex, pAce)
+EXTERNAL FUNCTION GetAclInformation (pAcl, pAclInformation, nAclInformationLength, dwAclInformationClass)
+EXTERNAL FUNCTION GetCurrentHwProfileA (lpHwProfileInfoASHW_PROFILE_INFO)
+EXTERNAL FUNCTION GetFileSecurityA (lpFileName, RequestedInformation, pSecurityDescriptor, nLength, lpnLengthNeeded)
+EXTERNAL FUNCTION GetKernelObjectSecurity (xHandle, RequestedInformation, pSecurityDescriptor, nLength, lpnLengthNeeded)
+EXTERNAL FUNCTION GetLengthSid (pSid)
+EXTERNAL FUNCTION GetNumberOfEventLogRecords (hEventLog, NumberOfRecords)
+EXTERNAL FUNCTION GetOldestEventLogRecord (hEventLog, OldestRecord)
+EXTERNAL FUNCTION GetPrivateObjectSecurity (ObjectDescriptor, SecurityInformation, ResultantDescriptorASSECURITY_DESCRIPTOR, DescriptorLength, ReturnLength)
+EXTERNAL FUNCTION GetSecurityDescriptorControl (pSecurityDescriptor, pControl, lpdwRevision)
+EXTERNAL FUNCTION GetSecurityDescriptorDacl (pSecurityDescriptor, lpbDaclPresent, pDacl, lpbDaclDefaulted)
+EXTERNAL FUNCTION GetSecurityDescriptorGroup (pSecurityDescriptor, pGroup, lpbGroupDefaulted)
+EXTERNAL FUNCTION GetSecurityDescriptorLength (pSecurityDescriptor)
+EXTERNAL FUNCTION GetSecurityDescriptorOwner (pSecurityDescriptor, pOwner, lpbOwnerDefaulted)
+EXTERNAL FUNCTION GetSecurityDescriptorSacl (pSecurityDescriptor, lpbSaclPresent, pSacl, lpbSaclDefaulted)
+EXTERNAL FUNCTION GetSecurityInfo (hHandle, ObjectType, SecurityInformation, pSidOwner, pSidGroup, pDacl, pSacl, pSecurityDescriptor)
+EXTERNAL FUNCTION GetServiceDisplayNameA (hSCManager, lpServiceName, lpDisplayName, lpcchBuffer)
+EXTERNAL FUNCTION GetServiceKeyNameA (hSCManager, lpDisplayName, lpServiceName, lpcchBuffer)
+EXTERNAL FUNCTION GetSidIdentifierAuthority (pSid)
+EXTERNAL FUNCTION GetSidLengthRequired (nSubAuthorityCount)
+EXTERNAL FUNCTION GetSidSubAuthority (pSid, nSubAuthority)
+EXTERNAL FUNCTION GetSidSubAuthorityCount (pSid)
+EXTERNAL FUNCTION GetTokenInformation (TokenHandle, TokenInformationClass, TokenInformation, TokenInformationLength, ReturnLength)
+EXTERNAL FUNCTION GetUserNameA (lpBuffer, nSize)
+EXTERNAL FUNCTION ImpersonateNamedPipeClient (hNamedPipe)
+EXTERNAL FUNCTION ImpersonateSelf (ImpersonationLevel)
+EXTERNAL FUNCTION InitializeAcl (pAcl, nAclLength, dwAclRevision)
+EXTERNAL FUNCTION InitializeSecurityDescriptor (pSecurityDescriptor, dwRevision)
+EXTERNAL FUNCTION InitializeSid (Sid, pIdentifierAuthority, nSubAuthorityCount)
+EXTERNAL FUNCTION InitiateSystemShutdownA (lpMachineName, lpMessage, dwTimeout, bForceAppsClosed, bRebootAfterShutdown)
+EXTERNAL FUNCTION IsTextUnicode (lpBuffer, cb, lpi)
+EXTERNAL FUNCTION IsValidAcl (pAcl)
+EXTERNAL FUNCTION IsValidSecurityDescriptor (pSecurityDescriptor)
+EXTERNAL FUNCTION IsValidSid (pSid)
+EXTERNAL FUNCTION LockServiceDatabase (hSCManager)
+EXTERNAL FUNCTION LookupAccountNameA (lpSystemName, lpAccountName, Sid, cbSid, ReferencedDomainName, cbReferencedDomainName, peUse)
+EXTERNAL FUNCTION LookupAccountSidA (lpSystemName, Sid, xName, cbName, ReferencedDomainName, cbReferencedDomainName, peUse)
+EXTERNAL FUNCTION LookupPrivilegeDisplayNameA (lpSystemName, lpName, lpDisplayName, cbDisplayName, lpLanguageID)
+EXTERNAL FUNCTION LookupPrivilegeNameA (lpSystemName, lpLuid, lpName, cbName)
+EXTERNAL FUNCTION LookupPrivilegeValueA (lpSystemName, lpName, lpLuid)
+EXTERNAL FUNCTION MakeAbsoluteSD (pSelfRelativeSecurityDescriptor, pAbsoluteSecurityDescriptorASSECURITY_DESCRIPTOR, lpdwAbsoluteSecurityDescriptorSize, pDacl, lpdwDaclSize, pSaclASACL, lpdwSaclSize, pOwner, lpdwOwnerSize, pPrimaryGroup, lpdwPrimaryGroupSize)
+EXTERNAL FUNCTION MakeSelfRelativeSD (pAbsoluteSecurityDescriptor, pSelfRelativeSecurityDescriptorASSECURITY_DESCRIPTOR, lpdwBufferLength)
+EXTERNAL FUNCTION MapGenericMask (AccessMask, GenericMapping)
+EXTERNAL FUNCTION NotifyBootConfigStatus (BootAcceptable)
+EXTERNAL FUNCTION NotifyChangeEventLog (hEventLog, hEvent)
+EXTERNAL FUNCTION ObjectCloseAuditAlarmA (SubsystemName, HandleId, GenerateOnClose)
+EXTERNAL FUNCTION ObjectPrivilegeAuditAlarmA (SubsystemName, HandleId, ClientToken, DesiredAccess, Privileges, AccessGranted)
+EXTERNAL FUNCTION OpenBackupEventLogA (lpUNCServerName, lpFileName)
+EXTERNAL FUNCTION OpenEventLogA (lpUNCServerName, lpSourceName)
+EXTERNAL FUNCTION OpenProcessToken (ProcessHandle, DesiredAccess, TokenHandle)
+EXTERNAL FUNCTION OpenSCManagerA (lpMachineName, lpDatabaseName, dwDesiredAccess)
+EXTERNAL FUNCTION OpenServiceA (hSCManager, lpServiceName, dwDesiredAccess)
+EXTERNAL FUNCTION OpenThreadToken (ThreadHandle, DesiredAccess, OpenAsSelf, TokenHandle)
+EXTERNAL FUNCTION PrivilegeCheck (ClientToken, RequiredPrivileges, pfResult)
+EXTERNAL FUNCTION PrivilegedServiceAuditAlarmA (SubsystemName, ServiceName, ClientToken, Privileges, AccessGranted)
+EXTERNAL FUNCTION QueryServiceConfigA (hService, lpServiceConfig, cbBufSize, pcbBytesNeeded)
+EXTERNAL FUNCTION QueryServiceLockStatusA (hSCManager, lpLockStatus, cbBufSize, pcbBytesNeeded)
+EXTERNAL FUNCTION QueryServiceObjectSecurity (hService, dwSecurityInformation, lpSecurityDescriptor, cbBufSize, pcbBytesNeeded)
+EXTERNAL FUNCTION QueryServiceStatus (hService, lpServiceStatus)
+EXTERNAL FUNCTION ReadEventLogA (hEventLog, dwReadFlags, dwRecordOffset, lpBuffer, nNumberOfBytesToRead, pnBytesRead, pnMinNumberOfBytesNeeded)
+EXTERNAL FUNCTION RegCloseKey (hKey)
+EXTERNAL FUNCTION RegConnectRegistryA (lpMachineName, hKey, phkResult)
+EXTERNAL FUNCTION RegCreateKeyA (hKey, lpSubKey, phkResult)
+EXTERNAL FUNCTION RegCreateKeyExA (hKey, lpSubKey, Reserved, lpClass, dwOptions, samDesired, lpSecurityAttributes, phkResult, lpdwDisposition)
+EXTERNAL FUNCTION RegDeleteKeyA (hKey, lpSubKey)
+EXTERNAL FUNCTION RegDeleteValueA (hKey, lpValueName)
+EXTERNAL FUNCTION RegEnumKeyA (hKey, dwIndex, lpName, cbName)
+EXTERNAL FUNCTION RegEnumKeyExA (hKey, dwIndex, lpName, lpcbName, lpReserved, lpClass, lpcbClass, lpftLastWriteTimeASFILETIME)
+EXTERNAL FUNCTION RegEnumValueA (hKey, dwIndex, lpValueName, lpcbValueName, lpReserved, lpType, lpData, lpcbData)
+EXTERNAL FUNCTION RegFlushKey (hKey)
+EXTERNAL FUNCTION RegGetKeySecurity (hKey, SecurityInformation, pSecurityDescriptor, lpcbSecurityDescriptor)
+EXTERNAL FUNCTION RegLoadKeyA (hKey, lpSubKey, lpFile)
+EXTERNAL FUNCTION RegNotifyChangeKeyValue (hKey, bWatchSubtree, dwNotifyFilter, hEvent, fAsynchronus)
+EXTERNAL FUNCTION RegOpenKeyA (hKey, lpSubKey, phkResult)
+EXTERNAL FUNCTION RegOpenKeyExA (hKey, lpSubKey, ulOptions, samDesired, phkResult)
+EXTERNAL FUNCTION RegQueryInfoKeyA (hKey, lpClass, lpcbClass, lpReserved, lpcSubKeys, lpcbMaxSubKeyLen, lpcbMaxClassLen, lpcValues, lpcbMaxValueNameLen, lpcbMaxValueLen, lpcbSecurityDescriptor, lpftLastWriteTimeASFILETIME)
+EXTERNAL FUNCTION RegQueryValueA (hKey, lpSubKey, lpValue, lpcbValue)
+EXTERNAL FUNCTION RegQueryValueExA (hKey, lpValueName, lpReserved, lpType, lpData, lpcbData)
+EXTERNAL FUNCTION RegReplaceKeyA (hKey, lpSubKey, lpNewFile, lpOldFile)
+EXTERNAL FUNCTION RegRestoreKeyA (hKey, lpFile, dwFlags)
+EXTERNAL FUNCTION RegSaveKeyA (hKey, lpFile, lpSecurityAttributes)
+EXTERNAL FUNCTION RegSetKeySecurity (hKey, SecurityInformation, pSecurityDescriptor)
+EXTERNAL FUNCTION RegSetValueA (hKey, lpSubKey, dwType, lpData, cbData)
+EXTERNAL FUNCTION RegSetValueExA (hKey, lpValueName, Reserved, dwType, lpData, cbData)
+EXTERNAL FUNCTION RegUnLoadKeyA (hKey, lpSubKey)
+EXTERNAL FUNCTION RegisterEventSourceA (lpUNCServerName, lpSourceName)
+EXTERNAL FUNCTION RegisterServiceCtrlHandlerA (lpServiceName, lpHandlerProc)
+EXTERNAL FUNCTION ReportEventA (hEventLog, wType, wCategory, dwEventID, lpUserSid, wNumStrings, dwDataSize, lpStrings, lpRawData)
+EXTERNAL FUNCTION RevertToSelf ()
+EXTERNAL FUNCTION SetAclInformation (pAcl, pAclInformation, nAclInformationLength, dwAclInformationClass)
+EXTERNAL FUNCTION SetFileSecurityA (lpFileName, SecurityInformation, pSecurityDescriptor)
+EXTERNAL FUNCTION SetKernelObjectSecurity (xHandle, SecurityInformation, SecurityDescriptor)
+EXTERNAL FUNCTION SetPrivateObjectSecurity (SecurityInformation, ModificationDescriptor, ObjectsSecurityDescriptorASSECURITY_DESCRIPTOR, GenericMapping, Token)
+EXTERNAL FUNCTION SetSecurityDescriptorDacl (pSecurityDescriptor, bDaclPresent, pDacl, bDaclDefaulted)
+EXTERNAL FUNCTION SetSecurityDescriptorGroup (pSecurityDescriptor, pGroup, bGroupDefaulted)
+EXTERNAL FUNCTION SetSecurityDescriptorOwner (pSecurityDescriptor, pOwner, bOwnerDefaulted)
+EXTERNAL FUNCTION SetSecurityDescriptorSacl (pSecurityDescriptor, bSaclPresent, pSacl, bSaclDefaulted)
+EXTERNAL FUNCTION SetServiceBits (hServiceStatus, dwServiceBits, bSetBitsOn, bUpdateImmediately)
+EXTERNAL FUNCTION SetServiceObjectSecurity (hService, dwSecurityInformation, lpSecurityDescriptor)
+EXTERNAL FUNCTION SetServiceStatus (hServiceStatus, lpServiceStatus)
+EXTERNAL FUNCTION SetThreadToken (hThread, Token)
+EXTERNAL FUNCTION SetTokenInformation (TokenHandle, TokenInformationClass, TokenInformation, TokenInformationLength)
+EXTERNAL FUNCTION StartServiceA (hService, dwNumServiceArgs, lpServiceArgVectors)
+EXTERNAL FUNCTION StartServiceCtrlDispatcherA (lpServiceStartTable)
+EXTERNAL FUNCTION UnlockServiceDatabase (ScLock)
+'
+'
+' ##########################################
+' #####  declare and define constants  #####
+' ##########################################
+'
+$$REG_NONE = 0
+$$REG_SZ = 1
+$$REG_EXPAND_SZ = 2
+$$REG_BINARY = 3
+$$REG_DWORD = 4
+$$REG_DWORD_LITTLE_ENDIAN = 4
+$$REG_DWORD_BIG_ENDIAN = 5
+$$REG_LINK = 6
+$$REG_MULTI_SZ = 7
+$$REG_RESOURCE_LIST = 8
+$$REG_FULL_RESOURCE_DESCRIPTOR = 9
+$$REG_RESOURCE_REQUIREMENTS_LIST = 10
+'
+$$HKEY_CLASSES_ROOT = 0x80000000
+$$HKEY_CURRENT_USER = 0x80000001
+$$HKEY_LOCAL_MACHINE = 0x80000002
+$$HKEY_USERS = 0x80000003
+$$HKEY_PERFORMANCE_DATA = 0x80000004
+$$HKEY_CURRENT_CONFIG = 0x80000005
+$$HKEY_DYN_DATA = 0x80000006
+'
+'$$ERROR_SUCCESS = 0
+$$APINULL = 0
+$$MAX_STRING_LENGTH = 256
+'
+'$$READ_CONTROL = 0x20000
+'$$WRITE_DAC = 0x40000
+'$$WRITE_OWNER = 0x80000
+'$$SYNCHRONIZE = 0x100000
+'
+' dwOptions Special options flag
+$$REG_OPTION_NON_VOLATILE = 0
+$$REG_OPTION_VOLATILE = 1
+$$REG_OPTION_BACKUP_RESTORE = 4
+'
+'$$STANDARD_RIGHTS_REQUIRED = 0xF0000
+'$$STANDARD_RIGHTS_ALL = 0x1F0000
+'$$STANDARD_RIGHTS_READ = $$READ_CONTROL
+'$$STANDARD_RIGHTS_WRITE = $$READ_CONTROL
+'$$STANDARD_RIGHTS_EXECUTE = $$READ_CONTROL
+'
+' samDesired   desired security access 
+$$KEY_QUERY_VALUE = 0x1
+$$KEY_SET_VALUE = 0x2
+$$KEY_CREATE_SUB_KEY = 0x4
+$$KEY_ENUMERATE_SUB_KEYS = 0x8
+$$KEY_NOTIFY = 0x10
+$$KEY_CREATE_LINK = 0x20
+$$KEY_READ = 0x20019       '(($$STANDARD_RIGHTS_READ OR $$KEY_QUERY_VALUE OR $$KEY_ENUMERATE_SUB_KEYS OR $$KEY_NOTIFY) AND (NOT $$SYNCHRONIZE))
+$$KEY_WRITE = 0x20006      '(($$STANDARD_RIGHTS_WRITE OR $$KEY_SET_VALUE OR $$KEY_CREATE_SUB_KEY) AND (NOT $$SYNCHRONIZE))
+$$KEY_EXECUTE = $$KEY_READ
+$$KEY_ALL_ACCESS = 0xF003F '(($$STANDARD_RIGHTS_ALL OR $$KEY_QUERY_VALUE OR $$KEY_SET_VALUE OR $$KEY_CREATE_SUB_KEY OR $$KEY_ENUMERATE_SUB_KEYS OR $$KEY_NOTIFY OR $$KEY_CREATE_LINK) AND (NOT $$SYNCHRONIZE))
+'
+' lpdwDisposition
+$$REG_CREATED_NEW_KEY = 1
+$$REG_OPENED_EXISTING_KEY = 2
+
+' crypto constants
+
+$$ALG_CLASS_ANY = 0
+$$ALG_CLASS_SIGNATURE = 0x2000
+$$ALG_CLASS_MSG_ENCRYPT = 0x4000
+$$ALG_CLASS_DATA_ENCRYPT = 0x6000
+$$ALG_CLASS_HASH = 0x8000
+$$ALG_CLASS_KEY_EXCHANGE = 0xA000
+$$ALG_TYPE_ANY = 0
+$$ALG_TYPE_DSS = 0x200
+$$ALG_TYPE_RSA = 0x400
+$$ALG_TYPE_BLOCK = 0x600
+$$ALG_TYPE_STREAM = 0x800
+$$ALG_TYPE_DH = 0xA00
+$$ALG_TYPE_SECURECHANNEL = 0xC00
+$$ALG_SID_ANY = 0
+$$ALG_SID_RSA_ANY = 0
+$$ALG_SID_RSA_PKCS = 1
+$$ALG_SID_RSA_MSATWORK = 2
+$$ALG_SID_RSA_ENTRUST = 3
+$$ALG_SID_RSA_PGP = 4
+$$ALG_SID_DSS_ANY = 0
+$$ALG_SID_DSS_PKCS = 1
+$$ALG_SID_DSS_DMS = 2
+$$ALG_SID_DES = 1
+$$ALG_SID_3DES = 3
+$$ALG_SID_DESX = 4
+$$ALG_SID_IDEA = 5
+$$ALG_SID_CAST = 6
+$$ALG_SID_SAFERSK64 = 7
+$$ALG_SID_SAFERSK128 = 8
+$$ALG_SID_3DES_112 = 9
+$$ALG_SID_CYLINK_MEK = 12
+$$ALG_SID_RC5 = 13
+$$ALG_SID_SKIPJACK = 10
+$$ALG_SID_TEK = 11
+$$CRYPT_MODE_CBCI = 6
+$$CRYPT_MODE_CFBP = 7
+$$CRYPT_MODE_OFBP = 8
+$$CRYPT_MODE_CBCOFM = 9
+$$CRYPT_MODE_CBCOFMI = 10
+$$ALG_SID_RC2 = 2
+$$ALG_SID_RC4 = 1
+$$ALG_SID_SEAL = 2
+$$ALG_SID_DH_SANDF = 1
+$$ALG_SID_DH_EPHEM = 2
+$$ALG_SID_AGREED_KEY_ANY = 3
+$$ALG_SID_KEA = 4
+$$ALG_SID_MD2 = 1
+$$ALG_SID_MD4 = 2
+$$ALG_SID_MD5 = 3
+$$ALG_SID_SHA = 4
+$$ALG_SID_SHA1 = 4
+$$ALG_SID_MAC = 5
+$$ALG_SID_RIPEMD = 6
+$$ALG_SID_RIPEMD160 = 7
+$$ALG_SID_SSL3SHAMD5 = 8
+$$ALG_SID_HMAC = 9
+$$ALG_SID_TLS1PRF = 10
+$$ALG_SID_SSL3_MASTER = 1
+$$ALG_SID_SCHANNEL_MASTER_HASH = 2
+$$ALG_SID_SCHANNEL_MAC_KEY = 3
+$$ALG_SID_PCT1_MASTER = 4
+$$ALG_SID_SSL2_MASTER = 5
+$$ALG_SID_TLS1_MASTER = 6
+$$ALG_SID_SCHANNEL_ENC_KEY = 7
+$$ALG_SID_EXAMPLE = 80
+
+$$CALG_MD2 = 0x8001		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_MD2)
+$$CALG_MD4 = 0x8002		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_MD4)
+$$CALG_MD5 = 0x8003		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_MD5)
+$$CALG_SHA = 0x8004		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_SHA)
+$$CALG_SHA1 = 0x8004		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_SHA1)
+$$CALG_MAC = 0x8005		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_MAC)
+
+$$CALG_RSA_SIGN = 0x2400	' ($$ALG_CLASS_SIGNATURE | $$ALG_TYPE_RSA | $$ALG_SID_RSA_ANY)
+$$CALG_DSS_SIGN = 0x2200	' ($$ALG_CLASS_SIGNATURE | $$ALG_TYPE_DSS | $$ALG_SID_DSS_ANY)
+$$CALG_RSA_KEYX = 0xA400	' ($$ALG_CLASS_KEY_EXCHANGE | $$ALG_TYPE_RSA | $$ALG_SID_RSA_ANY)
+$$CALG_DES = 0x6601		' ($$ALG_CLASS_DATA_ENCRYPT | $$ALG_TYPE_BLOCK | $$ALG_SID_DES)
+$$CALG_3DES_112 = 0x6609	' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_3DES_112)
+$$CALG_3DES = 0x6603		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_3DES)
+$$CALG_DESX = 0x6604		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_DESX)
+$$CALG_RC2 = 0x6602		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_RC2)
+$$CALG_RC4 = 0x6801		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_STREAM|$$ALG_SID_RC4)
+$$CALG_SEAL = 0x6802		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_STREAM|$$ALG_SID_SEAL)
+$$CALG_DH_SF = 0xAA01		' ($$ALG_CLASS_KEY_EXCHANGE|$$ALG_TYPE_DH|$$ALG_SID_DH_SANDF)
+$$CALG_DH_EPHEM = 0xAA02	' ($$ALG_CLASS_KEY_EXCHANGE|$$ALG_TYPE_DH|$$ALG_SID_DH_EPHEM)
+$$CALG_AGREEDKEY_ANY = 0xAA03	' ($$ALG_CLASS_KEY_EXCHANGE|$$ALG_TYPE_DH|$$ALG_SID_AGREED_KEY_ANY)
+$$CALG_KEA_KEYX = 0xAA04	' ($$ALG_CLASS_KEY_EXCHANGE|$$ALG_TYPE_DH|$$ALG_SID_KEA)
+$$CALG_HUGHES_MD5 = 0xA003	' ($$ALG_CLASS_KEY_EXCHANGE|$$ALG_TYPE_ANY|$$ALG_SID_MD5)
+$$CALG_SKIPJACK = 0x660A	' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_SKIPJACK)
+$$CALG_TEK = 0x660B		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_TEK)
+$$CALG_CYLINK_MEK = 0x660C	' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_CYLINK_MEK)
+$$CALG_SSL3_SHAMD5 = 0x8008	' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_SSL3SHAMD5)
+$$CALG_SSL3_MASTER = 0x4C01	' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_SSL3_MASTER)
+$$CALG_SCHANNEL_MASTER_HASH = 0x4C02	' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_SCHANNEL_MASTER_HASH)
+$$CALG_SCHANNEL_MAC_KEY = 0x4C03		' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_SCHANNEL_MAC_KEY)
+$$CALG_SCHANNEL_ENC_KEY = 0x4C07		' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_SCHANNEL_ENC_KEY)
+$$CALG_PCT1_MASTER = 0x4C04	' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_PCT1_MASTER)
+$$CALG_SSL2_MASTER = 0x4C05	' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_SSL2_MASTER)
+$$CALG_TLS1_MASTER = 0x4C06	' ($$ALG_CLASS_MSG_ENCRYPT|$$ALG_TYPE_SECURECHANNEL|$$ALG_SID_TLS1_MASTER)
+$$CALG_RC5 = 0x660D		' ($$ALG_CLASS_DATA_ENCRYPT|$$ALG_TYPE_BLOCK|$$ALG_SID_RC5)
+$$CALG_HMAC = 0x8009		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_HMAC)
+$$CALG_TLS1PRF = 0x800A		' ($$ALG_CLASS_HASH | $$ALG_TYPE_ANY | $$ALG_SID_TLS1PRF)
+
+$$SIGNATURE_RESOURCE_NUMBER = 666
+
+$$CRYPT_VERIFYCONTEXT = 0xF0000000
+$$CRYPT_NEWKEYSET = 0x00000008
+$$CRYPT_DELETEKEYSET = 0x00000010
+$$CRYPT_MACHINE_KEYSET = 0x00000020
+$$CRYPT_SILENT = 0x00000040
+$$CRYPT_EXPORTABLE = 0x00000001
+$$CRYPT_USER_PROTECTED = 0x00000002
+$$CRYPT_CREATE_SALT = 0x00000004
+$$CRYPT_UPDATE_KEY = 0x00000008
+$$CRYPT_NO_SALT = 0x00000010
+$$CRYPT_PREGEN = 0x00000040
+$$CRYPT_RECIPIENT = 0x00000010
+$$CRYPT_INITIATOR = 0x00000040
+$$CRYPT_ONLINE = 0x00000080
+$$CRYPT_SF = 0x00000100
+$$CRYPT_CREATE_IV = 0x00000200
+$$CRYPT_KEK = 0x00000400
+$$CRYPT_DATA_KEY = 0x00000800
+$$CRYPT_VOLATILE = 0x00001000
+$$CRYPT_SERVER = 0x00000400
+$$KEY_LENGTH_MASK = 0xFFFF0000
+$$CRYPT_Y_ONLY = 0x00000001
+$$CRYPT_SSL2_FALLBACK = 0x00000002
+$$CRYPT_DESTROYKEY = 0x00000004
+$$CRYPT_LITTLE_ENDIAN = 0x00000001
+$$CRYPT_NOHASHOID = 0x00000001
+$$CRYPT_TYPE2_FORMAT = 0x00000002
+$$CRYPT_MACHINE_DEFAULT = 0x00000001
+$$CRYPT_USER_DEFAULT = 0x00000002
+$$CRYPT_DELETE_DEFAULT = 0x00000004
+$$SIMPLEBLOB = 0x1
+$$PUBLICKEYBLOB = 0x6
+$$PRIVATEKEYBLOB = 0x7
+$$PLAINTEXTKEYBLOB = 0x8
+$$OPAQUEKEYBLOB = 0x9
+$$PUBLICKEYBLOBEX = 0xA
+$$AT_KEYEXCHANGE = 1
+$$AT_SIGNATURE = 2
+$$CRYPT_USERDATA = 1
+$$KP_IV = 1
+$$KP_SALT = 2
+$$KP_PADDING = 3
+$$KP_MODE = 4
+$$KP_MODE_BITS = 5
+$$KP_PERMISSIONS = 6
+$$KP_ALGID = 7
+$$KP_BLOCKLEN = 8
+$$KP_KEYLEN = 9
+$$KP_SALT_EX = 10
+$$KP_P = 11
+$$KP_G = 12
+$$KP_Q = 13
+$$KP_X = 14
+$$KP_Y = 15
+$$KP_RA = 16
+$$KP_RB = 17
+$$KP_INFO = 18
+$$KP_EFFECTIVE_KEYLEN = 19
+$$KP_SCHANNEL_ALG = 20
+$$KP_CLIENT_RANDOM = 21
+$$KP_SERVER_RANDOM = 22
+$$KP_RP = 23
+$$KP_PRECOMP_MD5 = 24
+$$KP_PRECOMP_SHA = 25
+$$KP_CERTIFICATE = 26
+$$KP_CLEAR_KEY = 27
+$$KP_PUB_EX_LEN = 28
+$$KP_PUB_EX_VAL = 29
+$$KP_KEYVAL = 30
+$$KP_ADMIN_PIN = 31
+$$KP_KEYEXCHANGE_PIN = 32
+$$KP_SIGNATURE_PIN = 33
+$$KP_PREHASH = 34
+$$PKCS5_PADDING = 1
+$$RANDOM_PADDING = 2
+$$ZERO_PADDING = 3
+$$CRYPT_MODE_CBC = 1
+$$CRYPT_MODE_ECB = 2
+$$CRYPT_MODE_OFB = 3
+$$CRYPT_MODE_CFB = 4
+$$CRYPT_MODE_CTS = 5
+$$CRYPT_ENCRYPT = 0x0001
+$$CRYPT_DECRYPT = 0x0002
+$$CRYPT_EXPORT = 0x0004
+$$CRYPT_READ = 0x0008
+$$CRYPT_WRITE = 0x0010
+$$CRYPT_MAC = 0x0020
+$$CRYPT_EXPORT_KEY = 0x0040
+$$CRYPT_IMPORT_KEY = 0x0080
+$$HP_ALGID = 0x0001
+$$HP_HASHVAL = 0x0002
+$$HP_HASHSIZE = 0x0004
+$$HP_HMAC_INFO = 0x0005
+$$HP_TLS1PRF_LABEL = 0x0006
+$$HP_TLS1PRF_SEED = 0x0007
+
+$$CRYPT_FAILED = 0				' FALSE
+$$CRYPT_SUCCEED = 1				' TRUE
+
+$$PP_ENUMALGS = 1
+$$PP_ENUMCONTAINERS = 2
+$$PP_IMPTYPE = 3
+$$PP_NAME = 4
+$$PP_VERSION = 5
+$$PP_CONTAINER = 6
+$$PP_CHANGE_PASSWORD = 7
+$$PP_KEYSET_SEC_DESCR = 8
+$$PP_CERTCHAIN = 9
+$$PP_KEY_TYPE_SUBTYPE = 10
+$$PP_PROVTYPE = 16
+$$PP_KEYSTORAGE = 17
+$$PP_APPLI_CERT = 18
+$$PP_SYM_KEYSIZE = 19
+$$PP_SESSION_KEYSIZE = 20
+$$PP_UI_PROMPT = 21
+$$PP_ENUMALGS_EX = 22
+$$PP_ENUMMANDROOTS = 25
+$$PP_ENUMELECTROOTS = 26
+$$PP_KEYSET_TYPE = 27
+$$PP_ADMIN_PIN = 31
+$$PP_KEYEXCHANGE_PIN = 32
+$$PP_SIGNATURE_PIN = 33
+$$PP_SIG_KEYSIZE_INC = 34
+$$PP_KEYX_KEYSIZE_INC = 35
+$$PP_UNIQUE_CONTAINER = 36
+$$CRYPT_FIRST = 1
+$$CRYPT_NEXT = 2
+$$CRYPT_IMPL_HARDWARE = 1
+$$CRYPT_IMPL_SOFTWARE = 2
+$$CRYPT_IMPL_MIXED = 3
+$$CRYPT_IMPL_UNKNOWN = 4
+$$CRYPT_SEC_DESCR = 0x00000001
+$$CRYPT_PSTORE = 0x00000002
+$$CRYPT_UI_PROMPT = 0x00000004
+$$CRYPT_FLAG_PCT1 = 0x0001
+$$CRYPT_FLAG_SSL2 = 0x0002
+$$CRYPT_FLAG_SSL3 = 0x0004
+$$CRYPT_FLAG_TLS1 = 0x0008
+$$PP_CLIENT_HWND = 1
+$$PP_CONTEXT_INFO = 11
+$$PP_KEYEXCHANGE_KEYSIZE = 12
+$$PP_SIGNATURE_KEYSIZE = 13
+$$PP_KEYEXCHANGE_ALG = 14
+$$PP_SIGNATURE_ALG = 15
+$$PP_DELETEKEY = 24
+$$PROV_RSA_FULL = 1
+$$PROV_RSA_SIG = 2
+$$PROV_DSS = 3
+$$PROV_FORTEZZA = 4
+$$PROV_MS_EXCHANGE = 5
+$$PROV_SSL = 6
+$$PROV_RSA_SCHANNEL = 12
+$$PROV_DSS_DH = 13
+$$PROV_EC_ECDSA_SIG = 14
+$$PROV_EC_ECNRA_SIG = 15
+$$PROV_EC_ECDSA_FULL = 16
+$$PROV_EC_ECNRA_FULL = 17
+$$PROV_DH_SCHANNEL = 18
+$$PROV_SPYRUS_LYNKS = 20
+$$PROV_STT_MER = 7
+$$PROV_STT_ACQ = 8
+$$PROV_STT_BRND = 9
+$$PROV_STT_ROOT = 10
+$$PROV_STT_ISS = 11
+
+$$MS_DEF_PROV_A = "Microsoft Base Cryptographic Provider v1.0"
+$$MS_DEF_PROV_W = "Microsoft Base Cryptographic Provider v1.0"
+
+'$$MS_DEF_PROV = $$MS_DEF_PROV_W
+$$MS_DEF_PROV = $$MS_DEF_PROV_A
+
+$$MS_ENHANCED_PROV_A = "Microsoft Enhanced Cryptographic Provider v1.0"
+$$MS_ENHANCED_PROV_W = "Microsoft Enhanced Cryptographic Provider v1.0"
+
+'$$MS_ENHANCED_PROV = $$MS_ENHANCED_PROV_W
+$$MS_ENHANCED_PROV = $$MS_ENHANCED_PROV_A
+
+$$MS_DEF_RSA_SIG_PROV_A = "Microsoft RSA Signature Cryptographic Provider"
+$$MS_DEF_RSA_SIG_PROV_W = "Microsoft RSA Signature Cryptographic Provider"
+ 
+'$$MS_DEF_RSA_SIG_PROV = $$MS_DEF_RSA_SIG_PROV_W
+$$MS_DEF_RSA_SIG_PROV = $$MS_DEF_RSA_SIG_PROV_A
+ 
+$$MS_DEF_RSA_SCHANNEL_PROV_A = "Microsoft RSA SChannel Cryptographic Provider"
+$$MS_DEF_RSA_SCHANNEL_PROV_W = "Microsoft RSA SChannel Cryptographic Provider"
+ 
+'$$MS_DEF_RSA_SCHANNEL_PROV = $$MS_DEF_RSA_SCHANNEL_PROV_W
+$$MS_DEF_RSA_SCHANNEL_PROV = $$MS_DEF_RSA_SCHANNEL_PROV_A
+ 
+$$MS_DEF_DSS_PROV_A = "Microsoft Base DSS Cryptographic Provider"
+$$MS_DEF_DSS_PROV_W = "Microsoft Base DSS Cryptographic Provider"
+ 
+'$$MS_DEF_DSS_PROV = $$MS_DEF_DSS_PROV_W
+$$MS_DEF_DSS_PROV = $$MS_DEF_DSS_PROV_A
+ 
+$$MS_DEF_DSS_DH_PROV_A = "Microsoft Base DSS and Diffie-Hellman Cryptographic Provider"
+$$MS_DEF_DSS_DH_PROV_W = "Microsoft Base DSS and Diffie-Hellman Cryptographic Provider"
+ 
+'$$MS_DEF_DSS_DH_PROV = $$MS_DEF_DSS_DH_PROV_W
+$$MS_DEF_DSS_DH_PROV = $$MS_DEF_DSS_DH_PROV_A
+ 
+$$MS_ENH_DSS_DH_PROV_A = "Microsoft Enhanced DSS and Diffie-Hellman Cryptographic Provider"
+$$MS_ENH_DSS_DH_PROV_W = "Microsoft Enhanced DSS and Diffie-Hellman Cryptographic Provider"
+ 
+'$$MS_ENH_DSS_DH_PROV = $$MS_ENH_DSS_DH_PROV_W
+$$MS_ENH_DSS_DH_PROV = $$MS_ENH_DSS_DH_PROV_A
+ 
+$$MS_DEF_DH_SCHANNEL_PROV_A = "Microsoft DH SChannel Cryptographic Provider"
+$$MS_DEF_DH_SCHANNEL_PROV_W = "Microsoft DH SChannel Cryptographic Provider"
+ 
+'$$MS_DEF_DH_SCHANNEL_PROV = $$MS_DEF_DH_SCHANNEL_PROV_W
+$$MS_DEF_DH_SCHANNEL_PROV = $$MS_DEF_DH_SCHANNEL_PROV_A
+ 
+$$MS_SCARD_PROV_A = "Microsoft Base Smart Card Crypto Provider"
+$$MS_SCARD_PROV_W = "Microsoft Base Smart Card Crypto Provider"
+ 
+'$$MS_SCARD_PROV = $$MS_SCARD_PROV_W
+$$MS_SCARD_PROV = $$MS_SCARD_PROV_A
+ 
+$$MAXUIDLEN = 64
+
+$$NTE_BAD_UID = 0x80090001
+$$NTE_BAD_HASH = 0x80090002
+$$NTE_BAD_KEY = 0x80090003
+$$NTE_BAD_LEN = 0x80090004
+$$NTE_BAD_DATA = 0x80090005
+$$NTE_BAD_SIGNATURE = 0x80090006
+$$NTE_BAD_VER = 0x80090007
+$$NTE_BAD_ALGID = 0x80090008
+$$NTE_BAD_FLAGS = 0x80090009
+$$NTE_BAD_TYPE = 0x8009000A
+$$NTE_BAD_KEY_STATE = 0x8009000B
+$$NTE_BAD_HASH_STATE = 0x8009000C
+$$NTE_NO_KEY = 0x8009000D
+$$NTE_NO_MEMORY = 0x8009000E
+$$NTE_EXISTS = 0x8009000F
+$$NTE_PERM = 0x80090010
+$$NTE_NOT_FOUND = 0x80090011
+$$NTE_DOUBLE_ENCRYPT = 0x80090012
+$$NTE_BAD_PROVIDER = 0x80090013
+$$NTE_BAD_PROV_TYPE = 0x80090014
+$$NTE_BAD_PUBLIC_KEY = 0x80090015
+$$NTE_BAD_KEYSET = 0x80090016
+$$NTE_PROV_TYPE_NOT_DEF = 0x80090017
+$$NTE_PROV_TYPE_ENTRY_BAD = 0x80090018
+$$NTE_KEYSET_NOT_DEF= 0x80090019
+$$NTE_KEYSET_ENTRY_BAD = 0x8009001A
+$$NTE_PROV_TYPE_NO_MATCH = 0x8009001B
+$$NTE_SIGNATURE_FILE_BAD = 0x8009001C
+$$NTE_PROVIDER_DLL_FAIL = 0x8009001D
+$$NTE_PROV_DLL_NOT_FOUND = 0x8009001E
+$$NTE_BAD_KEYSET_PARAM = 0x8009001F
+$$NTE_FAIL = 0x80090020
+$$NTE_SYS_ERR = 0x80090021
+$$NTE_SILENT_CONTEXT = 0x80090022
+$$NTE_TOKEN_KEYSET_STORAGE_FULL = 0x80090023
+
+$$NTE_OP_OK = 0
+
+
+
+
+
+ 

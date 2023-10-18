@@ -1,0 +1,44 @@
+;
+; ########################
+; #####  xstart.xxx  #####
+; ########################
+;
+; PROGRAM "xstart.xxx"    ' Startup code for standalone programs
+; VERSION "0.0000"        ' read in by XBasic to create <standalone>.s file
+;
+; Max Reason
+; Copyright 1993
+; Coral Reef Development
+; 1295 S. Kihei Rd, Suite 408
+; Kihei, Maui, Hawaii  96753  USA
+; (808) 875-8758
+;
+.text
+.globl	_main			; C entry label
+.globl	_WinMain		; Windows entry label
+.globl	_WinMain@16		; Windows entry label ???
+;
+;
+; ########################
+; #####  WinMain ()  #####
+; ########################
+;
+.align	8
+_main:				; C entry label
+_WinMain:			; Windows entry label
+_WinMain@16:			; Windows entry label ???
+push	0x00000000		; arg9 = reserved
+push	%_StartApplication	; arg8 = %_StartApplication
+push	[ebp+20]		; arg7 = nCmdShow
+push	[ebp+16]		; arg6 = lpszCmdLine
+push	[ebp+12]		; arg5 = hPrevInstance
+push	[ebp+ 8]		; arg4 = hInstance
+push	_WinMain		; arg3 = &WinMain() ===>> ##CODE
+push	[ebp-16]		; arg2 = *envp[]
+push	[ebp-20]		; arg1 = **argv[]
+push	[ebp-24]		; arg0 = argc
+call	_XxxMain		; XxxMain() is in xlib.s in xb.dll
+ret				; arguments removed by WinMain() ???
+;
+;
+;

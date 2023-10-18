@@ -1,0 +1,973 @@
+' ###################### David Szafranski
+' ##### msvcrt.dec ##### copyright 2002
+' ###################### XBLite for Windows declaration file for msvcrt.dll
+
+' version 0.005    2006/08/14
+
+' #############################
+' ##### Type Declarations #####
+' #############################
+
+TYPE DIV_T
+	XLONG	.quot
+	XLONG	.rem
+END TYPE
+
+TYPE LDIV_T
+	XLONG	.quot
+	XLONG	.rem
+END TYPE
+
+TYPE EXCEPTION			'math error exception struct
+	ULONG		.type
+	ULONG		.name
+	DOUBLE	.arg1
+	DOUBLE	.arg2
+	DOUBLE	.retval
+END TYPE
+
+TYPE TIMEB
+	ULONG		.time				'time since 00:00:00 GMT, Jan. 1, 1970 in seconds
+	USHORT	.millitm		'plus milliseconds
+	SSHORT	.timezone		'local time zone measured in minutes of time westward from Greenwich		
+	SSHORT	.dstflag		'daylight savings flag, if nonzero, daylight savings time applies locally
+END TYPE
+
+TYPE TM
+	ULONG	.tm_sec
+	ULONG	.tm_min
+	ULONG	.tm_hour
+	ULONG	.tm_mday
+	ULONG	.tm_mon
+	ULONG	.tm_year
+	ULONG	.tm_wday
+	ULONG	.tm_yday
+	XLONG	.tm_isdst
+END TYPE
+
+TYPE TMS
+	ULONG	.tms_utime              ' user time 
+	ULONG	.tms_stime              ' system time 
+	ULONG	.tms_cutime             ' user time, children 
+	ULONG	.tms_cstime             ' system time, children 
+END TYPE
+
+TYPE COMPLEX			' complex math expression struct
+	DOUBLE	.real
+	DOUBLE	.imag
+END TYPE
+
+TYPE STAT 
+	ULONG		.st_dev
+	USHORT	.st_ino
+	USHORT	.st_mode
+	SSHORT	.st_nlink
+	SSHORT	.st_uid
+	SSHORT	.st_gid
+	ULONG		.st_rdev
+	SLONG		.st_size
+	SLONG		.st_atime
+	SLONG		.st_mtime
+	SLONG		.st_ctime
+END TYPE
+
+TYPE UTIMBUF
+	ULONG	.actime
+	ULONG	.modtime
+END TYPE
+
+TYPE DISKFREE
+	ULONG	.num_clusters
+	ULONG	.available
+	ULONG	.cluster_sectors
+	ULONG	.sector_bytes
+END TYPE
+
+TYPE FIND
+	ULONG	.attrib
+	SLONG	.time_create
+	SLONG	.time_access
+	SLONG	.time_write
+	ULONG	.size
+	STRING*256	.name
+END TYPE
+
+TYPE CRTDLL_FILE
+	ULONG	.ptr
+	ULONG	.cnt
+	ULONG	.base
+	ULONG	.flag
+	ULONG	.file				'filedes
+	ULONG	.charbuf
+	ULONG	.bufsiz
+	ULONG	.tmpfname
+END TYPE
+
+' *********************************
+' ***** Function Declarations *****
+' *********************************
+
+EXTERNAL CFUNCTION  _CIacos ()
+EXTERNAL CFUNCTION  _CIasin ()
+EXTERNAL CFUNCTION  _CIatan ()
+EXTERNAL CFUNCTION  _CIatan2 ()
+EXTERNAL CFUNCTION  _CIcos ()
+EXTERNAL CFUNCTION  _CIcosh ()
+EXTERNAL CFUNCTION  _CIexp ()
+EXTERNAL CFUNCTION  _CIfmod ()
+EXTERNAL CFUNCTION  _CIlog ()
+EXTERNAL CFUNCTION  _CIlog10 ()
+EXTERNAL CFUNCTION  _CIpow ()
+EXTERNAL CFUNCTION  _CIsin ()
+EXTERNAL CFUNCTION  _CIsinh ()
+EXTERNAL CFUNCTION  _CIsqrt ()
+EXTERNAL CFUNCTION  _CItan ()
+EXTERNAL CFUNCTION  _CItanh ()
+EXTERNAL CFUNCTION  _CxxThrowException ()
+EXTERNAL CFUNCTION  _EH_prolog ()
+EXTERNAL CFUNCTION  _Getdays ()
+EXTERNAL CFUNCTION  _Getmonths ()
+EXTERNAL CFUNCTION  _Gettnames ()
+EXTERNAL CFUNCTION  _HUGE ()
+EXTERNAL CFUNCTION  _Strftime ()
+EXTERNAL CFUNCTION  _XcptFilter ()
+EXTERNAL CFUNCTION  __CxxFrameHandler ()
+EXTERNAL CFUNCTION  __CxxLongjmpUnwind ()
+EXTERNAL CFUNCTION  __RTCastToVoid ()
+EXTERNAL CFUNCTION  __RTDynamicCast ()
+EXTERNAL CFUNCTION  __RTtypeid ()
+EXTERNAL CFUNCTION  __STRINGTOLD ()
+EXTERNAL CFUNCTION  __argc ()
+EXTERNAL CFUNCTION  __argv ()
+EXTERNAL CFUNCTION  __badioinfo ()
+EXTERNAL CFUNCTION  __crtCompareStringA ()
+EXTERNAL CFUNCTION  __crtGetLocaleInfoW ()
+EXTERNAL CFUNCTION  __crtLCMapStringA ()
+EXTERNAL CFUNCTION  __dllonexit ()
+EXTERNAL CFUNCTION  __doserrno ()
+EXTERNAL CFUNCTION  __fpecode ()
+EXTERNAL CFUNCTION  __getmainargs ()
+EXTERNAL CFUNCTION  __initenv ()
+EXTERNAL CFUNCTION  __isascii (c)										' returns true if character is an ASCII character
+EXTERNAL CFUNCTION  __iscsym ()
+EXTERNAL CFUNCTION  __iscsymf ()
+EXTERNAL CFUNCTION  __lc_codepage ()
+EXTERNAL CFUNCTION  __lc_collate_cp ()
+EXTERNAL CFUNCTION  __lc_handle ()
+EXTERNAL CFUNCTION  __lconv_init ()
+EXTERNAL CFUNCTION  __mb_cur_max ()
+EXTERNAL CFUNCTION  __p___argc ()
+EXTERNAL CFUNCTION  __p___argv ()
+EXTERNAL CFUNCTION  __p___initenv ()
+EXTERNAL CFUNCTION  __p___mb_cur_max ()
+EXTERNAL CFUNCTION  __p___wargv ()
+EXTERNAL CFUNCTION  __p___winitenv ()
+EXTERNAL CFUNCTION  __p__acmdln ()
+EXTERNAL CFUNCTION  __p__amblksiz ()
+EXTERNAL CFUNCTION  __p__commode ()
+EXTERNAL CFUNCTION  __p__daylight ()
+EXTERNAL CFUNCTION  __p__dstbias ()
+EXTERNAL CFUNCTION  __p__environ ()
+EXTERNAL CFUNCTION  __p__fileinfo ()
+EXTERNAL CFUNCTION  __p__fmode ()
+EXTERNAL CFUNCTION  __p__iob ()
+EXTERNAL CFUNCTION  __p__mbcasemap ()
+EXTERNAL CFUNCTION  __p__mbctype ()
+EXTERNAL CFUNCTION  __p__osver ()
+EXTERNAL CFUNCTION  __p__pctype ()
+EXTERNAL CFUNCTION  __p__pgmptr ()
+EXTERNAL CFUNCTION  __p__pwctype ()
+EXTERNAL CFUNCTION  __p__timezone ()
+EXTERNAL CFUNCTION  __p__tzname ()
+EXTERNAL CFUNCTION  __p__wcmdln ()
+EXTERNAL CFUNCTION  __p__wenviron ()
+EXTERNAL CFUNCTION  __p__winmajor ()
+EXTERNAL CFUNCTION  __p__winminor ()
+EXTERNAL CFUNCTION  __p__winver ()
+EXTERNAL CFUNCTION  __p__wpgmptr ()
+EXTERNAL CFUNCTION  __pioinfo ()
+EXTERNAL CFUNCTION  __pxcptinfoptrs ()
+EXTERNAL CFUNCTION  __set_app_type ()
+EXTERNAL CFUNCTION  __setlc_active ()
+EXTERNAL CFUNCTION  __setusermatherr ()
+EXTERNAL CFUNCTION  __threadhandle ()								' call GetCurrentThread()
+EXTERNAL CFUNCTION  __threadid ()										' call GetCurrentThreadID()
+EXTERNAL CFUNCTION  __toascii (c)										' converts its argument, an 8-bit ASCII character, to a 7-bit ASCII character
+EXTERNAL CFUNCTION  __unDName ()
+EXTERNAL CFUNCTION  __unDNameEx ()
+EXTERNAL CFUNCTION  __unguarded_readlc_active ()
+EXTERNAL CFUNCTION  __wargv ()
+EXTERNAL CFUNCTION  __wgetmainargs ()
+EXTERNAL CFUNCTION  __winitenv ()
+EXTERNAL CFUNCTION  _abnormal_termination ()
+EXTERNAL CFUNCTION  _access (file_spec_Addr, mode)	' checks a file to see whether a specified access mode is allowed
+EXTERNAL CFUNCTION  _acmdln ()
+EXTERNAL CFUNCTION  _adj_fdiv_m16i ()
+EXTERNAL CFUNCTION  _adj_fdiv_m32 ()
+EXTERNAL CFUNCTION  _adj_fdiv_m32i ()
+EXTERNAL CFUNCTION  _adj_fdiv_m64 ()
+EXTERNAL CFUNCTION  _adj_fdiv_r ()
+EXTERNAL CFUNCTION  _adj_fdivr_m16i ()
+EXTERNAL CFUNCTION  _adj_fdivr_m32 ()
+EXTERNAL CFUNCTION  _adj_fdivr_m32i ()
+EXTERNAL CFUNCTION  _adj_fdivr_m64 ()
+EXTERNAL CFUNCTION  _adj_fpatan ()
+EXTERNAL CFUNCTION  _adj_fprem ()
+EXTERNAL CFUNCTION  _adj_fprem1 ()
+EXTERNAL CFUNCTION  _adj_fptan ()
+EXTERNAL CFUNCTION  _adjust_fdiv ()
+EXTERNAL CFUNCTION  _aexit_rtn ()
+EXTERNAL CFUNCTION  _amsg_exit ()
+EXTERNAL CFUNCTION  _assert (expression)									' used for implementing run-time diagnostics in programs
+EXTERNAL CFUNCTION  _atodbl ()
+EXTERNAL CFUNCTION  GIANT _atoi64 (sAddr)									' convert string to giant number
+EXTERNAL CFUNCTION  _atoldbl ()
+EXTERNAL CFUNCTION  _beep (freq, duration)
+EXTERNAL CFUNCTION  _beginthread (funcAddr, stackSize, argListAddr)	' call CreateThread (), start a new thread of execution
+EXTERNAL CFUNCTION  _beginthreadex (lpThreadAttributes, dwStackSize, Startess, lpParameter, dwCreationFlags, lpThreadId)
+EXTERNAL CFUNCTION  _c_exit ()														' perform cleanup operations and return without terminating the calling process
+EXTERNAL CFUNCTION  DOUBLE _cabs (cmplx_value)						' compute the absolute value of a complex number 
+EXTERNAL CFUNCTION  _callnewh ()
+EXTERNAL CFUNCTION  _cexit ()															' perform cleanup operations and return without terminating the calling process
+EXTERNAL CFUNCTION  _cgets ()
+EXTERNAL CFUNCTION  _chdir (pathAddr)											' change the current working directory 
+EXTERNAL CFUNCTION  _chdrive (drive)											' change the current drive
+EXTERNAL CFUNCTION  DOUBLE _chgsign (DOUBLE x)						' change sign of x
+EXTERNAL CFUNCTION  _chkesp ()
+EXTERNAL CFUNCTION  _chmod ()
+EXTERNAL CFUNCTION  _chsize (filedes, size)
+EXTERNAL CFUNCTION  _clearfp ()
+EXTERNAL CFUNCTION  _close (filedes)											' closes a file at the operating system level
+EXTERNAL CFUNCTION  _commit ()
+EXTERNAL CFUNCTION  _commode ()
+EXTERNAL CFUNCTION  _control87 (ULONG newcw, ULONG mask)	' update the control word of the 8087/80287/80387/80486
+EXTERNAL CFUNCTION  _controlfp (ULONG newVal, ULONG mask)
+EXTERNAL CFUNCTION  _copysign (DOUBLE x, DOUBLE sign)
+EXTERNAL CFUNCTION  _cprintf ()
+EXTERNAL CFUNCTION  _cputs (sAddr)												' write a character string directly to the console 
+EXTERNAL CFUNCTION  _creat (pathAddr, mode)								' create and open a file at the operating system level
+EXTERNAL CFUNCTION  _cscanf ()
+EXTERNAL CFUNCTION  _ctime64 ()
+EXTERNAL CFUNCTION  _ctype ()
+EXTERNAL CFUNCTION  _cwait (pnStatusAddr, hPrc, nAction)	' waits for a process to exit
+EXTERNAL CFUNCTION  _daylight ()
+EXTERNAL CFUNCTION  _dstbias ()
+EXTERNAL CFUNCTION  _dup (filedes)												' duplicates a file descriptor 
+EXTERNAL CFUNCTION  _dup2 (filedes, filedes2)							' duplicate a file descriptor
+EXTERNAL CFUNCTION  _ecvt (DOUBLE value, ndigits, decAddr, signAddr)	' converts the floating-point number value into a character string
+EXTERNAL CFUNCTION  _endthread ()													' call ExitThread(0), end a thread of execution
+EXTERNAL CFUNCTION  _endthreadex ()
+EXTERNAL CFUNCTION  _environ ()
+EXTERNAL CFUNCTION  _eof (filedes)												' determine if the end-of-file has been reached
+EXTERNAL CFUNCTION  _errno ()
+EXTERNAL CFUNCTION  _except_handler2 ()
+EXTERNAL CFUNCTION  _except_handler3 ()
+EXTERNAL CFUNCTION  _execl ()
+EXTERNAL CFUNCTION  _execle ()
+EXTERNAL CFUNCTION  _execlp ()
+EXTERNAL CFUNCTION  _execlpe ()
+EXTERNAL CFUNCTION  _execv (pathAddr, argvAddr)						' load and execute a new child process
+EXTERNAL CFUNCTION  _execve (pathAddr, argvAddr, envpAddr)
+EXTERNAL CFUNCTION  _execvp (fileAddr, argvAddr)
+EXTERNAL CFUNCTION  _execvpe (fileAddr, argvAddr, envpAddr)
+EXTERNAL CFUNCTION  _exit (status)												' terminate execution of the program from which they are calledTerminate execution of the program from which they are called
+EXTERNAL CFUNCTION  _expand (memblkAddr, size)						' change the size of a previously allocated block
+EXTERNAL CFUNCTION  _fcloseall ()													' close all open stream files, except stdin, stdout and stderr
+EXTERNAL CFUNCTION  _fcvt (DOUBLE value, ndigits, decAddr, signAddr)	' convert a floating-point number into a string
+EXTERNAL CFUNCTION  _fdopen (filedes, modeAddr)						' associate a stream with a file descriptor
+EXTERNAL CFUNCTION  _fgetchar ()
+EXTERNAL CFUNCTION  _fgetwchar ()
+EXTERNAL CFUNCTION  _filbuf ()
+EXTERNAL CFUNCTION  _fileinfo ()
+EXTERNAL CFUNCTION  _filelength ()
+EXTERNAL CFUNCTION  _filelengthi64 ()
+EXTERNAL CFUNCTION  _fileno (fpAddr)										' returns the file descriptor associated with the specified file pointer
+EXTERNAL CFUNCTION  _findclose (hand)										' free the resources from a search handle created from _findfirst()
+EXTERNAL CFUNCTION  _findfirst (fileSpecAddr, find_tAddr) ' create and return a search handle for iterating through a file and directory list; filespec is a file specification string for search, e.g "c:\*.bat", find_tAddr is a pointer to a FIND_T struct to populate
+EXTERNAL CFUNCTION  _findfirst64 ()
+EXTERNAL CFUNCTION  _findfirsti64 ()
+EXTERNAL CFUNCTION  _findnext (hand, find_tAddr)				' return the next matching file/directory from a search handle, hand is search handle form a previous call to _findfirst(), find_t is a pointer to a FIND_T structure to populate
+EXTERNAL CFUNCTION  _findnext64 ()
+EXTERNAL CFUNCTION  _findnexti64 ()
+EXTERNAL CFUNCTION  _finite (DOUBLE x)
+EXTERNAL CFUNCTION  _flsbuf ()
+EXTERNAL CFUNCTION  _flushall ()												' clear all input buffers and write all output buffers
+EXTERNAL CFUNCTION  _fmode ()
+EXTERNAL CFUNCTION  _fpclass (DOUBLE x)									' determine the class of IEEE floating-point value x
+EXTERNAL CFUNCTION  _fpieee_flt ()
+EXTERNAL CFUNCTION  _fpreset ()													' initialize for floating-point operations
+EXTERNAL CFUNCTION  _fputchar (c)												' write a character to stdout
+EXTERNAL CFUNCTION  _fputwchar (wc)
+EXTERNAL CFUNCTION  _fsopen (filenameAddr, modeAddr, share)		' open a file and associate a stream with it
+EXTERNAL CFUNCTION  _fstat (filedes, statbufAddr)				' obtain information about an open file
+EXTERNAL CFUNCTION  _fstat64 ()
+EXTERNAL CFUNCTION  _fstati64 ()
+EXTERNAL CFUNCTION  _ftime (timebAddr)									' get the current time, and store it in a structure of type TIMEB
+EXTERNAL CFUNCTION  _ftime64 ()
+EXTERNAL CFUNCTION  _ftol ()
+EXTERNAL CFUNCTION  _fullpath (bufAddr, pathAddr, size)	' return the full pathname of a file
+EXTERNAL CFUNCTION  _futime (filedes, utimbufAddr)
+EXTERNAL CFUNCTION  _futime64 ()
+EXTERNAL CFUNCTION  _gcvt (DOUBLE value, ndigits, sAddr)' convert a floating-point number into a string
+EXTERNAL CFUNCTION  _get_osfhandle ()
+EXTERNAL CFUNCTION  _get_sbh_threshold ()
+EXTERNAL CFUNCTION  _getch ()					' get a character from the console without echo
+EXTERNAL CFUNCTION  _getche ()													' get the next keystroke from the console, and echo it
+EXTERNAL CFUNCTION  _getcwd (bufAddr, maxlen)						' get the name of the current working directory
+EXTERNAL CFUNCTION  _getdcwd (nDrive, dirBufAddr, dirBufLen)	' get the current working directory on nDrive and return it in dirBuf  
+EXTERNAL CFUNCTION  _getdiskfree (drive, diskfreeAddr)	' get disk free space on drive, fill DISKFREE struct, return available clusters
+EXTERNAL CFUNCTION  _getdllprocaddr (hModuleAddr, lpProcNameAddr, iOrdinal)	' call GetProcAddress ()
+EXTERNAL CFUNCTION  _getdrive ()												' return current drive
+EXTERNAL CFUNCTION  _getdrives ()
+EXTERNAL CFUNCTION  _getmaxstdio ()
+EXTERNAL CFUNCTION  _getmbcp ()
+EXTERNAL CFUNCTION  _getpid ()													' returns the process ID of the current process
+EXTERNAL CFUNCTION  _getsystime (tmAddr)								' returns local time in struct TM variable
+EXTERNAL CFUNCTION  _getw (fpAddr)											' returns the next four characters from the specified input file as an int
+EXTERNAL CFUNCTION  _getws ()
+EXTERNAL CFUNCTION  _global_unwind2 ()
+EXTERNAL CFUNCTION  _gmtime64 ()
+EXTERNAL CFUNCTION  _heapadd ()
+EXTERNAL CFUNCTION  _heapchk ()													' perform a consistency check for a heap
+EXTERNAL CFUNCTION  _heapmin ()													' shrink a heap to its smallest possible size
+EXTERNAL CFUNCTION  _heapset (UBYTE fill_char)					' perform a consistency check on a heap 
+EXTERNAL CFUNCTION  _heapused ()
+EXTERNAL CFUNCTION  _heapwalk (entryAddr)								' walk through a heap, gathering debugging information
+EXTERNAL CFUNCTION  DOUBLE _hypot (DOUBLE x, DOUBLE y)	' calculate the length of the hypotenuse of a right-angled triangle
+EXTERNAL CFUNCTION  _i64toa (GIANT x, sAddr, size)
+EXTERNAL CFUNCTION  _i64tow ()
+EXTERNAL CFUNCTION  _initterm (startAddr, endAddr)
+EXTERNAL CFUNCTION  _inp (USHORT port)		' return a byte read from port
+EXTERNAL CFUNCTION  _inpd (USHORT port)		' return a double word (ULONG) read from port
+EXTERNAL CFUNCTION  _inpw (USHORT port)		' return a word (USHORT) read from port
+EXTERNAL CFUNCTION  _iob ()
+EXTERNAL CFUNCTION  _isatty (filedes)
+EXTERNAL CFUNCTION  _isctype (c, ctypeFlags)
+EXTERNAL CFUNCTION  _ismbbalnum ()
+EXTERNAL CFUNCTION  _ismbbalpha ()
+EXTERNAL CFUNCTION  _ismbbgraph ()
+EXTERNAL CFUNCTION  _ismbbkalnum ()
+EXTERNAL CFUNCTION  _ismbbkana ()
+EXTERNAL CFUNCTION  _ismbbkprint ()
+EXTERNAL CFUNCTION  _ismbbkpunct ()
+EXTERNAL CFUNCTION  _ismbblead ()
+EXTERNAL CFUNCTION  _ismbbprint ()
+EXTERNAL CFUNCTION  _ismbbpunct ()
+EXTERNAL CFUNCTION  _ismbbtrail ()
+EXTERNAL CFUNCTION  _ismbcalnum (mbc)
+EXTERNAL CFUNCTION  _ismbcalpha (mbc)
+EXTERNAL CFUNCTION  _ismbcdigit (mbc)
+EXTERNAL CFUNCTION  _ismbcgraph (mbc)
+EXTERNAL CFUNCTION  _ismbchira (mbc)
+EXTERNAL CFUNCTION  _ismbckata (mbc)
+EXTERNAL CFUNCTION  _ismbcl0 (mbc)
+EXTERNAL CFUNCTION  _ismbcl1 (mbc)
+EXTERNAL CFUNCTION  _ismbcl2 (mbc)
+EXTERNAL CFUNCTION  _ismbclegal (mbc)
+EXTERNAL CFUNCTION  _ismbclower (mbc)
+EXTERNAL CFUNCTION  _ismbcprint (mbc)
+EXTERNAL CFUNCTION  _ismbcpunct (mbc)
+EXTERNAL CFUNCTION  _ismbcspace (mbc)
+EXTERNAL CFUNCTION  _ismbcsymbol (mbc)
+EXTERNAL CFUNCTION  _ismbcupper (mbc)
+EXTERNAL CFUNCTION  _ismbslead ()
+EXTERNAL CFUNCTION  _ismbstrail ()
+EXTERNAL CFUNCTION  _isnan (DOUBLE x)
+EXTERNAL CFUNCTION  _itoa (value, sAddr, radix)						' converts an integer to ASCII
+EXTERNAL CFUNCTION  _itow ()
+EXTERNAL CFUNCTION  DOUBLE _j0 (DOUBLE x)
+EXTERNAL CFUNCTION  DOUBLE _j1 (DOUBLE x)
+EXTERNAL CFUNCTION  DOUBLE _jn (n, DOUBLE x)
+EXTERNAL CFUNCTION  _kbhit ()					' returns a nonzero value if a key has been pressed. Otherwise, it returns 0
+EXTERNAL CFUNCTION  _lfind (keyAddr, baseAddr, numAddr, width, compareFuncAddr)
+EXTERNAL CFUNCTION  _loaddll (nameAddr)												' LoadlibraryA ()
+EXTERNAL CFUNCTION  _local_unwind2 ()
+EXTERNAL CFUNCTION  _localtime64 ()
+EXTERNAL CFUNCTION  _lock ()
+EXTERNAL CFUNCTION  _locking (filedes, mode, nbyte)						' locks or unlocks nbyte bytes of the file specified by filedes
+EXTERNAL CFUNCTION  DOUBLE _logb (DOUBLE x)
+EXTERNAL CFUNCTION  _longjmpex ()
+EXTERNAL CFUNCTION  ULONG _lrotl (ULONG value, ULONG shift)		' rotates the unsigned long integer, determined by value, to the left by the number of bits specified in shift
+EXTERNAL CFUNCTION  ULONG _lrotr (ULONG value, ULONG shift)		' rotates the unsigned long integer, determined by value, to the right by the number of bits specified in shift
+EXTERNAL CFUNCTION  _lsearch (keyAddr, baseAddr, numAddr, width, compareFuncAddr)	' perform a linear search in an array
+EXTERNAL CFUNCTION  _lseek (filedes, offset, whence)					' set the current file position at the operating-system level
+EXTERNAL CFUNCTION  _lseeki64 ()
+EXTERNAL CFUNCTION  _ltoa (value, bufAddr, radix)							' convert a binary integer value to a string in a given base
+EXTERNAL CFUNCTION  _ltow ()
+EXTERNAL CFUNCTION  _makepath (pathAddr, rootAddr, dirAddr, fnameAddr, extAddr)	' construct a full pathname
+EXTERNAL CFUNCTION  _mbbtombc ()
+EXTERNAL CFUNCTION  _mbbtype ()
+EXTERNAL CFUNCTION  _mbcasemap ()
+EXTERNAL CFUNCTION  _mbccpy ()
+EXTERNAL CFUNCTION  _mbcjistojms ()
+EXTERNAL CFUNCTION  _mbcjmstojis ()
+EXTERNAL CFUNCTION  _mbclen ()
+EXTERNAL CFUNCTION  _mbctohira ()
+EXTERNAL CFUNCTION  _mbctokata ()
+EXTERNAL CFUNCTION  _mbctolower ()
+EXTERNAL CFUNCTION  _mbctombb ()
+EXTERNAL CFUNCTION  _mbctoupper ()
+EXTERNAL CFUNCTION  _mbctype ()
+EXTERNAL CFUNCTION  _mbsbtype ()
+EXTERNAL CFUNCTION  _mbscat ()
+EXTERNAL CFUNCTION  _mbschr ()
+EXTERNAL CFUNCTION  _mbscmp ()
+EXTERNAL CFUNCTION  _mbscoll ()
+EXTERNAL CFUNCTION  _mbscpy ()
+EXTERNAL CFUNCTION  _mbscspn ()
+EXTERNAL CFUNCTION  _mbsdec ()
+EXTERNAL CFUNCTION  _mbsdup ()
+EXTERNAL CFUNCTION  _mbsicmp ()
+EXTERNAL CFUNCTION  _mbsicoll ()
+EXTERNAL CFUNCTION  _mbsinc ()
+EXTERNAL CFUNCTION  _mbslen ()
+EXTERNAL CFUNCTION  _mbslwr ()
+EXTERNAL CFUNCTION  _mbsnbcat ()
+EXTERNAL CFUNCTION  _mbsnbcmp ()
+EXTERNAL CFUNCTION  _mbsnbcnt ()
+EXTERNAL CFUNCTION  _mbsnbcoll ()
+EXTERNAL CFUNCTION  _mbsnbcpy ()
+EXTERNAL CFUNCTION  _mbsnbicmp ()
+EXTERNAL CFUNCTION  _mbsnbicoll ()
+EXTERNAL CFUNCTION  _mbsnbset ()
+EXTERNAL CFUNCTION  _mbsncat ()
+EXTERNAL CFUNCTION  _mbsnccnt ()
+EXTERNAL CFUNCTION  _mbsncmp ()
+EXTERNAL CFUNCTION  _mbsncoll ()
+EXTERNAL CFUNCTION  _mbsncpy ()
+EXTERNAL CFUNCTION  _mbsnextc ()
+EXTERNAL CFUNCTION  _mbsnicmp ()
+EXTERNAL CFUNCTION  _mbsnicoll ()
+EXTERNAL CFUNCTION  _mbsninc ()
+EXTERNAL CFUNCTION  _mbsnset ()
+EXTERNAL CFUNCTION  _mbspbrk ()
+EXTERNAL CFUNCTION  _mbsrchr ()
+EXTERNAL CFUNCTION  _mbsrev ()
+EXTERNAL CFUNCTION  _mbsset ()
+EXTERNAL CFUNCTION  _mbsspn ()
+EXTERNAL CFUNCTION  _mbsspnp ()
+EXTERNAL CFUNCTION  _mbsstr ()
+EXTERNAL CFUNCTION  _mbstok ()
+EXTERNAL CFUNCTION  _mbstrlen ()
+EXTERNAL CFUNCTION  _mbsupr ()
+EXTERNAL CFUNCTION  _memccpy (destAddr, srcAddr, c, n)	' copies characters sequentially between strings in memory areas
+EXTERNAL CFUNCTION  _memicmp (s1, s2, n)							  ' compares first n bytes of strings s1 and s2, case insensitive
+EXTERNAL CFUNCTION  _mkdir (pathAddr, mode)							' creates a new subdirectory with name path
+EXTERNAL CFUNCTION  _mktemp (templateAddr)							' creates a unique file name from a template				
+EXTERNAL CFUNCTION  _mktime64 ()
+EXTERNAL CFUNCTION  _msize (bufAddr)										' return the size of an allocated block of memory
+EXTERNAL CFUNCTION  DOUBLE _nextafter (DOUBLE x, DOUBLE y)
+EXTERNAL CFUNCTION  _onexit (funcAddr)									' create a list of functions to be called when the program terminates normally
+EXTERNAL CFUNCTION  _open (pathAddr, flags, mode)				' opens a file for reading, writing, or editing. It positions the file at its beginning (byte 0)
+EXTERNAL CFUNCTION  _open_osfhandle ()
+EXTERNAL CFUNCTION  _osplatform ()
+EXTERNAL CFUNCTION  _osver ()
+EXTERNAL CFUNCTION  _outp (USHORT port, UBYTE databyte)		' write a byte to the specified output port
+EXTERNAL CFUNCTION  _outpd (USHORT port, ULONG dataword)		' write a double word to the specified output port
+EXTERNAL CFUNCTION  _outpw (USHORT port, USHORT dataword)		' write a word to the specified output port
+EXTERNAL CFUNCTION  _pclose (streamAddr)								' closes a pipe to a process 
+EXTERNAL CFUNCTION  _pctype ()
+EXTERNAL CFUNCTION  _pgmptr ()
+EXTERNAL CFUNCTION  _pipe (pfds, ULONG psize, textmode)			' creates a pipe for reading and writing
+EXTERNAL CFUNCTION  _popen (commandAddr, typeAddr)			' initiates a pipe to a process
+EXTERNAL CFUNCTION  _purecall ()
+EXTERNAL CFUNCTION  _putch (c)													' write a character to the console 
+EXTERNAL CFUNCTION  _putenv (env_name_Addr)							' add, change or delete an environment variable
+EXTERNAL CFUNCTION  _putw (integer, fpAddr)							' writes four characters to the output file as an int
+EXTERNAL CFUNCTION  _putws ()
+EXTERNAL CFUNCTION  _pwctype ()
+EXTERNAL CFUNCTION  _read (filedes, bufferAddr, nbytes)	' reads nbytes from a file and places them in a buffer
+EXTERNAL CFUNCTION  _rmdir (pathAddr)										' removes (deletes) the specified (empty) directory
+EXTERNAL CFUNCTION  _rmtmp ()														' remove temporary files in current directory
+EXTERNAL CFUNCTION  _rotl (ULONG value, ULONG shift)		' rotate an unsigned integer to the left
+EXTERNAL CFUNCTION  _rotr (ULONG value, ULONG shift)		' rotate an unsigned integer to the right
+EXTERNAL CFUNCTION  _safe_fdiv ()
+EXTERNAL CFUNCTION  _safe_fdivr ()
+EXTERNAL CFUNCTION  _safe_fprem ()
+EXTERNAL CFUNCTION  _safe_fprem1 ()
+EXTERNAL CFUNCTION  DOUBLE _scalb (DOUBLE x, exponent)
+EXTERNAL CFUNCTION  _searchenv ()
+EXTERNAL CFUNCTION  _seh_longjmp_unwind ()
+EXTERNAL CFUNCTION  _set_error_mode ()
+EXTERNAL CFUNCTION  _set_sbh_threshold ()
+EXTERNAL CFUNCTION  _seterrormode ()
+EXTERNAL CFUNCTION  _setjmp (env)												' save the calling environment, for use by longjmp
+EXTERNAL CFUNCTION  _setjmp3 ()
+EXTERNAL CFUNCTION  _setmaxstdio ()
+EXTERNAL CFUNCTION  _setmbcp ()
+EXTERNAL CFUNCTION  _setmode (filedes, mode)						' set the file translation mode
+EXTERNAL CFUNCTION  _setsystime (tmAddr, ms)						' set local time from filled TM struct and ms millisecs
+EXTERNAL CFUNCTION  _sleep (seconds)										' suspend a process for a given length of time 
+EXTERNAL CFUNCTION  _snprintf (bufAddr, count, formatAddr, ...)			' write formatted output to a character array, up to a given maximum number of characters
+EXTERNAL CFUNCTION  _snwprintf ()
+EXTERNAL CFUNCTION  _sopen ()
+EXTERNAL CFUNCTION  _spawnl ()
+EXTERNAL CFUNCTION  _spawnle ()
+EXTERNAL CFUNCTION  _spawnlp ()
+EXTERNAL CFUNCTION  _spawnlpe ()
+EXTERNAL CFUNCTION  _spawnv (mode, pathAddr, argvAddr)	' create and execute a new child process
+EXTERNAL CFUNCTION  _spawnve (mode, pathAddr, argvAddr, envpAddr)
+EXTERNAL CFUNCTION  _spawnvp (mode, fileAddr, argvAddr)
+EXTERNAL CFUNCTION  _spawnvpe (mode, fileAddr, argvAddr, envpAddr)
+EXTERNAL CFUNCTION  _splitpath (pathAddr, nodeAddr, dirAddr, fnameAddr, extAddr) 'split a pathname into node, directory, file name, and extension
+EXTERNAL CFUNCTION  _stat (pathAddr, statbufAddr)				' obtains information about the file or directory referenced in path. This information is placed in the structure located at the address indicated by buf
+EXTERNAL CFUNCTION  _stat64 (pathAddr, stat64bufAddr)		' obtains information on large file
+EXTERNAL CFUNCTION  _stati64 ()
+EXTERNAL CFUNCTION  _statusfp ()
+EXTERNAL CFUNCTION  _strcmpi (s1, s2)				' case insensitive comparison between two strings
+EXTERNAL CFUNCTION  _strdate (datestrAddr)							' copies the current date to the 9 byte buffer pointed to by datestr. The date is formatted as MM/DD/YY
+EXTERNAL CFUNCTION  _strdup (sAddr)											' finds and points to a duplicate string
+EXTERNAL CFUNCTION  _strerror (error_code)							' maps the error number in error_code to a locale-dependent error message string
+EXTERNAL CFUNCTION  _stricmp (s1Addr, s2Addr)
+EXTERNAL CFUNCTION  _stricoll ()
+EXTERNAL CFUNCTION  _strlwr (xAddr)
+EXTERNAL CFUNCTION  _strncoll ()
+EXTERNAL CFUNCTION  _strnicmp (s1Addr, s2Addr, n)
+EXTERNAL CFUNCTION  _strnicoll ()
+EXTERNAL CFUNCTION  _strnset (sAddr, fillChar, len)			' fill a string with a given character, to a given length
+EXTERNAL CFUNCTION  _strrev (sAddr)											' reverse a string in place
+EXTERNAL CFUNCTION  _strset (sAddr, fill)								' fill the string pointed to by s with the character fill
+EXTERNAL CFUNCTION  _strtime (timestrAddr)							' copies the current time to the 9 byte buffer pointed to by timestr. The time is formatted as HH:MM:SS
+EXTERNAL CFUNCTION  _strupr (sAddr)											' replace the string s with uppercase characters 
+EXTERNAL CFUNCTION  _swab (srcAddr, destAddr, num)			' copies/swaps num bytes (which should be even) from src to dest, swapping every pair of characters
+EXTERNAL CFUNCTION  _sys_errlist ()
+EXTERNAL CFUNCTION  _sys_nerr ()
+EXTERNAL CFUNCTION  _tell (filedes)
+EXTERNAL CFUNCTION  _telli64 ()
+EXTERNAL CFUNCTION  _tempnam (pathAddr, prefixAddr)			' constructs the name for a temporary file
+EXTERNAL CFUNCTION  _time64 ()
+EXTERNAL CFUNCTION  _timezone ()
+EXTERNAL CFUNCTION  _tolower (c)												' converts an uppercase character to lowercase 
+EXTERNAL CFUNCTION  _toupper (c)												' converts a character to uppercase 
+EXTERNAL CFUNCTION  _tzname ()
+EXTERNAL CFUNCTION  _tzset ()														' sets and accesses time-zone conversion
+EXTERNAL CFUNCTION  _ui64toa ()
+EXTERNAL CFUNCTION  _ui64tow ()
+EXTERNAL CFUNCTION  _ultoa (ULONG value, buffAddr, radix)		' convert an unsigned binary integer to a string
+EXTERNAL CFUNCTION  _ultow ()
+EXTERNAL CFUNCTION  _umask (mode_complement)						' creates a file protection mask that is used when a new file is created, and returns the previous mask value
+EXTERNAL CFUNCTION  _ungetch ()
+EXTERNAL CFUNCTION  _unlink ()
+EXTERNAL CFUNCTION  _unloaddll (handleAddr)							' FreeLibrary ()
+EXTERNAL CFUNCTION  _unlock ()
+EXTERNAL CFUNCTION  _utime (filenameAddr, utimbufAddr)
+EXTERNAL CFUNCTION  _utime64 ()
+EXTERNAL CFUNCTION  _vsnprintf ()
+EXTERNAL CFUNCTION  _vsnwprintf (wcsAddr, len, wcformatAddr, valist)
+EXTERNAL CFUNCTION  _waccess ()
+EXTERNAL CFUNCTION  _wasctime ()
+EXTERNAL CFUNCTION  _wchdir ()
+EXTERNAL CFUNCTION  _wchmod ()
+EXTERNAL CFUNCTION  _wcmdln ()
+EXTERNAL CFUNCTION  _wcreat ()
+EXTERNAL CFUNCTION  _wcsdup (wcsAddr)										' duplicate a wide char string
+EXTERNAL CFUNCTION  _wcsicmp ()
+EXTERNAL CFUNCTION  _wcsicoll (wcs1Addr, wcs2Addr)
+EXTERNAL CFUNCTION  _wcslwr ()
+EXTERNAL CFUNCTION  _wcsncoll ()
+EXTERNAL CFUNCTION  _wcsnicmp ()
+EXTERNAL CFUNCTION  _wcsnicoll ()
+EXTERNAL CFUNCTION  _wcsnset (wcsAddr, wc, size)
+EXTERNAL CFUNCTION  _wcsrev (wcsAddr)										' reverse a wide char string
+EXTERNAL CFUNCTION  _wcsset (wcsAddr, wc)
+EXTERNAL CFUNCTION  _wcsupr ()
+EXTERNAL CFUNCTION  _wctime ()
+EXTERNAL CFUNCTION  _wctime64 ()
+EXTERNAL CFUNCTION  _wenviron ()
+EXTERNAL CFUNCTION  _wexecl ()
+EXTERNAL CFUNCTION  _wexecle ()
+EXTERNAL CFUNCTION  _wexeclp ()
+EXTERNAL CFUNCTION  _wexeclpe ()
+EXTERNAL CFUNCTION  _wexecv ()
+EXTERNAL CFUNCTION  _wexecve ()
+EXTERNAL CFUNCTION  _wexecvp ()
+EXTERNAL CFUNCTION  _wexecvpe ()
+EXTERNAL CFUNCTION  _wfdopen ()
+EXTERNAL CFUNCTION  _wfindfirst ()
+EXTERNAL CFUNCTION  _wfindfirst64 ()
+EXTERNAL CFUNCTION  _wfindfirsti64 ()
+EXTERNAL CFUNCTION  _wfindnext ()
+EXTERNAL CFUNCTION  _wfindnext64 ()
+EXTERNAL CFUNCTION  _wfindnexti64 ()
+EXTERNAL CFUNCTION  _wfopen ()
+EXTERNAL CFUNCTION  _wfreopen ()
+EXTERNAL CFUNCTION  _wfsopen ()
+EXTERNAL CFUNCTION  _wfullpath ()
+EXTERNAL CFUNCTION  _wgetcwd ()
+EXTERNAL CFUNCTION  _wgetdcwd ()
+EXTERNAL CFUNCTION  _wgetenv ()
+EXTERNAL CFUNCTION  _winmajor ()
+EXTERNAL CFUNCTION  _winminor ()
+EXTERNAL CFUNCTION  _winver ()
+EXTERNAL CFUNCTION  _wmakepath (wcpathAddr, wcdriveAddr, wcdirAddr, wcfilenameAddr, wcextensionAddr))
+EXTERNAL CFUNCTION  _wmkdir ()
+EXTERNAL CFUNCTION  _wmktemp ()
+EXTERNAL CFUNCTION  _wopen ()
+EXTERNAL CFUNCTION  _wperror ()
+EXTERNAL CFUNCTION  _wpgmptr ()
+EXTERNAL CFUNCTION  _wpopen ()
+EXTERNAL CFUNCTION  _wputenv ()
+EXTERNAL CFUNCTION  _wremove ()
+EXTERNAL CFUNCTION  _wrename ()
+EXTERNAL CFUNCTION  _write (filedes, bufAddr, nbytes)		' writes a specified number of bytes from a buffer to a file
+EXTERNAL CFUNCTION  _wrmdir ()
+EXTERNAL CFUNCTION  _wsearchenv ()
+EXTERNAL CFUNCTION  _wsetlocale ()
+EXTERNAL CFUNCTION  _wsopen ()
+EXTERNAL CFUNCTION  _wspawnl ()
+EXTERNAL CFUNCTION  _wspawnle ()
+EXTERNAL CFUNCTION  _wspawnlp ()
+EXTERNAL CFUNCTION  _wspawnlpe ()
+EXTERNAL CFUNCTION  _wspawnv ()
+EXTERNAL CFUNCTION  _wspawnve ()
+EXTERNAL CFUNCTION  _wspawnvp ()
+EXTERNAL CFUNCTION  _wspawnvpe ()
+EXTERNAL CFUNCTION  _wsplitpath ()
+EXTERNAL CFUNCTION  _wstat ()
+EXTERNAL CFUNCTION  _wstat64 ()
+EXTERNAL CFUNCTION  _wstati64 ()
+EXTERNAL CFUNCTION  _wstrdate ()
+EXTERNAL CFUNCTION  _wstrtime ()
+EXTERNAL CFUNCTION  _wsystem ()
+EXTERNAL CFUNCTION  _wtempnam ()
+EXTERNAL CFUNCTION  _wtmpnam ()
+EXTERNAL CFUNCTION  _wtoi ()
+EXTERNAL CFUNCTION  _wtoi64 ()
+EXTERNAL CFUNCTION  _wtol ()
+EXTERNAL CFUNCTION  _wunlink ()
+EXTERNAL CFUNCTION  _wutime ()
+EXTERNAL CFUNCTION  _wutime64 ()
+EXTERNAL CFUNCTION  DOUBLE _y0 (DOUBLE x)
+EXTERNAL CFUNCTION  DOUBLE _y1 (DOUBLE x)
+EXTERNAL CFUNCTION  DOUBLE _yn (n, DOUBLE x)
+EXTERNAL CFUNCTION  abort ()													' raise the SIGABRT signal to terminate program execution
+EXTERNAL CFUNCTION  abs (num)													' return the absolute value of an integer
+EXTERNAL CFUNCTION  DOUBLE acos (DOUBLE x)						' compute arc cosine of x
+EXTERNAL CFUNCTION  asctime (tmAddr)									' convert time information to a string: Sat Mar 21 15:58:27 1987\n\0
+EXTERNAL CFUNCTION  DOUBLE asin (DOUBLE x)						' compute arc sine of x
+EXTERNAL CFUNCTION  DOUBLE atan (DOUBLE x)						' compute arc tangent of x
+EXTERNAL CFUNCTION  DOUBLE atan2 (DOUBLE y, DOUBLE x)	' compute arc tangent of y/x
+EXTERNAL CFUNCTION  atexit (funcAddr)									' register functions to be called when the program terminates normally
+EXTERNAL CFUNCTION  DOUBLE atof (sAddr)								' convert string to double value	
+EXTERNAL CFUNCTION  SLONG atoi (sAddr)								' convert string to an integer value													
+EXTERNAL CFUNCTION  SLONG atol (sAddr)								' convert string to a long integer value									
+EXTERNAL CFUNCTION  bsearch (keyAddr, baseAddr, nummemb, size, comparFuncAddr)	' perform a binary search of a sorted array
+EXTERNAL CFUNCTION  calloc (n, size)									' allocate space for an array of n objects, each of length size bytes. Each element is initialized to 0
+EXTERNAL CFUNCTION  DOUBLE ceil (DOUBLE x)						' get smallest integral value that exceeds x
+EXTERNAL CFUNCTION  clearerr (fpAddr)									' clears the end-of-file and error indicators for the stream pointed to by fp. These indicators are cleared only when the file is opened, or by an explicit call to the clearerr() or rewind() functions
+EXTERNAL CFUNCTION  clock ()													' determines the CPU time (in 10-millisecond units) used since the beginning of the process
+EXTERNAL CFUNCTION  DOUBLE cos (DOUBLE x)							' compute cosine of angle in radians
+EXTERNAL CFUNCTION  DOUBLE cosh (DOUBLE x)						' compute the hyperbolic cosine of x
+EXTERNAL CFUNCTION  ctime (timeAddr)									' converts a time in seconds, since 00:00:00 January 1, 1970 (from time()), to an ASCII string in the form generated by the asctime () function. 
+EXTERNAL CFUNCTION  DOUBLE difftime (time1, time0)		' calculates the difference between the two calendar times: time1 - time0
+EXTERNAL CFUNCTION  DIV_T div (numer, denom)					' calculates the quotient and remainder of the division of the numerator, numer, by the denominator, denom
+EXTERNAL CFUNCTION  exit (status)											' cause normal program termination to occur
+EXTERNAL CFUNCTION  DOUBLE exp (DOUBLE x)							' compute exponential of x
+EXTERNAL CFUNCTION  DOUBLE fabs (DOUBLE x)						' compute absolute value of x
+EXTERNAL CFUNCTION  fclose (fpAddr)										' close the file fp
+EXTERNAL CFUNCTION  feof (fpAddr)											' tests the end-of-file indicator for the stream pointed to by fp
+EXTERNAL CFUNCTION  ferror (fpAddr)										' tests the error indicator for the stream pointed to by fp
+EXTERNAL CFUNCTION  fflush (fpAddr)										' if the file fp is open for output or update, the fflush() function causes any unwritten data to be written to the file
+EXTERNAL CFUNCTION  fgetc (fpAddr)										' gets the next character from the file designated by fp
+EXTERNAL CFUNCTION  fgetpos (fpAddr, posAddr)					' stores the current position of the file fp in the object pointed to by pos
+EXTERNAL CFUNCTION  fgets (bufAddr, n, fpAddr)				' gets a string of n-1 characters from the file designated by fp, and stores them in the array pointed to by buf
+EXTERNAL CFUNCTION  fgetwc (fpAddr)										' reads the next character from a specified file, and converts it to a wide-character code
+EXTERNAL CFUNCTION  fgetws (wsAddr, n, streamAddr)		' the fgetws() function reads characters from the stream, converts these to the corresponding wide-character codes, places them in the wchar_t array pointed to by ws, until n-1 characters are read, or a newline character is read, converted and transferred to ws, or an end-of-file condition is encountered
+EXTERNAL CFUNCTION  DOUBLE floor (DOUBLE x)						' get largest integer value less than x
+EXTERNAL CFUNCTION  DOUBLE fmod (DOUBLE x, DOUBLE y)	' compute a floating-point modulus x MOD y
+EXTERNAL CFUNCTION  fopen (filenameAddr, modeAddr)		' open a file whose name is the string pointed to by filename.
+EXTERNAL CFUNCTION  fprintf (streamAddr, formatAddr, arg)	' places formatted output on the named output stream
+EXTERNAL CFUNCTION  fputc (c, fpAddr)									' writes the character specified by the argument c to the output stream designated by fp
+EXTERNAL CFUNCTION  fputs (bufAddr, fpAddr)						' writes the character string pointed to by buf to the output stream designated by fp
+EXTERNAL CFUNCTION  fputwc (wc, fpAddr)								' converts a wide character to its corresponding multibyte value, and writes the result to a specified file  
+EXTERNAL CFUNCTION  fputws (wcsAddr, streamAddr)			' writes a character string corresponding to the (null-terminated) wide-character string pointed to by ws to the stream pointed to by stream
+EXTERNAL CFUNCTION  fread (bufAddr, elsize, nelem, fpAddr)		' reads nelem elements of elsize bytes each from the file specified by fp into the buffer specified by buf 
+EXTERNAL CFUNCTION  free (ptrAddr)														' deallocates the memory block located by the argument ptr
+EXTERNAL CFUNCTION  freopen (filenameAddr, modeAddr, fpAddr) 	' opens the file whose name is the string pointed to by filename, and associates a stream with it
+EXTERNAL CFUNCTION  DOUBLE frexp (DOUBLE x, expAddr)					' breaks down x into mantissa and an integral power of 2
+EXTERNAL CFUNCTION  fscanf (streamAddr, formatAddr, arg)			' read from stream and output formatted value to arg
+EXTERNAL CFUNCTION  fseek (fpAddr, offset, where)			' changes the read/write position of the file specified by fp
+EXTERNAL CFUNCTION  fsetpos (fpAddr, posAddr)					' positions the file fp according to the value of the object pointed to by pos
+EXTERNAL CFUNCTION  ftell (fpAddr)										' returns the current read/write position of the file specified by fp
+EXTERNAL CFUNCTION  fwprintf (streamAddr, formatAddr, arg)	' print formatted output arg to stream
+EXTERNAL CFUNCTION  fwrite (bufAddr, elsize, nelem, fpAddr)	' writes nelem elements of elsize bytes each to the file specified by fp
+EXTERNAL CFUNCTION  fwscanf (streamAddr, formatAddr, arg)		' convert stream input byte into formatted arg
+EXTERNAL CFUNCTION  getc (fpAddr)											' gets the next character from the file designated by fp 
+EXTERNAL CFUNCTION  getchar ()												' get a character from stdin
+EXTERNAL CFUNCTION  getenv (nameAddr)									' searches the environment list for an entry matching the string pointed to by name
+EXTERNAL CFUNCTION  gets (bufAddr)										' gets a string of characters from the file designated by stdin, and stores them in the array pointed to by buf until end-of-file is encountered or a new-line character is read
+EXTERNAL CFUNCTION  getwc (streamAddr)								' get a wide-character from a stream
+EXTERNAL CFUNCTION  getwchar ()												' get a wide-character from a stdin stream
+EXTERNAL CFUNCTION  gmtime (timeAddr)									' convert calendar time to a broken-down GMT time
+EXTERNAL CFUNCTION  is_wctype ()
+EXTERNAL CFUNCTION  isalnum (c)												' true if c is alphanumeric
+EXTERNAL CFUNCTION  isalpha (c)												' true if c is a letter
+EXTERNAL CFUNCTION  iscntrl (c)												' true if c is a control char
+EXTERNAL CFUNCTION  isdigit (c)												' true if c is a decimal digit
+EXTERNAL CFUNCTION  isgraph (c)												' true if c is a graphical char
+EXTERNAL CFUNCTION  isleadbyte (mbsAddr)  
+EXTERNAL CFUNCTION  islower (c)												' true if c is a lowercase letter
+EXTERNAL CFUNCTION  isprint (c)												' true if c is a printable char
+EXTERNAL CFUNCTION  ispunct (c)												' true if c is a punctuation char
+EXTERNAL CFUNCTION  isspace (c)												' true if c is a space char
+EXTERNAL CFUNCTION  isupper (c)												' true if c is an uppercase letter
+EXTERNAL CFUNCTION  iswalnum (wc)											' true if wc is alphanumeric
+EXTERNAL CFUNCTION  iswalpha (wc)											' true if wc is a letter
+EXTERNAL CFUNCTION  iswascii (wc)											' true if wc is ascii char  
+EXTERNAL CFUNCTION  iswcntrl (wc)											' true if wc is a control char
+EXTERNAL CFUNCTION  iswctype (wc, wc_prop)						' true if wc has char-class property wc_prop 
+EXTERNAL CFUNCTION  iswdigit (wc)											' true if c is a decimal digit
+EXTERNAL CFUNCTION  iswgraph (wc)											' true if wc is a graphical char
+EXTERNAL CFUNCTION  iswlower (wc)											' true if wc is a lowercase letter
+EXTERNAL CFUNCTION  iswprint (wc)											' true if wc is a printable char
+EXTERNAL CFUNCTION  iswpunct (wc)											' true if wc is a punctuation char
+EXTERNAL CFUNCTION  iswspace (wc)											' true if wc is a space char
+EXTERNAL CFUNCTION  iswupper (wc)											' true if wc is an uppercase letter
+EXTERNAL CFUNCTION  iswxdigit (wc)										' true if wc is a hexadecimal digit
+EXTERNAL CFUNCTION  isxdigit (c)											' true if c is a hexadecimal digit
+EXTERNAL CFUNCTION  labs (n)												' find absolute value of long integer n
+EXTERNAL CFUNCTION  DOUBLE ldexp (DOUBLE x, exp)		' reconstructs x out of mantissa and exponent of two, x * 2^exp
+EXTERNAL CFUNCTION  LDIV_T ldiv (numer, denom)			' calculates the quotient and remainder of the division of the numerator numer by the denominator denom
+EXTERNAL CFUNCTION  localeconv ()										' set up formatting of numeric quantities according to the current locale
+EXTERNAL CFUNCTION  localtime (timeAddr)						' convert calendar time to local time
+EXTERNAL CFUNCTION  DOUBLE log (DOUBLE x)						' compute natural log ln(x)
+EXTERNAL CFUNCTION  DOUBLE log10 (DOUBLE x)					' compute log to the base 10 of x
+EXTERNAL CFUNCTION  longjmp (env, return_value)			' restores the environment saved by the most recent call to the setjmp() function with the corresponding env argument
+EXTERNAL CFUNCTION  malloc (size)										' allocate space for an object of size bytes
+EXTERNAL CFUNCTION  mblen (sAddr, n)								' determines the number of bytes comprising the multibyte character pointed to by s. At most n bytes of the array pointed to by s will be examined
+EXTERNAL CFUNCTION  mbstowcs (pwcsAddr, sAddr, n)		' converts a sequence of multibyte characters pointed to by s into their corresponding wide character codes, and stores not more than n codes into the array pointed to by pwcs
+EXTERNAL CFUNCTION  mbtowc (pwcAddr, sAddr, n)			' converts a single multibyte character pointed to by s into the wide character code that corresponds to it. The code for the null character is zero
+EXTERNAL CFUNCTION  memchr (bufAddr, c, length)			' search for first occurrence of a char in a buffer
+EXTERNAL CFUNCTION  memcmp (s1Addr, s2Addr, length)	' compare the first length characters of buffer s1 to buffer s2
+EXTERNAL CFUNCTION  memcpy (destAddr, srcAddr, n)		' copy n bytes from src buffer to dest buffer
+EXTERNAL CFUNCTION  memmove (destAddr, srcAddr, n)	' move n bytes from src buffer to dest buffer
+EXTERNAL CFUNCTION  memset (bufAddr, c, n)					' fill the first n bytes of a buffer with character c
+EXTERNAL CFUNCTION  mktime (tmAddr)									' converts the local time information in the structure pointed to by timeptr into a calendar time (Coordinated Universal Time) with the same encoding used by the time() function
+EXTERNAL CFUNCTION  DOUBLE modf (DOUBLE x, intAddr)	' break x into integral and fractional parts
+EXTERNAL CFUNCTION  perror (prefixAddr)							' print, in stderr, the message associated with the value of errno
+EXTERNAL CFUNCTION  DOUBLE pow (DOUBLE x, DOUBLE y)	' compute x raised to the power y
+EXTERNAL CFUNCTION  printf (formatAddr, arg)				' places formatted output to stdout
+EXTERNAL CFUNCTION  putc (c, fpAddr)								' writes the character specified by the argument c to the output stream designated by fp
+EXTERNAL CFUNCTION  putchar (c)											' writes the character specified by the argument c to the output stream stdout
+EXTERNAL CFUNCTION  puts (bufAddr)									' write a string to stdout
+EXTERNAL CFUNCTION  putwc (wc, streamAddr)					' put a wide-character on a stream
+EXTERNAL CFUNCTION  putwchar (wc)										' put a wide-character on stdout stream
+EXTERNAL CFUNCTION  qsort (arrayAddr, num_elements, element_size, comparFuncAddr)	' sort an array, using a modified Quicksort algorithm
+EXTERNAL CFUNCTION  raise (condition)								' signal an exceptional condition
+EXTERNAL CFUNCTION  rand ()													' returns successive pseudo-random numbers in the range from 0 to 32767
+EXTERNAL CFUNCTION  realloc (old_blk_Addr, size)		' allocate, reallocate or free a block of memory
+EXTERNAL CFUNCTION  remove (fileNameAddr)						' deletes the file whose name is the string pointed to by filename
+EXTERNAL CFUNCTION  rename (oldAddr, newAddr)				' causes the file whose name is indicated by the string old to be renamed to the name given by the string new 
+EXTERNAL CFUNCTION  rewind (fpAddr)									' sets the file position indicator for the stream indicated by fp to the beginning of the file
+EXTERNAL CFUNCTION  scanf (formatAddr, arg)					' convert stdin byte input to formatted arg
+EXTERNAL CFUNCTION  setbuf (fpAddr, bufAddr)				' associate a buffer with the file designated by fp
+EXTERNAL CFUNCTION  setlocale (category, localeAddr)	' selects the appropriate piece of the program's locale, as specified by the category and locale arguments, and may be used to change or query the program's entire locale or portions thereof				
+EXTERNAL CFUNCTION  setvbuf (fpAddr, bufAddr, mode, size)		' associate a buffer with the file designated by fp
+EXTERNAL CFUNCTION  signal (sig, funcAddr)					' set handling for exceptional conditions
+EXTERNAL CFUNCTION  DOUBLE sin (DOUBLE x)						' compute sine of angle in radians
+EXTERNAL CFUNCTION  DOUBLE sinh (DOUBLE x)					' compute hyperbolic sine of x
+EXTERNAL CFUNCTION  sprintf (sAddr, formatAddr, ...)	' places formatted text into sAddr, user must allocate enough space in string s 
+EXTERNAL CFUNCTION  DOUBLE sqrt (DOUBLE x)					' compute the square root of x
+EXTERNAL CFUNCTION  srand (ULONG seed)							' set a new seed for the rng rand ()
+EXTERNAL CFUNCTION  sscanf (sAddr, formatAddr, ...)	' convert input string s into formatted arg
+EXTERNAL CFUNCTION  strcat (s1Addr, s2Addr)					' append string2 to string1
+EXTERNAL CFUNCTION  strchr (sAddr, c)								' find first occurrence of character c in string
+EXTERNAL CFUNCTION  strcmp (s1Addr, s2Addr)					' compare string1 and string2 to determine alphabetic order
+EXTERNAL CFUNCTION  strcoll (s1Addr, s2Addr)				' compare two strings, using the locale's collating sequence
+EXTERNAL CFUNCTION  strcpy (s1Addr, s2Addr)					' copy s2 string to s1 string
+EXTERNAL CFUNCTION  strcspn (s1Addr, s2Addr)				' returns the number of characters at the beginning of s1 that DO NOT match s2
+EXTERNAL CFUNCTION  strerror (errnum)								' get error message corresponding to specified error number
+EXTERNAL CFUNCTION  strftime (sAddr, maxsize, fmtAddr, tmAddr)	' format the time into a string
+EXTERNAL CFUNCTION  strlen (sAddr)									' determine the length of a string
+EXTERNAL CFUNCTION  strncat (s1Addr, s2Addr, n)			' append n characters from string2 to string1
+EXTERNAL CFUNCTION  strncmp (s1Addr, s2Addr, n)			' compare first n characters of two strings
+EXTERNAL CFUNCTION  strncpy (s1Addr, s2Addr, n)			' copy first n characters of string2 to string1
+EXTERNAL CFUNCTION  strpbrk (s1Addr, s2Addr)				' returns a pointer to the first occurrence in string s1 of any character from s2, or a null pointer if no character from s2 exists in s1
+EXTERNAL CFUNCTION  strrchr (sAddr, c)							' find last occurrence of character c in string
+EXTERNAL CFUNCTION  strspn (s1Addr, s2Addr)					' returns the number of characters at the beginning of s1 that match s2
+EXTERNAL CFUNCTION  strstr (s1Addr, s2Addr)					' locates the first occurrence of the string s2 in s1
+EXTERNAL CFUNCTION  DOUBLE strtod (sAddr, endAddr)	' convert a string to a double value
+EXTERNAL CFUNCTION  strtok (s1Addr, s2Addr)								' break the string pointed to by s1 into a sequence of tokens, each of which is delimited by one or more characters from the string pointed to by s2
+EXTERNAL CFUNCTION  SLONG strtol (sAddr, endAddr, base)		' convert string to a SLONG integer using a given base or radix
+EXTERNAL CFUNCTION  ULONG strtoul (sAddr, endAddr, base)	' convert string to ULONG using a given base or radix
+EXTERNAL CFUNCTION  strxfrm (destAddr, srcAddr, n)				' transform one string into another, to a given length
+EXTERNAL CFUNCTION  swprintf (sAddr, n, formatAddr, arg)	' print n formatted wide-chars to output string s
+EXTERNAL CFUNCTION  swscanf (sAddr, formatAddr, arg)			' convert arg to formatted wide-character string s
+EXTERNAL CFUNCTION  system (commandAddr)									' execute a system shell command, invokes a copy of the shell, and passes the string command to it for processing 
+EXTERNAL CFUNCTION  DOUBLE tan (DOUBLE x)									' compute tangent of angle in radians
+EXTERNAL CFUNCTION  DOUBLE tanh (DOUBLE x)								' compute the hyperbolic tangent of x
+EXTERNAL CFUNCTION  time (timeAddr)												' returns the time since 00:00:00 GMT, Jan 1, 1970, measured in seconds.
+EXTERNAL CFUNCTION  tmpfile ()														' creates a temporary file that is opened for update
+EXTERNAL CFUNCTION  tmpnam (directoryAddr, prefixAddr)		' constructs the name for a temporary file
+EXTERNAL CFUNCTION  tolower (c)														' convert c to lowercase
+EXTERNAL CFUNCTION  toupper (c)														' convert c to uppercase
+EXTERNAL CFUNCTION  towlower (wc)													' convert wc to lowercase
+EXTERNAL CFUNCTION  towupper (wc)													' convert wc to uppercase
+EXTERNAL CFUNCTION  ungetc (c, fpAddr)										' pushes a character c back into the input stream and leaves the stream positioned before the character
+EXTERNAL CFUNCTION  ungetwc (wc, fpAddr)									' pushes a wide-character code back into input file stream
+EXTERNAL CFUNCTION  vfprintf (streamAddr, formatAddr, list)	' print formatted list to stream
+EXTERNAL CFUNCTION  vfwprintf (streamAddr, formatAddr, list)' print wide-character formatted std arg list to stream
+EXTERNAL CFUNCTION  vprintf (formatAddr, list)						' print formatted std arg list to stdout
+EXTERNAL CFUNCTION  vsprintf (sAddr, formatAddr, list)		' formats std arg list data under control of the format control string, and writes the result to string s
+EXTERNAL CFUNCTION  vswprintf (wcsAddr, n, formatAddr, list)	' prints formatted std arg list to wide-character string
+EXTERNAL CFUNCTION  vwprintf (formatAddr, list)						' prints std arg list to formatted wide-character stdout
+EXTERNAL CFUNCTION  wcscat (wcs1Addr, wcs2Addr)						' append string2 to string1
+EXTERNAL CFUNCTION  wcschr (wcsAddr, wc)									' find first occurrence of character c in string
+EXTERNAL CFUNCTION  wcscmp (wcs1Addr, wcs2Addr)						' compare string1 and string2 to determine alphabetic order
+EXTERNAL CFUNCTION  wcscoll (wcs1Addr, wcs2Addr)					' compares two wide-character strings and returns an integer that indicates if the strings differ, and how they differ
+EXTERNAL CFUNCTION  wcscpy (wcs1Addr, wcs2Addr)						' copy s2 string to s1 string
+EXTERNAL CFUNCTION  wcscspn (wcs1Addr, wcs2Addr)					' returns the number of characters at the beginning of s1 that DO NOT match s2
+EXTERNAL CFUNCTION  wcsftime (wcsAddr, maxsize, formatAddr, tmAddr)	' uses date and time information stored in a tm  structure to create a wide-character output string. The format of the output string is controlled by a format string
+EXTERNAL CFUNCTION  wcslen (wcsAddr)											' determine the length of a string
+EXTERNAL CFUNCTION  wcsncat (wcs1Addr, wcs2Addr, n)				' append n characters from string2 to string1
+EXTERNAL CFUNCTION  wcsncmp (wcs1Addr, wcs2Addr, n)				' compare first n characters of two strings
+EXTERNAL CFUNCTION  wcsncpy (wcs1Addr, wcs2Addr, n)				' copy first n characters of string2 to string1
+EXTERNAL CFUNCTION  wcspbrk (wcsAddr, wcacceptAddr)				' returns a pointer to the first occurrence in string s1 of any character from s2, or a null pointer if no character from s2 exists in s1
+EXTERNAL CFUNCTION  wcsrchr (wcsAddr, wc)									' find last occurrence of character c in string
+EXTERNAL CFUNCTION  wcsspn (wcs1Addr, wcs2Addr)						' returns the number of characters at the beginning of s1 that match s2
+EXTERNAL CFUNCTION  wcsstr (wcs1Addr, wcs2Addr)						' locates the first occurrence of the string s2 in s1
+EXTERNAL CFUNCTION  DOUBLE wcstod (wcsAddr, endAddr)			' convert a string to a double value
+EXTERNAL CFUNCTION  wcstok (wcs1Addr, wcs2Addr)						' break the string pointed to by s1 into a sequence of tokens, each of which is delimited by one or more characters from the string pointed to by s2
+EXTERNAL CFUNCTION  SLONG wcstol (wcsAddr, endAddr, base)	' convert string to a SLONG integer using a given base or radix
+EXTERNAL CFUNCTION  wcstombs (wcsAddr, pwcsAddr, n)				' converts a sequence of wide character codes from the array pointed to by pwcs into a sequence of multibyte characters, and stores them in the array pointed to by s
+EXTERNAL CFUNCTION  ULONG wcstoul (wcsAddr, endAddr, base)' convert string to ULONG using a given base or radix
+EXTERNAL CFUNCTION  wcsxfrm (destAddr, srcAddr, n)				' transform one string into another, to a given length
+EXTERNAL CFUNCTION  wctomb (wcsAddr, wc)									' convert a wide character to a multibyte character
+EXTERNAL CFUNCTION  wprintf (formatAddr, arg)							' print formatted wide-char ouput to stdout 
+EXTERNAL CFUNCTION  wscanf ()
+
+' *********************
+' ***** Constants *****
+' *********************
+
+$$NULL = 0
+
+'exit() function status constants
+
+$$EXIT_FAILURE = 1
+$$EXIT_SUCCESS = 0
+
+'time.h constants
+
+$$CLOCKS_PER_SEC 		= 1000
+$$CLK_TCK 					= 1000
+$$_CLOCKS_PER_SEC_ 	= 1000
+
+'math constants
+
+$$M_E           =  2.7182818284590452354		' the base of natural logarithms (e)
+$$M_LOG2E       =  1.4426950408889634074		' the base-2 log of e
+$$M_LOG10E      =  0.43429448190325182765		' the base-10 log of e
+$$M_LN2         =  0.69314718055994530942		' the natural log of 2
+$$M_LN10        =  2.30258509299404568402		' the natural log of 10
+$$M_PI          =  3.14159265358979323846		' pi
+$$M_TWOPI       =  6.28318530717958647692		' 2 * pi
+$$M_PI_2        =  1.57079632679489661923		' pi/2
+$$M_PI_4        =  0.78539816339744830962		' pi/4
+$$M_3PI_4       =  2.3561944901923448370		' 3*pi/4
+$$M_SQRTPI      =  1.7724538509055160279298	' sqrt(pi)
+$$M_1_PI        =  0.31830988618379067154		' 1/pi
+$$M_2_PI        =  0.63661977236758134308		' 2/pi
+$$M_2_SQRTPI    =  1.12837916709551257390		' 2/sqrt(pi)
+$$M_SQRT2       =  1.41421356237309504880		' sqrt(2)
+$$M_SQRT1_2     =  0.70710678118654752440		' sqrt(1/2)
+$$M_SQRT3       =  1.73205080756887719000		' sqrt(3)
+$$M_IVLN10      =  0.43429448190325182765 	' 1/log(10) 
+$$M_LOG2_E      =  0.693147180559945309417	' 
+$$M_INVLN2      =  1.4426950408889633870  	' 1/log(2) 
+
+' process.h constants
+
+$$_P_WAIT       =  1
+$$_P_NOWAIT     =  2       ' always generates error 
+$$_P_OVERLAY    =  3
+$$_P_NOWAITO    =  4
+$$_P_DETACH     =  5
+
+$$WAIT_CHILD    =  1
+
+' floating point class constants
+
+$$_FPCLASS_SNAN	= 0x0001	' signaling NaN  
+$$_FPCLASS_QNAN	= 0x0002	' quiet NaN  
+$$_FPCLASS_NINF	= 0x0004	' negative infinity  
+$$_FPCLASS_NN	  = 0x0008	' negative normal  
+$$_FPCLASS_ND   = 0x0010	' negative denormal  
+$$_FPCLASS_NZ	  = 0x0020	' -0  
+$$_FPCLASS_PZ	  = 0x0040	' +0  
+$$_FPCLASS_PD	  = 0x0080	' positive denormal  
+$$_FPCLASS_PN	  = 0x0100	' positive normal  
+$$_FPCLASS_PINF	= 0x0200	' positive infinity  
+
+$$FP_SNAN       = 0x0001  ' signaling NaN
+$$FP_QNAN       = 0x0002  ' quiet NaN
+$$FP_NINF       = 0x0004  ' negative infinity
+$$FP_PINF       = 0x0200  ' positive infinity
+$$FP_NDENORM    = 0x0008  ' negative denormalized non-zero
+$$FP_PDENORM    = 0x0010  ' positive denormalized non-zero
+$$FP_NZERO      = 0x0020  ' negative zero
+$$FP_PZERO      = 0x0040  ' positive zero
+$$FP_NNORM      = 0x0080  ' negative normalized non-zero
+$$FP_PNORM      = 0x0100  ' positive normalized non-zero
+
+' file open modes 
+$$_O_RDONLY  = 0x0000
+$$_O_WRONLY  = 0x0001
+$$_O_RDWR    = 0x0002
+$$_O_APPEND  = 0x0008
+$$_O_CREAT   = 0x0100
+$$_O_TRUNC   = 0x0200
+$$_O_EXCL    = 0x0400
+$$_O_TEXT    = 0x4000
+$$_O_BINARY  = 0x8000
+$$_O_TEMPORARY = 0x0040 ' Will be closed and deleted on exit
+
+' _stat() mode bits 
+$$_S_IFMT          =  0170000
+$$_S_IFREG         =  0100000
+$$_S_IFDIR         =  0040000
+$$_S_IFCHR         =  0020000
+$$_S_IFIFO         =  0010000
+$$_S_IREAD         =  0000400
+$$_S_IWRITE        =  0000200
+$$_S_IEXEC         =  0000100
+
+' _statusfp bit flags 
+$$_SW_INEXACT    = 0x1
+$$_SW_UNDERFLOW  = 0x2
+$$_SW_OVERFLOW   = 0x4
+$$_SW_ZERODIVIDE = 0x8
+$$_SW_INVALID    = 0x10
+$$_SW_DENORMAL   = 0x80000
+
+' heap function constants 
+$$_HEAPEMPTY    = -1
+$$_HEAPOK       = -2
+$$_HEAPBADBEGIN = -3
+$$_HEAPBADNODE  = -4
+$$_HEAPEND      = -5
+$$_HEAPBADPTR   = -6
+$$_FREEENTRY    = 0
+$$_USEDENTRY    = 1
+
+' File attribute constants for _findfirst() 
+
+$$_A_NORMAL	= 0x00	' Normal file - No read/write restrictions
+$$_A_RDONLY	= 0x01	' Read only file
+$$_A_HIDDEN	= 0x02	' Hidden file
+$$_A_SYSTEM	= 0x04	' System file
+$$_A_SUBDIR	= 0x10	' Subdirectory
+$$_A_ARCH 	= 0x20	' Archive file
+
+$$EOF = -1
+
+' these are in winmm.dec
+'$$SEEK_SET  = 0
+'$$SEEK_CUR  = 1
+'$$SEEK_END  = 2
+
+$$FILENAME_MAX = 260
+
+$$BUFSIZ = 512
+
+$$FOPEN_MAX = 256

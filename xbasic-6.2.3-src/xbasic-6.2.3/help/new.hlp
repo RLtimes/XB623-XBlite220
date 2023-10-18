@@ -1,0 +1,519 @@
+'
+'
+' ####################  Max Reason
+' #####  XBasic  #####  copyright 1988-2000
+' ####################  features not in documentation
+'
+' subject to GPL and LGPL licenses - see COPYING, COPYING_LIB
+'
+' http://xbasic.sf.net
+' http://groups.yahoo.com/group/xbasic
+' xbasic@yahoogroups.com
+'
+' for Windows XBasic
+' for Linux XBasic
+'
+' #####
+'
+' The following information may or may not be included
+' in the printed documentation or other documentation.
+'
+' #####  v6.2.3  #####  20021027
+' - Fixed new message in XuiSetMessageFunc
+' - Conversion from float to string ('colon bug') fixed.
+' - Fixed 2 bugs in FORMAT$().
+' - SIGALRM wasn't handled outside of the PDE on Linux. This caused functions
+'   like XstStartTimer() and XstSleep() to fail.
+' - Fixed SUB TextEvent in XuiDropBox, XuiListBox, etc.
+' - Changed new.hlp to reflect current mailing list
+' - Fixed bug in xgr.x (Windows version) that caused the last font installed
+'   to be ignored by XBasic
+' - Fixed bug in linux/xit.x function SharedMemory
+' - DEC didn't work correctly on SINGLE and DOUBLE variables.
+' - Moved code to create Toolkit and related windows to XxxGuiDesignerOnOff
+' - Removed dependency on the OSTYPE environment-variable on Linux. This
+'   fixes startup on Red Hat 7.3 and other distributions that use bash 2.05
+' - Fixed values of $$LOGE10 and $$MAX_ULONG constants.
+' - Fixed winmm.dec.
+'
+' #####  v6.2.2  #####  20020107
+' - Fixed SWAP for string components
+' - Corrected expression evaluation in DIM and REDIM
+' - Fixed SWAP for strings
+' - Corrected XstQuickSort and related functions
+' - Changed background of hint grid to one of the standard colors
+'
+' #####  v6.2.1  #####  20010722
+' - Corrected computation of components
+' - Added 'erase output' to the PDE run menu to clear the Console window
+' - Corrections to SIZE and TYPE intrinsics for built-in types
+' - Corrections to Expresso for expressions involving mixed types
+' - Fixed incompatibilities in XgrDrawBox between Windows and Linux
+' - Adjusted some problems in XgrDrawPoints (Win32) identified by Ken Minogue
+' - Fixed defaultFontSize in xui.x
+' - Can now use keypad for numbers in Linux
+' - Fixed XstNextCLine$
+' - FOR (GIANT) didn't test for finished properly
+' - Entering text for the menu in the GUI-Designer didn't work right.
+' - GIANT division and mod didn't use the full 64 bits either.
+' - Assigning literals > 2147483647 (0x7FFFFFFF) to an ULONG caused an
+'   overflow exception in the compiler.
+' - Conversion of DOUBLE/SINGLE to ULONG gave incorrect result if the value
+'   was > 0x7FFFFFFF.
+' - Using an ULONG literal as actual parameter for a function used the wrong
+'   value if it was > 0x7FFFFFFF.
+' - XgrGetMouseInfo() (Win32) now returns the actual state, instead of the
+'   state since the last call.
+' - SIZE(#array[]) gave a 'compiler error' when the array wasn't before in a
+'   function.
+' - Programs using Xin could crash the PDE.
+' - XinSocketConnectRequest() didn't work correctly.
+' - User-DLL's are now initialized before running (instead of during
+'   compiling) a user program by the PDE (Win32).
+' - The symbol hash-table wasn't properly cleared, which caused the compiler
+'   generating code using the wrong type for (e.g.) SELECT CASE statements in
+'   subsequent compilations.
+' - User-mode hotkeys are no longer sent to the PDE and vice versa.
+' - xb now gives a more elegant error-message when run from the console on
+'   Linux.
+' - Negative STEP values are now supported with a ULONG for-loop.
+' - Fixed '##WHOMASK' bug with XstGetDateAndTime()
+' - Removed 64KB limit of structures.
+' - Implemented READ/WRITE for string arrays.
+' - Corrected READ/WRITE for multi-dimensional arrays.
+' - Fixed SWAP for elements > 4 bytes (Linux).
+' - New functions to draw ellipses (XgrDrawEllipse, XgrDrawEllipseGrid,
+'   XgrDrawEllipseScaled).
+' - XgrDrawCircleScaled now scales the radius correctly.
+' - Fixed a bug in XstStringArraySectionToString and
+'   XstStringArraySectionToStringArray when y1 = y2.
+' - Fixed generation of .rpm's on RedHat 7.0 (RPM4).
+'
+' #####  v6.2.0  #####  20001126
+' - GIANT multiplication didn't use the full 64 bits.
+' - XstDecomposePathname now treats / right (Win32).
+' - The name of the current file is displayed in the title-bar.
+' - -1 is accepted as 'default' (full width/height) parameter for the
+'   XgrDrawImage-functions. In the future (>= 6.3.0) -1 will be the only
+'   'default' parameter, 0 will be reused to be able to specify an image of 1
+'   pixel wide/high.
+' - Compile files (myfile.mak, myfile.dec, myfile.s, myfile.def) now are
+'   saved in the same directory as the source file myfile.x
+' - Fixed xit.x (both versions) so pressing "save" on "file not saved"
+'   message boxes doesn't automatically stop the previous operation (e.g.,
+'   Quit, Load, New, or Text-Load)
+' - Fixed generated makefile for programs with external libraries on Linux.
+' - Some bitmap-files (e.g. just *.bmp) were not installed with the
+'   self-installing .exe'.
+' - mousewheel support in Windows corrected in XuiTextArea and added to
+'   XuiFileBox, XuiDirectoryBox, XuiList and XuiConsole
+' - hint strings removed from TextLower and Command of the PDE and from
+'   Console window
+' - fixed #SomeMore and #SomeLess to work as described in TextMessage
+' - fixed treatment of last character in XstBackStringToBinString$
+' - font.xxx and property.xxx were not read when the XBDIR environment
+'   variable was not set.
+' - Paste over a selction wouldn't replace in Environment (using hotbutton
+'   or menu) or in Console or any XuiTextLine grid. Fixed in xit.x function
+'   EditPaste () and in xui.x functions XuiConsole () and XuiTextLine ()
+' - Setting the CEO in a user-program would cause
+'   $$ExceptionSegmentationViolation when another program was loaded and run.
+'
+' #####  v6.1.4  #####  20001024
+' - XstGetTypedArray now uses an ANY array.
+' - Added XstTypeSize to calculate the size of a type constant
+' - Added XstBytesToBound to calculate the number of elements an array
+'   should have to occupy at least a certain number of bytes.
+' - XstFindFiles now returns (only) \ as directory separator.
+' - XstPathToAbsolutePath now works correctly when drive-letters are used.
+' - XstFindFile now handles drive-letters correctly and both \ (for windows)
+'   and / can be used as directory-separators. Directories are now only found
+'   if $$FileDirectory is specified in the attribute-filter.
+' - XstGetExecutionPathArray now correctly processes drive-letters.
+' - XstCopyDirectory now returns an error if the destination-directory
+'   doesn't exist.
+' - Corrected various wrong values of the ##ERROR variables.
+' - XstNextCLine$ now sets 'done' correctly if the C-String ends without a
+'   '\n'.
+' - XstKillTimer didn't (always) return 0 if it succeeded.
+' - XstGetPathComponents now works for relative paths.
+' - dx1/dy1 parameters were ignored in XgrDrawImageScaled.
+' - SINGLE arguments with computed values were allocated incorrectly, fixed
+'
+' #####  v6.1.3  #####  20000910
+' - XBasic looks for a .dec-file now first in the current directory and
+'   (if it doesn't exist there) then in the XBasic system include directory.
+' - XinSocketConnectRequest used wrong port-number.
+' - External XBasic libraries (.dll) can be used in the PDE again.
+' - Removed Xin() from PDE. This prevents a crash on badly configured (TCP/IP)
+'   systems.
+' - Added XstGetLocalDateAndTime() to retrieve the date/time in the local
+'   timezone (note that XstGetDateAndTime() retrieves the UTC date/time).
+' - Fixed compilation from source-distribution and 'make install' on Win32.
+' - mousewheel-support for Linux. Note: to enable the mousewheel in XFree86
+'   add 'ZAxisMapping 4 5' to the 'Pointer' section in your XF86Config. For
+'   more information about mousewheel-support on Linux, see:
+'   http://www-sop.inria.fr/koala/colas/mouse-wheel-scroll/
+'
+' #####  v6.1.2  #####  20000724
+' - .rpm is now packaged as root.root
+' - Fixed bug in XuiFile: double-click in empty directory
+'   would crash the program/PDE.
+' - XuiHint, XuiListBox, XuiListButton don't show up in the taskbar anymore
+'   (by Vincent Voois).
+' - Added (more) mousewheel-patches by Vincent Voois
+' - Removed 'busy wait' when idle (CPU Utilization should be 0% now, when
+'   idle)
+' - 'make install' now works (better) on Win32
+' - Added default xbvars.bat to Win32 binary .zip distribution
+'
+' #####  v6.1.1  #####  20000606
+' - Instant help is working again
+' - Creating .dll-files is working again
+' - Added mousewheel-patches by Vincent Voois
+' - Fixed bug where numlock disabled input (Linux only)
+'
+'
+' #####  v6.1.0  #####  20000514
+'
+' Reorganized directory structure.
+' Merged windows and linux source.
+'
+' #####  v6.0022  #####  20000901
+'
+' Some problems that existed with routines that checked
+' the operating-system platform and/or version are fixed.
+' Hopefully new problems have not been introduced.
+'
+'
+' #####  v6.0022  #####  20000901
+'
+' The following functions were added to the "xgr" function library
+' to support display of 16-bit UNICODE characters.  Support has not
+' been added in the "xui" AKA GuiDesigner function library yet.
+' A sample program called "aunicode.x" has been added to display
+' all 65536 UNICODE characters.  To display non-English characters,
+' get some fonts designed for various languages and change the code
+' to select those fonts.  The fonts shown in "aunicode.x" contain
+' many Asian/Chinese characters.
+'
+' These functions have not been added to Linux XBasic yet.
+'
+FUNCTION  XgrDrawTextWide           (grid, color, USHORT text[])
+FUNCTION  XgrDrawTextWideGrid       (grid, color, USHORT text[])
+FUNCTION  XgrDrawTextWideScaled     (grid, color, USHORT text[])
+FUNCTION  XgrDrawTextWideFill       (grid, color, USHORT text[])
+FUNCTION  XgrDrawTextWideFillGrid   (grid, color, USHORT text[])
+FUNCTION  XgrDrawTextWideFillScaled (grid, color, USHORT text[])
+'
+'
+' #####  v6.0021  #####  forgot what was done in this version
+' #####  v6.0020  #####  forgot what was done in this version
+'
+'
+' #####  v6.0019  #####  20000615
+'
+' The IDE hot-keys now work.  When the names in the main
+' menu-bar were changed to lower-case many versions ago,
+' the IDE hot-keys stopped working.  The code that handles
+' hot-keys now handles lower-case characters properly, so
+' lower-case hot-keys characters now work.
+'
+'
+' #####  v6.0019  #####  20000615
+'
+' The XstIsDataDimension(@array[]) function was added to
+' the "xst" function library.  XstIsDataDimension() returns
+' zero if the array[] argument contains data of any data type.
+' XstIsDataDimension() returns non-zero if the array[] argument
+' is empty or contains nodes (addresses of "lower" dimensions).
+'
+' Added sample program "adatadim.x" to demonstrate the
+' XstIsDataDimension() function.
+'
+'
+' #####  v6.0019  #####  20000615
+'
+' The startup window now display only the first 10 times
+' XBasic is started after each new installation of XBasic.
+' The startup window can be made to display indefinitely
+' by editing the "c:/windows/xb.ini" file and setting the
+' # number at the end of the "about=#" line to "about=-1".
+'
+' The startup window is displayed when "help, about" is
+' selected in the main menu in the XBasic main window.
+'
+'
+' #####  v6.0019  #####  20000615
+'
+' The startup window and HelpWindow are now hidden when
+' "close" is activated in the menu bar of the window,
+' from either the system menu or the "close button".
+'
+'
+' #####  v6.0019  #####  20000615
+'
+' The "view, new function" and "view, load function"
+' windows are now easier to "close" and "hide".
+'
+'
+' #####  v6.0019  #####  20000615
+'
+' The #MouseWheel message is now recognized by the
+' XuiScrollBarV and XuiTextArea grids on some computers.
+'
+'
+' #####  v6.0019  #####  20000615
+'
+' XBasic now has the capability to load any XBasic function
+' from any XBasic *.x source-code file.  Select "view, import"
+' in the XBasic main menu.  The code was supplied by an XBasic
+' programmer and is not yet tested.  Please report problems.
+'
+'
+' #####  v6.0019  #####  20000615
+'
+' The information display by "help, notes" in previous
+' versions is now reproduced at the end of this file.
+' These are mostly reports of bugs and annoyances.
+'
+'
+' #####  v6.0018  #####  20000612
+'
+' Changed various aspects of "backslash array" code after
+' various comments from XBasic programmers and rethinking.
+'
+' The "backslash=" option in "xb.ini" that has been played
+' with during the past two weeks (v6.0013 to v6.0017) has
+' been removed, because too many potential confusions exist.
+'
+' The following describes how backslash strings work.
+' Any differences between this information and previous
+' documentation or help-file entries are resolved in favor
+' of this "help, new" entries - and/or subsequent ones.
+'
+' The new XstGetBackslashArray() and XstSetBackslashArray()
+' functions have been removed.
+'
+' The long-existing functions XstBinStringToBackString$()
+' and XstBinStringToBackStringNL$() now work exactly as
+' they did prior to two weeks ago, except all characters
+' from 0x80 to 0xFF are no longer backslashed, so XBasic
+' now supports many non-English characters by default.
+'
+' The operation of functions XstBinStringToBackString$()
+' and XstBinStringToBackStringNL$() are not altered in any
+' way by other backslash functions or any backslash array.
+'
+' The new XstBinStringToBackStringThese$() function still
+' exists and operates without modification or restriction
+' based upon the backslash array argument.  No character
+' is overridden, so programs have full, unlimited ability
+' to specify backslash or no-backslash for any character,
+' including 0x09 = tab = \t and 0x0A = newline = \n and
+' 0x0D = return = \r and 0x22 = double-quote = " and
+' 0x5C = backslash = \\ and any other.
+'
+'
+' *****  summary  *****
+' xb.ini has no effect on backslashing.
+' XstGetBackslashArray() has been removed.
+' XstSetBackslashArray() has been removed.
+' XstBinStringToBackString$() works as it originally did.
+' XstBinStringToBackStringNL$() works as it originally did.
+' XstBinStringToBackStringThese$() has no limitations.
+'
+'
+' #####  v6.0012  #####  20000528
+'
+' Linux XBasic and Windows XBasic v6.0012 are in-sync.
+' At least supposedly so.  Please report any differences.
+'
+' This release contains bug fixes for POWER() in "xlib.s",
+' and internal changes to "xui.x", "xit.x", "xst.x".
+'
+'
+' #####  v6.0011  #####  20000525
+'
+' The following sample programs have been added since v6.0000
+' but may not have been mentioned previously:
+'
+' aarray.x
+' acolumns.x
+' acommand.x
+' adatadim.x
+' adrawing.x
+' afile.x
+' ahtml.x
+' amerge.x
+' amemory.x
+' arecord.x
+' arecurse.x
+' aredrawn.x
+' arotate.x
+' ascroll.x
+' ashell.x
+' asortie.x
+' astring.x
+' atrim.x
+' awrite.x
+'
+'
+' #####  v6.0010  #####  20000522
+'
+' Merged Steven Gunhouse bug fixes into file "xgr.x".
+' Merged Steven Gunhouse improvements into file "xma.x".
+'
+'
+' #####  v6.0010  #####  20000520
+'
+' Added the following functions to "xst" function library:
+'
+'  XstReadString()  : reads string from file (with ULONG length header)
+'  XstWriteString() : writes string to file (with ULONG length header)
+'
+' Why were the above functions added?  Currently to read strings
+' from files with READ, you need to know the length of the string
+' you intend to read, then size a string to that length to receive
+' the string data, then READ the string.  These two new functions
+' automatically read and write string length to simply reading and
+' writing strings from and to open files.  XstWriteString() writes
+' a ULONG variable containing the string length, then writes the
+' string data.  XstReadString() reads the string length into a
+' ULONG variable, sizes the string variable based on that length,
+' then reads that number of bytes of string data into the string.
+' XstWriteString() writes the ULONG header containing value zero
+' if the string is empty.  XstReadString() recognizes a zero value
+' in the ULONG header means empty strings.  Therefore empty strings
+' are fully supported and work exactly like strings with contents.
+'
+' The "astring.x" sample program was added to demonstrate these
+' two new functions: XstReadString() and XstWriteString().
+'
+'
+' #####  v6.0010  #####  20000520
+'
+' Integrated bug fixes provided by Steven Gunhouse into
+' files "xcow.x" and "xlib.s".  These changes affect
+' various integer division situations and POWER().
+'
+'
+' #####  v6.0010  #####  20000505
+'
+' Added the following functions to "xst" function library:
+'
+'  XstClearConsole()   : empty console of contents, redraw
+'  XstDisplayConsole() : display console, give keyboard focus
+'  XstHideConsole()    : hide console, loose keyboard focus
+'  XstShowConsole()    : show console, no keyboard focus
+'
+'
+' #####  v6.0009  #####  20000423
+'
+' Fixed bugs in Windows XBasic "xgr.x" by adding changes
+' supplied by SVG.
+'
+'
+' #####  v6.0008  #####  20000408
+'
+' Fixed bugs in XstQuickSort() routines.
+'
+'
+' #####  v6.0007  #####  20000224
+'
+' Added #Redrawn message.  The XuiLabel and a few other
+' simple grids now generate a #Redrawn callback message
+' at the end of their RedrawGrid subroutines.  Programs
+' can now easily draw special graphics onto these grids
+' after the grids redraw themselves normally in response
+' to #Redrawn callback messages.  See sample "aredrawn.x".
+'
+'
+' #####  v6.0006  #####  20000212
+'
+' Modified "xgr" to work around KDE "maximize window" bug.
+'
+'
+' #####  v6.0006  #####  20000212
+'
+' Modified "xgr" to place windows closer to their desired
+' positions in both GNOME and KDE, but not always exactly.
+'
+'
+' #####  v6.0006  #####  20000212
+'
+' Added XstClearConsole() to "xst" function library.
+'
+'
+' #####  v6.0005  #####  20000210
+'
+' Fixed bug with GIANT variables in INC and DEC statements.
+'
+'
+' #####  v6.0004  #####  20000208
+'
+' Fixed bug with WRITE string$ when string$ is empty.
+'
+'
+' #####  v6.0003  #####  20000202
+'
+' Two semi-obscure bugs in FOR and NEXT with ULONG and GIANT
+' data-types have been fixed.
+'
+'
+' #####  v6.0002  #####  20000201
+'
+' Because of limitations in early versions of Windows95/NT
+' the maximum dynamic memory space was 64MB.  This has been
+' increased to 256MB and can be further extended if needed
+' by changing two or three hardwired values.
+'
+'
+' #####  v6.0001  #####  20000120
+'
+' XstFindFiles() added.  The new sample programs "afindall.x"
+' and "aviewbmp.x" demonstrate XstFindFiles().
+'
+'
+'
+' #####################
+' #####  v6.0000  #####  20000115
+' #####################
+'
+'
+' #####  v6.0000  #####  20000115
+'
+' Linux XBasic brought into sync with Windows XBasic
+' and both are released under GPL and LGPL licenses.
+'
+' #####  all versions  #####
+'
+' NOTE : Linux only
+' Make sure the .fvwmrc file in your home directory
+' enables "SmartPlacement" or "RandomPlacement".
+' The above filename will be different if your
+' window manager is not "fvwm".
+'
+' Make sure any "NoPPosition" line is removed, or
+' the line is disabled by a "#" prefix, like this:
+' # NoPPosition
+'
+' FIX : this problem is under investigation
+'
+'
+' #####  all versions  #####
+'
+' LIMITATION : Linux only
+' Linux XBasic cannot produce "dynamic link libraries" or
+' "DLLs" since the ELF specification foolishly requires
+' the compiler generate PIC aka position independent code,
+' which XBasic cannot do without a rewrite.  This does not
+' prevent an XBasic program from calling functions in DLLs,
+' however.  In fact Linux XBasic itself is linked with the
+' DLL versions of the X-Windows "xlib" library, the standard
+' operating system library, and the ELF support library.
+'
+' FIX : This limitation will be eliminated if and when
+' XBasic is modified to emit C instead of assembly language.
+'
+'

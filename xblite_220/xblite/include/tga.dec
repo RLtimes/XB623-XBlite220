@@ -1,0 +1,6 @@
+
+
+EXTERNAL CFUNCTION TGA_UploadImage( Addr_file)
+EXTERNAL CFUNCTION TGA_UploadCube( Addr_right,  Addr_left,  Addr_top,  Addr_bottom,  Addr_front,  Addr_back)
+EXTERNAL CFUNCTION TGA_UploadDUDV( Addr_file)
+EXTERNAL CFUNCTION TGA_UploadDOT3( Addr_file)

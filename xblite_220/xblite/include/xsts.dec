@@ -1,0 +1,67 @@
+	EXTERNAL FUNCTION DOUBLE XstsN (DOUBLE X[])
+	EXTERNAL FUNCTION DOUBLE XstsSum (DOUBLE X[], power)
+	EXTERNAL FUNCTION DOUBLE XstsMean (DOUBLE X[])
+	EXTERNAL FUNCTION DOUBLE XstsMinValue (DOUBLE X[])
+	EXTERNAL FUNCTION DOUBLE XstsMaxValue (DOUBLE X[])
+	EXTERNAL FUNCTION DOUBLE XstsDeltaMax (DOUBLE X[])
+	EXTERNAL FUNCTION DOUBLE XstsAbsolutMoment (DOUBLE X[], DOUBLE point, power)
+	EXTERNAL FUNCTION DOUBLE XstsRawMoment (DOUBLE X[], power)
+	EXTERNAL FUNCTION DOUBLE XstsCentralMoment (DOUBLE X[], power)
+	EXTERNAL FUNCTION DOUBLE XstsVariance (DOUBLE X[], unbiased)
+	EXTERNAL FUNCTION DOUBLE XstsStdDev (DOUBLE X[], unbiased)
+	EXTERNAL FUNCTION DOUBLE XstsSkewness (DOUBLE X[], unbiased)
+	EXTERNAL FUNCTION DOUBLE XstsKurtosis (DOUBLE X[], unbiased)
+'==========================
+' Standard Error of...
+'==========================
+	EXTERNAL FUNCTION DOUBLE XstsSEMean (DOUBLE X[], unbiased)
+	EXTERNAL FUNCTION DOUBLE XstsSEVariance (DOUBLE X[], unbiased)
+	EXTERNAL FUNCTION DOUBLE XstsSEStdDev (DOUBLE X[], unbiased)
+'
+'
+'
+	EXTERNAL FUNCTION  XstsCenterAndNorm (DOUBLE old[], DOUBLE new[], unbiased)
+'==========================
+' Statistical tests
+'==========================
+' F-test of Fisher (comparing two variances)
+	EXTERNAL FUNCTION DOUBLE Xsts_FFisher (DOUBLE X[], DOUBLE Y[], unbiased, @fmin, @fmax)
+' t-test of Student (comparing two averages)
+	EXTERNAL FUNCTION DOUBLE Xsts_tStudent (DOUBLE X[], DOUBLE Y[], same, unbiased, DOUBLE @f)
+' Lambda-Square-test of Kolmogorov-Smirnov (two-sample test)
+	EXTERNAL FUNCTION DOUBLE Xsts_LambdaSqr (DOUBLE X[], DOUBLE Y[], DOUBLE alpha, DOUBLE @criticalLambda)
+'==========================
+' Mescellaneous functions
+'==========================
+	EXTERNAL FUNCTION  XstsSetMinPower (n)
+	EXTERNAL FUNCTION  XstsGetMinPower ()
+	EXTERNAL FUNCTION  XstsSetMaxPower (n)
+	EXTERNAL FUNCTION  XstsGetMaxPower ()
+	EXTERNAL FUNCTION  XstsGetWarning ()
+	EXTERNAL FUNCTION  XstsGetWarning$ (warning)
+	EXTERNAL FUNCTION  XstsCleanWarning ()
+'====================
+' Warning constants
+'====================
+	$$XstsN_warning							= 1
+	$$XstsSum_warning					  = 2
+	$$XstsMean_warning					= 3
+	$$XstsMinValue_warning			= 4
+	$$XstsMaxValue_warning			= 5
+	$$XstsDeltaMax_warning			= 6
+	$$XstsAbsolutMoment_warning = 7
+	$$XstsRawMoment_warning			= 8
+	$$XstsCentralMoment_warning	= 9
+	$$XstsVariance_warning			= 10
+	$$XstsStdDev_warning				= 11
+	$$XstsSkewness_warning			= 12
+	$$XstsKurtosis_warning			= 13
+	$$XstsSEMean_warning				= 14
+	$$XstsSEVariance_warning		= 15
+	$$XstsSEStdDev_warning			= 16
+	$$Xsts_FFisher_warning			= 17
+	$$Xsts_tStudent_warning			= 18
+	$$Xsts_LambdaSqr_warning		= 19
+	$$XstsCenterAndNorm_warning	= 20
+'
+

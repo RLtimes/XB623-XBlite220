@@ -1,0 +1,19 @@
+scrabble ICON    scrabble.ico
+
+menu MENU 
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "&Draw Mondrian",                101
+		MENUITEM SEPARATOR
+		MENUITEM "&Save As BMP",                 	102
+		MENUITEM SEPARATOR
+		MENUITEM "E&xit",                       	103
+	END
+	POPUP "&Image Size"
+	BEGIN
+		MENUITEM "256x256",               	130
+		MENUITEM "512x512",               	131
+	END
+END
+

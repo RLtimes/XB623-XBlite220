@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>DevCentral - Using OpenGL in Visual C++: Part III</title>
+  <meta http-equiv="CONTENT-TYPE"
+ content="TEXT/HTML; CHARSET=ISO-8859-1">
+  <meta name="keywords"
+ content="ITI, Interface, custom, software, development, technology, technologies, devcentral, devjournal, programmers, program, web, technical, project, professional, programming, design, application, ASP, Internet, developer, C, C++, VB, Java, VBScript, JavaScript, Swing, ASP, HTML, PHP, Windows, NT, 2000, UNIX, Linux, SQL, Server, Oracle, Microsoft, Win32, Transaction, MFC, ATL, OLE, JDBC, ODBC,  ADO, Object, Oriented, COM, DCOM,  ActiveX, CORBA, web-based, tools, Raleigh, NC, RTP, Triangle, Research, article, tutorial, SourceVizor, ITCLib">
+  <meta name="description"
+ content="DevCentral - Articles and tutorials with easy to understand examples for the seasoned professional to the student.">
+</head>
+<body bgcolor="#ffffff" leftmargin="0" topmargin="0">
+<!-- This is the include file for the header -->
+<table width="750" border="0" cellspacing="0" cellpadding="0">
+	<tbody>
+    <tr valign="top">
+		 				 				 		<td width="5"><img
+ src="Using%20OpenGL%20Part%20III_files/spacer.gif" width="5"></td>
+		 		<td width="454"><br>
+			<!-- This is the main body text --> <big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="3"><big><b>Using OpenGL
+in Visual C++:  Part III</b></big></font>                <font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Transformations
+and the Matrix Stack</big></font></big>					 
+      <p align="right"><big>                    <font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="2"><big><i><b>by Alan
+Oursland</b></i></big></font></big></p>
+<!-- \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\   End TITLE SECTION -->
+         <!-- PDF File Download --><big><br>
+      <a
+ href="http://download.iftech.com/DevCentral/source/openGL_part3.zip"><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>[Download the
+example source]</big></font></a>  <font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="3"><big><b>Transformations
+and the Matrix Stack</b></big></font></big>		                           
+   <!-- /////////////////////////////////////////// Begin CONTENT -->  		
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		The sample program presented in this section will show  		you
+how to use display lists, basic transforms, the matrix  		stack, and double
+buffering. 	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Once again, follow the above steps to get to a starting
+point 		for this third sample program (or continue to modify the same 		program).
+In this program we will be creating a "robot arm" 		that you can control
+with your mouse. This "arm" will 		actually be two rectangles where one rectangle
+rotates about a 		point on the other rectangle. Begin by adding the public
+member 		function "void RenderScene(void)" to the CGLSample3Doc 		class.
+Modify CGLSample3View::OnPaint and CGLSample3Doc:: RenderScene 		so that
+they look like this: 	</big></font></big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>void CGLSample3View::OnPaint()<br>{<br>   CPaintDC dc(this); // device context for painting<br> <br>   CGLSample3Doc* pDoc = GetDocument();<br>   pDoc-&gt;RenderScene();<br>}<br><br>void CGLSample3Doc::RenderScene(void)<br>{<br>   glClear(GL_COLOR_BUFFER_BIT);<br><br>   glFlush();<br>}</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		At this time our program generates a black screen. We will
+do 		something about that in a minute, but first we need to add some 		state
+variables to the CGLSample3Doc class. Add the following 		enumerated types
+and variables to the document class. Then initialize 		them in the document
+constructor. 	</big></font></big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>enum GLDisplayListNames<br>{<br>   ArmPart=1<br>};<br><br>double m_transY;<br>double m_transX;<br>double m_angle2;<br>double m_angle1;<br><br>CGLSample3Doc::CGLSample3Doc()<br>{<br>   m_transY=100;<br>   m_transX=100;<br>   m_angle2=15;    <br>   m_angle1=15;    <br>}</big></font></big></pre>
+      <ul>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>ArmPart - This
+is a identifier for the display list that we will be creating to draw the
+parts of the arm.</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>m_transY - This
+is the y offset of the arm from the world coordinate system origin</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>m_transX - This
+is the x offset of the arm from the world coordinate system origin</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>m_angle2 - This
+is the angle of the second part of the arm with respect to the first part.</big></font></big></li>
+        <big>	</big><li><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>m_angle1 - This
+is the angle of the first part of the arm with respect to the world coordinate
+axis.</big></font></big></li>
+        <big></big>
+      </ul>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		We will be using what is known as a display list to draw
+the parts 		of our arm. A display list is simply a list of OpenGL commands
+		that have been stored and named for future processing. Display 		lists
+are often preprocessed, giving them a speed advantage over 		the same commands
+called out of a display list. Once a display 		list is created, its commands
+may be executed by calling glCallList 		with the integer name of the list.
+Edit CGLSample3Doc::OnNewDocument 		to look like this: 	</big></font></big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>BOOL CGLSample3Doc::OnNewDocument()<br>{<br>   if (!CDocument::OnNewDocument())<br>      return FALSE;<br><br>   glNewList(ArmPart);<br>      glBegin(GL_POLYGON);<br>      glVertex2f(-10.0f,  10.0f);<br>      glVertex2f(-10.0f, -10.0f);<br>      glVertex2f(100.0f, -10.0f);<br>      glVertex2f(100.0f,  10.0f);<br>      glEnd();<br>   glEndList();<br><br>   return TRUE;<br>}</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		<i>			Note: Microsoft has changed the OpenGL API since this
+was written. If you are using a newer version of 			the API, you will need
+to make the following call to glNewList: 		</i>	</big></font></big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>glNewList(ArmPart, GL_COMPILE);</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		<i>			GL_COMPILE tells OpenGL to just build the display
+list. Alternatively, you can pass GL_COMPILE_AND_EXECUTE 			into glNewList.
+This will cause the commands to be executed as the display list is being
+built! 		</i>	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Now edit CGLSample3Doc::RenderScene to look like this: 	</big></font>
+      </big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>void CGLSample3Doc::RenderScene(void)<br>{<br>   glClear(GL_COLOR_BUFFER_BIT);<br><br>   glColor4f(1.0f, 0.0f, 0.0f, 1.0f);<br>   glCallList(ArmPart);<br><br>   glFlush();<br>}</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		If you were to run the program now, all you would see is
+a small 		red rectangle in the lower left hand corner of the screen. Now 		add
+the following lines just before the call to glCallList: 	</big></font></big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>glTranslated( m_transX, m_transY, 0);<br>glRotated( m_angle1, 0, 0, 1);</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		These two commands affect the ModelView matrix, causing
+our rectangle 		to rotate the number of degrees stored in m_angle1 and translate
+		by the distance defined by (m_transX, m_transY). Run the program 		now
+to see the results. Notice that every time the program gets 		a WM_PAINT
+event the rectangle moves a little bit more ( you can 		trigger this by placing
+another window over the GLSample3 program 		and then going back to GLSample3
+). The effect occurs because 		we keep changing the ModelView matrix each
+time we call glRotate 		and glTranslate. Note that resizing the window resets
+the rectangle 		to its original position ( OnSize clears the matrix to an
+identity 		matrix, as you can see in the code) We need to leave the matrix
+		in the same state in which we found it. To do this we will use 		the matrix
+stack. Edit CGLSample3Doc::RenderScene to look like 		the code below. Then
+compile and run the program again. 	</big></font></big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>void CGLSample3Doc::RenderScene(void)<br>{<br>   glClear(GL_COLOR_BUFFER_BIT);<br><br>   glPushMatrix();<br>      glTranslated( m_transX, m_transY, 0);<br>      glRotated( m_angle1, 0, 0, 1);<br>      glColor4f(1.0f, 0.0f, 0.0f, 1.0f);<br>      glCallList(ArmPart);<br>   glPopMatrix();<br><br>   glFlush();<br>}</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		glPushMatrix takes a copy of the current matrix and places
+it 		on a stack. When we call glPopMatrix, the last matrix pushed is 		restored
+as the current matrix. Our glPushMatrix call preserves 		the initial identity
+matrix, and glPopMatrix restores it after 		we dirtied up the matrix. We
+can use this technique to position 		objects with respect to other objects.
+Once again, edit RenderScene 		to match the code below. 	</big></font></big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>void CGLSample3Doc::RenderScene(void)<br>{<br>   glClear(GL_COLOR_BUFFER_BIT);<br><br>   glPushMatrix();<br>      glTranslated( m_transX, m_transY, 0);<br>      glRotated( m_angle1, 0, 0, 1);<br>      glPushMatrix();<br>         glTranslated( 90, 0, 0);<br>         glRotated( m_angle2, 0, 0, 1);<br>         glColor4f(0.0f, 1.0f, 0.0f, 1.0f);<br>         glCallList(ArmPart);<br>      glPopMatrix();<br>      glColor4f(1.0f, 0.0f, 0.0f, 1.0f);<br>      glCallList(ArmPart);<br>   glPopMatrix();<br><br>   glFlush();<br>}</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		When you run this you will see a red rectangle overlapping
+a green 		rectangle. The translate commands actually move the object's vertex
+		in the world coordinates. When the object is rotated, it still 		rotates
+around its own vertex, thus allowing the green rectangle 		to rotate around
+the end of the red one. Follow the steps below 		to add controls so that
+you can move these rectangles. 	</big></font></big></p>
+      <ul>
+        <li><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>Add the following member variables to the view class:</big></font></big></li>
+      </ul>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>CPoint m_RightDownPos;     // Initialize to (0,0)<br>CPoint m_LeftDownPos;    // Initialize to (0,0)<br>BOOL m_RightButtonDown; // Initialize to FALSE<br>BOOL m_LeftButtonDown;     // Initialize to FALSE</big></font></big></pre>
+	
+      <ul>
+        <li><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>Add member functions responding to WM_LBUTTONDOWN, WM_LBUTTONUP,
+WM_RBUTTONDOWN, and WM_RBUTTONUP. Edit them as shown below:</big></font></big></li>
+      </ul>
+	 	
+      <pre><big><font face="courier new" size="1" color="Navy"><big>void CGLSample3View::OnLButtonUp(UINT nFlags, CPoint point) <br>{<br>   m_LeftButtonDown = FALSE;<br>   CView::OnLButtonUp(nFlags, point);<br>}<br><br>void CGLSample3View::OnLButtonDown(UINT nFlags, CPoint point) <br>{<br>   m_LeftButtonDown = TRUE;<br>   m_LeftDownPos = point;<br>   CView::OnLButtonDown(nFlags, point);<br>}<br><br>void CGLSample3View::OnRButtonUp(UINT nFlags, CPoint point) <br>{<br>   m_RightButtonDown = FALSE;<br>   CView::OnRButtonUp(nFlags, point);<br>}<br><br>void CGLSample3View::OnRButtonDown(UINT nFlags, CPoint point) <br>{<br>   m_RightButtonDown = TRUE;<br>   m_RightDownPos = point;<br>   CView::OnRButtonDown(nFlags, point);<br>}</big></font></big></pre>
+      <ul>
+        <li><big><font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>Add a member function responding to WM_MOUSEMOVE and edit
+it as shown below.</big></font></big></li>
+      </ul>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>void CGLSample3View::OnMouseMove(UINT nFlags, CPoint point) <br>{<br>   if (m_RightButtonDown)<br>   {<br>       CGLSample3Doc* pDoc = GetDocument();<br>       CSize rotate = m_RightDownPos - point;<br>       m_RightDownPos = point;<br><br>       pDoc-&gt;m_angle1 += rotate.cx/3;<br>       pDoc-&gt;m_angle2 += rotate.cy/3;<br>       InvalidateRect(NULL);<br>   }<br><br>   if (m_LeftButtonDown)<br>   {<br>       CGLSample3Doc* pDoc = GetDocument();<br>       CSize translate = m_LeftDownPos - point;<br>       m_LeftDownPos = point;<br>       pDoc-&gt;m_transX -= translate.cx/3;<br>       pDoc-&gt;m_transY += translate.cy/3;<br>       InvalidateRect(NULL);<br>   }<br><br>   CView::OnMouseMove(nFlags, point);<br>}</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Build and run the program. You may now drag with the left
+mouse 		button anywhere on the screen to move the arm, and drag with the 		right
+button to rotate the parts of the arm. The above code uses 		the Windows
+interface to change data. The OpenGL code then draws 		a scene based on that
+data. The only problem with the program 		now is that annoying flicker from
+the full screen refreshes. We 		will add double buffering to the program
+and then call it complete. 	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Double buffering is a very simple concept used in most high
+performance 		graphics programs. Instead of drawing to one buffer that maps
+		directly to the screen, two buffers are used. One buffer is always 		displayed
+( known as the front buffer ), while the other buffer 		is hidden ( known
+as the back buffer ). We do all of our drawing 		to the back buffer and,
+when we are done, swap it with the front 		buffer. Because all of the updates
+happen at once we don't get 		any flicker.  	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		The only drawback to double buffering is that it is incompatible
+		with GDI. GDI was not designed with double buffering in mind. 		Because
+of this, GDI commands will not work in an OpenGL window 		with double buffering
+enable. That being said, we first need to 		change all of the "InvalidateRect(NULL);"
+calls to "InvalidateRect(NULL, 		FALSE);". This will solve most of our flicker
+problem (the 		rest of the flicker was mainly to make a point). To enable
+double 		buffering for the pixel format, change the pixelDesc.dwFlags definition
+		in CGLSample3View::SetWindowPixelFormat to the following: 	</big></font>
+      </big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>pixelDesc.dwFlags = PFD_DRAW_TO_WINDOW | <br>  PFD_SUPPORT_OPENGL | <br>  PFD_DOUBLEBUFFER | <br>  PFD_STEREO_DONTCARE;</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		There are no checks when we set the pixel format to make
+sure 		that ours has double buffering. I will leave this as an exercise 		for
+the reader. 	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		First we need to tell OpenGL to draw only onto the back
+buffer. 		Add the following line to the end of CGLSample3View::OnSize: 	</big></font>
+      </big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>glDrawBuffer(GL_BACK);</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		Each time we draw a new scene we need to swap the buffer.
+Add 		the following line to the end of CGLSample3View::OnPaint: 	</big></font>
+      </big></p>
+      <pre><big><font face="courier new" size="1" color="Navy"><big>SwapBuffers(dc.m_ps.hdc);</big></font></big></pre>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		When you compile and run the program now you should see
+absolutely 		no flicker. However, the program will run noticeably slower.
+If 		you still see any flicker then ChoosePixelFormat is not returning 		a
+pixel format with double buffering. Remember that ChoosePixelFormat 		returns
+an identifier for the pixel format that it believes is 		closest to the one
+you want. Try forcing different indices when 		you call SetPixelFormat until
+you find a format that supports 		double buffering. 	</big></font></big></p>
+      <p><big>	<font face="VERDANA, ARIAL, HELVETICA, SANS-SERIF"
+ size="1"><big>		In the final sample program, we will construct a three dimensional
+		cube. There may be some 3-D graphics concepts in this section 		that those
+uninitiated to graphics will not understand. Part IV  		will include a few
+recommended books on 3D graphics.  	</big></font></big></p>
+      <table border="1">
+        <big></big><tbody>
+          <tr>
+            <big>	</big><td><big><font
+ face="VERDANA, ARIAL, HELVETICA, SANS-SERIF" size="1"><big>Developed Under:<br>
+            <br>
+	Visual C++ 5+</big></font></big></td>
+            <big></big></tr>
+          <big></big>
+        </tbody>
+      </table>
+			 			 		</td>
+		<!-- RHS Margin ->
+		<TD WIDTH="5"><img src="/images/spacer.gif" WIDTH="5"></TD>
+		
+		<!-- RHS divider line -->
+		<td width="1" bgcolor="#48115b"><big>			<img
+ src="Using%20OpenGL%20Part%20III_files/spacer.gif">		</big></td>
+		<!-- RHS Margin -->				<!-- RHS proper -->			</tr>
+  </tbody>
+</table>
+<!-- This is the include file for the footer --><!-- End Footer --><br>
+</body>
+</html>

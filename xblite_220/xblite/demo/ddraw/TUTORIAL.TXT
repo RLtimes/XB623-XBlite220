@@ -1,0 +1,168 @@
+How to use DirectDraw in Win32ASM
+
+By X-Calibre of Diamond
+
+Well, there has been quite a large demand for this essay, so I finally started
+writing it. This essay will show you how to use C++ objects and COM interface
+in Win32ASM, using DirectDraw as an example.
+
+Well, in this part of the Win32 API, you will soon find out how important it
+is to know C and C++ when you want to use an API written in these languages.
+Judging from the demand for this essay, I think it will be necessary to
+explain a bit of how objects work in C++. I will not go too deep, but only
+show the things you need to know in Win32ASM.
+
+What are objects really? 
+
+Actually a structure is an object of which all fields are public. We will look 
+at it the other way around. So the public fields in an object make up a 
+structure. The other fields in an object are private and are not reachable 
+from the outside. So they are not interesting to us.
+
+A special thing about objects is that they can contain pointers to functions.
+Normally, when using C or ASM, this would be possible, but a bit error-prone.
+It can be seen as 'dirty' programming. That's why you probably haven't seen it
+before.
+
+When using C++ with a compiler, there will be no errors, as long as the
+compiler does its job. So here you can use this technique with no chance of
+errors, and it gives you some nice new programming options.
+
+C++ goes even further with this 'structure of functions' idea. With
+inheritance, you can also overwrite functions of the base class in the
+inherited class. You can also create 'virtual' functions, which are defined in
+the base class, but the actual code is only in inherited classes.
+
+This is of course interesting for DirectX, where you want to have standard
+functions, but with different code, depending on the hardware on which it is
+running. So in DirectX, all functions are defined as virtual, and the base
+class is inherited by hardware-specific drivers which supply hardware-specific
+code. And the beauty of this is, that it's all transparent to the programmer.
+The function pointers can change at runtime because of this system, so the C++ 
+designers had to think of a way to keep the pointers to the functions 
+available to the program at all time.
+
+What this all boils down to is that there is a table with pointers to the
+functions. It's called the Virtual Function Table. I will call this the
+vtable from now on.
+
+So we need to get this table, in order to call functions from our object.
+Lucky for you, Z-Nith has already made a C program to 'capture' the table,
+and converted the resulting header file to an include file for use with MASM.
+So I'll just explain how you should use this table, and you can get going
+soon.
+
+Well, actually it's quite simple. The DirectX objects are defined like this:
+
+IDirectDraw        STRUC
+    lpVtbl DWORD ?
+IDirectDraw        ENDS
+
+IDirectDrawPalette STRUC
+    lpVtbl DWORD ?
+IDirectDrawPalette ENDS
+
+IDirectDrawClipper STRUC
+    lpVtbl DWORD ?
+IDirectDrawClipper ENDS
+
+IDirectDrawSurface STRUC
+    lpVtbl DWORD ?
+IDirectDrawSurface ENDS
+
+So these structs are actually just a pointer to the vtables, and don't contain
+any other values. Well, this makes it all very easy for us then.
+I'll give you a small example:
+
+Say we have an IDirectDraw object called lpDD. And we want to call the
+RestoreDisplayMode function.
+Then we need to do 2 things:
+
+1. Get the vtable.
+2. Get the address of the function, using the vtable.
+
+The first part is simple. All the struct contains, is the pointer to the
+vtable. So we can just do this:
+
+    mov  eax, [lpDD]
+    mov  eax, [eax]
+
+Simple, isn't it? And the next part isn't really much harder. The vtable is
+put into a structure called IDirectDrawVtbl in DDRAW.INC. We now have the
+address of the structure in eax. All we have to do now, is get the correct
+member of that structure, to get the address of the function we want to call.
+You would have guessed by now, that this will do the trick:
+
+    call [IDirectDrawVtbl.RestoreDisplayMode][eax]
+
+That is not a bad guess...
+But there's one more thing, which is very important: this function needs to be
+invoked on the IDirectDraw object. We may only see the vtable in the structure,
+but there are also private members inside the object. So there's more than
+meets the eye here. What it comes down to is that the call needs the object
+as an argument. And this will be done by stack as always. So we just need to
+push lpDD before we call. The complete call will look like this:
+
+    push [lpDD]
+    call [IDirectDrawVtbl.RestoreDisplayMode][eax]
+
+Simple, was it not? And calls with arguments are not much harder.
+Let's set the displaymode to 320x200 in 32 bits next.
+This call requires 3 arguments:
+
+SetDisplayMode( width, height, bpp );
+
+Well, the extra arguments work just like normal API calls: just push them onto
+the stack in backward order.
+So it will look like this:
+
+    push 32
+    push 200
+    push 320
+    mov  eax, [lpDD]
+    push eax
+    mov  eax, [eax]
+    call [IDirectDrawVtbl.SetDisplayMode][eax]
+
+And that's all there is to it.
+
+To make life easier, we have included some MASM macros in DDRAW.INC, for use
+with the IDirectDraw and IDirectDrawSurface objects:
+
+DDINVOKE  MACRO   func, this, arglist :VARARG
+    mov  eax, [this]
+    mov  eax, [eax]
+
+    IFB <arglist>
+        INVOKE [IDirectDrawVtbl. func][eax], this
+    ELSE
+        INVOKE [IDirectDrawVtbl. func][eax], this, arglist
+    ENDIF
+ENDM
+
+DDSINVOKE MACRO   func, this, arglist :VARARG
+    mov  eax, [this]
+    mov  eax,  [eax]
+
+    IFB <arglist>
+        INVOKE [IDirectDrawSurfaceVtbl. func][eax], this
+    ELSE
+        INVOKE [IDirectDrawSurfaceVtbl. func][eax], this, arglist
+    ENDIF
+ENDM
+
+With these macros, our 2 example calls will look as simple as this:
+
+    DDINVOKE RestoreDisplayMode, lpDD
+
+    DDINVOKE SetDisplayMode, lpDD, 320, 200, 32
+
+
+Well, that's basically all there is to know about using objects, COM and
+DirectX in Win32ASM. Have fun with it!
+
+And remember:
+
+C and C++ knowledge is power!
+
+X-Calibre

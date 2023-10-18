@@ -1,0 +1,3 @@
+EXTERNAL FUNCTION Msg2Name (hWnd, msg, wParam, lParam)
+EXTERNAL FUNCTION ShowWM2Name ()
+EXTERNAL FUNCTION DestroyWM2Name ()

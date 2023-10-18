@@ -1,0 +1,1258 @@
+'/////////////////////////////////////////////////////////////////////////////////
+'//
+'//  CodeMax Code Editor Control
+'//
+'//  Copyright © 1997-2000  WinMain Software
+'//
+'//  This header file declares all exported functionality of the CodeMax custom
+'//  control.  For a complete description of all declarations below, please refer
+'//  to the CodeMax documentation.
+'//
+'/////////////////////////////////////////////////////////////////////////////////
+
+'IMPORT "comctl32.dec"
+'IMPORT "gdi32.dec"
+
+'#ifndef __CODEMAX_H__
+'#define __CODEMAX_H__
+
+$$CODEMAXWNDCLASS = "CodeMax"
+
+'Registery info
+$$REG_APP_XBLDEV  = "XBLDEV"
+$$REG_APP_PROFILE = "XBLDEV_PROFILE"
+
+'
+'Xblite language
+$$XbliteLang1  = "ABS\nALL\nAND\nASC\nATTACH\nAUTO\nAUTOS\nAUTOX\nBIN$\nBINB$\nBITFIELD\n"  
+$$XbliteLang2  = "CASE\nCFUNCTION\nCHR$\nCJUST$\nCLEAR\nCLOSE\nCLR\nCSIZE\n"    
+$$XbliteLang3  = "CSIZE$\nCSTRING$\nDCOMPLEX\nDEC\nDECLARE\nDHIGH\nDIM\nDLOW\n"          
+$$XbliteLang4  = "DMAKE\nDO\nDOUBLE\nDOUBLE\nDOUBLEAT\nDOUBLEAT\nELSE\nEND\n"             
+$$XbliteLang5  = "ENDIF\nEOF\nERROR\nERROR$\nEXIT\nEXPORT\nEXTERNAL\nEXTS\n"          
+$$XbliteLang6  = "EXTU\nFALSE\nFIX\nFOR\nFORMAT$\nFUNCADDR\nFUNCADDR\nFUNCADDRESS\n"   
+$$XbliteLang7  = "FUNCTION\nGHIGH\nGIANT\nGIANT\nGIANTAT\nGIANTAT\nGLOW\nGMAKE\n"         
+$$XbliteLang8  = "GOADDR\nGOADDR\nGOADDRESS\nGOSUB\nGOTO\nHEX$\nHEXX$\nHIGH0\n"         
+$$XbliteLang9  = "HIGH1\nIF\nIFF\nIFT\nIFZ\nIMPORT\nINC\nINCHR\nINCHRI\nINFILE$\n"
+$$XbliteLang10 = "INLINE$\nINSTR\nINSTRI\nINT\nINTERNAL\nLCASE$\nLCLIP$\nLEFT$\n"
+$$XbliteLang11 = "LEN\nLIBRARY\nLIBRARY\nLJUST$\nLOF\nLOOP\nLTRIM$\nMAKE\nMAX\n"          
+$$XbliteLang12 = "MID$\nMIN\nMOD\nNEXT\nNOT\nNULL$\nOCT$\nOCTO$\nOPEN\nOR\n" 
+$$XbliteLang13 = "POF\nPRINT\nPROGRAM\nPROGRAM$\nQUIT\nRCLIP$\nREAD\nREDIM\nRETURN\n"         
+$$XbliteLang14 = "RIGHT$\nRINCHR\nRINCHRI\nRINSTR\nRINSTRI\nRJUST$\nROTATER\nRTRIM$\n"       
+$$XbliteLang15 = "SBYTE\nSBYTEAT\nSCOMPLEX\nSEEK\nSELECT\nSET\nSFUNCTION\nSGN\nSHARED\n"
+$$XbliteLang16 = "SHELL\nSIGN\nSIGNED$\nSINGLE\nSINGLE\nSINGLEAT\nSIZE\nSLONG\nSLONGAT\n"
+$$XbliteLang17 = "SMAKE\nSPACE$\nSSHORT\nSSHORT\nSSHORTAT\nSTATIC\nSTEP\nSTOP\nSTR$\n"
+$$XbliteLang18 = "STRING\nSTRING$\nSTUFF$\nSUB\nSUBADDR\nSUBADDRESS\nSWAP\nTAB\nTHEN\n"
+$$XbliteLang19 = "TO\nTRIM$\nTRUE\nTYPE\nUBOUND\nUBYTE\nUBYTEAT\nUCASE$\nULONG\nULONGAT\n"      
+$$XbliteLang20 = "UNION\nUNTIL\nUSHORT\nUSHORTAT\nVERSION\nVERSION$\nVOID\nWHILE\nWRITE\n"
+$$XbliteLang21 = "XLONG\nXLONGAT\nXMAKE\nXOR"   
+
+'Standard Library Functions System Functions 
+$$XbliteLang22 = "Xst\nXstVersion$\nXstAbend\nXstAlert\nXstCauseException\nXstErrorNameToNumber\nXstErrorNumberToName\n" 
+$$XbliteLang23 = "XstExceptionNumberToName\nXstFileToSystemFile\nXstGetCommandLine\nXstGetCommandLineArguments\nXstGetCPUName\n"
+$$XbliteLang24 = "XstGetDateAndTime\nXstGetEndian\nXstGetEndianName\nXstGetEnvironmentVariable\nXstGetEnvironmentVariables\n" 
+$$XbliteLang25 = "XstGetException\nXstGetExceptionFunction\nXstGetLocalDateAndTime\nXstGetDateAndTimeFormatted\nXstGetOSName\n" 
+$$XbliteLang26 = "XstGetOSVersion\nXstGetProgramFileName$\nXstGetSystemError\nXstGetSystemTime\nXstKillTimer\nXstSetCommandLineArguments\n" 
+$$XbliteLang27 = "XstSetDateAndTime\nXstSetEnvironmentVariable\nXstSetExceptionFunction\nXstSetSystemError\nXstSleep\nXstStartTimer\n" 
+$$XbliteLang28 = "XstSystemErrorNumberToName\nXstSystemErrorToError\nXstSystemExceptionNumberToName\nXstSystemExceptionToException\n"
+
+'File Functions
+$$XbliteLang29 = "XstBinRead\nXstBinWrite\nXstChangeDirectory\nXstCopyFile\nXstDateAndTimeToFileTime\nXstDecomposePathname\n"
+$$XbliteLang30 = "XstDeleteFile\nXstFileTimeToDateAndTime\nXstFindFile\nXstFindFiles\nXstGetCurrentDirectory\nXstGetDrives\n" 
+$$XbliteLang31 = "XstGetFileAttributes\nXstGetFiles\nXstGetFilesAndAttributes\nXstGetPathComponents\nXstGuessFileName\nXstIsAbsolutePath\n"
+$$XbliteLang32 = "XstLoadString\nXstLoadStringArray\nXstLockFileSection\nXstMakeDirectory\nXstPathToAbsolutePath\nXstRenameFile\n" 
+$$XbliteLang33 = "XstSaveString\nXstSaveStringArray\nXstSaveStringArrayCRLF\nXstSetCurrentDirectory\nXstUnlockFileSection\n"
+
+'String Functions
+$$XbliteLang34 = "XstBackArrayToBinArray\nXstBackStringToBinString$\nXstBinArrayToBackArray\nXstBinStringToBackString$\nXstBinStringToBackStringNL$\n" 
+$$XbliteLang35 = "XstBinStringToBackStringThese$\nXstCopyArray\nXstDeleteLines\nXstFindArray\nXstLTRIM\nXstMergeStrings$\nXstMultiStringToStringArray\n"
+$$XbliteLang36 = "XstNextCField$\nXstNextCLine$\nXstNextField$\nXstNextLine$\nXstParse$\nXstParseStringToStringArray\nXstPathString$\nXstReplaceArray\n" 
+$$XbliteLang37 = "XstReplaceLines\nXstRTRIM\nXstStringArraySectionToString\nXstStringArraySectionToStringArray\nXstStringArrayToString\nXstStringArrayToStringCRLF\n"
+$$XbliteLang38 = "XstStringToNumber\nXstStringToStringArray\nXstTally\nXstTRIM\n"  
+
+'Console Functions
+$$XbliteLang39 = "XstClearConsole\nXstCreateConsole\nXstFreeConsole\nXstHideConsole\nXstPromptConsole\nXstReadConsole\nXstSetConsoleTextColors\n"
+$$XbliteLang40 = "XstShowConsole\nXstStdio\nXstWriteConsole\n" 
+
+'Random Number Functions
+$$XbliteLang41 = "XstRandom\nXstRandomCreateSeed\nXstRandomSeed\nXstRandomUniform\n"
+
+'Miscellaneous
+$$XbliteLang42 = "HIWORD\nLOWORD\nMAKELONG\nRGB\nXstBytesToBound\nXstCompareStrings\nXstCreateDoubleImage$\nXstFindMemoryMatch\nXstIsDataDimenson\n"
+$$XbliteLang43 = "XstQuickSort\nXstTypeSize\nXxxFormat$\nXxxReadFile\nXxxWriteFile"
+
+'Xblite operators
+$$XbliteOp1 = "~\n&\n^\n|\n!!\n!\n&&\n^^\n||\n=\n=\n<>\n<\n<=\n>\n>=\n==\n!=\n!<\n!<=\n!>\n!>=\n<<\n>>\n" 
+$$XbliteOp2 = "<<<\n>>>\n+\n\n-\n*\n\\n/" 
+
+'Xblite comments
+$$XbliteComments1 = "'\nREM"
+
+'Xblite Delims
+$$XbliteStringDelims = "\"\n\""
+
+
+'//  I've commented these out to prevent warnings. (PK)
+'//#ifdef __cplusplus
+'//#define EXTERN_C extern "C"
+'//#else
+'//#define EXTERN_C
+'//#endif
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Constants
+'//
+'//
+'// maximum size (TCHARs) of text to find or replace
+$$CM_MAX_FINDREPL_TEXT = 100
+'// maximum MRU size in find and find/replace dialogs
+$$CM_FIND_REPLACE_MRU_MAX =  10
+'// required buffer size for pszMRUList argument CMSetFindReplaceMRUList() and CMGetFindReplaceMRUList() 
+$$CM_FIND_REPLACE_MRU_BUFF_SIZE = 1010   '  ( ( CM_MAX_FINDREPL_TEXT + 1 ) * CM_FIND_REPLACE_MRU_MAX )
+'// maximum number of keystroke macros supported by CodeMax
+$$CM_MAX_MACROS    = 10
+'// maximum size of command string returned in pszBuff param of CMGetCommandString() if bDescription is FALSE
+$$CM_MAX_CMD_STRING = 50
+'// maximum size of command string returned in pszBuff param of CMGetCommandString() if bDescription is TRUE
+$$CM_MAX_CMD_DESCRIPTION =  100
+'// maximum size of a language name set with CMRegisterLanguage
+$$CM_MAX_LANGUAGE_NAME = 30
+'// maximum tab size (characters)
+$$CM_MAX_TABSIZE     =  100
+'// minimum tab size (characters)
+$$CM_MIN_TABSIZE     =  2
+'// left margin width (pixels)
+$$CM_CXLEFTMARGIN    =  24
+'/////////////////////////////////////////////////////////////
+'//
+'// CMM_SETLINESTYLE style bits
+'//
+'//
+$$CML_OWNERDRAW  = 0x1      '// Parent window should receive CMN_DRAWLINE notifications
+$$CML_NOTIFY_DEL = 0x2      '// Parent window should receive CMN_LINEDELETED notifications
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Messages
+'//
+'//
+
+$$CMM_SETLANGUAGE                =   2624
+$$CMM_GETLANGUAGE                =   2625
+$$CMM_ENABLECOLORSYNTAX          =   2634
+$$CMM_ISCOLORSYNTAXENABLED       =   2644
+$$CMM_SETCOLORS                  =   2654
+$$CMM_GETCOLORS                  =   2664
+$$CMM_ENABLEWHITESPACEDISPLAY    =   2824
+$$CMM_ISWHITESPACEDISPLAYENABLED =   2834
+$$CMM_ENABLETABEXPAND            =   2835
+$$CMM_ISTABEXPANDENABLED         =   2836
+$$CMM_ENABLESMOOTHSCROLLING      =   2844
+$$CMM_SETTABSIZE                 =   2845
+$$CMM_GETTABSIZE                 =   2846
+$$CMM_ISSMOOTHSCROLLINGENABLED   =   2854
+$$CMM_SETREADONLY                =   2864
+$$CMM_ISREADONLY                 =   2874
+$$CMM_ENABLELINETOOLTIPS         =   2884
+$$CMM_ISLINETOOLTIPSENABLED      =   2894
+$$CMM_ENABLELEFTMARGIN           =   2904
+$$CMM_ISLEFTMARGINENABLED        =   2914
+$$CMM_ENABLECOLUMNSEL            =   2915
+$$CMM_ISCOLUMNSELENABLED         =   2916
+$$CMM_ENABLEDRAGDROP             =   2917
+$$CMM_ISDRAGDROPENABLED          =   2918
+$$CMM_ENABLEOVERTYPE             =   2924
+$$CMM_ISOVERTYPEENABLED          =   2934
+$$CMM_ENABLECASESENSITIVE        =   2944
+$$CMM_ISCASESENSITIVEENABLED     =   2954
+$$CMM_ENABLEPRESERVECASE         =   2955
+$$CMM_ISPRESERVECASEENABLED      =   2956
+$$CMM_ENABLEWHOLEWORD            =   2964
+$$CMM_ISWHOLEWORDENABLED         =   2974
+$$CMM_SETTOPINDEX                =   2984
+$$CMM_GETTOPINDEX                =   2994
+$$CMM_GETVISIBLELINECOUNT        =   3004
+$$CMM_HITTEST                    =   3014
+$$CMM_OPENFILE                   =   3324
+$$CMM_SAVEFILE                   =   3334
+$$CMM_INSERTFILE                 =   3344
+$$CMM_INSERTTEXT                 =   3354
+$$CMM_SETTEXT                    =   3359
+$$CMM_REPLACETEXT                =   3364
+$$CMM_GETTEXTLENGTH              =   3374
+$$CMM_GETTEXT                    =   3384
+$$CMM_GETLINECOUNT               =   3389
+$$CMM_GETLINE                    =   3394
+$$CMM_GETLINELENGTH              =   3404
+$$CMM_GETWORD                    =   3405
+$$CMM_GETWORDLENGTH              =   3406
+$$CMM_ADDTEXT                    =   3414
+$$CMM_DELETELINE                 =   3424
+$$CMM_INSERTLINE                 =   3434
+$$CMM_GETSEL                     =   3444
+$$CMM_GETSELFROMPOINT            =   3449
+$$CMM_SETSEL                     =   3454
+$$CMM_SELECTLINE                 =   3459
+$$CMM_DELETESEL                  =   3464
+$$CMM_REPLACESEL                 =   3474
+$$CMM_ISMODIFIED                 =   3484
+$$CMM_SETMODIFIED                =   3485
+$$CMM_ENABLECRLF                 =   3494
+$$CMM_ISCRLFENABLED              =   3504
+$$CMM_SETFONTOWNERSHIP           =   3509
+$$CMM_GETFONTOWNERSHIP           =   3510
+$$CMM_EXECUTECMD                 =   3724
+$$CMM_SETSPLITTERPOS             =   3924
+$$CMM_GETSPLITTERPOS             =   3925
+$$CMM_SETAUTOINDENTMODE          =   4124
+$$CMM_GETAUTOINDENTMODE          =   4134
+$$CMM_CANUNDO                    =   4324
+$$CMM_CANREDO                    =   4334
+$$CMM_CANCUT                     =   4344
+$$CMM_CANCOPY                    =   4354
+$$CMM_CANPASTE                   =   4364
+$$CMM_REDO                       =   4374
+$$CMM_CLEARUNDOBUFFER            =   4375
+$$CMM_UNDO                       =   4384
+$$CMM_CUT                        =   4394
+$$CMM_COPY                       =   4404
+$$CMM_PASTE                      =   4414
+$$CMM_SETUNDOLIMIT               =   4424
+$$CMM_GETUNDOLIMIT               =   4434
+$$CMM_GETVIEWCOUNT               =   4624
+$$CMM_GETCURRENTVIEW             =   4634
+$$CMM_SHOWSCROLLBAR              =   4724
+$$CMM_HASSCROLLBAR               =   4734
+$$CMM_ENABLESPLITTER             =   4744
+$$CMM_ISSPLITTERENABLED          =   4754
+$$CMM_ISRECORDINGMACRO           =   4755
+$$CMM_ISPLAYINGMACRO             =   4756
+$$CMM_ENABLEGLOBALPROPS          =   4764
+$$CMM_ISGLOBALPROPSENABLED       =   4765
+$$CMM_SETDLGPARENT               =   4774
+
+'// 2.0
+$$CMM_ENABLESELBOUNDS            =   4784
+$$CMM_ISSELBOUNDSENABLED         =   4794
+$$CMM_SETFONTSTYLES              =   4804
+$$CMM_GETFONTSTYLES              =   4814
+$$CMM_ENABLEREGEXP               =   4824
+$$CMM_ISREGEXPENABLED            =   4834
+$$CMM_SETITEMDATA                =   4844
+$$CMM_GETITEMDATA                =   4854
+$$CMM_SETLINESTYLE               =   4864
+$$CMM_GETLINESTYLE               =   4874
+$$CMM_SETBOOKMARK                =   4884
+$$CMM_GETBOOKMARK                =   4894
+$$CMM_SETALLBOOKMARKS            =   4904
+$$CMM_GETALLBOOKMARKS            =   4914
+$$CMM_SETLINENUMBERING           =   4924
+$$CMM_GETLINENUMBERING           =   4934
+$$CMM_POSFROMCHAR                =   4944
+$$CMM_ENABLEHIDESEL              =   4954
+$$CMM_ISHIDESELENABLED           =   4964
+$$CMM_SETHIGHLIGHTEDLINE         =   4974
+$$CMM_GETHIGHLIGHTEDLINE         =   4984
+$$CMM_ENABLENORMALIZECASE        =   4994
+$$CMM_ISNORMALIZECASEENABLED     =   5004
+$$CMM_SETDIVIDER                 =   5014
+$$CMM_GETDIVIDER                 =   5024
+$$CMM_ENABLEOVERTYPECARET        =   5034
+$$CMM_ISOVERTYPECARETENABLED     =   5044
+$$CMM_SETFINDTEXT                =   5054
+$$CMM_GETFINDTEXT                =   5064
+$$CMM_SETREPLACETEXT             =   5074
+$$CMM_GETREPLACETEXT             =   5084
+$$CMM_SETIMAGELIST               =   5094
+$$CMM_GETIMAGELIST               =   5104
+$$CMM_SETMARGINIMAGES            =   5114
+$$CMM_GETMARGINIMAGES            =   5124
+$$CMM_ABOUTBOX                   =   5134
+$$CMM_PRINT                      =   5144
+$$CMM_SETCARETPOS                =   5154
+$$CMM_VIEWCOLTOBUFFERCOL         =   5164
+$$CMM_BUFFERCOLTOVIEWCOL         =   5174
+
+'// 2.1
+$$CMM_SETBORDERSTYLE             =   5184
+$$CMM_GETBORDERSTYLE             =   5194
+
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Notifications
+'//
+'//
+$$CMN_CHANGE          = 100      '// buffer contents changed
+$$CMN_HSCROLL         = 110      '// horizontal scrollbar pos changed
+$$CMN_VSCROLL         = 120      '// vertical scrollbar pos changed
+$$CMN_SELCHANGE       = 130      '// active selection has changed
+$$CMN_VIEWCHANGE      = 140      '// the user switched to a different splitter view
+$$CMN_MODIFIEDCHANGE  = 150      '// the modified state of the buffer has changed
+$$CMN_SHOWPROPS       = 160      '// the user is about to show the props window
+$$CMN_PROPSCHANGE     = 170      '// the user changed properties via the props window
+$$CMN_CREATE          = 180      '// the control has been created
+$$CMN_DESTROY         = 190      '// the control is about to be destroyed
+
+'// 2.0
+$$CMN_DRAWLINE         = 200      '// owner-draw functionality
+$$CMN_DELETELINE       = 210      '// line is about to be deleted
+$$CMN_CMDFAILURE       = 220      '// a keystroke command failed to successfully complete
+$$CMN_REGISTEREDCMD    = 230      '// a registered command has been invoked by the user
+$$CMN_KEYDOWN          = 240      '// a key was pressed (WM_KEYDOWN)
+$$CMN_KEYUP            = 250      '// a key was released (WM_KEYUP)
+$$CMN_KEYPRESS         = 260      '// a key was pressed and released (WM_CHAR)
+$$CMN_MOUSEDOWN        = 270      '// a mouse button was pressed (WM_xBUTTONDOWN)
+$$CMN_MOUSEUP          = 280      '// a mouse button was released (WM_xBUTTONUP)
+$$CMN_MOUSEMOVE        = 290      '// the mouse pointer was moved (WM_MOUSEMOVE)
+$$CMN_OVERTYPECHANGE   = 300      '// the overtype mode has changed
+
+'// 2.1
+$$CMN_FINDWRAPPED      = 310      '// a find operation wrapped to start/end of buffer
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Edit commands
+'//
+'//
+
+$$CMD_FIRST                   = 100
+$$CMD_WORDUPPERCASE           = 100  
+$$CMD_WORDTRANSPOSE           = 101  
+$$CMD_WORDRIGHTEXTEND         = 102  
+$$CMD_WORDRIGHT               = 103  
+$$CMD_WORDENDRIGHT            = 104  
+$$CMD_WORDENDRIGHTEXTEND      = 105  
+$$CMD_WORDLOWERCASE           = 106  
+$$CMD_WORDLEFTEXTEND          = 107  
+$$CMD_WORDLEFT                = 108  
+$$CMD_WORDENDLEFT             = 109  
+$$CMD_WORDENDLEFTEXTEND       = 110  
+$$CMD_WORDDELETETOSTART       = 111  
+$$CMD_WORDDELETETOEND         = 112  
+$$CMD_WORDCAPITALIZE          = 113  
+$$CMD_WINDOWSTART             = 114  
+$$CMD_WINDOWSCROLLUP          = 115  
+$$CMD_WINDOWSCROLLTOTOP       = 116  
+$$CMD_WINDOWSCROLLTOCENTER    = 117  
+$$CMD_WINDOWSCROLLTOBOTTOM    = 118  
+$$CMD_WINDOWSCROLLRIGHT       = 119  
+$$CMD_WINDOWSCROLLLEFT        = 120  
+$$CMD_WINDOWSCROLLDOWN        = 121  
+$$CMD_WINDOWRIGHTEDGE         = 122  
+$$CMD_WINDOWLEFTEDGE          = 123  
+$$CMD_WINDOWEND               = 124  
+$$CMD_UPPERCASESELECTION      = 125  
+$$CMD_UNTABIFYSELECTION       = 126  
+$$CMD_UNINDENTSELECTION       = 127  
+$$CMD_UNDOCHANGES             = 128  
+$$CMD_UNDO                    = 129  
+$$CMD_TABIFYSELECTION         = 130  
+$$CMD_SENTENCERIGHT           = 131  
+$$CMD_SENTENCELEFT            = 132  
+$$CMD_SENTENCECUT             = 133  
+$$CMD_SELECTSWAPANCHOR        = 134  
+$$CMD_SELECTPARA              = 135  
+$$CMD_SELECTLINE              = 136  
+$$CMD_SELECTALL               = 137  
+$$CMD_REDOCHANGES             = 138  
+$$CMD_REDO                    = 139  
+$$CMD_PASTE                   = 140  
+$$CMD_PARAUP                  = 141  
+$$CMD_PARADOWN                = 142  
+$$CMD_PAGEUPEXTEND            = 143  
+$$CMD_PAGEUP                  = 144  
+$$CMD_PAGEDOWNEXTEND          = 145  
+$$CMD_PAGEDOWN                = 146  
+$$CMD_LOWERCASESELECTION      = 147  
+$$CMD_LINEUPEXTEND            = 148  
+$$CMD_LINEUP                  = 149  
+$$CMD_LINETRANSPOSE           = 150  
+$$CMD_LINESTART               = 151  
+$$CMD_LINEOPENBELOW           = 152  
+$$CMD_LINEOPENABOVE           = 153  
+$$CMD_LINEENDEXTEND           = 154  
+$$CMD_LINEEND                 = 155  
+$$CMD_LINEDOWNEXTEND          = 156  
+$$CMD_LINEDOWN                = 157  
+$$CMD_LINEDELETETOSTART       = 158  
+$$CMD_LINEDELETETOEND         = 159  
+$$CMD_LINEDELETE              = 160  
+$$CMD_LINECUT                 = 161  
+$$CMD_INDENTTOPREV            = 162  
+$$CMD_INDENTSELECTION         = 163  
+$$CMD_HOMEEXTEND              = 164  
+$$CMD_HOME                    = 165  
+$$CMD_GOTOMATCHBRACE          = 166  
+$$CMD_GOTOINDENTATION         = 167  
+$$CMD_GOTOLINE                = 168  
+$$CMD_FINDREPLACE             = 169  
+$$CMD_REPLACE                 = 170  
+$$CMD_REPLACEALLINBUFFER      = 171 
+$$CMD_REPLACEALLINSELECTION   = 172 
+$$CMD_FINDPREVWORD            = 173 
+$$CMD_FINDPREV                = 174 
+$$CMD_FINDNEXTWORD            = 175 
+$$CMD_FINDNEXT                = 176 
+$$CMD_FINDMARKALL             = 177 
+$$CMD_FIND                    = 178 
+$$CMD_SETFINDTEXT             = 179 
+$$CMD_SETREPLACETEXT          = 180 
+$$CMD_TOGGLEPRESERVECASE      = 181 
+$$CMD_TOGGLEWHOLEWORD         = 182   
+$$CMD_TOGGLECASESENSITIVE     = 183   
+$$CMD_END                     = 184   
+$$CMD_TOGGLEWHITESPACEDISPLAY = 185  
+$$CMD_TOGGLEOVERTYPE          = 186  
+$$CMD_SETREPEATCOUNT          = 187  
+$$CMD_DOCUMENTSTARTEXTEND     = 188  
+$$CMD_DOCUMENTSTART           = 189  
+$$CMD_DOCUMENTENDEXTEND       = 190  
+$$CMD_DOCUMENTEND             = 191  
+$$CMD_DELETEHORIZONTALSPACE   = 192  
+$$CMD_DELETEBLANKLINES        = 193  
+$$CMD_DELETEBACK              = 194  
+$$CMD_DELETE                  = 195  
+$$CMD_CUTSELECTION            = 196
+$$CMD_CUT                     = 197
+$$CMD_COPY                    = 198
+$$CMD_CHARTRANSPOSE           = 199
+$$CMD_CHARRIGHTEXTEND         = 200
+$$CMD_CHARRIGHT               = 201
+$$CMD_CHARLEFTEXTEND          = 202
+$$CMD_CHARLEFT                = 203
+$$CMD_BOOKMARKTOGGLE          = 204
+$$CMD_BOOKMARKPREV            = 205
+$$CMD_BOOKMARKNEXT            = 206
+$$CMD_BOOKMARKCLEARALL        = 207
+$$CMD_BOOKMARKJUMPTOFIRST     = 208
+$$CMD_BOOKMARKJUMPTOLAST      = 209
+$$CMD_APPENDNEXTCUT           = 210
+$$CMD_INSERTCHAR              = 211
+$$CMD_NEWLINE                 = 212
+$$CMD_RECORDMACRO             = 213
+$$CMD_PLAYMACRO1              = 214
+$$CMD_PLAYMACRO2              = 215
+$$CMD_PLAYMACRO3              = 216
+$$CMD_PLAYMACRO4              = 217
+$$CMD_PLAYMACRO5              = 218
+$$CMD_PLAYMACRO6              = 219
+$$CMD_PLAYMACRO7              = 220
+$$CMD_PLAYMACRO8              = 221
+$$CMD_PLAYMACRO9              = 222
+$$CMD_PLAYMACRO10             = 223
+$$CMD_PROPERTIES              = 224
+$$CMD_BEGINUNDO               = 225
+$$CMD_ENDUNDO                 = 226
+$$CMD_RESERVED3               = 227
+'// 2.0
+$$CMD_TOGGLEREGEXP            = 228
+$$CMD_CLEARSELECTION          = 229
+$$CMD_REGEXPON                = 230
+$$CMD_REGEXPOFF               = 231
+$$CMD_WHOLEWORDON             = 232
+$$CMD_WHOLEWORDOFF            = 233
+$$CMD_PRESERVECASEON          = 234
+$$CMD_PRESERVECASEOFF         = 235
+$$CMD_CASESENSITIVEON         = 236
+$$CMD_CASESENSITIVEOFF        = 237
+$$CMD_WHITESPACEDISPLAYON     = 238
+$$CMD_WHITESPACEDISPLAYOFF    = 239
+$$CMD_OVERTYPEON              = 240
+$$CMD_OVERTYPEOFF             = 241
+$$CMD_LAST                    = 241
+
+'// all register commands must be at or higher than CMD_USER_BASE
+$$CMD_USER_BASE     = 1000           '  ( CMD_FIRST + 900 )
+
+$$CMDERR_FAILURE    = 1     '// general failure
+$$CMDERR_INPUT      = 2     '// bad input
+$$CMDERR_SELECTION  = 3     '// bad selection
+$$CMDERR_NOTFOUND   = 4     '// data not found
+$$CMDERR_EMPTYBUF   = 5     '// buffer is empty
+$$CMDERR_READONLY   = 6     '// buffer is read-only
+
+'////////////////////////////////////////////////////////////////////////////////////////
+'//
+'// Language Support for CMM_SETLANGUAGE, RegisterLanguage(), and UnregisterLanguage()
+'//
+'//
+
+'// stock languages
+$$CMLANG_CPP    = "C/C++"
+$$CMLANG_PASCAL = "Pascal"
+$$CMLANG_BASIC  = "Basic"
+$$CMLANG_SQL    = "SQL"
+$$CMLANG_JAVA   = "Java"
+$$CMLANG_HTML   = "HTML"
+$$CMLANG_XML    = "XML"
+
+'// custom language
+$$XBLITE = "Xblite"
+
+
+'// language styles
+$$CMLS_PROCEDURAL = 0
+$$CMLS_SGML       = 1
+
+'typedef struct _CM_LANGUAGE {
+'    DWORD   dwStyle;                     // One of the CMLS_ values
+'    BOOL    bIsCaseSensitive;            // TRUE if keywords are case sensitive
+'    LPCTSTR pszKeywords;                 // The keywords delimited by '\n'
+'    LPCTSTR pszOperators;                // The operators delimited by '\n'
+'    LPCTSTR pszSingleLineComments;       // The single line comment tokens (e.g. "//")
+'    LPCTSTR pszSingleLineComments;       // The multiline comment start tokens (e.g. "/*\n{\n(*")
+'    LPCTSTR pszMultiLineComments2;       // The multiline comment end tokens (e.g. "*/\n}\n*)")
+'    LPCTSTR pszScopeKeywords1;           // The scoping start tokens (e.g. "{\nbegin")
+'    LPCTSTR pszScopeKeywords2;           // The multiline comment end tokens (e.g. "}\nend")
+'    LPCTSTR pszStringDelims;             // The string literal delimiters (e.g. "\"\n'") -- also includes character literals
+'    TCHAR   chEscape;                    // The escape character
+'    TCHAR   chTerminator;                // The statement terminator char (usually ';')
+'    LPCTSTR pszTagElementNames;          // Tag-based element names delimited by '\n'
+'    LPCTSTR pszTagAttributeNames;        // Tag-based attribute names delimited by '\n'
+'    LPCTSTR pszTagEntities;              // Tag-based entities delimited by '\n'
+'} CM_LANGUAGE;
+
+TYPE CM_LANGUAGE
+ ULONG     .dwStyle
+ SSHORT    .bIsCaseSensitive 
+ ULONG     .pszKeywords               
+ ULONG     .pszOperators 
+ ULONG     .pszSingleLineComments
+ ULONG     .pszSingleLineComments1
+ ULONG     .pszSingleLineComments2
+ ULONG     .pszScopeKeywords1
+ ULONG     .pszScopeKeywords2
+ ULONG     .pszStringDelims
+ ULONG     .chEscape
+ ULONG     .chTerminator
+ ULONG     .pszTagElementNames
+ ULONG     .pszTagAttributeNames 
+ ULONG     .pszTagEntities 
+END TYPE
+
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Color settings for CMM_GETCOLORS and CMM_SETCOLORS
+'//
+'// Note:  Use CLR_INVALID on background colors to specify transparent 
+'//        (text) or appropriate control panel setting
+'//
+'typedef struct _CM_COLORS {
+'    COLORREF crWindow;               // window background color
+'    COLORREF crLeftMargin;           // left margin background color
+'    COLORREF crBookmark;             // bookmark foreground color
+'    COLORREF crBookmarkBk;           // bookmark background color
+'    COLORREF crText;                 // plain text foreground color
+'    COLORREF crTextBk;               // plain text background color
+'    COLORREF crNumber;               // numeric literal foreground color
+'    COLORREF crNumberBk;             // numeric literal background color
+'    COLORREF crKeyword;              // keyword foreground color
+'    COLORREF crKeywordBk;            // keyword background color
+'    COLORREF crOperator;             // operator foreground color
+'    COLORREF crOperatorBk;           // operator background color
+'    COLORREF crScopeKeyword;         // scope keyword foreground color
+'    COLORREF crScopeKeywordBk;       // scope keyword background color
+'    COLORREF crComment;              // comment foreground color
+'    COLORREF crCommentBk;            // comment background color
+'    COLORREF crString;               // string foreground color
+'    COLORREF crStringBk;             // string background color
+'    COLORREF crTagText;              // plain tag text foreground color
+'    COLORREF crTagTextBk;            // plain tag text background color
+'    COLORREF crTagEntity;            // tag entity foreground color
+'    COLORREF crTagEntityBk;          // tag entity background color
+'    COLORREF crTagElementName;       // tag element name foreground color
+'    COLORREF crTagElementNameBk;     // tag element name background color
+'    COLORREF crTagAttributeName;     // tag attribute name foreground color
+'    COLORREF crTagAttributeNameBk;   // tag attribute name background color
+'    COLORREF crLineNumber;           // line number foreground color
+'    COLORREF crLineNumberBk;         // line number background color
+'    COLORREF crHDividerLines;        // line number separate line color
+'    COLORREF crVDividerLines;        // left margin separate line color
+'    COLORREF crHighlightedLine;      // highlighted line color
+'} CM_COLORS;
+
+
+TYPE CM_COLORS
+ XLONG     .crWindow               '// window background color
+ XLONG     .crLeftMargin           '// left margin background color
+ XLONG     .crBookmark             '// bookmark foreground color
+ XLONG     .crBookmarkBk           '// bookmark background color
+ XLONG     .crText                 '// plain text foreground color
+ XLONG     .crTextBk               '// plain text background color
+ XLONG     .crNumber               '// numeric literal foreground color
+ XLONG     .crNumberBk             '// numeric literal background color
+ XLONG     .crKeyword              '// keyword foreground color
+ XLONG     .crKeywordBk            '// keyword background color
+ XLONG     .crOperator             '// operator foreground color
+ XLONG     .crOperatorBk           '// operator background color
+ XLONG     .crScopeKeyword         '// scope keyword foreground color
+ XLONG     .crScopeKeywordBk       '// scope keyword background color
+ XLONG     .crComment              '// comment foreground color
+ XLONG     .crCommentBk            '// comment background color
+ XLONG     .crString               '// string foreground color
+ XLONG     .crStringBk             '// string background color
+ XLONG     .crTagText              '// plain tag text foreground color
+ XLONG     .crTagTextBk            '// plain tag text background color
+ XLONG     .crTagEntity            '// tag entity foreground color
+ XLONG     .crTagEntityBk          '// tag entity background color
+ XLONG     .crTagElementName       '// tag element name foreground color
+ XLONG     .crTagElementNameBk     '// tag element name background color
+ XLONG     .crTagAttributeName     '// tag attribute name foreground color
+ XLONG     .crTagAttributeNameBk   '// tag attribute name background color
+ XLONG     .crLineNumber           '// line number foreground color
+ XLONG     .crLineNumberBk         '// line number background color
+ XLONG     .crHDividerLines        '// line number separate line color
+ XLONG     .crVDividerLines        '// left margin separate line color
+ XLONG     .crHighlightedLine      '// highlighted line color
+END TYPE
+
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Font style settings for CMM_GETFONTSTYLES and CMM_SETFONTSTYLES
+'// each byte value is one of the CM_FONT_XXX values listed below
+'// this declaration
+'//
+'typedef struct _CM_FONTSTYLES {
+'    BYTE byText;                 // plain text font style
+'    BYTE byNumber;               // numeric literal font style
+'    BYTE byKeyword;              // keyword font style
+'    BYTE byOperator;             // operator font style
+'    BYTE byScopeKeyword;         // scope keyword font style
+'    BYTE byComment;              // comment font style
+'    BYTE byString;               // string font style
+'    BYTE byTagText;              // plain tag text font style
+'    BYTE byTagEntity;            // tag entity font style
+'    BYTE byTagElementName;       // tag element name font style
+'    BYTE byTagAttributeName;     // tag attribute name font style
+'    BYTE byLineNumber;           // line number font style
+'} CM_FONTSTYLES;
+
+TYPE CM_FONTSTYLES
+ UBYTE     .byText                '; // plain text font style
+ UBYTE     .byNumber              '; // numeric literal font style
+ UBYTE     .byKeyword             '; // keyword font style
+ UBYTE     .byOperator            '; // operator font style
+ UBYTE     .byScopeKeyword        '; // scope keyword font style
+ UBYTE     .byComment             '; // comment font style
+ UBYTE     .byString              '; // string font style
+ UBYTE     .byTagText             '; // plain tag text font style
+ UBYTE     .byTagEntity           '; // tag entity font style
+ UBYTE     .byTagElementName      '; // tag element name font style
+ UBYTE     .byTagAttributeName    '; // tag attribute name font style
+ UBYTE     .byLineNumber          '; // line number font style
+END TYPE
+
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Font style options used in CM_FONTSTYLES
+'//
+'//
+$$CM_FONT_NORMAL     = 0   '// normal weight
+$$CM_FONT_BOLD       = 1   '// bold weight
+$$CM_FONT_ITALIC     = 2   '// normal weight, italic
+$$CM_FONT_BOLDITALIC = 3   '// bold weight, italic
+$$CM_FONT_UNDERLINE  = 4   '// normal weight, underline
+
+'/////////////////////////////////////////////////////////////
+'//
+'// AutoIndent options
+'//
+'//
+$$CM_INDENT_OFF       = 0    '// auto-indent off -- new line begins at column 0
+$$CM_INDENT_SCOPE     = 1    '// new line begins at correct language scope indentation level
+$$CM_INDENT_PREVLINE  = 2    '// new line has identical indentation of previous line
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Print option flags used with CMM_PRINT
+'//
+'//
+$$CM_PRINT_PROMPTDLG    = 0x000   '// display the print common dialog
+$$CM_PRINT_DEFAULTPRN   = 0x001   '// use default printer (no print dialog displayed)
+$$CM_PRINT_HDC          = 0x002   '// use HDC provided
+$$CM_PRINT_RICHFONTS    = 0x004   '// use bold, italics, underline, etc. when appropriate
+$$CM_PRINT_COLOR        = 0x008   '// print in color
+$$CM_PRINT_PAGENUMS     = 0x010   '// print 'page # of #' at the bottom of the page
+$$CM_PRINT_DATETIME     = 0x020   '// print date and time at top of the page
+$$CM_PRINT_BORDERTHIN   = 0x040   '// surround text with a thin border
+$$CM_PRINT_BORDERTHICK  = 0x080   '// surround text with a thick border
+$$CM_PRINT_BORDERDOUBLE = 0x100   '// surround text with two thin borders
+$$CM_PRINT_SELECTION    = 0x200   '// print the selection rather than entire edit contents
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Border option flags used with CMM_GETBORDERSTYLE and CMM_SETBORDERSTYLE.
+'// Note: this values may be or'd together to achieve different effects.
+'//
+$$CM_BORDER_NONE      = 0x0  '// no border
+$$CM_BORDER_THIN      = 0x1  '// 1-pixel border
+$$CM_BORDER_CLIENT    = 0x2  '// client edge (WS_EX_CLIENTEDGE)
+$$CM_BORDER_STATIC    = 0x4  '// static edge (WS_EX_STATICEDGE)
+$$CM_BORDER_MODAL     = 0x8  '// modal edge (WS_EX_DLGMODALFRAME)
+'$$CM_BORDER_CORRAL   =      '(CM_BORDER_MODAL|CM_BORDER_CLIENT)
+
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Text position indicators
+'//
+'//
+'typedef struct _CM_POSITION {
+'    int nLine;   // zero-based line number
+'    int nCol;   // zero-based *buffer* column number
+'} CM_POSITION;
+
+TYPE CM_POSITION
+ ULONG .nLine
+ ULONG .nCol
+END TYPE
+
+
+'typedef struct _CM_RANGE {
+'    CM_POSITION posStart;  // the anchor
+'    CM_POSITION posEnd;    // the extension (if same as anchor, selection is empty)
+'    BOOL bColumnSel;       // TRUE if is a column selection, FALSE if paragragh selection
+'} CM_RANGE;
+
+
+TYPE CM_RANGE
+ CM_POSITION .posStart
+ CM_POSITION .posEnd
+ SSHORT       .bColumnSel 
+END TYPE
+
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Hot key descriptor
+'//
+'//
+'typedef struct _CM_HOTKEY {
+'    BYTE byModifiers1;  // 1st keystroke's modifiers (combination of HOTKEYF_ALT, HOTKEYF_SHIFT, HOTKEYF_CONTROL)
+'    UINT nVirtKey1;     // 1st keystroke's virtkey (e.g. Ctrl + 'A')
+'    BYTE byModifiers2;  // 2nd keystroke's modifiers (combination of HOTKEYF_ALT, HOTKEYF_SHIFT, HOTKEYF_CONTROL)
+'    UINT nVirtKey2;     // 2nd keystroke's virtkey (e.g. Ctrl + 'A')
+'} CM_HOTKEY;
+
+TYPE CM_HOTKEY
+ UBYTE .byModifiers1
+ ULONG .nVirtKey1
+ UBYTE .byModifiers2
+ ULONG .nVirtKey2
+END TYPE
+
+'/////////////////////////////////////////////////////////////
+'//
+'// CMN_DRAWLINE notification data passed to parent window
+'//
+'//
+'typedef struct _CM_DRAWLINEDATA {
+'    NMHDR hdr;          // standard notification data
+'    HDC hDC;            // device context to draw with, clipped to current paint area
+'    RECT rcLine;        // bounds of line, excluding left margin region.
+'    int nLine;          // line number to draw
+'    int nLeftCol;       // leftmost visible col
+'    int nRightCol;      // rightmost visible col
+'    LPARAM lParam;      // itemdata associated with the line (CMM_SETITEMDATA)
+'    DWORD dwStyle;      // line style bits (CML_XXX)
+'} CM_DRAWLINEDATA;
+
+TYPE CM_DRAWLINEDATA
+ NMHDR    .hdr
+ XLONG    .hDC
+ RECT     .rcLine
+ ULONG    .nLine
+ ULONG    .nLeftCol
+ ULONG    .nRightCol
+ XLONG    .lParam
+ ULONG    .dwStyle  
+END TYPE
+
+'/////////////////////////////////////////////////////////////
+'//
+'// CMN_DELETELINE notification data passed to parent window
+'//
+'//
+'typedef struct _CM_DELETELINEDATA {
+'    NMHDR hdr;          // standard notification data
+'    int nLine;          // line that is about to be deleted
+'    LPARAM lParam;      // itemdata associated with the line (CMM_SETITEMDATA)
+'} CM_DELETELINEDATA;
+
+
+TYPE CM_DELETELINEDATA
+ NMHDR    .hdr
+ ULONG    .nLine
+ XLONG    .lParam
+END TYPE
+
+
+'/////////////////////////////////////////////////////////////
+'//
+'// CMN_CMDFAILURE notification data passed to parent window
+'//
+'//
+'typedef struct _CM_CMDFAILUREDATA {
+'    NMHDR hdr;          // standard notification data
+'    WORD wCmd;          // CMD_XXX command that failed
+'    DWORD dwErr;        // CMDERR_XXX failure code
+'} CM_CMDFAILUREDATA;
+
+
+TYPE CM_CMDFAILUREDATA
+ NMHDR    .hdr
+ USHORT   .wCmd
+ ULONG    .dwErr 
+END TYPE
+
+
+'/////////////////////////////////////////////////////////////
+'//
+'// CMN_REGISTEREDCMD notification data passed to parent window
+'//
+'//
+'typedef struct _CM_REGISTEREDCMDDATA {
+'    NMHDR hdr;          // standard notification data
+'    WORD wCmd;          // registered command to be executed
+'} CM_REGISTEREDCMDDATA;
+
+TYPE CM_REGISTEREDCMDATA
+ NMHDR    .hdr
+ USHORT   .wCmd
+END TYPE
+
+'/////////////////////////////////////////////////////////////
+'//
+'// CMN_KEYDOWN, CMN_KEYUP, CMN_KEYPRESS notification 
+'// data passed to parent window
+'//
+'//
+
+$$CM_KEY_SHIFT  = 0x1
+$$CM_KEY_CTRL   = 0x2
+$$CM_KEY_ALT    = 0x4
+
+'typedef struct _CM_KEYDATA {
+'    NMHDR hdr;          // standard notification data
+'    int nKeyCode;       // virtkey if CMN_KEYUP or CMN_KEYDOWN.  Ascii code if CMN_KEYPRESS
+'    int nKeyModifier;   // bitfield of: CM_KEY_SHIFT, CM_KEY_CTRL, and/or CM_KEY_ALT
+'} CM_KEYDATA;
+
+
+TYPE CM_KEYDATA
+ NMHDR   .hdr
+ ULONG   .nKeyCode 
+ ULONG   .nKeyModifier
+END TYPE
+
+
+'/////////////////////////////////////////////////////////////
+'//
+'// CMN_MOUSEDOWN, CMN_MOUSEUP, CMN_MOUSEPRESS notification 
+'// data passed to parent window
+'//
+'//
+$$CM_BTN_LEFT    = 0x1
+$$CM_BTN_RIGHT   = 0x2
+$$CM_BTN_MIDDLE  = 0x4
+'typedef struct _CM_MOUSEDATA {
+'    NMHDR hdr;          // standard notification data
+'    POINT pt;           // position of mouse (client coordinates)
+'    int nButton;        // bitfield of: CM_BTN_LEFT, CM_BTN_RIGHT, and/or CM_BTN_MIDDLE
+'    int nKeyModifier;   // bitfield of: CM_KEY_SHIFT, CM_KEY_CTRL, and/or CM_KEY_ALT
+'} CM_MOUSEDATA;
+
+
+TYPE CM_MOUSEDATA
+ NMHDR   .hdr
+ POINTAPI   .pt
+ ULONG   .nButton
+ ULONG   .nKeyModifier  
+END TYPE
+
+
+'/////////////////////////////////////////////////////////////
+'//
+'// CMN_FINDWRAPPED notification data passed to parent window
+'//
+'//
+'typedef struct _CM_FINDWRAPPEDDATA {
+'    NMHDR hdr;          // standard notification data
+'	WORD wCmd;			// the command being executed
+'    BOOL bForward;      // TRUE if wrapped while searching forward, FALSE if searching backward
+'} CM_FINDWRAPPEDDATA;
+
+
+TYPE CM_FINDWRAPPEDDATA
+ NMHDR    .hdr
+ USHORT   .wCmd
+ SSHORT   .bForward
+END TYPE
+
+'/////////////////////////////////////////////////////////////
+'//
+'// data passed to CMM_SETLINENUMBERING
+'//
+'//
+$$CM_BINARY        = 2
+$$CM_OCTAL         = 8
+$$CM_DECIMAL       = 10
+$$CM_HEXADECIMAL   = 16
+
+'typedef struct _CM_LINENUMBERING {
+'    BOOL bEnabled;      // TRUE to enable, FALSE to disable
+'    UINT nStartAt;      // # of line at top of buffer (line 0)
+'    DWORD dwStyle;      // CM_DECIMAL, CM_HEXADECIMAL, CM_OCTAL, or CM_BINARY
+'} CM_LINENUMBERING;
+                  
+TYPE CM_LINENUMBERING
+ SSHORT   .bEnabled
+ ULONG    .nStartAt
+ ULONG    .dwStyle
+END TYPE
+
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Error codes
+'//
+'//
+'typedef LRESULT CME_CODE;
+
+$$CME_SUCCESS     = 1        '// function or method completed successfully
+$$CME_FAILURE     = 0        '// function or method did not complete because of an error
+$$CME_BADARGUMENT = -1       '// function or method did not complete because an invalid argument was passed in
+
+'/////////////////////////////////////////////////////////////
+'//
+'// CMM_HITTEST return codes
+'//
+'//
+
+$$CM_NOWHERE       = 0        '// Not over the CodeMax control 
+$$CM_HSPLITTER     = 1        '// Over the horizontal splitter bar
+$$CM_VSPLITTER     = 2        '// Over the vertical splitter bar
+$$CM_HVSPLITTER    = 3        '// Over the intersection of the horizontal and vertical splitter bar
+$$CM_EDITSPACE     = 4        '// Over the buffer contents (code)
+$$CM_HSCROLLBAR    = 5        '// Over the horizontal scrollbar
+$$CM_VSCROLLBAR    = 6        '// Over the vertical scrollbar
+$$CM_SIZEBOX       = 7        '// Over the sizebox visible when both scrollbars are visible
+$$CM_LEFTMARGIN    = 8        '// Over the left margin area
+
+'/////////////////////////////////////////////////////////////
+'//
+'// Exported functions
+'//
+'//
+
+$$CM_VERSION = 0x01000
+'//#ifdef __cplusplus
+'//EXTERN_C CME_CODE CMRegisterControl( DWORD dwVersion = CM_VERSION );
+'//#else
+'//#endif
+'
+
+EXTERNAL CFUNCTION CMRegisterControl(dwVersion)
+
+EXTERNAL CFUNCTION CMUnregisterControl ()
+EXTERNAL CFUNCTION CMSetFindReplaceMRUList (pszMRUList, bFind )
+EXTERNAL CFUNCTION CMGetFindReplaceMRUList (pszMRUList, bFind )
+EXTERNAL CFUNCTION CMRegisterLanguage (pszName$, pLang)
+EXTERNAL CFUNCTION CMUnregisterLanguage (pszName$)
+EXTERNAL CFUNCTION CMGetHotKeys (pBuff)
+EXTERNAL CFUNCTION CMSetHotKeys (pBuff)
+EXTERNAL CFUNCTION CMResetDefaultHotKeys ()
+EXTERNAL CFUNCTION CMGetHotKeysForCmd (wCmd, pHotKeys)
+EXTERNAL CFUNCTION CMRegisterHotKey (pHotKey, wCmd)
+EXTERNAL CFUNCTION CMUnregisterHotKey (pHotKey)
+EXTERNAL CFUNCTION CMGetCommandString (wCmd, bDescription, pszBuff, nBuffLen)
+EXTERNAL CFUNCTION CMGetMacro (nMacro, pMacroBuff)
+EXTERNAL CFUNCTION CMSetMacro (nMacro, pMacroBuff)
+
+'// 2.0
+EXTERNAL CFUNCTION CMUnregisterAllLanguages ()
+EXTERNAL CFUNCTION CMGetLanguageDef (pszName$, pLang)
+EXTERNAL CFUNCTION CMRegisterCommand (wCmd, pszName, pszDesc)
+EXTERNAL CFUNCTION CMUnregisterCommand (wCmd )
+
+'///////////////////////////////////////////////////////////////////
+'//
+'// Message crackers for all CM_xxxx messages
+'//
+'//
+'
+'$$CM_SetLanguage( hWnd, pszName ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETLANGUAGE, 0, ( LPARAM ) ( pszName ) ) )
+'$$CM_GetLanguage( hWnd, pszName ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETLANGUAGE, 0, ( LPARAM ) ( pszName ) ) )
+'$$CM_EnableColorSyntax( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLECOLORSYNTAX, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsColorSyntaxEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISCOLORSYNTAXENABLED, 0, 0 ) )
+'$$CM_OpenFile( hWnd, pszFileName ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_OPENFILE, 0, ( LPARAM ) ( pszFileName ) ) )
+'$$CM_InsertFile( hWnd, pszFileName, pPos ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_INSERTFILE, ( WPARAM ) ( pPos ), ( LPARAM ) ( pszFileName ) ) )
+'$$CM_InsertText( hWnd, pszText, pPos ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_INSERTTEXT, ( WPARAM ) ( pPos ), ( LPARAM ) ( pszText ) ) )
+'$$CM_SetText( hWnd, pszText ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETTEXT, 0, ( LPARAM ) ( pszText ) ) )
+'$$CM_SetColors( hWnd, pColors ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETCOLORS, 0, ( LPARAM ) ( pColors ) ) )
+'$$CM_GetColors( hWnd, pColors ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETCOLORS, 0, ( LPARAM ) ( pColors ) ) )
+'$$CM_EnableWhitespaceDisplay( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLEWHITESPACEDISPLAY, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsWhitespaceDisplayEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISWHITESPACEDISPLAYENABLED, 0, 0 ) )
+'$$CM_EnableTabExpand( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLETABEXPAND, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsTabExpandEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISTABEXPANDENABLED, 0, 0 ) )
+'$$CM_EnableSmoothScrolling( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLESMOOTHSCROLLING, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsSmoothScrollingEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISSMOOTHSCROLLINGENABLED, 0, 0 ) )
+'$$CM_SetTabSize( hWnd, nTabSize ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETTABSIZE, ( WPARAM ) ( nTabSize ), 0 ) )
+'$$CM_GetTabSize( hWnd ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETTABSIZE, 0, 0 ) )
+'$$CM_SetReadOnly( hWnd, bReadOnly ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETREADONLY, ( WPARAM ) ( bReadOnly ), 0 ) )
+'$$CM_IsReadOnly( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISREADONLY, 0, 0 ) )
+'$$CM_EnableLineToolTips( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLELINETOOLTIPS, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsLineToolTipsEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISLINETOOLTIPSENABLED, 0, 0 ) )
+'$$CM_EnableLeftMargin( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLELEFTMARGIN, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsLeftMarginEnabled( hWnd ) \
+'               ( ( BOOL )  SendMessage( hWnd, CMM_ISLEFTMARGINENABLED, 0, 0 ) )
+'$$CM_SaveFile( hWnd, pszFileName, bClearUndo ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SAVEFILE, ( WPARAM ) ( bClearUndo ), ( LPARAM ) ( pszFileName ) ) )
+'$$CM_ReplaceText( hWnd, pszText, pRange ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_REPLACETEXT, ( WPARAM ) ( pRange ), ( LPARAM ) ( pszText ) ) )
+'$$CM_GetTextLength( hWnd, pRange, bLogical ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETTEXTLENGTH, ( WPARAM ) ( pRange ), ( LPARAM ) ( bLogical ) ) )
+'$$CM_GetText( hWnd, pszBuff, pRange ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETTEXT, ( WPARAM ) ( pRange ), ( LPARAM ) ( pszBuff ) ) )
+'$$CM_GetLineCount( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETLINECOUNT, 0, 0 ) )
+'$$CM_GetLine( hWnd, nLine, pszBuff ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETLINE, ( WPARAM ) ( nLine ), ( LPARAM ) ( pszBuff ) ) )
+'$$CM_GetLineLength( hWnd, nLine, bLogical ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETLINELENGTH, ( WPARAM ) ( nLine ), ( LPARAM ) ( bLogical ) ) )
+'$$CM_GetWord( hWnd, pszBuff, pPos ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETWORD, ( WPARAM ) ( pPos ), ( LPARAM ) ( pszBuff ) ) )
+'$$CM_GetWordLength( hWnd, pPos, bLogical ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETWORDLENGTH, ( WPARAM ) ( pPos ), ( LPARAM ) ( bLogical ) ) )
+'$$CM_AddText( hWnd, pszText ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ADDTEXT, 0, ( LPARAM ) ( pszText ) ) )
+'$$CM_DeleteLine( hWnd, nLine ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_DELETELINE, ( WPARAM ) ( nLine ), 0 ) )
+'$$CM_InsertLine( hWnd, nLine, pszText ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_INSERTLINE, ( WPARAM ) ( nLine ), ( LPARAM ) ( pszText ) ) )
+'$$CM_GetSel( hWnd, pRange, bNormalized ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETSEL, ( WPARAM ) ( bNormalized ), ( LPARAM ) ( pRange ) ) )
+'$$CM_SetSel( hWnd, pRange, bMakeVisible ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETSEL, ( WPARAM ) ( bMakeVisible ), ( LPARAM ) ( pRange ) ) )
+'$$CM_DeleteSel( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_DELETESEL, 0, 0 ) )
+'$$CM_ReplaceSel( hWnd, pszText ) \
+'               ( ( CME_CODE )  SendMessage( hWnd, CMM_REPLACESEL, 0, ( LPARAM ) ( pszText ) ) )
+'$$CM_ExecuteCmd( hWnd, wCmd, dwCmdData ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_EXECUTECMD, ( WPARAM ) ( wCmd ), ( LPARAM ) ( dwCmdData ) ) )
+'$$CM_SetSplitterPos( hWnd, bHorz, nPos ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETSPLITTERPOS, ( WPARAM ) ( bHorz ), ( LPARAM ) ( nPos ) ) )
+'$$CM_GetSplitterPos( hWnd, bHorz ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETSPLITTERPOS, ( WPARAM ) ( bHorz ), 0 ) )
+'$$CM_SetAutoIndentMode( hWnd, nMode ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETAUTOINDENTMODE, ( WPARAM ) ( nMode ), 0 ) )
+'$$CM_GetAutoIndentMode( hWnd ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETAUTOINDENTMODE, 0, 0 ) )
+'$$CM_CanUndo( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_CANUNDO, 0, 0 ) )
+'$$CM_CanRedo( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_CANREDO, 0, 0 ) )
+'$$CM_Redo( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_REDO, 0, 0 ) )
+'$$CM_Undo( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_UNDO, 0, 0 ) )
+'$$CM_ClearUndoBuffer( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_CLEARUNDOBUFFER, 0, 0 ) )
+'$$CM_CanCut( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_CANCUT, 0, 0 ) )
+'$$CM_CanCopy( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_CANCOPY, 0, 0 ) )
+'$$CM_CanPaste( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_CANPASTE, 0, 0 ) )
+'$$CM_Cut( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_CUT, 0, 0 ) )
+'$$CM_Copy( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_COPY, 0, 0 ) )
+'$$CM_Paste( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_PASTE, 0, 0 ) )
+'$$CM_IsRecordingMacro( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ISRECORDINGMACRO, 0, 0 ) )
+'$$CM_IsPlayingMacro( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ISPLAYINGMACRO, 0, 0 ) )
+'$$CM_SetUndoLimit( hWnd, nLimit ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETUNDOLIMIT, ( WPARAM ) ( nLimit ), 0 ) )
+'$$CM_GetUndoLimit( hWnd ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETUNDOLIMIT, 0, 0 ) )
+'$$CM_IsModified( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISMODIFIED, 0, 0 ) )
+'$$CM_SetModified( hWnd, bModified ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETMODIFIED, ( WPARAM ) ( bModified ), 0 ) )
+'$$CM_EnableOvertype( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLEOVERTYPE, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsOvertypeEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISOVERTYPEENABLED, 0, 0 ) )
+'$$CM_EnableCaseSensitive( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLECASESENSITIVE, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsCaseSensitiveEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISCASESENSITIVEENABLED, 0, 0 ) )
+'$$CM_EnablePreserveCase( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLEPRESERVECASE, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsPreserveCaseEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISPRESERVECASEENABLED, 0, 0 ) )
+'$$CM_EnableWholeWord( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLEWHOLEWORD, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsWholeWordEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISWHOLEWORDENABLED, 0, 0 ) )
+'$$CM_EnableRegExp( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLEREGEXP, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsRegExpEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISREGEXPENABLED, 0, 0 ) )
+'$$CM_SetTopIndex( hWnd, nView, nLine ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETTOPINDEX, ( WPARAM ) ( nView ), ( LPARAM ) ( nLine ) ) )
+'$$CM_GetTopIndex( hWnd, nView ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETTOPINDEX, ( WPARAM ) ( nView ), 0 ) )
+'$$CM_GetVisibleLineCount( hWnd, nView, bFullyVisible ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETVISIBLELINECOUNT, ( WPARAM ) ( nView ), ( LPARAM ) ( bFullyVisible ) ) )
+'$$CM_EnableCRLF( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLECRLF, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsCRLFEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISCRLFENABLED, 0, 0 ) )
+'$$CM_SetFontOwnership( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETFONTOWNERSHIP, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_GetFontOwnership( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_GETFONTOWNERSHIP, 0, 0 ) )
+'$$CM_GetCurrentView( hWnd ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETCURRENTVIEW, 0, 0 ) )
+'$$CM_GetViewCount( hWnd ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETVIEWCOUNT, 0, 0 ) )
+'$$CM_ShowScrollBar( hWnd, bHorz, bShow ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SHOWSCROLLBAR, ( WPARAM ) ( bHorz ), ( LPARAM ) ( bShow ) ) )
+'$$CM_HasScrollBar( hWnd, bHorz ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_HASSCROLLBAR, ( WPARAM ) ( bHorz ), 0 ) )
+'$$CM_GetSelFromPoint( hWnd, xClient, yClient, pPos ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETSELFROMPOINT, MAKEWPARAM( ( xClient ), ( yClient ) ), ( LPARAM ) ( pPos ) ) )
+'$$CM_SelectLine( hWnd, nLine, bMakeVisible ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SELECTLINE, ( WPARAM ) ( nLine ), ( LPARAM ) ( bMakeVisible ) ) )
+'$$CM_HitTest( hWnd, xClient, yClient ) \
+'                ( ( int )  SendMessage( hWnd, CMM_HITTEST, MAKEWPARAM( ( xClient ), ( yClient ) ), 0 ) )
+'$$CM_EnableDragDrop( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLEDRAGDROP, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsDragDropEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISDRAGDROPENABLED, 0, 0 ) )
+'$$CM_EnableSplitter( hWnd, bHorz, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLESPLITTER, ( WPARAM ) ( bHorz ), ( LPARAM ) ( bEnable ) ) )
+'$$CM_IsSplitterEnabled( hWnd, bHorz ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISSPLITTERENABLED, ( WPARAM ) ( bHorz ), 0 ) )
+'$$CM_EnableColumnSel( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLECOLUMNSEL, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsColumnSelEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISCOLUMNSELENABLED, 0, 0 ) )
+'$$CM_EnableGlobalProps( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLEGLOBALPROPS, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsGlobalPropsEnabled( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ISGLOBALPROPSENABLED, 0, 0 ) )
+'$$CM_SetDlgParent( hWnd, hWndParent ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETDLGPARENT, ( WPARAM ) ( hWndParent ), 0 ) )
+'$$CM_EnableSelBounds( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLESELBOUNDS, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsSelBoundsEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISSELBOUNDSENABLED, 0, 0 ) )
+'$$CM_SetFontStyles( hWnd, pFontStyles ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETFONTSTYLES, 0, ( LPARAM ) ( pFontStyles ) ) )
+'$$CM_GetFontStyles( hWnd, pFontStyles ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETFONTSTYLES, 0, ( LPARAM ) ( pFontStyles ) ) )
+'$$CM_SetItemData( hWnd, nLine, lParam ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETITEMDATA, ( WPARAM ) ( nLine ), ( LPARAM ) ( lParam ) ) )
+'$$CM_GetItemData( hWnd, nLine ) \
+'                ( ( LPARAM )  SendMessage( hWnd, CMM_GETITEMDATA, ( WPARAM ) ( nLine ), 0 ) )
+'$$CM_SetLineStyle( hWnd, nLine, dwStyle ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETLINESTYLE, ( WPARAM ) ( nLine ), ( LPARAM ) ( dwStyle ) ) )
+'$$CM_GetLineStyle( hWnd, nLine ) \
+'                ( ( DWORD )  SendMessage( hWnd, CMM_GETLINESTYLE, ( WPARAM ) ( nLine ), 0 ) )
+'$$CM_SetBookmark( hWnd, nLine, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETBOOKMARK, ( WPARAM ) ( nLine ), ( LPARAM ) ( bEnable ) ) )
+'$$CM_GetBookmark( hWnd, nLine ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_GETBOOKMARK, ( WPARAM ) ( nLine ), 0 ) )
+'$$CM_SetAllBookmarks( hWnd, nCount, pdwLines ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETALLBOOKMARKS, ( WPARAM ) ( nCount ), ( LPARAM ) ( pdwLines ) ) )
+'$$CM_GetAllBookmarks( hWnd, pdwLines ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETALLBOOKMARKS, 0, ( LPARAM ) ( pdwLines ) ) )
+'$$CM_SetLineNumbering( hWnd, pNumbering ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETLINENUMBERING, 0, ( LPARAM ) ( pNumbering ) ) )
+'$$CM_GetLineNumbering( hWnd, pNumbering ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETLINENUMBERING, 0, ( LPARAM ) ( pNumbering ) ) )
+'$$CM_PosFromChar( hWnd, pPos, pRect ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_POSFROMCHAR, ( WPARAM ) ( pPos ), ( LPARAM ) ( pRect ) ) )
+'$$CM_EnableHideSel( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLEHIDESEL, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsHideSelEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISHIDESELENABLED, 0, 0 ) )
+'$$CM_SetHighlightedLine( hWnd, nLine ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETHIGHLIGHTEDLINE, ( WPARAM ) ( nLine ), 0 ) )
+'$$CM_GetHighlightedLine( hWnd ) \
+'                ( ( int )  SendMessage( hWnd, CMM_GETHIGHLIGHTEDLINE, 0, 0 ) )
+'$$CM_EnableNormalizeCase( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLENORMALIZECASE, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsNormalizeCaseEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISNORMALIZECASEENABLED, 0, 0 ) )
+'$$CM_SetDivider( hWnd, nLine, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETDIVIDER, ( WPARAM ) ( nLine ), ( LPARAM ) ( bEnable ) ) )
+'$$CM_GetDivider( hWnd, nLine ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_GETDIVIDER, ( WPARAM ) ( nLine ), 0 ) )
+'$$CM_EnableOvertypeCaret( hWnd, bEnable ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ENABLEOVERTYPECARET, ( WPARAM ) ( bEnable ), 0 ) )
+'$$CM_IsOvertypeCaretEnabled( hWnd ) \
+'                ( ( BOOL )  SendMessage( hWnd, CMM_ISOVERTYPECARETENABLED, 0, 0 ) )
+'$$CM_SetFindText( hWnd, pszText ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETFINDTEXT, 0, ( LPARAM ) ( pszText ) ) )
+'$$CM_GetFindText( hWnd, pszText ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETFINDTEXT, 0, ( LPARAM ) ( pszText ) ) )
+'$$CM_SetReplaceText( hWnd, pszText ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETREPLACETEXT, 0, ( LPARAM ) ( pszText ) ) )
+'$$CM_GetReplaceText( hWnd, pszText ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_GETREPLACETEXT, 0, ( LPARAM ) ( pszText ) ) )
+'$$CM_SetImageList( hWnd, hImageList ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETIMAGELIST, 0, ( LPARAM ) ( hImageList ) ) )
+'$$CM_GetImageList( hWnd ) \
+'                ( ( HIMAGELIST )  SendMessage( hWnd, CMM_GETIMAGELIST, 0, 0 ) )
+'$$CM_SetMarginImages( hWnd, nLine, byImages ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETMARGINIMAGES, ( WPARAM ) ( nLine ), ( LPARAM ) ( byImages ) ) )
+'$$CM_GetMarginImages( hWnd, nLine ) \
+'                ( ( BYTE )  SendMessage( hWnd, CMM_GETMARGINIMAGES, ( WPARAM ) ( nLine ), 0 ) )
+'$$CM_AboutBox( hWnd ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_ABOUTBOX, 0, 0 ) )
+'$$CM_Print( hWnd, hDC, dwFlags ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_PRINT, ( WPARAM ) ( hDC ), ( LPARAM ) ( dwFlags ) ) )
+'$$CM_SetCaretPos( hWnd, nLine, nCol ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETCARETPOS, ( WPARAM ) ( nLine ), ( LPARAM ) ( nCol ) ) )
+'$$CM_ViewColToBufferCol( hWnd, nLine, nViewCol ) \
+'                ( ( int )  SendMessage( hWnd, CMM_VIEWCOLTOBUFFERCOL, ( WPARAM ) ( nLine ), ( LPARAM ) ( nViewCol ) ) )
+'$$CM_BufferColToViewCol( hWnd, nLine, nBufferCol ) \
+'                ( ( int )  SendMessage( hWnd, CMM_BUFFERCOLTOVIEWCOL, ( WPARAM ) ( nLine ), ( LPARAM ) ( nBufferCol ) ) )
+'$$CM_SetBorderStyle( hWnd, dwStyle ) \
+'                ( ( CME_CODE )  SendMessage( hWnd, CMM_SETBORDERSTYLE, ( WPARAM ) ( dwStyle ), 0 ) )
+'$$CM_GetBorderStyle( hWnd ) \
+'                ( ( DWORD )  SendMessage( hWnd, CMM_GETBORDERSTYLE, 0, 0 ) )
+'#endif

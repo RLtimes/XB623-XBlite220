@@ -1,0 +1,259 @@
+'
+'
+' ####################
+' #####  PROLOG  #####
+' ####################
+'
+' A simple XBLite GUI template.
+'
+VERSION	"0.0000"
+'
+	IMPORT	"xst"   		' standard library	: required by most programs
+'	IMPORT  "xsx"				' extended std library
+'	IMPORT	"xio"				' console io library
+	IMPORT	"gdi32"     ' gdi32.dll
+	IMPORT  "user32"    ' user32.dll
+	IMPORT  "kernel32"  ' kernel32.dll
+	IMPORT  "comctl32"	' comctl32.dll			: common controls library
+'	IMPORT	"comdlg32"  ' comdlg32.dll	    : common dialog library
+'	IMPORT	"xma"   		' math library			: Sin/Asin/Sinh/Asinh/Log/Exp/Sqrt...
+'	IMPORT	"xcm"				' complex math library
+'	IMPORT  "msvcrt"		' msvcrt.dll				: C function library
+'	IMPORT  "shell32"   ' shell32.dll
+'
+DECLARE FUNCTION Entry            ()
+DECLARE FUNCTION WndProc          (hwnd, msg, wParam, lParam)
+DECLARE FUNCTION InitGui          ()
+DECLARE FUNCTION RegisterWinClass (className$, addrWndProc, icon$, menu$)
+DECLARE FUNCTION CreateWindows    ()
+DECLARE FUNCTION NewWindow        (className$, titleBar$, style, x, y, w, h, exStyle)
+DECLARE FUNCTION NewChild         (className$, text$, style, x, y, w, h, parent, id, exStyle)
+DECLARE FUNCTION MessageLoop      ()
+DECLARE FUNCTION CleanUp          ()
+DECLARE FUNCTION GetNotifyMsg     (lParam, @hwndFrom, @idFrom, @code)
+'
+'
+'
+' ######################
+' #####  Entry ()  #####
+' ######################
+'
+FUNCTION Entry ()
+
+	STATIC	entry
+'
+	IF entry THEN RETURN							' enter once
+	entry =  $$TRUE										' enter occured
+
+'	XioCreateConsole (title$, 50)			' create console, if console is not wanted, comment out this line
+	InitGui ()												' initialize program and libraries
+	IF CreateWindows () THEN QUIT (0)	' create windows and other child controls
+	MessageLoop ()										' the main message loop
+	CleanUp ()												' unregister all window classes
+'	XioFreeConsole ()									' free console
+
+END FUNCTION
+'
+'
+' ########################
+' #####  WndProc ()  #####
+' ########################
+'
+FUNCTION WndProc (hWnd, msg, wParam, lParam)
+
+	PAINTSTRUCT ps
+	RECT rect
+
+	SELECT CASE msg
+
+'		CASE $$WM_CREATE :
+
+'		CASE $$WM_COMMAND :
+'			id         = LOWORD(wParam)
+'			hwndCtl    = lParam
+'			notifyCode = HIWORD(wParam)
+'			SELECT CASE id
+'			END SELECT
+
+		CASE $$WM_DESTROY :
+			PostQuitMessage(0)
+
+'		CASE $$WM_NOTIFY :
+'			idCtrl = wParam
+'			SELECT CASE idCtrl
+'				CASE $$ListView1 :
+'					GetNotifyMsg (lParam, @hwndFrom, @idFrom, @code)
+'					SELECT CASE code :
+'					END SELECT
+'			END SELECT
+
+'		CASE $$WM_PAINT :
+'			hdc = BeginPaint (hWnd, &ps)
+'			EndPaint (hWnd, &ps)
+
+'		CASE $$WM_SIZE :
+'			w = LOWORD (lParam)
+'			h = HIWORD (lParam)
+'			sizeType = wParam
+
+		CASE ELSE :
+			RETURN DefWindowProcA (hWnd, msg, wParam, lParam)
+
+	END SELECT
+
+END FUNCTION
+'
+'
+' ########################
+' #####  InitGui ()  #####
+' ########################
+'
+FUNCTION InitGui ()
+
+	SHARED hInst
+	hInst = GetModuleHandleA (0) 	' get current instance handle
+	IFZ hInst THEN QUIT (0)
+	InitCommonControls ()					' initialize comctl32.dll library
+
+END FUNCTION
+'
+'
+' #################################
+' #####  RegisterWinClass ()  #####
+' #################################
+'
+FUNCTION RegisterWinClass (className$, addrWndProc, icon$, menu$)
+
+	SHARED hInst
+	WNDCLASS wc
+
+	wc.style           = $$CS_HREDRAW | $$CS_VREDRAW | $$CS_OWNDC
+	wc.lpfnWndProc     = addrWndProc
+	wc.cbClsExtra      = 0
+	wc.cbWndExtra      = 0
+	wc.hInstance       = hInst
+	wc.hIcon           = LoadIconA (hInst, &icon$)
+	wc.hCursor         = LoadCursorA (0, $$IDC_ARROW)
+	wc.hbrBackground   = $$COLOR_BTNFACE + 1
+	wc.lpszMenuName    = &menu$
+	wc.lpszClassName   = &className$
+
+	IFZ RegisterClassA (&wc) THEN RETURN ($$TRUE)
+
+END FUNCTION
+'
+'
+' ##############################
+' #####  CreateWindows ()  #####
+' ##############################
+'
+FUNCTION CreateWindows ()
+
+' register window class
+	className$  = "MyWindowClass"
+	addrWndProc = &WndProc()
+	icon$ 			= "scrabble"
+	menu$ 			= ""
+	IF RegisterWinClass (@className$, addrWndProc, @icon$, @menu$) THEN RETURN ($$TRUE)
+
+' create main window
+	titleBar$ = "My Window Title"
+	style 		= $$WS_OVERLAPPEDWINDOW
+	w 				= 300
+	h 				= 300
+	exStyle		= 0
+	#winMain = NewWindow (@className$, @titleBar$, style, x, y, w, h, exStyle)
+	IFZ #winMain THEN RETURN ($$TRUE)
+
+	XstCenterWindow (#winMain)							' center window position
+	ShowWindow (#winMain, $$SW_SHOWNORMAL)	' show window
+
+END FUNCTION
+'
+'
+' ##########################
+' #####  NewWindow ()  #####
+' ##########################
+'
+FUNCTION NewWindow (className$, titleBar$, style, x, y, w, h, exStyle)
+
+	SHARED hInst
+
+	RETURN CreateWindowExA (exStyle, &className$, &titleBar$, style, x, y, w, h, 0, 0, hInst, 0)
+
+END FUNCTION
+'
+'
+' #########################
+' #####  NewChild ()  #####
+' #########################
+'
+FUNCTION  NewChild (className$, text$, style, x, y, w, h, parent, id, exStyle)
+
+	SHARED hInst
+
+	style = style | $$WS_CHILD | $$WS_VISIBLE
+	RETURN CreateWindowExA (exStyle, &className$, &text$, style, x, y, w, h, parent, id, hInst, 0)
+
+END FUNCTION
+'
+'
+' ############################
+' #####  MessageLoop ()  #####
+' ############################
+'
+FUNCTION MessageLoop ()
+
+	MSG msg
+
+' main message loop
+
+	IF LIBRARY(0) THEN RETURN								' main program executes message loop
+
+	DO																			' the message loop
+		ret = GetMessageA (&msg, NULL, 0, 0)	' retrieve next message from queue
+
+		SELECT CASE ret
+			CASE  0 : RETURN msg.wParam					' WM_QUIT message
+			CASE -1 : RETURN $$TRUE							' error
+			CASE ELSE:
+				hwnd = GetActiveWindow ()
+				IF (!IsWindow (hwnd)) || (!IsDialogMessageA (hwnd, &msg)) THEN		' send only non-dialog messages
+  				TranslateMessage (&msg)					' translate virtual-key messages into character messages
+  				DispatchMessageA (&msg)					' send message to window callback function WndProc()
+				END IF
+		END SELECT
+	LOOP
+
+END FUNCTION
+'
+'
+' ########################
+' #####  CleanUp ()  #####
+' ########################
+'
+FUNCTION CleanUp ()
+
+	SHARED hInst, className$
+
+	UnregisterClassA (&className$, hInst)
+
+END FUNCTION
+'
+'
+' #############################
+' #####  GetNotifyMsg ()  #####
+' #############################
+'
+FUNCTION GetNotifyMsg (lParam, @hwndFrom, @idFrom, @code)
+
+	NMHDR nmhdr
+	nmhdrAddr = lParam
+'	XstCopyMemory (nmhdrAddr, &nmhdr, SIZE(nmhdr))	'Xsx library function
+	RtlMoveMemory (&nmhdr, nmhdrAddr, SIZE(nmhdr))	'kernel32 library function
+	hwndFrom = nmhdr.hwndFrom
+	idFrom   = nmhdr.idFrom
+	code     = nmhdr.code
+
+END FUNCTION
+END PROGRAM

@@ -1,0 +1,6 @@
+The files in this zip file are the ones used to make xblib.lib.  Files ending with .asm are in GoAsm format, those ending with .s remain in spasm format.
+
+To build, run BuildLib.bat.  You will need spasm, GoAsm and POLib in the folder in order to build.
+
+Greg Heller
+7 October 2005
